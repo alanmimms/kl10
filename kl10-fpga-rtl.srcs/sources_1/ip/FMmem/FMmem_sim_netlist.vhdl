@@ -1,7 +1,7 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
--- Date        : Mon Jan 13 16:19:02 2020
+-- Date        : Mon Jan 13 17:30:06 2020
 -- Host        : alanm running 64-bit Ubuntu 19.10
 -- Command     : write_vhdl -force -mode funcsim
 --               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/FMmem/FMmem_sim_netlist.vhdl
@@ -20,7 +20,7 @@ entity FMmem_blk_mem_gen_prim_wrapper_init is
     clka : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 )
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   attribute ORIG_REF_NAME : string;
   attribute ORIG_REF_NAME of FMmem_blk_mem_gen_prim_wrapper_init : entity is "blk_mem_gen_prim_wrapper_init";
@@ -165,11 +165,9 @@ begin
       RSTRAMB => '0',
       RSTREGARSTREG => '0',
       RSTREGB => '0',
-      WEA(1) => wea(0),
-      WEA(0) => wea(0),
+      WEA(1 downto 0) => wea(1 downto 0),
       WEBWE(3 downto 2) => B"00",
-      WEBWE(1) => wea(0),
-      WEBWE(0) => wea(0)
+      WEBWE(1 downto 0) => wea(3 downto 2)
     );
 end STRUCTURE;
 library IEEE;
@@ -182,7 +180,7 @@ entity FMmem_blk_mem_gen_prim_width is
     clka : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 )
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   attribute ORIG_REF_NAME : string;
   attribute ORIG_REF_NAME of FMmem_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
@@ -196,7 +194,7 @@ begin
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
-      wea(0) => wea(0)
+      wea(3 downto 0) => wea(3 downto 0)
     );
 end STRUCTURE;
 library IEEE;
@@ -209,7 +207,7 @@ entity FMmem_blk_mem_gen_generic_cstr is
     clka : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 )
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   attribute ORIG_REF_NAME : string;
   attribute ORIG_REF_NAME of FMmem_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
@@ -223,7 +221,7 @@ begin
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
-      wea(0) => wea(0)
+      wea(3 downto 0) => wea(3 downto 0)
     );
 end STRUCTURE;
 library IEEE;
@@ -236,7 +234,7 @@ entity FMmem_blk_mem_gen_top is
     clka : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 )
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   attribute ORIG_REF_NAME : string;
   attribute ORIG_REF_NAME of FMmem_blk_mem_gen_top : entity is "blk_mem_gen_top";
@@ -250,7 +248,7 @@ begin
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
-      wea(0) => wea(0)
+      wea(3 downto 0) => wea(3 downto 0)
     );
 end STRUCTURE;
 library IEEE;
@@ -263,7 +261,7 @@ entity FMmem_blk_mem_gen_v8_4_4_synth is
     clka : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 )
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
   attribute ORIG_REF_NAME : string;
   attribute ORIG_REF_NAME of FMmem_blk_mem_gen_v8_4_4_synth : entity is "blk_mem_gen_v8_4_4_synth";
@@ -277,7 +275,7 @@ begin
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
-      wea(0) => wea(0)
+      wea(3 downto 0) => wea(3 downto 0)
     );
 end STRUCTURE;
 library IEEE;
@@ -290,7 +288,7 @@ entity FMmem_blk_mem_gen_v8_4_4 is
     rsta : in STD_LOGIC;
     ena : in STD_LOGIC;
     regcea : in STD_LOGIC;
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 );
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 );
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     douta : out STD_LOGIC_VECTOR ( 35 downto 0 );
@@ -298,7 +296,7 @@ entity FMmem_blk_mem_gen_v8_4_4 is
     rstb : in STD_LOGIC;
     enb : in STD_LOGIC;
     regceb : in STD_LOGIC;
-    web : in STD_LOGIC_VECTOR ( 0 to 0 );
+    web : in STD_LOGIC_VECTOR ( 3 downto 0 );
     addrb : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dinb : in STD_LOGIC_VECTOR ( 35 downto 0 );
     doutb : out STD_LOGIC_VECTOR ( 35 downto 0 );
@@ -323,7 +321,7 @@ entity FMmem_blk_mem_gen_v8_4_4 is
     s_axi_awvalid : in STD_LOGIC;
     s_axi_awready : out STD_LOGIC;
     s_axi_wdata : in STD_LOGIC_VECTOR ( 35 downto 0 );
-    s_axi_wstrb : in STD_LOGIC_VECTOR ( 0 to 0 );
+    s_axi_wstrb : in STD_LOGIC_VECTOR ( 3 downto 0 );
     s_axi_wlast : in STD_LOGIC;
     s_axi_wvalid : in STD_LOGIC;
     s_axi_wready : out STD_LOGIC;
@@ -471,9 +469,9 @@ entity FMmem_blk_mem_gen_v8_4_4 is
   attribute C_USE_BRAM_BLOCK : integer;
   attribute C_USE_BRAM_BLOCK of FMmem_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_USE_BYTE_WEA : integer;
-  attribute C_USE_BYTE_WEA of FMmem_blk_mem_gen_v8_4_4 : entity is 0;
+  attribute C_USE_BYTE_WEA of FMmem_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_USE_BYTE_WEB : integer;
-  attribute C_USE_BYTE_WEB of FMmem_blk_mem_gen_v8_4_4 : entity is 0;
+  attribute C_USE_BYTE_WEB of FMmem_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_USE_DEFAULT_DATA : integer;
   attribute C_USE_DEFAULT_DATA of FMmem_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_USE_ECC : integer;
@@ -483,9 +481,9 @@ entity FMmem_blk_mem_gen_v8_4_4 is
   attribute C_USE_URAM : integer;
   attribute C_USE_URAM of FMmem_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_WEA_WIDTH : integer;
-  attribute C_WEA_WIDTH of FMmem_blk_mem_gen_v8_4_4 : entity is 1;
+  attribute C_WEA_WIDTH of FMmem_blk_mem_gen_v8_4_4 : entity is 4;
   attribute C_WEB_WIDTH : integer;
-  attribute C_WEB_WIDTH of FMmem_blk_mem_gen_v8_4_4 : entity is 1;
+  attribute C_WEB_WIDTH of FMmem_blk_mem_gen_v8_4_4 : entity is 4;
   attribute C_WRITE_DEPTH_A : integer;
   attribute C_WRITE_DEPTH_A of FMmem_blk_mem_gen_v8_4_4 : entity is 128;
   attribute C_WRITE_DEPTH_B : integer;
@@ -629,7 +627,7 @@ inst_blk_mem_gen: entity work.FMmem_blk_mem_gen_v8_4_4_synth
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
-      wea(0) => wea(0)
+      wea(3 downto 0) => wea(3 downto 0)
     );
 end STRUCTURE;
 library IEEE;
@@ -639,7 +637,7 @@ use UNISIM.VCOMPONENTS.ALL;
 entity FMmem is
   port (
     clka : in STD_LOGIC;
-    wea : in STD_LOGIC_VECTOR ( 0 to 0 );
+    wea : in STD_LOGIC_VECTOR ( 3 downto 0 );
     addra : in STD_LOGIC_VECTOR ( 6 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     douta : out STD_LOGIC_VECTOR ( 35 downto 0 )
@@ -796,9 +794,9 @@ architecture STRUCTURE of FMmem is
   attribute C_USE_BRAM_BLOCK : integer;
   attribute C_USE_BRAM_BLOCK of U0 : label is 0;
   attribute C_USE_BYTE_WEA : integer;
-  attribute C_USE_BYTE_WEA of U0 : label is 0;
+  attribute C_USE_BYTE_WEA of U0 : label is 1;
   attribute C_USE_BYTE_WEB : integer;
-  attribute C_USE_BYTE_WEB of U0 : label is 0;
+  attribute C_USE_BYTE_WEB of U0 : label is 1;
   attribute C_USE_DEFAULT_DATA : integer;
   attribute C_USE_DEFAULT_DATA of U0 : label is 1;
   attribute C_USE_ECC : integer;
@@ -808,9 +806,9 @@ architecture STRUCTURE of FMmem is
   attribute C_USE_URAM : integer;
   attribute C_USE_URAM of U0 : label is 0;
   attribute C_WEA_WIDTH : integer;
-  attribute C_WEA_WIDTH of U0 : label is 1;
+  attribute C_WEA_WIDTH of U0 : label is 4;
   attribute C_WEB_WIDTH : integer;
-  attribute C_WEB_WIDTH of U0 : label is 1;
+  attribute C_WEB_WIDTH of U0 : label is 4;
   attribute C_WRITE_DEPTH_A : integer;
   attribute C_WRITE_DEPTH_A of U0 : label is 128;
   attribute C_WRITE_DEPTH_B : integer;
@@ -893,12 +891,12 @@ U0: entity work.FMmem_blk_mem_gen_v8_4_4
       s_axi_wdata(35 downto 0) => B"000000000000000000000000000000000000",
       s_axi_wlast => '0',
       s_axi_wready => NLW_U0_s_axi_wready_UNCONNECTED,
-      s_axi_wstrb(0) => '0',
+      s_axi_wstrb(3 downto 0) => B"0000",
       s_axi_wvalid => '0',
       sbiterr => NLW_U0_sbiterr_UNCONNECTED,
       shutdown => '0',
       sleep => '0',
-      wea(0) => wea(0),
-      web(0) => '0'
+      wea(3 downto 0) => wea(3 downto 0),
+      web(3 downto 0) => B"0000"
     );
 end STRUCTURE;

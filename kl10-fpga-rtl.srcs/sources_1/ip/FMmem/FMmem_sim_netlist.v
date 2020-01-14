@@ -1,7 +1,7 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
-// Date        : Mon Jan 13 16:19:02 2020
+// Date        : Mon Jan 13 17:30:06 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode funcsim
 //               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/FMmem/FMmem_sim_netlist.v
@@ -21,7 +21,7 @@ module FMmem
     dina,
     douta);
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK" *) (* x_interface_parameter = "XIL_INTERFACENAME BRAM_PORTA, MEM_SIZE 8192, MEM_WIDTH 32, MEM_ECC NONE, MASTER_TYPE OTHER, READ_LATENCY 1" *) input clka;
-  (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA WE" *) input [0:0]wea;
+  (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA WE" *) input [3:0]wea;
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR" *) input [6:0]addra;
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN" *) input [35:0]dina;
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA DOUT" *) output [35:0]douta;
@@ -30,7 +30,7 @@ module FMmem
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
   wire NLW_U0_dbiterr_UNCONNECTED;
   wire NLW_U0_rsta_busy_UNCONNECTED;
   wire NLW_U0_rstb_busy_UNCONNECTED;
@@ -112,14 +112,14 @@ module FMmem
   (* C_RST_PRIORITY_B = "CE" *) 
   (* C_SIM_COLLISION_CHECK = "ALL" *) 
   (* C_USE_BRAM_BLOCK = "0" *) 
-  (* C_USE_BYTE_WEA = "0" *) 
-  (* C_USE_BYTE_WEB = "0" *) 
+  (* C_USE_BYTE_WEA = "1" *) 
+  (* C_USE_BYTE_WEB = "1" *) 
   (* C_USE_DEFAULT_DATA = "1" *) 
   (* C_USE_ECC = "0" *) 
   (* C_USE_SOFTECC = "0" *) 
   (* C_USE_URAM = "0" *) 
-  (* C_WEA_WIDTH = "1" *) 
-  (* C_WEB_WIDTH = "1" *) 
+  (* C_WEA_WIDTH = "4" *) 
+  (* C_WEB_WIDTH = "4" *) 
   (* C_WRITE_DEPTH_A = "128" *) 
   (* C_WRITE_DEPTH_B = "128" *) 
   (* C_WRITE_MODE_A = "WRITE_FIRST" *) 
@@ -185,13 +185,13 @@ module FMmem
         .s_axi_wdata({1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0,1'b0}),
         .s_axi_wlast(1'b0),
         .s_axi_wready(NLW_U0_s_axi_wready_UNCONNECTED),
-        .s_axi_wstrb(1'b0),
+        .s_axi_wstrb({1'b0,1'b0,1'b0,1'b0}),
         .s_axi_wvalid(1'b0),
         .sbiterr(NLW_U0_sbiterr_UNCONNECTED),
         .shutdown(1'b0),
         .sleep(1'b0),
         .wea(wea),
-        .web(1'b0));
+        .web({1'b0,1'b0,1'b0,1'b0}));
 endmodule
 
 (* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
@@ -205,13 +205,13 @@ module FMmem_blk_mem_gen_generic_cstr
   input clka;
   input [6:0]addra;
   input [35:0]dina;
-  input [0:0]wea;
+  input [3:0]wea;
 
   wire [6:0]addra;
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
 
   FMmem_blk_mem_gen_prim_width \ramloop[0].ram.r 
        (.addra(addra),
@@ -232,13 +232,13 @@ module FMmem_blk_mem_gen_prim_width
   input clka;
   input [6:0]addra;
   input [35:0]dina;
-  input [0:0]wea;
+  input [3:0]wea;
 
   wire [6:0]addra;
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
 
   FMmem_blk_mem_gen_prim_wrapper_init \prim_init.ram 
        (.addra(addra),
@@ -259,13 +259,13 @@ module FMmem_blk_mem_gen_prim_wrapper_init
   input clka;
   input [6:0]addra;
   input [35:0]dina;
-  input [0:0]wea;
+  input [3:0]wea;
 
   wire [6:0]addra;
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
 
   (* box_type = "PRIMITIVE" *) 
   RAMB18E1 #(
@@ -389,8 +389,8 @@ module FMmem_blk_mem_gen_prim_wrapper_init
         .RSTRAMB(1'b0),
         .RSTREGARSTREG(1'b0),
         .RSTREGB(1'b0),
-        .WEA({wea,wea}),
-        .WEBWE({1'b0,1'b0,wea,wea}));
+        .WEA(wea[1:0]),
+        .WEBWE({1'b0,1'b0,wea[3:2]}));
 endmodule
 
 (* ORIG_REF_NAME = "blk_mem_gen_top" *) 
@@ -404,13 +404,13 @@ module FMmem_blk_mem_gen_top
   input clka;
   input [6:0]addra;
   input [35:0]dina;
-  input [0:0]wea;
+  input [3:0]wea;
 
   wire [6:0]addra;
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
 
   FMmem_blk_mem_gen_generic_cstr \valid.cstr 
        (.addra(addra),
@@ -440,9 +440,9 @@ endmodule
 (* C_READ_LATENCY_B = "1" *) (* C_READ_WIDTH_A = "36" *) (* C_READ_WIDTH_B = "36" *) 
 (* C_RSTRAM_A = "0" *) (* C_RSTRAM_B = "0" *) (* C_RST_PRIORITY_A = "CE" *) 
 (* C_RST_PRIORITY_B = "CE" *) (* C_SIM_COLLISION_CHECK = "ALL" *) (* C_USE_BRAM_BLOCK = "0" *) 
-(* C_USE_BYTE_WEA = "0" *) (* C_USE_BYTE_WEB = "0" *) (* C_USE_DEFAULT_DATA = "1" *) 
+(* C_USE_BYTE_WEA = "1" *) (* C_USE_BYTE_WEB = "1" *) (* C_USE_DEFAULT_DATA = "1" *) 
 (* C_USE_ECC = "0" *) (* C_USE_SOFTECC = "0" *) (* C_USE_URAM = "0" *) 
-(* C_WEA_WIDTH = "1" *) (* C_WEB_WIDTH = "1" *) (* C_WRITE_DEPTH_A = "128" *) 
+(* C_WEA_WIDTH = "4" *) (* C_WEB_WIDTH = "4" *) (* C_WRITE_DEPTH_A = "128" *) 
 (* C_WRITE_DEPTH_B = "128" *) (* C_WRITE_MODE_A = "WRITE_FIRST" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
 (* C_WRITE_WIDTH_A = "36" *) (* C_WRITE_WIDTH_B = "36" *) (* C_XDEVICEFAMILY = "zynq" *) 
 (* ORIG_REF_NAME = "blk_mem_gen_v8_4_4" *) (* downgradeipidentifiedwarnings = "yes" *) 
@@ -514,7 +514,7 @@ module FMmem_blk_mem_gen_v8_4_4
   input rsta;
   input ena;
   input regcea;
-  input [0:0]wea;
+  input [3:0]wea;
   input [6:0]addra;
   input [35:0]dina;
   output [35:0]douta;
@@ -522,7 +522,7 @@ module FMmem_blk_mem_gen_v8_4_4
   input rstb;
   input enb;
   input regceb;
-  input [0:0]web;
+  input [3:0]web;
   input [6:0]addrb;
   input [35:0]dinb;
   output [35:0]doutb;
@@ -547,7 +547,7 @@ module FMmem_blk_mem_gen_v8_4_4
   input s_axi_awvalid;
   output s_axi_awready;
   input [35:0]s_axi_wdata;
-  input [0:0]s_axi_wstrb;
+  input [3:0]s_axi_wstrb;
   input s_axi_wlast;
   input s_axi_wvalid;
   output s_axi_wready;
@@ -579,7 +579,7 @@ module FMmem_blk_mem_gen_v8_4_4
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
 
   assign dbiterr = \<const0> ;
   assign doutb[35] = \<const0> ;
@@ -712,13 +712,13 @@ module FMmem_blk_mem_gen_v8_4_4_synth
   input clka;
   input [6:0]addra;
   input [35:0]dina;
-  input [0:0]wea;
+  input [3:0]wea;
 
   wire [6:0]addra;
   wire clka;
   wire [35:0]dina;
   wire [35:0]douta;
-  wire [0:0]wea;
+  wire [3:0]wea;
 
   FMmem_blk_mem_gen_top \gnbram.gnativebmg.native_blk_mem_gen 
        (.addra(addra),

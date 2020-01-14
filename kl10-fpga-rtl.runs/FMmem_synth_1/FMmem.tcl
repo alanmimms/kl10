@@ -37,6 +37,7 @@ set_property parent.project_path /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.xpr [cur
 set_property XPM_LIBRARIES XPM_MEMORY [current_project]
 set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
+set_property board_part_repo_paths {/home/alan/vivado-boards/new/board_files} [current_project]
 set_property board_part digilentinc.com:cora-z7-10:part0:1.0 [current_project]
 set_property ip_output_repo /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]

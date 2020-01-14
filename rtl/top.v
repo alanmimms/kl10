@@ -18,7 +18,8 @@ module top(
   wire eboxSync;
   wire vmaACRef;
   wire [37:35] mboxGateVMA;
-  wire [0:35] cacheData;
+  wire [0:35] cacheDataRead;
+  wire [0:35] cacheDataWrite;
   wire [10:12] cacheClearer;
 
   wire anyEboxError;
@@ -43,7 +44,8 @@ module top(
              .vmaACRef(vmaACRef),
 
              .mboxGateVMA(mboxGateVMA),
-             .cacheData(cacheData),
+             .cacheDataRead(cacheDataRead),
+             .cacheDataWrite(cacheDataWrite),
 
              //             output pageTestPriv,
              //             output pageIllEntry,
@@ -94,7 +96,8 @@ module top(
              .cacheClearer(cacheClearer),
              .vmaACRef(vmaACRef),
              .mboxGateVMA(mboxGateVMA),
-             .cacheData(cacheData),
+             .cacheData(cacheDataRead),
+             .writeData(cacheDataWrite),
              .req(eboxReq),
              .read(eboxRead),
              .PSE(eboxPSE),

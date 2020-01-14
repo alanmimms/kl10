@@ -64,7 +64,7 @@ module FMmem (
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK" *)
 input wire clka;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA WE" *)
-input wire [0 : 0] wea;
+input wire [3 : 0] wea;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR" *)
 input wire [6 : 0] addra;
 (* X_INTERFACE_INFO = "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN" *)
@@ -100,8 +100,8 @@ output wire [35 : 0] douta;
     .C_INITA_VAL("0"),
     .C_HAS_ENA(0),
     .C_HAS_REGCEA(0),
-    .C_USE_BYTE_WEA(0),
-    .C_WEA_WIDTH(1),
+    .C_USE_BYTE_WEA(1),
+    .C_WEA_WIDTH(4),
     .C_WRITE_MODE_A("WRITE_FIRST"),
     .C_WRITE_WIDTH_A(36),
     .C_READ_WIDTH_A(36),
@@ -114,8 +114,8 @@ output wire [35 : 0] douta;
     .C_INITB_VAL("0"),
     .C_HAS_ENB(0),
     .C_HAS_REGCEB(0),
-    .C_USE_BYTE_WEB(0),
-    .C_WEB_WIDTH(1),
+    .C_USE_BYTE_WEB(1),
+    .C_WEB_WIDTH(4),
     .C_WRITE_MODE_B("WRITE_FIRST"),
     .C_WRITE_WIDTH_B(36),
     .C_READ_WIDTH_B(36),
@@ -162,7 +162,7 @@ output wire [35 : 0] douta;
     .rstb(1'D0),
     .enb(1'D0),
     .regceb(1'D0),
-    .web(1'B0),
+    .web(4'B0),
     .addrb(7'B0),
     .dinb(36'B0),
     .doutb(),
@@ -187,7 +187,7 @@ output wire [35 : 0] douta;
     .s_axi_awvalid(1'D0),
     .s_axi_awready(),
     .s_axi_wdata(36'B0),
-    .s_axi_wstrb(1'B0),
+    .s_axi_wstrb(4'B0),
     .s_axi_wlast(1'D0),
     .s_axi_wvalid(1'D0),
     .s_axi_wready(),

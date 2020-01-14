@@ -4,9 +4,6 @@ module EDP(input clk,
            output [0:35] AD,
            output [0:36] ADX,
 
-           input [0:17] FMLH,
-           input [0:17] FMRH,
-
            output ADcarry36,
            input ADXcarry36, // CTL1
            input ADlong,     // CTL
@@ -91,14 +88,15 @@ module EDP(input clk,
 
   wire [0:35] FM;
 
-  wire AD_CG06_11, AD_CG12_35, AD_CP06_11, AD_CP12_35, AD_CG18_23, AD_CG24_35, AD_CP18_23;
-  wire AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
+  wire AD_CG06_11, AD_CG12_35, AD_CP06_11, AD_CP12_35;
+  wire AD_CG18_23, AD_CG24_35, AD_CP18_23;
+  wire AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
+  wire ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
   wire inhibitCarry18, spec_genCarry18;
 
   assign ADcarry36 = ADcarry[36];
   assign ADXcarry36 = ADXcarry[36];
-  assign FM = {FMLH, FMRH};
 
   // AR including ARL, ARR, and ARM p15.
 
@@ -428,19 +426,12 @@ module EDP(input clk,
   // FM. No static at all!
   wire [0:6] fmAddress = {fmBlk, fmAdr};
 
-/*
-  FM_LH FMmemLH(.addra(fma),
+  FMmem FMmem0(.addra(fmAddress),
                 .clka(clk),
-                .dina(AR[0:17]),
-                .douta(FMR[0:17]),
-                .wea(fmWrite00_17));
-
-  FM_RH FMmemRH(.addra(fma),
-                .clka(clk),
-                .dina(AR[18:35]),
-                .douta(FMR[18:35]),
-                .wea(fmWrite18_35));
-*/
+                .dina(AR),
+                .douta(FM),
+                .wea({fmWrite00_17, fmWrite00_17, fmWrite18_35, fmWrite18_35})
+               );
 
   reg fmWriteR;
   always @(*) begin
@@ -448,7 +439,7 @@ module EDP(input clk,
   end
 
   assign fmWrite = fmWriteR;
-  assign fmParity = ^FMLH ^ ^FMRH;
+  assign fmParity = ^FM;
 
 
   // BRX

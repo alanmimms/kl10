@@ -13,26 +13,14 @@ module IR(input clk,
           output [10:0] DRAM_J
           );
 
-  // DRAM write port is never needed?
-  reg [23:0] DRAMwriteData;
-  reg [8:0] DRAMwriteAddr;
-  wire DRAMwriteClk;
-  wire DRAMwriteEnable;
-
-  assign DRAMwriteEnable = 0;
-  assign DRAMwriteClk = 0;
-
   reg [23:0] DRAMdata;
   reg [0:12] DRADR;
 
- DRAMblockRAM dramRAM(.clka(DRAMwriteClk),
-                      .addra(DRAMwriteAddr),
-                      .dina(DRAMwriteData),
-                      .wea(DRAMwriteEnable),
-
-                      .clkb(clk),
-                      .addrb(DRADR),
-                      .doutb(DRAMdata),
-                      .enb(1)
-                      );
+  DRAMmem dram(.clka(clk),
+               .addra(DRADR),
+               .douta(DRAMdata),
+               .dina(0),
+               .wea(0),
+               .ena(1)
+               );
 endmodule // IR
