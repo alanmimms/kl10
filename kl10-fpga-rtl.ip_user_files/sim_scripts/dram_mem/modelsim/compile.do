@@ -32,7 +32,7 @@ vlog -work blk_mem_gen_v8_4_4 -64 -incr "+incdir+/x/Xilinx/Vivado/2019.2/data/xi
 "../../../ipstatic/simulation/blk_mem_gen_v8_4.v" \
 
 vlog -work xil_defaultlib -64 -incr "+incdir+/x/Xilinx/Vivado/2019.2/data/xilinx_vip/include" \
-"/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/sim/dram_mem.v" \
+"../../../../kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/sim/dram_mem.v" \
 
 vlog -work xil_defaultlib \
 "glbl.v"

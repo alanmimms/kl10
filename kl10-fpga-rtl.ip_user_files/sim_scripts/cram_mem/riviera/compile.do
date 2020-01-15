@@ -3,10 +3,12 @@ vlib riviera
 
 vlib riviera/xilinx_vip
 vlib riviera/xpm
+vlib riviera/blk_mem_gen_v8_4_4
 vlib riviera/xil_defaultlib
 
 vmap xilinx_vip riviera/xilinx_vip
 vmap xpm riviera/xpm
+vmap blk_mem_gen_v8_4_4 riviera/blk_mem_gen_v8_4_4
 vmap xil_defaultlib riviera/xil_defaultlib
 
 vlog -work xilinx_vip  -sv2k12 "+incdir+/x/Xilinx/Vivado/2019.2/data/xilinx_vip/include" \
@@ -25,6 +27,12 @@ vlog -work xpm  -sv2k12 "+incdir+/x/Xilinx/Vivado/2019.2/data/xilinx_vip/include
 
 vcom -work xpm -93 \
 "/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_VCOMP.vhd" \
+
+vlog -work blk_mem_gen_v8_4_4  -v2k5 "+incdir+/x/Xilinx/Vivado/2019.2/data/xilinx_vip/include" \
+"../../../ipstatic/simulation/blk_mem_gen_v8_4.v" \
+
+vlog -work xil_defaultlib  -v2k5 "+incdir+/x/Xilinx/Vivado/2019.2/data/xilinx_vip/include" \
+"../../../../kl10-fpga-rtl.srcs/sources_1/ip/cram_mem/sim/cram_mem.v" \
 
 vlog -work xil_defaultlib \
 "glbl.v"

@@ -15,6 +15,12 @@
 -makelib ies_lib/xpm \
   "/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_VCOMP.vhd" \
 -endlib
+-makelib ies_lib/blk_mem_gen_v8_4_4 \
+  "../../../ipstatic/simulation/blk_mem_gen_v8_4.v" \
+-endlib
+-makelib ies_lib/xil_defaultlib \
+  "../../../../kl10-fpga-rtl.srcs/sources_1/ip/cram_mem/sim/cram_mem.v" \
+-endlib
 -makelib ies_lib/xil_defaultlib \
   glbl.v
 -endlib

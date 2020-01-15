@@ -19,7 +19,7 @@
   "../../../ipstatic/simulation/blk_mem_gen_v8_4.v" \
 -endlib
 -makelib ies_lib/xil_defaultlib \
-  "/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/sim/dram_mem.v" \
+  "../../../../kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/sim/dram_mem.v" \
 -endlib
 -makelib ies_lib/xil_defaultlib \
   glbl.v
