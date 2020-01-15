@@ -63,71 +63,6 @@ module ebox(input clk,
             input mboxCDirParErr,
             output anyEboxError/*AUTOARG*/);
 
-  wire [11:0] J;
-  wire [6:0] AD;
-  wire [3:0] ADA;
-  wire [1:0] ADA_EN;
-  wire [2:0] ADB;
-  wire [3:0] AR;
-  wire [3:0] ARX;
-  wire [1:0] BR;
-  wire [1:0] BRX;
-  wire [1:0] MQ;
-  wire [3:0] FMADR;
-  wire [3:0] SCAD;
-  wire [3:0] SCADA;
-  wire [1:0] SCADA_EN;
-  wire [2:0] SCADB;
-  wire [1:0] SC;
-  wire [1:0] FE;
-  wire [2:0] SH;
-  wire [2:0] ARMM;
-  wire [2:0] VMAX;
-  wire [2:0] VMA;
-  wire [2:0] TIME;
-  wire [4:0] MEM;
-  wire [6:0] SKIP;
-  wire [6:0] COND;
-  wire [1:0] CALL;
-  wire [5:0] DISP;
-  wire [5:0] SPEC;
-  wire [1:0] MARK;
-  wire [9:0] magic;
-  wire [6:0] MAJVER;
-  wire [3:0] MINVER;
-  wire [1:0] KLPAGE;
-  wire [1:0] LONGPC;
-  wire [1:0] NONSTD;
-  wire [1:0] PV;
-  wire [1:0] PMOVE;
-  wire [1:0] ISTAT;
-  wire [3:0] PXCT;
-  wire [3:0] ACB;
-  wire [4:0] ACmagic;
-  wire [5:0] AC_OP;
-  wire [1:0] AR0_8;
-  wire [4:0] CLR;
-  wire [3:0] ARL;
-  wire [3:0] AR_CTL;
-  wire [1:0] EXP_TST;
-  wire [2:0] MQ_CTL;
-  wire [9:0] PC_FLAGS;
-  wire [9:0] FLAG_CTL;
-  wire [9:0] SPEC_INSTR;
-  wire [9:0] FETCH;
-  wire [9:0] EA_CALC;
-  wire [9:0] SP_MEM;
-  wire [9:0] MREG_FNC;
-  wire [9:0] MBOX_CTL;
-  wire [3:0] MTR_CTL;
-  wire [9:0] EBUS_CTL;
-  wire [9:0] DIAG_FUNC;
-  
-  // This is the multiplexed current EBUS multiplexed by each the
-  // XXXdrivingEBUS signal coming from each module to determine who
-  // gets to provide EBUS its content.
-  reg [0:35] EBUS;
-
   // TEMPORARY
   wire [7:0] fmAddress;
   wire FORCE1777;
@@ -140,64 +75,80 @@ module ebox(input clk,
   assign CONDAdr10 = 0;
   assign MULdone = 0;
 
+  // This is the multiplexed current EBUS multiplexed by each the
+  // XXXdrivingEBUS signal coming from each module to determine who
+  // gets to provide EBUS its content.
+  reg [0:35] EBUS;
+
+  // EBUS is muxed in this design based on each module output
+  // XXXdrivingEBUS.
+  always @(posedge clk) begin
+
+    if (EDPdrivingEBUS)
+      EBUS <= EDP_EBUS;
+    else if (IRdrivingEBUS)
+      EBUS <= IR_EBUS;
+    else if (SCDdrivingEBUS)
+      EBUS <= SCD_EBUS;
+  end
+
   clk clk0(
            /*AUTOINST*/
-	   // Outputs
-	   .mbXfer			(mbXfer),
-	   // Inputs
-	   .clk				(clk));
+           // Outputs
+           .mbXfer                      (mbXfer),
+           // Inputs
+           .clk                         (clk));
 
   con con0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Outputs
+           .loadIR                      (loadIR),
+           .loadDRAM                    (loadDRAM),
+           // Inputs
+           .clk                         (clk));
 
-  cra cra0(.DISP(CRAM_DISP),
-           .CONDA10(CONDAdr10),
-           .MULDONE(MULdone),
-           .COND(CRAM_COND),
-           .SKIP(CRAM_SKIP),
-           .CALL(SPECcall),
-           .RET(DISPret),
+  cra cra0(.CONDA10(CONDAdr10),
            .J(CRAM_J),
+           .AD(CRAM_AD),
+           .ADA(CRAM_ADA),
+           .ADAEN(CRAM_ADAEN),
+           .ADB(CRAM_ADB),
+           .AR(CRAM_AR),
+           .ARX(CRAM_ARX),
+           .BR(CRAM_BR),
+           .BRX(CRAM_BRX),
+           .MQ(CRAM_MQ),
+           .FMADR(CRAM_FMADR),
+           .SCAD(CRAM_SCAD),
+           .SCADA(CRAM_SCADA),
+           .SCADB(CRAM_SCADB),
+           .SC(CRAM_SC),
+           .FE(CRAM_FE),
+           .SH(CRAM_SH),
+           .ARMM(CRAM_ARMM),
+           .VMAX(CRAM_VMAX),
+           .VMA(CRAM_VMA),
+           .TIME(CRAM_TIME),
+           .MEM(CRAM_MEM),
+           .SKIP(CRAM_SKIP),
+           .COND(CRAM_COND),
+           .CALL(CRAM_CALL),
+           .DISP(CRAM_DISP),
+           .SPEC(CRAM_SPEC),
+           .MARK(CRAM_MARK),
+           .magic(CRAM_magic),
+
            /*AUTOINST*/
-	   // Outputs
-	   .CRADR			(CRADR[11:0]),
-	   // Inputs
-	   .clkForce1777		(clkForce1777),
-	   .DRAMa			(DRAMa[0:3]),
-	   .DRAMb			(DRAMb[0:3]),
-	   .DRAMj			(DRAMj[0:9]),
-	   .dispIn			(dispIn[7:10]),
-	   .condIn			(condIn[8:0]),
-	   .AD				(AD[5:0]),
-	   .ada				(ada[2:0]),
-	   .adaEn			(adaEn),
-	   .adb				(adb[1:0]),
-	   .ar				(ar[2:0]),
-	   .arx				(arx[2:0]),
-	   .br				(br),
-	   .brx				(brx),
-	   .mq				(mq),
-	   .fmadr			(fmadr[2:0]),
-	   .scad			(scad[2:0]),
-	   .scada			(scada[1:0]),
-	   .scadb			(scadb[1:0]),
-	   .sc				(sc),
-	   .fe				(fe),
-	   .sh				(sh[1:0]),
-	   .armm			(armm[1:0]),
-	   .vmax			(vmax[1:0]),
-	   .vma				(vma[1:0]),
-	   .time_			(time_[1:0]),
-	   .mem				(mem[3:0]),
-	   .skip			(skip[5:0]),
-	   .cond			(cond[5:0]),
-	   .call			(call),
-	   .disp			(disp[4:0]),
-	   .spec			(spec[4:0]),
-	   .mark			(mark),
-	   .magic			(magic[8:0]));
+           // Outputs
+           .CRADR                       (CRADR),
+           // Inputs
+           .clkForce1777                (clkForce1777),
+           .MULdone                     (MULdone),
+           .DRAM_A                      (DRAM_A),
+           .DRAM_B                      (DRAM_B),
+           .DRAM_J                      (DRAM_J),
+           .dispIn                      (dispIn),
+           .condIn                      (condIn));
 
   cram cram0(.J(CRAM_J),
              .AD(CRAM_AD),
@@ -259,9 +210,9 @@ module ebox(input clk,
              .EBUS_CTL(CRAM_EBUS_CTL),
              .DIAG_FUNC(CRAM_DIAG_FUNC),
              /*AUTOINST*/
-	     // Inputs
-	     .clk			(clk),
-	     .CRADR			(CRADR[11:0]));
+             // Inputs
+             .clk                       (clk),
+             .CRADR                     (CRADR));
 
   edp edp0(.AD(EDP_AD),
            .ADX(EDP_ADX),
@@ -269,190 +220,197 @@ module ebox(input clk,
            .VMA(eboxVMA),
            .ebusIn(EBUS),
            .drivingEBUS(EDPdrivingEBUS),
-           .EBUS(EDP_EBUS),
-           /*AUTOINST*/
-	   // Outputs
-	   .MQ				(MQ[0:35]),
-	   .ad6Beq0			(ad6Beq0[0:5]),
-	   .ADoverflow00		(ADoverflow00),
-	   .ARout			(ARout[0:35]),
-	   .fmWrite			(fmWrite),
-	   .fmParity			(fmParity),
-	   .ADcarry36			(ADcarry36),
-	   // Inputs
-	   .clk				(clk),
-	   .ADXcarry36			(ADXcarry36),
-	   .ADlong			(ADlong),
-	   .ARLsel			(ARLsel[0:2]),
-	   .ARRsel			(ARRsel[0:2]),
-	   .AR00to08load		(AR00to08load),
-	   .AR09to17load		(AR09to17load),
-	   .ARRload			(ARRload),
-	   .BRload			(BRload),
-	   .BRXload			(BRXload),
-	   .ARXLsel			(ARXLsel[2:0]),
-	   .ARXRsel			(ARXRsel[2:0]),
-	   .ARXload			(ARXload),
-	   .MQsel			(MQsel[0:1]),
-	   .MQMsel			(MQMsel[0:1]),
-	   .MQMen			(MQMen),
-	   .AR00to11clr			(AR00to11clr),
-	   .AR12to17clr			(AR12to17clr),
-	   .ARRclr			(ARRclr),
-	   .ARMM			(ARMM[0:35]),
-	   .cacheData			(cacheData[0:35]),
-	   .SH				(SH[0:35]),
-	   .adToEBUS_L			(adToEBUS_L),
-	   .adToEBUS_R			(adToEBUS_R),
-	   .ADbool			(ADbool),
-	   .ADsel			(ADsel[0:3]),
-	   .ADAsel			(ADAsel[0:1]),
-	   .ADBsel			(ADBsel[0:1]),
-	   .ADAen			(ADAen[0:35]),
-	   .fmBlk			(fmBlk[0:2]),
-	   .fmAdr			(fmAdr[0:3]),
-	   .fmWrite00_17		(fmWrite00_17),
-	   .fmWrite18_35		(fmWrite18_35),
-	   .diag			(diag[0:8]),
-	   .diagReadFunc12X		(diagReadFunc12X),
-	   .VMAheldOrPC			(VMAheldOrPC[0:35]),
-	   .magic			(magic[0:8]));
+           .ebusOut(EDP_EBUS),
 
-  ir ir0(.AD(EDP_AD),
+           .MQ(EDP_MQ),
+           .AR(EDP_AR),
+           .ARX(EDP_ARX),
+
+           .ARMM                        (CRAM_ARMM),
+           .ADsel                       (CRAM_AD),
+           .ADAsel                      (CRAM_ADA),
+           .ADBsel                      (CRAM_ADB),
+           .ADAen                       (CRAM_ADAEN),
+           .SH                          (CRAM_SH),
+           .ARLsel                      (CRAM_ARL),
+           .ARRsel                      (CRAM_ARR),
+           .MQsel                       (CRAM_MQ),
+           .MQMsel                      (CRAM_MQMSEL),
+           .MQMen                       (CRAM_MQMEN),
+           .magic                       (CRAM_magic),
+
+           /*AUTOINST*/
+           // Outputs
+           .ADoverflow00                (ADoverflow00),
+           .fmWrite                     (fmWrite),
+           .fmParity                    (fmParity),
+           .ADcarry36                   (ADcarry36),
+           // Inputs
+           .clk                         (clk),
+           .ADXcarry36                  (ADXcarry36),
+           .ADlong                      (ADlong),
+           .AR00to08load                (AR00to08load),
+           .AR09to17load                (AR09to17load),
+           .ARRload                     (ARRload),
+           .BRload                      (BRload),
+           .BRXload                     (BRXload),
+           .ARXLsel                     (ARXLsel),
+           .ARXRsel                     (ARXRsel),
+           .ARXload                     (ARXload),
+           .AR00to11clr                 (AR00to11clr),
+           .AR12to17clr                 (AR12to17clr),
+           .ARRclr                      (ARRclr),
+           .cacheData                   (cacheData),
+           .adToEBUS_L                  (adToEBUS_L),
+           .adToEBUS_R                  (adToEBUS_R),
+           .ADbool                      (ADbool),
+           .fmBlk                       (fmBlk),
+           .fmAdr                       (fmAdr),
+           .fmWrite00_17                (fmWrite00_17),
+           .fmWrite18_35                (fmWrite18_35),
+           .diag                        (diag),
+           .diagReadFunc12X             (diagReadFunc12X),
+           .VMAheldOrPC                 (VMAheldOrPC));
+
+  ir ir0(.AD(AD),
          .drivingEBUS(IRdrivingEBUS),
-         .EBUS(IR_EBUS),
+         .ebusOut(IR_EBUS),
          /*AUTOINST*/
-	 // Outputs
-	 .IOlegal			(IOlegal),
-	 .ACeq0				(ACeq0),
-	 .JRST0				(JRST0),
-	 .testSatisfied			(testSatisfied),
-	 .IR				(IR[0:12]),
-	 .IRAC				(IRAC[9:12]),
-	 .DRAM_A			(DRAM_A[2:0]),
-	 .DRAM_B			(DRAM_B[2:0]),
-	 .DRAM_J			(DRAM_J[10:0]),
-	 .DRAM_ODD_PARITY		(DRAM_ODD_PARITY),
-	 // Inputs
-	 .clk				(clk),
-	 .cacheData			(cacheData[0:35]),
-	 .CRAM_magic			(CRAM_magic[0:8]),
-	 .mbXfer			(mbXfer),
-	 .loadIR			(loadIR),
-	 .loadDRAM			(loadDRAM),
-	 .diag				(diag[4:6]),
-	 .diagLoadFunc06X		(diagLoadFunc06X),
-	 .diagReadFunc13X		(diagReadFunc13X),
-	 .inhibitCarry18		(inhibitCarry18),
-	 .SPEC_genCarry18		(SPEC_genCarry18),
-	 .genCarry36			(genCarry36),
-	 .ADcarry_02			(ADcarry_02),
-	 .ADcarry12			(ADcarry12),
-	 .ADcarry18			(ADcarry18),
-	 .ADcarry24			(ADcarry24),
-	 .ADcarry30			(ADcarry30),
-	 .ADcarry36			(ADcarry36),
-	 .ADXcarry12			(ADXcarry12),
-	 .ADXcarry24			(ADXcarry24));
+         // Outputs
+         .IOlegal                       (IOlegal),
+         .ACeq0                         (ACeq0),
+         .JRST0                         (JRST0),
+         .testSatisfied                 (testSatisfied),
+         .IR                            (IR),
+         .IRAC                          (IRAC),
+         .DRAM_A                        (DRAM_A),
+         .DRAM_B                        (DRAM_B),
+         .DRAM_J                        (DRAM_J),
+         .DRAM_ODD_PARITY               (DRAM_ODD_PARITY),
+         // Inputs
+         .clk                           (clk),
+         .cacheData                     (cacheData),
+         .CRAM_magic                    (CRAM_magic),
+         .mbXfer                        (mbXfer),
+         .loadIR                        (loadIR),
+         .loadDRAM                      (loadDRAM),
+         .diag                          (diag),
+         .diagLoadFunc06X               (diagLoadFunc06X),
+         .diagReadFunc13X               (diagReadFunc13X),
+         .inhibitCarry18                (inhibitCarry18),
+         .SPEC_genCarry18               (SPEC_genCarry18),
+         .genCarry36                    (genCarry36),
+         .ADcarry_02                    (ADcarry_02),
+         .ADcarry12                     (ADcarry12),
+         .ADcarry18                     (ADcarry18),
+         .ADcarry24                     (ADcarry24),
+         .ADcarry30                     (ADcarry30),
+         .ADcarry36                     (ADcarry36),
+         .ADXcarry12                    (ADXcarry12),
+         .ADXcarry24                    (ADXcarry24));
 
   vma vma0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   apr apr0(
+           .ebusIn(EBUS),
            /*AUTOINST*/
-	   // Outputs
-	   .fmOut			(fmOut[0:35]),
-	   .ebusReturn			(ebusReturn),
-	   .ebusReq			(ebusReq),
-	   .ebusDemand			(ebusDemand),
-	   .disableCS			(disableCS),
-	   .ebusF01			(ebusF01),
-	   .coniOrDATAI			(coniOrDATAI),
-	   .sendF02			(sendF02),
-	   .aprPhysNum			(aprPhysNum),
-	   // Inouts
-	   .ebusD			(ebusD[0:35]),
-	   // Inputs
-	   .fmIn			(fmIn[0:35]),
-	   .irAC			(irAC[9:12]),
-	   .ad				(ad[0:35]),
-	   .cshAdrParErr		(cshAdrParErr),
-	   .mbParErr			(mbParErr),
-	   .sbusErr			(sbusErr),
-	   .nxmErr			(nxmErr),
-	   .mboxCDirParErr		(mboxCDirParErr),
-	   .ds				(ds[0:7]),
-	   .ebusDSStrobe		(ebusDSStrobe));
+           // Outputs
+           .fmOut                       (fmOut),
+           .ebusReturn                  (ebusReturn),
+           .ebusReq                     (ebusReq),
+           .ebusDemand                  (ebusDemand),
+           .disableCS                   (disableCS),
+           .ebusF01                     (ebusF01),
+           .coniOrDATAI                 (coniOrDATAI),
+           .sendF02                     (sendF02),
+           .aprPhysNum                  (aprPhysNum),
+           // Inouts
+           .ebusD                       (ebusD),
+           // Inputs
+           .fmIn                        (fmIn),
+           .irAC                        (irAC),
+           .ad                          (ad),
+           .cshAdrParErr                (cshAdrParErr),
+           .mbParErr                    (mbParErr),
+           .sbusErr                     (sbusErr),
+           .nxmErr                      (nxmErr),
+           .mboxCDirParErr              (mboxCDirParErr),
+           .ds                          (ds),
+           .ebusDSStrobe                (ebusDSStrobe));
 
   mcl mcl0(
            /*AUTOINST*/
-	   // Outputs
-	   .eboxReqIn			(eboxReqIn),
-	   .mboxRespIn			(mboxRespIn),
-	   .eboxSync			(eboxSync),
-	   .mboxClk			(mboxClk),
-	   .mboxXfer			(mboxXfer),
-	   .pfHold			(pfHold),
-	   .ptPublic			(ptPublic),
-	   .clkForce1777		(clkForce1777),
-	   // Inputs
-	   .cshEBOXT0			(cshEBOXT0),
-	   .cshEBOXRetry		(cshEBOXRetry),
-	   .pfEBOXHandle		(pfEBOXHandle),
-	   .pcp				(pcp),
-	   .iot				(iot),
-	   .user			(user),
-	   .public			(public));
+           // Outputs
+           .eboxReqIn                   (eboxReqIn),
+           .mboxRespIn                  (mboxRespIn),
+           .eboxSync                    (eboxSync),
+           .mboxClk                     (mboxClk),
+           .mboxXfer                    (mboxXfer),
+           .pfHold                      (pfHold),
+           .ptPublic                    (ptPublic),
+           .clkForce1777                (clkForce1777),
+           // Inputs
+           .cshEBOXT0                   (cshEBOXT0),
+           .cshEBOXRetry                (cshEBOXRetry),
+           .pfEBOXHandle                (pfEBOXHandle),
+           .pcp                         (pcp),
+           .iot                         (iot),
+           .user                        (user),
+           .public                      (public));
 
   ctl ctl0(
            /*AUTOINST*/
-	   // Outputs
-	   .ADXcarry36			(ADXcarry36),
-	   // Inputs
-	   .clk				(clk),
-	   .CRAM_ADcarry		(CRAM_ADcarry),
-	   .ar				(ar[0:35]),
-	   .PCplus1inh			(PCplus1inh));
+           // Outputs
+           .ADXcarry36                  (ADXcarry36),
+           .ADLONG                      (ADLONG),
+           // Inputs
+           .clk                         (clk),
+           .CRAM_ADcarry                (CRAM_ADcarry),
+           .ar                          (ar),
+           .PCplus1inh                  (PCplus1inh));
 
-  scd scd0(.AR(EDP_AR),
+  scd scd0(.AR(AR),
            .DIAG(CRAM_DIAG_FUNC),
            .ebusIn(EBUS),
            .drivingEBUS(SCDdrivingEBUS),
-           .EBUS(SCD_EBUS),
+           .ebusOut(SCD_EBUS),
+
+           .ARMM(CRAM_CRAM_ARMM),
+           .FE(CRAM_FE),
+           .SC(CRAM_SC),
+           .SCADA(CRAM_SCADA),
+           .SCADB(CRAM_SCADB),
+
            /*AUTOINST*/
-	   // Outputs
-	   .ARMM			(ARMM[0:35]),
-	   .FE				(FE[0:9]),
-	   .SC				(SC[0:9]),
-	   .SCADA			(SCADA[0:35]),
-	   .SCADB			(SCADB[0:35]),
-	   .SC_GE_36			(SC_GE_36),
-	   .OV				(OV),
-	   .CRY0			(CRY0),
-	   .CRY1			(CRY1),
-	   .FOV				(FOV),
-	   .FXU				(FXU),
-	   .FPD				(FPD),
-	   .PCP				(PCP),
-	   .DIV_CHK			(DIV_CHK),
-	   .TRAP_REQ1			(TRAP_REQ1),
-	   .TRAP_REQ2			(TRAP_REQ2),
-	   .TRAP_CYC1			(TRAP_CYC1),
-	   .TRAP_CYC2			(TRAP_CYC2),
-	   .USER			(USER),
-	   .USER_IOT			(USER_IOT),
-	   .PUBLIC			(PUBLIC),
-	   .PRIVATE			(PRIVATE),
-	   .ADR_BRK_PREVENT		(ADR_BRK_PREVENT),
-	   // Inputs
-	   .clk				(clk),
-	   .CRAM_SCAD			(CRAM_SCAD[2:0]),
-	   .CRAM_SCADA			(CRAM_SCADA[1:0]),
-	   .CRAM_SCADB			(CRAM_SCADB[1:0]),
-	   .CRAM_MAGIC			(CRAM_MAGIC[0:8]),
-	   .DIAG_READ_FUNC_13X		(DIAG_READ_FUNC_13X));
+           // Outputs
+           .SC_GE_36                    (SC_GE_36),
+           .OV                          (OV),
+           .CRY0                        (CRY0),
+           .CRY1                        (CRY1),
+           .FOV                         (FOV),
+           .FXU                         (FXU),
+           .FPD                         (FPD),
+           .PCP                         (PCP),
+           .DIV_CHK                     (DIV_CHK),
+           .TRAP_REQ1                   (TRAP_REQ1),
+           .TRAP_REQ2                   (TRAP_REQ2),
+           .TRAP_CYC1                   (TRAP_CYC1),
+           .TRAP_CYC2                   (TRAP_CYC2),
+           .USER                        (USER),
+           .USER_IOT                    (USER_IOT),
+           .PUBLIC                      (PUBLIC),
+           .PRIVATE                     (PRIVATE),
+           .ADR_BRK_PREVENT             (ADR_BRK_PREVENT),
+           // Inputs
+           .clk                         (clk),
+           .CRAM_SCAD                   (CRAM_SCAD),
+           .CRAM_SCADA                  (CRAM_SCADA),
+           .CRAM_SCADB                  (CRAM_SCADB),
+           .CRAM_MAGIC                  (CRAM_MAGIC),
+           .DIAG_READ_FUNC_13X          (DIAG_READ_FUNC_13X));
 
   shm shm0(.AR(EDP_AR),
            .ARX(EDP_ARX),
@@ -460,87 +418,87 @@ module ebox(input clk,
            .ARX36(ARXcarry36),
            .longEnable(0),       // XXX
            /*AUTOINST*/
-	   // Outputs
-	   .XR				(XR[3:0]),
-	   .indexed			(indexed),
-	   .ARextended			(ARextended),
-	   .ARparityOdd			(ARparityOdd),
-	   // Inputs
-	   .clk				(clk),
-	   .CRAM_SH			(CRAM_SH[1:0]));
+           // Outputs
+           .XR                          (XR),
+           .indexed                     (indexed),
+           .ARextended                  (ARextended),
+           .ARparityOdd                 (ARparityOdd),
+           // Inputs
+           .clk                         (clk),
+           .CRAM_SH                     (CRAM_SH));
 
   csh csh0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   cha cha0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   chx chx0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   pma pma0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   pag pag0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   chd chd0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   mbc mbc0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   mbz mbz0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   pic pic0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   chc chc0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   ccw ccw0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   crc crc0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   ccl ccl0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   mtr mtr0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 
   dps dps0(
            /*AUTOINST*/
-	   // Inputs
-	   .clk				(clk));
+           // Inputs
+           .clk                         (clk));
 endmodule // ebox

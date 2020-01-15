@@ -54,15 +54,15 @@ module edp(input clk,
            output [0:35] AD,
            output [0:36] ADX,
            output reg [0:35] MQ,
-           output [0:5] ad6Beq0, // AD 00-05=0, ...
            output ADoverflow00,
-           output [0:35] ARout,
+           output reg [0:35] AR,
+           output reg [0:35] ARX,
            output fmWrite,
            output fmParity,
 
            output ADcarry36,
            output drivingEBUS,
-           output [0:35] EBUS
+           output [0:35] ebusOut
            );
 
   // Universal shift register function selector values
@@ -71,9 +71,8 @@ module edp(input clk,
   localparam USR_SHR  = 2'b10;
   localparam USR_HOLD = 2'b11;
   
-  reg [0:35] AR, ARX;
   reg [0:36] BR, BRX;
-  reg [0:17] ARL, ARR;
+  reg [0:17] ARL;
   reg [0:17] ARXL, ARXR;
 
 
@@ -112,35 +111,39 @@ module edp(input clk,
     3'b101: ARL = AD[1:18];
     3'b110: ARL = ADX[0:17];
     3'b111: ARL = AD[-2:15];
-    endcase // case (ARLsel)
+    endcase
   end
   
   always @(posedge clk) begin
-    if (AR00to08load) AR[0:8] <= ARL[0:8];
-    if (AR09to17load) AR[9:17] <= ARL[9:17];
+
+    if (AR00to11clr) begin
+      AR[0:11] <= 0;
+    end else if (AR00to08load) begin
+      AR[0:8] <= ARL[0:8];
+    end
+
+    if (AR12to17clr) begin
+      AR[12:17] <= 0;
+    end else if (AR09to17load) begin
+      AR[9:17] <= ARL[9:17];
+    end
+
+    if (ARRclr) begin
+      AR[18:35] <= 0;
+    end else if (ARRload) begin
+      case (ARRsel)
+      3'b000: AR[18:35] <= ARMM[18:35];
+      3'b001: AR[18:35] <= cacheData[18:35];
+      3'b010: AR[18:35] <= AD[18:35];
+      3'b011: AR[18:35] <= ebusIn[18:35];
+      3'b100: AR[18:35] <= SH[18:35];
+      3'b101: AR[18:35] <= {AD[19:35], ADX[0]};
+      3'b110: AR[18:35] <= ADX[18:35];
+      3'b111: AR[18:35] <= AD[16:33];
+      endcase
+    end
   end
 
-  always @(*) begin
-
-    case (ARRsel)
-    3'b000: AR[18:35] = ARMM[18:35];
-    3'b001: AR[18:35] = cacheData[18:35];
-    3'b010: AR[18:35] = AD[18:35];
-    3'b011: AR[18:35] = ebusIn[18:35];
-    3'b100: AR[18:35] = SH[18:35];
-    3'b101: AR[18:35] = {AD[19:35], ADX[0]};
-    3'b110: AR[18:35] = ADX[18:35];
-    3'b111: AR[18:35] = AD[16:33];
-    endcase // case (ARLsel)
-  end
-
-  always @(posedge clk) begin
-    if (ARRload) AR[17:35] = ARR;
-    if (AR00to11clr) AR[0:11] <= 0;
-    if (AR12to17clr) AR[12:17] <= 0;
-    if (ARRclr) AR[18:35] <= 0;      
-  end
-  
   // ARX p16.
   always @(*) begin
 

@@ -1,0 +1,159 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/sim/dram_mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dram_mem
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/fm_mem/sim/fm_mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fm_mem
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/cram_mem/sim/cram_mem.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cram_mem
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/apr.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module apr
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/ccl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ccl
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/ccw.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ccw
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/cha.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cha
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/chc.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module chc
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/chd.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module chd
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/chx.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module chx
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/clk.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module clk
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/con.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module con
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/cra.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cra
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/cram.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cram
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/crc.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module crc
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/csh.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module csh
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/ctl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ctl
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/dps.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module dps
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/ebox.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ebox
+INFO: [VRFC 10-2458] undeclared symbol mbXfer, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:146]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_DISP, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:155]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_COND, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:158]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SKIP, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:159]
+INFO: [VRFC 10-2458] undeclared symbol SPECcall, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:160]
+INFO: [VRFC 10-2458] undeclared symbol DISPret, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:161]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_J, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:162]
+INFO: [VRFC 10-2458] undeclared symbol clkForce1777, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:167]
+INFO: [VRFC 10-2458] undeclared symbol adaEn, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:175]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_AD, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:199]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ADA, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:200]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ADA_EN, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:201]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ADB, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:202]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_AR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:203]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ARX, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:204]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_BR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:205]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_BRX, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:206]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MQ, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:207]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_FMADR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:208]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SCAD, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:209]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SCADA, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:210]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SCADA_EN, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:211]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SCADB, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:212]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SC, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:213]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_FE, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:214]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SH, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:215]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ARMM, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:216]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_VMAX, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:217]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_VMA, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:218]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_TIME, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:219]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MEM, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:220]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_CALL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:223]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SPEC, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:225]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MARK, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:226]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_magic, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:227]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MAJVER, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:228]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MINVER, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:229]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_KLPAGE, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:230]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_LONGPC, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:231]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_NONSTD, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:232]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_PV, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:233]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_PMOVE, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:234]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ISTAT, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:235]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_PXCT, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:236]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ACB, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:237]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ACmagic, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:238]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_AC_OP, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:239]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_AR0_8, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:240]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_CLR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:241]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_ARL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:242]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_AR_CTL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:243]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_EXP_TST, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:244]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MQ_CTL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:245]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_PC_FLAGS, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:246]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_FLAG_CTL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:247]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SPEC_INSTR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:248]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_FETCH, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:249]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_EA_CALC, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:250]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_SP_MEM, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:251]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MREG_FNC, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:252]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MBOX_CTL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:253]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_MTR_CTL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:254]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_EBUS_CTL, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:255]
+INFO: [VRFC 10-2458] undeclared symbol CRAM_DIAG_FUNC, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:256]
+INFO: [VRFC 10-2458] undeclared symbol EDP_AD, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:262]
+INFO: [VRFC 10-2458] undeclared symbol EDP_ADX, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:263]
+INFO: [VRFC 10-2458] undeclared symbol EDP_AR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:264]
+INFO: [VRFC 10-2458] undeclared symbol EDPdrivingEBUS, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:267]
+INFO: [VRFC 10-2458] undeclared symbol EDP_EBUS, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:268]
+INFO: [VRFC 10-2458] undeclared symbol ADoverflow00, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:273]
+INFO: [VRFC 10-2458] undeclared symbol fmWrite, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:275]
+INFO: [VRFC 10-2458] undeclared symbol fmParity, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:276]
+INFO: [VRFC 10-2458] undeclared symbol ADcarry36, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:277]
+INFO: [VRFC 10-2458] undeclared symbol ADXcarry36, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:280]
+INFO: [VRFC 10-2458] undeclared symbol ADlong, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:281]
+INFO: [VRFC 10-2458] undeclared symbol AR00to08load, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:284]
+INFO: [VRFC 10-2458] undeclared symbol AR09to17load, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:285]
+INFO: [VRFC 10-2458] undeclared symbol ARRload, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:286]
+INFO: [VRFC 10-2458] undeclared symbol BRload, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:287]
+INFO: [VRFC 10-2458] undeclared symbol BRXload, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:288]
+INFO: [VRFC 10-2458] undeclared symbol ARXload, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:291]
+INFO: [VRFC 10-2458] undeclared symbol MQMen, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:294]
+INFO: [VRFC 10-2458] undeclared symbol AR00to11clr, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:295]
+INFO: [VRFC 10-2458] undeclared symbol AR12to17clr, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:296]
+INFO: [VRFC 10-2458] undeclared symbol ARRclr, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:297]
+INFO: [VRFC 10-2458] undeclared symbol adToEBUS_L, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:301]
+INFO: [VRFC 10-2458] undeclared symbol adToEBUS_R, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:302]
+INFO: [VRFC 10-2458] undeclared symbol ADbool, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:303]
+INFO: [VRFC 10-2458] undeclared symbol fmWrite00_17, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:310]
+INFO: [VRFC 10-2458] undeclared symbol fmWrite18_35, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:311]
+INFO: [VRFC 10-2458] undeclared symbol diagReadFunc12X, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:313]
+INFO: [VRFC 10-2458] undeclared symbol IRdrivingEBUS, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:318]
+INFO: [VRFC 10-2458] undeclared symbol IR_EBUS, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:319]
+INFO: [VRFC 10-2458] undeclared symbol IOlegal, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:322]
+INFO: [VRFC 10-2458] undeclared symbol ACeq0, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:323]
+INFO: [VRFC 10-2458] undeclared symbol JRST0, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:324]
+INFO: [VRFC 10-2458] undeclared symbol testSatisfied, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:325]
+INFO: [VRFC 10-2458] undeclared symbol DRAM_ODD_PARITY, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:331]
+INFO: [VRFC 10-2458] undeclared symbol loadIR, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:337]
+INFO: [VRFC 10-2458] undeclared symbol loadDRAM, assumed default net type wire [/home/alan/kl10-fpga-rtl/rtl/ebox.v:338]
+INFO: [Common 17-14] Message 'VRFC 10-2458' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+ERROR: [VRFC 10-2989] 'CRADR' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:165]
+ERROR: [VRFC 10-2989] 'DRAMa' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:168]
+ERROR: [VRFC 10-2989] 'DRAMb' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:169]
+ERROR: [VRFC 10-2989] 'DRAMj' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:170]
+ERROR: [VRFC 10-2989] 'dispIn' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:171]
+ERROR: [VRFC 10-2989] 'condIn' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:172]
+ERROR: [VRFC 10-2989] 'CRADR' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:260]
+ERROR: [VRFC 10-2989] 'ad6Beq0' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:272]
+ERROR: [VRFC 10-2989] 'ARout' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:274]
+ERROR: [VRFC 10-2989] 'ARLsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:282]
+ERROR: [VRFC 10-2989] 'ARRsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:283]
+ERROR: [VRFC 10-2989] 'ARXLsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:289]
+ERROR: [VRFC 10-2989] 'ARXRsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:290]
+ERROR: [VRFC 10-2989] 'MQsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:292]
+ERROR: [VRFC 10-2989] 'MQMsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:293]
+ERROR: [VRFC 10-2989] 'ADsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:304]
+ERROR: [VRFC 10-2989] 'ADAsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:305]
+ERROR: [VRFC 10-2989] 'ADBsel' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:306]
+ERROR: [VRFC 10-2989] 'ADAen' is not declared [/home/alan/kl10-fpga-rtl/rtl/ebox.v:307]
+INFO: [#UNDEF] Sorry, too many errors..

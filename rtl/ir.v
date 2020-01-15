@@ -27,7 +27,7 @@ module ir(input clk,
           output JRST0,
           output testSatisfied,
           output drivingEBUS,
-          output [0:35] EBUS,
+          output [0:35] ebusOut,
           output [0:12] IR,
           output [9:12] IRAC,
           output [2:0] DRAM_A,
@@ -190,7 +190,7 @@ module ir(input clk,
 
   // Diagnostics to drive EBUS
   reg [0:35] EBUS_R;
-  assign EBUS = EBUS_R;
+  assign ebusOut = EBUS_R;
   assign drivingEBUS = diagReadFunc13X;
 
   always @(*) begin

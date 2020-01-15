@@ -1,11 +1,13 @@
 `timescale 1ns / 1ps
 // M8543 CTL
 module ctl(input clk,
-           output ADXcarry36,
            input CRAM_ADcarry,
            input [0:35] ar,
-           input PCplus1inh
-           );
+           input PCplus1inh,
+
+           output ADXcarry36,
+           output ADLONG
+           /*AUTOARG*/);
 
   wire spec_XCRY_AR0;
   wire PIcycleSaveFlags;
