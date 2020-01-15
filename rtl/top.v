@@ -12,7 +12,7 @@ module top(
            output LED1R,
            output LED1G,
            output LED1B
-           );
+           /*AUTOARG*/);
 
   wire mboxClk;
   wire eboxSync;
@@ -24,83 +24,71 @@ module top(
 
   wire anyEboxError;
 
-  EBOX ebox0(.clk(clk),
-
-             .eboxVMA(eboxVMA),
-             .cacheClearer(cacheClearer),
-
-             // XXX temporary
-             .cshEBOXT0(0),
-             .cshEBOXRetry(0),
+  ebox ebox0(.cshEBOXRetry(0),
              .mboxRespIn(0),
-
-             .eboxSync(eboxSync),
-             .mboxClk(mboxClk),
 
              .pfHold(0),
              .pfEBOXHandle(0),
              .pfPublic(0),
-
-             .vmaACRef(vmaACRef),
-
-             .mboxGateVMA(mboxGateVMA),
-             .cacheDataRead(cacheDataRead),
-             .cacheDataWrite(cacheDataWrite),
-
-             //             output pageTestPriv,
-             //             output pageIllEntry,
-             //             output eboxUser,
-
-             //             output eboxMayBePaged,
-             //             output eboxCache,
-             //             output eboxLookEn,
-             //             output ki10PagingMode,
-             //             output pageAdrCond,
-
-             //             output eboxMap,
-
-             .eboxReq(eboxReq),
-             .eboxRead(eboxRead),
-             .eboxPSE(eboxPSE),
-             .eboxWrite(eboxWrite),
-
-             //             output upt,
-             //             output ept,
-             //             output userRef,
-
-             //             output eboxCCA,
-             //             output eboxUBR,
-             //             output eboxERA,
-             //             output eboxEnRefillRAMWr,
-             //             output eboxSBUSDiag,
-             //             output eboxLoadReg,
-             //             output eboxReadReg,
-
-             //             output ptDirWrite,
-             //             output ptWr,
-             //             output mboxCtl03,
-             //             output mboxCtl06,
-             //             output wrPtSel0,
-             //             output wrPtSel1,
 
              .cshAdrParErr(0),
              .mbParErr(0),
              .sbusErr(0),
              .nxmErr(0),
              .mboxCDirParErr(0),
-             .anyEboxError(anyEboxError)
-             );
+             /*AUTOINST*/
+             // Outputs
+             .eboxVMA                   (eboxVMA[13:35]),
+             .cacheClearer              (cacheClearer[10:12]),
+             .eboxReq                   (eboxReq),
+             .eboxSync                  (eboxSync),
+             .mboxClk                   (mboxClk),
+             .vmaACRef                  (vmaACRef),
+             .pageTestPriv              (pageTestPriv),
+             .pageIllEntry              (pageIllEntry),
+             .eboxUser                  (eboxUser),
+             .eboxMayBePaged            (eboxMayBePaged),
+             .eboxCache                 (eboxCache),
+             .eboxLookEn                (eboxLookEn),
+             .ki10PagingMode            (ki10PagingMode),
+             .pageAdrCond               (pageAdrCond),
+             .eboxMap                   (eboxMap),
+             .eboxRead                  (eboxRead),
+             .eboxPSE                   (eboxPSE),
+             .eboxWrite                 (eboxWrite),
+             .upt                       (upt),
+             .ept                       (ept),
+             .userRef                   (userRef),
+             .eboxCCA                   (eboxCCA),
+             .eboxUBR                   (eboxUBR),
+             .eboxERA                   (eboxERA),
+             .eboxEnRefillRAMWr         (eboxEnRefillRAMWr),
+             .eboxSBUSDiag              (eboxSBUSDiag),
+             .eboxLoadReg               (eboxLoadReg),
+             .eboxReadReg               (eboxReadReg),
+             .ptDirWrite                (ptDirWrite),
+             .ptWr                      (ptWr),
+             .mboxCtl03                 (mboxCtl03),
+             .mboxCtl06                 (mboxCtl06),
+             .wrPtSel0                  (wrPtSel0),
+             .wrPtSel1                  (wrPtSel1),
+             .anyEboxError              (anyEboxError),
+             // Inputs
+             .clk                       (clk),
+             .cshEBOXT0                 (cshEBOXT0),
+             .mboxGateVMA               (mboxGateVMA[27:35]),
+             .cacheData                 (cacheData[0:35]));
 
-  MBOX mbox0(.clk(mboxClk),
+  mbox mbox0(.clk(mboxClk),
              .vma(eboxVMA),
-             .cacheClearer(cacheClearer),
-             .vmaACRef(vmaACRef),
-             .mboxGateVMA(mboxGateVMA),
              .cacheData(cacheDataRead),
              .writeData(cacheDataWrite),
              .req(eboxReq),
              .read(eboxRead),
              .PSE(eboxPSE),
-             .write(eboxWrite)
-             );
+             .write(eboxWrite),
+             /*AUTOINST*/
+             // Inputs
+             .vmaACRef                  (vmaACRef),
+             .mboxGateVMA               (mboxGateVMA[37:35]));
 endmodule

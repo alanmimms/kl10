@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
 // M8533 CHC
-module CHC(input clk
+module chc(input clk
           );
-endmodule // CHC
+endmodule // chc

@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module CHA(input clk
+module cha(input clk
           );
-endmodule // CHA
+endmodule // cha

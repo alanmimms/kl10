@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8545 APR
-module APR(output [0:35] fmOut,
+module apr(output [0:35] fmOut,
            input [0:35] fmIn,
            input [9:12] irAC,
            input [0:35] ad,
@@ -22,5 +22,5 @@ module APR(output [0:35] fmOut,
            inout [0:35] ebusD,
            input [0:7] ds,
            input ebusDSStrobe
-           );
-endmodule // APR
+           /*AUTOARG*/);
+endmodule // apr

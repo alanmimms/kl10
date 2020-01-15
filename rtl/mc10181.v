@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module MC10181(input [3:0] S,
+module mc10181(input [3:0] S,
                input M,
                input [3:0] A,
                input [3:0] B,
@@ -35,11 +35,11 @@ module MC10181(input [3:0] S,
   assign CG = ~notGG;
   assign CP = ~|P;
   assign COUT = ~(notGG | ~(CP | CIN));
-endmodule // MC10181
+endmodule // mc10181
 
 
 `ifdef TESTBENCH
-module MC10181_TB;
+module mc10181_tb;
 
   reg clk;
   reg [3:0] S, A, B;
@@ -49,7 +49,7 @@ module MC10181_TB;
   reg [31:0] s, a, b;
   reg [31:0] m, cin;
 
-  MC10181 mc10181(.S(S), .M(M), .A(A), .B(B), .CIN(CIN), .F(F), .CG(CG), .CP(CP), .COUT(COUT));
+  mc10181 mc10181(.S(S), .M(M), .A(A), .B(B), .CIN(CIN), .F(F), .CG(CG), .CP(CP), .COUT(COUT));
 
   always #1 clk = ~clk;
 
@@ -79,8 +79,8 @@ module MC10181_TB;
   initial begin
     $monitor("T=%-6D M=%b S=%4b A=%4b B=%4b CIN=%b F=%4b CG=%b CP=%b COUT=%b",
              $time, M, S, A, B, CIN, F, CG, CP, COUT);
-    $dumpfile("MC10181_TB.vcd");
-    $dumpvars(0, MC10181_TB);
+    $dumpfile("mc10181_tb.vcd");
+    $dumpvars(0, mc10181_tb);
   end
-endmodule // MC10181_TB
+endmodule // mc10181_tb
 `endif //  `ifdef TESTBENCH

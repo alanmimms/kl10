@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module EDP(input clk,
+module edp(input clk,
 
            input ADXcarry36, // CTL1
            input ADlong,     // CTL
@@ -251,7 +251,7 @@ module EDP(input clk,
   genvar n;
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADaluE1
-      MC10181(.S(ADsel), .M(ADbool),
+      mc10181(.S(ADsel), .M(ADbool),
               .A({ADA[n+0], ADA[n+0], ADA[n+0], ADA[n+1]}),
               .B(ADB[n-2:1]),
               .CIN(ADcarry[n+2]),
@@ -264,7 +264,7 @@ module EDP(input clk,
   
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADaluE2
-      MC10181(.S(ADsel), .M(ADbool),
+      mc10181(.S(ADsel), .M(ADbool),
               .A(ADA[n+2:n+5]),
               .B(ADB[n+2:n+5]),
               .CIN(n < 30 ? ADcarry[n+6] : ADcarry36),
@@ -277,7 +277,7 @@ module EDP(input clk,
   
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3
-      MC10181(.S(ADsel), .M(ADbool),
+      mc10181(.S(ADsel), .M(ADbool),
               .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
               .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
               .CIN(ADXcarry[n+3]),
@@ -289,7 +289,7 @@ module EDP(input clk,
 
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE4
-      MC10181(.S(ADsel), .M(ADbool),
+      mc10181(.S(ADsel), .M(ADbool),
               .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
               .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
               .CIN(n < 30 ? ADXcarry[n+6] : ADXcarry36),
@@ -302,21 +302,21 @@ module EDP(input clk,
   // AD carry look ahead
   // Moved here from IR4
   // IR4 E11
-  MC10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
+  mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
                      .P({AD_CP[0], AD_CP[2], AD_CP06_11, AD_CP12_35}),
                      .CIN(ADcarry36),
                      .C8OUT(ADcarry[-2]),
                      .C2OUT(ADcarry[6]));
 
   // IR4 E7
-  MC10179 AD_LCG_E7(.G({AD_CG[6], AD_CG[6], AD_CG[8], AD_CG[8]}),
+  mc10179 AD_LCG_E7(.G({AD_CG[6], AD_CG[6], AD_CG[8], AD_CG[8]}),
                     .P({AD_CP[6],        0,        0, AD_CP[8]}),
                     .CIN(0),
                     .GOUT(AD_CG06_11),
                     .POUT(AD_CP06_11));
 
   // IR4 E2
-  MC10179 AD_LCG_E2(.G({AD_CG[12], AD_CG[14], AD_CG18_23, AD_CG24_35}),
+  mc10179 AD_LCG_E2(.G({AD_CG[12], AD_CG[14], AD_CG18_23, AD_CG24_35}),
                     .P({AD_CP[12], AD_CP[14], AD_CP18_23, AD_CP24_35}),
                     .CIN(ADcarry36),
                     .GOUT(AD_CG12_35),
@@ -325,14 +325,14 @@ module EDP(input clk,
                     .C2OUT(ADcarry[18]));
 
   // IR4 E6
-  MC10179 AD_LCG_E6(.G({~inhibitCarry18, ~inhibitCarry18, AD_CG[18], AD_CG[20]}),
+  mc10179 AD_LCG_E6(.G({~inhibitCarry18, ~inhibitCarry18, AD_CG[18], AD_CG[20]}),
                     .P({spec_genCarry18, 0, AD_CP[18], AD_CP[20]}),
                     .CIN(0),
                     .GOUT(AD_CG18_23),
                     .POUT(AD_CP18_23));
 
   // IR4 E1
-  MC10179 AD_LCG_E1(.G({AD_CG[24], AD_CG[26], AD_CG[30], AD_CG[32]}),
+  mc10179 AD_LCG_E1(.G({AD_CG[24], AD_CG[26], AD_CG[30], AD_CG[32]}),
                     .P({AD_CP[24], AD_CP[26], AD_CP[30], AD_CP[32]}),
                     .CIN(ADcarry36),
                     .GOUT(AD_CG24_35),
@@ -343,24 +343,24 @@ module EDP(input clk,
   // ADX carry look ahead
   // Moved here from IR4
   // IR4 E22
-  MC10179 ADX_LCG_E22(.G({ADXcarry36 | ADlong, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
+  mc10179 ADX_LCG_E22(.G({ADXcarry36 | ADlong, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
                       .P({~ADlong, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
                       .CIN(ADXcarry36),
                       .C8OUT(ADcarry36));
   // IR4 E21
-  MC10179 ADX_LCG_E21(.G({ADX_CG[0], ADX_CG[3], ADX_CG[6], ADX_CG[9]}),
+  mc10179 ADX_LCG_E21(.G({ADX_CG[0], ADX_CG[3], ADX_CG[6], ADX_CG[9]}),
                       .P({ADX_CP[0], ADX_CP[3], ADX_CP[6], ADX_CP[9]}),
                       .CIN(ADXcarry[12]),
                       .GOUT(ADX_CG00_11),
                       .POUTT(ADX_CP00_11));
   // IR4 E26
-  MC10179 ADX_LCG_E26(.G({ADX_CG[12], ADX_CG[15], ADX_CG[18], ADX_CG[21]}),
+  mc10179 ADX_LCG_E26(.G({ADX_CG[12], ADX_CG[15], ADX_CG[18], ADX_CG[21]}),
                       .P({ADX_CP[12], ADX_CP[15], ADX_CP[18], ADX_CP[21]}),
                       .CIN(ADXcarry[24]),
                       .C8OUT(ADXcarry[12]),
                       .C2OUT(ADXcarry[18]));
   // IR4 E16
-  MC10179 ADX_LCG_E16(.G({ADX_CG[24], ADX_CG[27], ADX_CG[30], ADX_CG[33]}),
+  mc10179 ADX_LCG_E16(.G({ADX_CG[24], ADX_CG[27], ADX_CG[30], ADX_CG[33]}),
                       .P({ADX_CP[24], ADX_CP[27], ADX_CP[30], ADX_CP[33]}),
                       .CIN(ADXcarry36),
                       .GOUT(ADX_CG24_35),
@@ -428,12 +428,12 @@ module EDP(input clk,
   // FM. No static at all!
   wire [0:6] fmAddress = {fmBlk, fmAdr};
 
-  FMmem FMmem0(.addra(fmAddress),
-                .clka(clk),
-                .dina(AR),
-                .douta(FM),
-                .wea({fmWrite00_17, fmWrite00_17, fmWrite18_35, fmWrite18_35})
-               );
+  fm_mem fm_mem0(.addra(fmAddress),
+                 .clka(clk),
+                 .dina(AR),
+                 .douta(FM),
+                 .wea({fmWrite00_17, fmWrite00_17, fmWrite18_35, fmWrite18_35})
+                 );
 
   reg fmWriteR;
   always @(*) begin

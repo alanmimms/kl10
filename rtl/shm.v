@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8540 SHM
-module SHM(input clk,
+module shm(input clk,
            input [0:35] AR,
            input [0:35] ARX,
            input AR36,
@@ -14,4 +14,4 @@ module SHM(input clk,
            output ARextended,
            output ARparityOdd
           );
-endmodule // SHM
+endmodule // shm

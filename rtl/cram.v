@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8548 CRAM
-module CRAM(input clk,
+module cram(input clk,
             input [11:0] CRADR,
             output [11:0] J,
             output [6:0] AD,
@@ -125,10 +125,10 @@ module CRAM(input clk,
   assign EBUS_CTL = CRAMdata[75:83];
   assign DIAG_FUNC = CRAMdata[75:83]; 
 
-  CRAMmem cram(.clka(clk),
-               .addra(CRADR),
-               .dina(0),
-               .douta(CRAMdata),
-               .wea(0)
-               );
-endmodule // CRAM
+  cram_mem cram0(.clka(clk),
+                 .addra(CRADR),
+                 .dina(0),
+                 .douta(CRAMdata),
+                 .wea(0)
+                 );
+endmodule // cram

@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module PMA(input clk
+module pma(input clk
           );
-endmodule // PMA
+endmodule // pma

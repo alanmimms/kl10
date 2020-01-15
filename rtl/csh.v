@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module CSH(input clk
+module csh(input clk
           );
-endmodule // CSH
+endmodule // csh

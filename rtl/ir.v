@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8522 IR
-module IR(input clk,
+module ir(input clk,
           input [0:35] cacheData,
           input [0:35] AD,
           input [0:8] CRAM_magic,
@@ -34,20 +34,20 @@ module IR(input clk,
           output [2:0] DRAM_B,
           output [10:0] DRAM_J,
           output DRAM_ODD_PARITY
-          );
+          /*AUTOARG*/);
 
   reg [23:0] DRAMdata;
   reg [0:12] DRADR;
 
   wire [8:10] DRAM_J_X, DRAM_J_Y;
 
-  DRAMmem dram(.clka(clk),
-               .addra(DRADR),
-               .douta(DRAMdata),
-               .dina(0),
-               .wea(0),
-               .ena(1)
-               );
+  dram_mem dram(.clka(clk),
+                .addra(DRADR),
+                .douta(DRAMdata),
+                .dina(0),
+                .wea(0),
+                .ena(1)
+                /*AUTOINST*/);
 
 
   // p.210 shows older KL10 DRAM addressing.
@@ -214,4 +214,4 @@ module IR(input clk,
   end
 
   // Look-ahead carry functions have been moved from IR to EDP.
-endmodule // IR
+endmodule // ir

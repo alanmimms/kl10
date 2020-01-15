@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
 // M8520 PAG
-module PAG(input clk
+module pag(input clk
           );
-endmodule // PAG
+endmodule // pag

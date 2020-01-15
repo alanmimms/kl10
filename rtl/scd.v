@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8524 SCD
-module SCD(input clk,
+module scd(input clk,
            input [2:0] CRAM_SCAD,
            input [1:0] CRAM_SCADA,
            input [1:0] CRAM_SCADB,
@@ -36,4 +36,4 @@ module SCD(input clk,
            output PRIVATE,
            output ADR_BRK_PREVENT
           );
-endmodule // SCD
+endmodule // scd

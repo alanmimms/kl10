@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8541 CRA
-module CRA(
+module cra(
    input clkForce1777,
    input [0:3] DRAMa,
    input [0:3] DRAMb,
@@ -37,8 +37,7 @@ module CRA(
    output [4:0] spec,
    output mark,
    output [8:0] magic
-   // xxx complete this list
    );
 
 reg [0:83] cram[0:2047];
-endmodule // CRA
+endmodule // cra

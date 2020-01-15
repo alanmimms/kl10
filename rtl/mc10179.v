@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module MC10179(input [3:0] G,
+module mc10179(input [3:0] G,
                input [3:0] P,
                input CIN,
 
@@ -23,4 +23,4 @@ module MC10179(input [3:0] G,
                  ~|{P[3], P[2], G[1]},
                  ~|{P[3], P[2], P[1], G[0]}};
   assign PG = P[3] | P[2] | P[1] | P[0];
-endmodule // MC10179
+endmodule // mc10179

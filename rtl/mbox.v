@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module MBOX(input clk,
+module mbox(input clk,
             input [13:35] vma,
             input vmaACRef,
             input [37:35] mboxGateVMA,
@@ -11,11 +11,11 @@ module MBOX(input clk,
             input write
             );
 
-  FAKE_MEM mem(.clka(clk),
-               .addra(vma),
-               .dina(writeData),
-               .douta(cacheData),
-               .ena(1),
-               .wea(write)
-               );
-endmodule // MBOX
+  fake_mem mem0(.clka(clk),
+                .addra(vma),
+                .dina(writeData),
+                .douta(cacheData),
+                .ena(1),
+                .wea(write)
+                );
+endmodule // mbox

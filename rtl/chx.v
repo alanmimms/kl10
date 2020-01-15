@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module CHX(input clk
+module chx(input clk
           );
-endmodule // CHX
+endmodule // chx
