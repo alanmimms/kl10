@@ -3,14 +3,23 @@
 module IR(input clk,
           input [0:35] cacheData,
           input [0:35] AD,
-          input ADcarry_02,
           input [0:8] CRAM_magic,
           input mbXfer,
           input loadIR,
           input loadDRAM,
+          input [4:6] diag,
           input diagLoadFunc06X,
           input diagReadFunc13X,
-          input [0:5] ad6bEQ0,
+          input inhibitCarry18,
+          input SPEC_genCarry18,
+          input genCarry36,
+          input ADcarry_02,
+          input ADcarry12,
+          input ADcarry18,
+          input ADcarry24,
+          input ADcarry30,
+          input ADcarry36,
+          input ADXcarry12, ADXcarry24,
 
           output IOlegal,
           output ACeq0,
@@ -61,7 +70,9 @@ module IR(input clk,
   assign IOlegal = &IR[3:6];
   assign ACeq0 = IR[9:12] === 4'b0;
 
-  wire enIO_JRST;
+  reg enIO_JRST;
+  reg enAC;
+
   wire instr7XX;
   wire enableAC;
   wire magic7eq8;
@@ -113,13 +124,13 @@ module IR(input clk,
 
   // Latch-mux
   always @(loadIR) if (loadIR) begin
-    IR_R <= mbXfer ? AD[0:12] : cacheDataRead[0:12];
+    IR_R <= mbXfer ? AD[0:12] : cacheData[0:12];
     IRAC_R <= enableAC ? IR[9:12] : 4'b0;
   end
 
   assign magic7eq8 = CRAM_magic[7] ^ CRAM_magic[8];
   assign AgtB = AD[0] ^ ADcarry_02;
-  assign ADeq0 = ~|AD6beq0;
+  assign ADeq0 = ~|AD;
   assign testSatisfied = |{DRAM_B[1] & ADeq0,                 // EQ
                            DRAM_B[2] & AgtB & CRAM_magic[7],  // GT
                            DRAM_B[2] & AD[0] & CRAM_magic[8], // LT
@@ -127,75 +138,79 @@ module IR(input clk,
                            } ^ DRAM_B[0];
 
   // p.130 E57 and friends
-  wire dramLoadXYeven, dramLoadXYodd;
-  wire dramLoadJcommon, dramLoadJeven, dramLoadJodd;
-  wire enJSRT5, enJRST6, enJRST7;
-  wire enAC;
+  reg dramLoadXYeven, dramLoadXYodd;
+  reg dramLoadJcommon, dramLoadJeven, dramLoadJodd;
+  reg enJRST5, enJRST6, enJRST7;
 
   // Inferred latch initialization
   initial begin
-    enAC = 0;
-    enIO_JRST = 0;
+    enAC <= 0;
+    enIO_JRST <= 0;
   end
 
   always @(*) begin
 
     if (diagLoadFunc06X) begin
-      dramLoadXYeven === 3'b000;
-      dramLoadXYodd === 3'b001;
-      dramLoadJcommon === 3'b010;
-      dramLoadJeven === 3'b011;
-      dramLoadJodd === 3'b100;
-      enJRST5 === 3'b101;
-      enJRST6 === 3'b110;
-      enJRST7 === 3'b111;
+      dramLoadXYeven <= 3'b000;
+      dramLoadXYodd <= 3'b001;
+      dramLoadJcommon <= 3'b010;
+      dramLoadJeven <= 3'b011;
+      dramLoadJodd <= 3'b100;
+      enJRST5 <= 3'b101;
+      enJRST6 <= 3'b110;
+      enJRST7 <= 3'b111;
     end else begin
-      dramLoadXYeven = 0;
-      dramLoadXYodd = 0;
-      dramLoadJcommon = 0;
-      dramLoadJeven = 0;
-      dramLoadJodd = 0;
-      enJRST5 = 0;
-      enJRST6 = 0;
-      enJRST7 = 0;
+      dramLoadXYeven <= 0;
+      dramLoadXYodd <= 0;
+      dramLoadJcommon <= 0;
+      dramLoadJeven <= 0;
+      dramLoadJodd <= 0;
+      enJRST5 <= 0;
+      enJRST6 <= 0;
+      enJRST7 <= 0;
     end
 
-    enIO_JRST = enJRST5 & (~enJRST7 | enIO_JRST);
-    enAC = enJRST6 & (~enJRST7 | enAC);
+    enIO_JRST <= enJRST5 & (~enJRST7 | enIO_JRST);
+    enAC <= enJRST6 & (~enJRST7 | enAC);
   end
 
   wire [8:10] norm;
 
   // p.130 E67 priority encoder
-  norm = AD[0] ? 3'b001 :
-         AD6beq0[0] || AD[6] ? 3'b010 :
-         AD[7] ? 3'b011 :
-         AD[8] ? 3'b100 :
-         AD[9] ? 3'b101 :
-         AD[10] ? 3'b110 :
-         ~ADeq0;
+  assign norm = AD[0] ? 3'b001 :
+                |AD[0:5] || AD[6] ? 3'b010 :
+                AD[7] ? 3'b011 :
+                AD[8] ? 3'b100 :
+                AD[9] ? 3'b101 :
+                AD[10] ? 3'b110 :
+                |AD[6:35];
 
   assign DRAM_ODD_PARITY = ^{DRAM_A, DRAM_B, DRAM_PAR, DRAM_J[1:4], DRAM_PAR_J[7:10]};
 
   // Diagnostics to drive EBUS
+  reg [0:35] EBUS_R;
+  assign EBUS = EBUS_R;
   assign drivingEBUS = diagReadFunc13X;
 
-  if (drivingEBUS) begin
+  always @(*) begin
 
-    case (diag[4:6])
-    3'b000: EBUS[0:5] = {norm, DRADR[0:2]};
-    3'b001: EBUS[0:5] = DRADR[3:8];
-    3'b010: EBUS[0:5] = {enIO_JRST, enAC, IRAC[9:12]};
-    3'b011: EBUS[0:5] = {DRAM_A[0:2], DRAM_B[0:2]};
-    3'b100: EBUS[0:5] = {satisfied, JRST0, DRAM_J[1:4]};
-    3'b101: EBUS[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
-    3'b110: EBUS[0:5] = {ADeq0, IOlegal, inhibitCarry18,
-                         SPEC_genCarry18, genCarry36, ADcarry_02};
-    3'b111: EBUS[0:5] = {ADcarry12, ADcarry18, ADcarry24,
-                         ADcarry36, ADXcarry12, ADXcarry24};
-    endcase // case (diag[4:6])
-  end else
-    EBUS = 0;
+    if (drivingEBUS) begin
+
+      case (diag[4:6])
+      3'b000: EBUS_R[0:5] = {norm, DRADR[0:2]};
+      3'b001: EBUS_R[0:5] = DRADR[3:8];
+      3'b010: EBUS_R[0:5] = {enIO_JRST, enAC, IRAC[9:12]};
+      3'b011: EBUS_R[0:5] = {DRAM_A[0:2], DRAM_B[0:2]};
+      3'b100: EBUS_R[0:5] = {testSatisfied, JRST0, DRAM_J[1:4]};
+      3'b101: EBUS_R[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
+      3'b110: EBUS_R[0:5] = {ADeq0, IOlegal, inhibitCarry18,
+                             SPEC_genCarry18, genCarry36, ADcarry_02};
+      3'b111: EBUS_R[0:5] = {ADcarry12, ADcarry18, ADcarry24,
+                             ADcarry36, ADXcarry12, ADXcarry24};
+      endcase // case (diag[4:6])
+    end else
+      EBUS_R = 0;
+  end
 
   // Look-ahead carry functions have been moved from IR to EDP.
 endmodule // IR
