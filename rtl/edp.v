@@ -38,7 +38,7 @@ module EDP(input clk,
            input adToEBUS_L,
            input adToEBUS_R,
 
-           output [0:5] ad6bEQ0, // AD 00-05=0, ...
+           output [0:5] ad6beq0, // AD 00-05=0, ...
            output ADoverflow00,
 
            input ADbool,

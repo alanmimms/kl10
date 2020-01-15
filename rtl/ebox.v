@@ -137,7 +137,8 @@ module EBOX(input clk,
   assign CONDAdr10 = 0;
   assign MULdone = 0;
 
-  CLK clkModule(.clk(clk)
+  CLK clkModule(.clk(clk),
+                .mbXfer(mbXfer)
                 );
 
   CON con(.clk(clk)
@@ -222,6 +223,8 @@ module EBOX(input clk,
           .AD(EDP_AD),
           .ADX(EDP_ADX),
           .AR(EDP_AR),
+          .ADcarry36(ADcarry36),
+          .ADcarry_02(ADcarry_02),
           .fmAddress(fmAddress),
           .VMA(eboxVMA),
           .EBUS(EBUS)
@@ -229,8 +232,12 @@ module EBOX(input clk,
 
   IR ir(.clk(clk),
         .AD(EDP_AD),
+        .ADcarry36(ADcarry36),
+        .ADcarry_02(ADcarry_02),
+        .ad6bEQ0(ad6beq0),
         .EBUS(EBUS),
         .CRAM_magic(CRAM_magic),
+        .mbXfer(mbXfer),
         .JRST0(JRST0),
         .DRAM_A(DRAM_A),
         .DRAM_B(DRAM_B),
@@ -302,9 +309,6 @@ module EBOX(input clk,
           );
 
   CCL ccl(.clk(clk)
-          );
-
-  MBZ mbz(.clk(clk)
           );
 
   MTR mtr(.clk(clk)
