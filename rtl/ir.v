@@ -216,5 +216,5 @@ module ir(input clk,
   // Look-ahead carry functions have been moved from IR to EDP.
 endmodule // ir
 // Local Variables:
-// verilog-library-files:("../ip/dram_mem/dram_mem.v")
+// verilog-library-files:("../ip/dram_mem/dram_mem_stub.v")
 // End:
