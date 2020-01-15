@@ -123,6 +123,9 @@ module EBOX(input clk,
   wire [75:83] CRAM_EBUS_CTL;
   wire [75:83] CRAM_DIAG_FUN;
   
+  // This is the multiplexed current EBUS multiplexed by each the
+  // XXXdrivingEBUS signal coming from each module to determine who
+  // gets to provide EBUS its content.
   reg [0:35] EBUS;
 
   // TEMPORARY
@@ -227,20 +230,46 @@ module EBOX(input clk,
           .ADcarry_02(ADcarry_02),
           .fmAddress(fmAddress),
           .VMA(eboxVMA),
-          .EBUS(EBUS)
+          .ebusIn(EBUS),
+          .drivingEBUS(EDPdrivingEBUS),
+          .EBUS(EDP_EBUS)
           );
 
   IR ir(.clk(clk),
+        .cacheData(cacheData),
         .AD(EDP_AD),
-        .ADcarry36(ADcarry36),
-        .ADcarry_02(ADcarry_02),
-        .EBUS(EBUS),
         .CRAM_magic(CRAM_magic),
         .mbXfer(mbXfer),
+        .loadIR(loadIR),
+        .loadDRAM(loadDRAM),
+        .diag(diag),
+        .diagLoadFunc06X(diagLoadFunc06X),
+        .diagReadFunc13X(diagReadFunc13X),
+        .inhibitCarry18(inhibitCarry18),
+        .SPEC_genCarry18(SPEC_genCarry18),
+        .genCarry36(genCarry36),
+        .ADcarry_02(ADcarry_02),
+        .ADcarry12(ADcarry12),
+        .ADcarry18(ADcarry18),
+        .ADcarry24(ADcarry24),
+        .ADcarry30(ADcarry30),
+        .ADcarry36(ADcarry36),
+        .ADXcarry12(ADXcarry12),
+        .ADXcarry24(ADXcarry24),
+
+        .IOlegal(IOlegal),
+        .ACeq0(ACeq0),
         .JRST0(JRST0),
+        .testSatisfied(testSatisfied),
+        .IR(IR),
+        .IRAC(IRAC),
         .DRAM_A(DRAM_A),
         .DRAM_B(DRAM_B),
-        .DRAM_J(DRAM_J)
+        .DRAM_J(DRAM_J),
+        .DRAM_ODD_PARITY(DRAM_ODD_PARITY),
+
+        .drivingEBUS(IRdrivingEBUS),
+        .EBUS(IR_EBUS)
         );
 
   VMA vma(.clk(clk)
@@ -259,7 +288,9 @@ module EBOX(input clk,
           .CRAM_MAGIC(CRAM_MAGIC),
           .AR(EDP_AR),
           .DIAG(CRAM_DIAG_FUNC),
-          .EBUS(EBUS)
+          .ebusIn(EBUS),
+          .drivingEBUS(SCDdrivingEBUS),
+          .EBUS(SCD_EBUS)
           );
 
   SHM shm(.clk(clk),

@@ -1,10 +1,6 @@
 `timescale 1ns / 1ps
 module EDP(input clk,
 
-           output [0:35] AD,
-           output [0:36] ADX,
-
-           output ADcarry36,
            input ADXcarry36, // CTL1
            input ADlong,     // CTL
 
@@ -31,15 +27,11 @@ module EDP(input clk,
 
            input [0:35] ARMM,
            input [0:35] cacheData,
-           inout [0:35] ebusD,
+           input [0:35] ebusIn,
            input [0:35] SH,
-           output reg [0:35] MQ,
 
            input adToEBUS_L,
            input adToEBUS_R,
-
-           output [0:5] ad6Beq0, // AD 00-05=0, ...
-           output ADoverflow00,
 
            input ADbool,
            input [0:3] ADsel,
@@ -49,18 +41,28 @@ module EDP(input clk,
 
            input [0:2] fmBlk,
            input [0:3] fmAdr,
-           output [0:35] ARout,
 
            input fmWrite00_17,
            input fmWrite18_35,
-           output fmWrite,
-           output fmParity,
 
            input [0:8] diag,
            input diagReadFunc12X,
 
            input [0:35] VMAheldOrPC,
-           input [0:8] magic
+           input [0:8] magic,
+
+           output [0:35] AD,
+           output [0:36] ADX,
+           output reg [0:35] MQ,
+           output [0:5] ad6Beq0, // AD 00-05=0, ...
+           output ADoverflow00,
+           output [0:35] ARout,
+           output fmWrite,
+           output fmParity,
+
+           output ADcarry36,
+           output drivingEBUS,
+           output [0:35] EBUS
            );
 
   // Universal shift register function selector values
@@ -105,7 +107,7 @@ module EDP(input clk,
     3'b000: ARL = ARMM[0:17];
     3'b001: ARL = cacheData[0:17];
     3'b010: ARL = AD[0:17];
-    3'b011: ARL = ebusD[0:17];
+    3'b011: ARL = ebusIn[0:17];
     3'b100: ARL = SH[0:17];
     3'b101: ARL = AD[1:18];
     3'b110: ARL = ADX[0:17];
@@ -124,7 +126,7 @@ module EDP(input clk,
     3'b000: AR[18:35] = ARMM[18:35];
     3'b001: AR[18:35] = cacheData[18:35];
     3'b010: AR[18:35] = AD[18:35];
-    3'b011: AR[18:35] = ebusD[18:35];
+    3'b011: AR[18:35] = ebusIn[18:35];
     3'b100: AR[18:35] = SH[18:35];
     3'b101: AR[18:35] = {AD[19:35], ADX[0]};
     3'b110: AR[18:35] = ADX[18:35];
@@ -456,6 +458,9 @@ module EDP(input clk,
   reg [0:35] ebusR;
   reg [0:17] ebusLH, ebusRH;
 
+  assign drivingEBUS = diagReadFunc12X;
+  assign EBUS = {ebusLH, ebusRH};
+
   always @(*) begin
 
     case (diag[4:6])
@@ -473,5 +478,4 @@ module EDP(input clk,
     if (diagReadFunc12X || adToEBUS_R) ebusRH = ebusR[18:35];
   end // always @ (*)
   
-  assign ebusD = {ebusLH, ebusRH};
 endmodule // edp
