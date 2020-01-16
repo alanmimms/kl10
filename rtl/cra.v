@@ -13,29 +13,28 @@ module cra(input clk,
            input [0:3] DRAM_A,
            input [0:3] DRAM_B,
            input [0:9] DRAM_J,
-           input [10:0] J,
-           input [3:0] MEM,
-           input [5:0] SKIP,
-           input [5:0] COND,
-           input CALL,
-           input [4:0] DISP,
-           input [4:0] SPEC,
-           input MARK,
-           input [8:0] magic,
-           input [0:35] ebusIn,
-           input [4:6] diag,
+           input [10:0] CRAM_J,
+           input [3:0] CRAM_MEM,
+           input [5:0] CRAM_SKIP,
+           input [5:0] CRAM_COND,
+           input CRAM_CALL,
+           input [4:0] CRAM_DISP,
+           input [4:0] CRAM_SPEC,
+           input [0:8] CRAM_DIAG_FUNC,
+           input CRAM_MARK,
+           input [8:0] CRAM_magic,
+           input [0:35] EBUS,
            input [8:10] norm,
            input [0:10] NICOND,
            input [0:3] SR,
-           input [0:35] SH,
-           input [0:35] MQ,
-           input [0:35] BR,
-           input [0:35] AD,
-           input [0:35] ADX,
-           input [0:35] AR,
-           input [0:35] ARX,
+           input [0:35] SHM_SH,
+           input [0:35] EDP_MQ,
+           input [0:35] EDP_BR,
+           input [0:35] EDP_AD,
+           input [0:35] EDP_ADX,
+           input [0:35] EDP_AR,
+           input [0:35] EDP_ARX,
            input [0:10] pfDisp,
-           input [7:10] eaType,
            input skipEn40_47,
            input skipEn50_57,
            input diagReadFunc14X,
@@ -55,12 +54,13 @@ module cra(input clk,
            input SCADeq0,
            input FPD,
            input ARparityOdd,
+           input [0:35] EBUS,
 
            output reg [11:0] CRADR,
            output reg [1:10] AREAD,
            output reg dispParity,
-           output reg drivingEBUS,
-           output reg [0:35] ebusOut
+           output reg CRAdrivingEBUS,
+           output reg [0:35] CRA_EBUS
            /*AUTOARG*/);
 
   initial CRADR <= 0;
@@ -78,6 +78,12 @@ module cra(input clk,
   wire callForce1777;
   wire retNotForce1777;
   wire ret;
+
+  // TEMPORARY? This looks like it belongs to an incompletely
+  // implemented feature that might have been called DISP/EA TYPE
+  // (37). This dispatch is never used in microcode.
+  wire [7:10] eaType = 0;
+
 
   // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
   // they are simple CRAM storage mapping to logical fields.
@@ -225,9 +231,9 @@ module cra(input clk,
   always @(posedge clk) begin
 
     if (diaFunc051)
-      diagAdr[5:10] <= ebusIn[0:5];
+      diagAdr[5:10] <= EBUS[0:5];
     else if (diaFunc052)
-      diagAdr[0:4] <= ebusIn[1:5];
+      diagAdr[0:4] <= EBUS[1:5];
 
     loc <= adr;
 
@@ -237,7 +243,7 @@ module cra(input clk,
   // Diagnostics driving EBUS
   always @(*) begin
 
-    case (diag[4:6])
+    case (CRAM_DIAG_FUNC[4:6])
     3'b000: ebusOut <= {dispEn00_07, dispEn00_03, stackAdr};
     3'b001: ebusOut <= {CALL, DISP[0:4], stackAdr};
     3'b010: ebusOut <= sbrRet[5:10];
@@ -248,6 +254,6 @@ module cra(input clk,
     3'b111: ebusOut <= {1'b0, loc[0:4]};
     endcase
 
-    drivingEBUS <= diagReadFunc14X;
+    CRAdrivingEBUS <= diagReadFunc14X;
   end
 endmodule

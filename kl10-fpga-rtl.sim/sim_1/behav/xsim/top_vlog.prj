@@ -13,8 +13,8 @@ verilog xil_defaultlib  --include "../../../../kl10-fpga-rtl.ip_user_files/ipsta
 "../../../../rtl/clk.v" \
 "../../../../rtl/con.v" \
 "../../../../rtl/cra.v" \
-"../../../../rtl/cram.v" \
 "../../../../rtl/crc.v" \
+"../../../../rtl/crm.v" \
 "../../../../rtl/csh.v" \
 "../../../../rtl/ctl.v" \
 "../../../../rtl/dps.v" \

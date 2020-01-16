@@ -2,12 +2,12 @@
 // M8522 IR
 module ir(input clk,
           input [0:35] cacheData,
-          input [0:35] AD,
+          input [0:35] EDP_AD,
+          input [0:8] CRAM_DIAG_FUNC,
           input [0:8] CRAM_magic,
           input mbXfer,
           input loadIR,
           input loadDRAM,
-          input [4:6] diag,
           input diagLoadFunc06X,
           input diagReadFunc13X,
           input inhibitCarry18,
@@ -27,8 +27,8 @@ module ir(input clk,
           output ACeq0,
           output JRST0,
           output testSatisfied,
-          output drivingEBUS,
-          output [0:35] ebusOut,
+          output IRdrivingEBUS,
+          output [0:35] IR_EBUS,
           output [8:10] norm,
           output [0:12] IR,
           output [9:12] IRAC,
@@ -190,13 +190,13 @@ module ir(input clk,
   // Diagnostics to drive EBUS
   reg [0:35] EBUS_R;
   assign ebusOut = EBUS_R;
-  assign drivingEBUS = diagReadFunc13X;
+  assign IRdrivingEBUS = diagReadFunc13X;
 
   always @(*) begin
 
-    if (drivingEBUS) begin
+    if (IRdrivingEBUS) begin
 
-      case (diag[4:6])
+      case (CRAM_DIAG_FUNC[4:6])
       3'b000: EBUS_R[0:5] = {norm, DRADR[0:2]};
       3'b001: EBUS_R[0:5] = DRADR[3:8];
       3'b010: EBUS_R[0:5] = {enIO_JRST, enAC, IRAC[9:12]};
@@ -207,7 +207,7 @@ module ir(input clk,
                              SPEC_genCarry18, genCarry36, ADcarry_02};
       3'b111: EBUS_R[0:5] = {ADcarry12, ADcarry18, ADcarry24,
                              ADcarry36, ADXcarry12, ADXcarry24};
-      endcase // case (diag[4:6])
+      endcase
     end else
       EBUS_R = 0;
   end

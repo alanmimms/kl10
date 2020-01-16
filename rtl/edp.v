@@ -4,11 +4,23 @@ module edp(input clk,
            input ADXcarry36, // CTL1
            input ADlong,     // CTL
 
-           input [0:2] ARLsel,
-           input [0:2] ARRsel,
-           input AR00to08load,
-           input AR09to17load,
-           input ARRload,
+           input [0:6] CRAM_AD,
+           input [0:3] CRAM_ADA,
+           input [0:1] CRAM_ADA_EN,
+           input [0:2] CRAM_ADB,
+
+           input [0:3] CRAM_AR,
+           input [0:3] CRAM_ARX,
+
+           input [0:2] CTL_ARL_SEL,
+           input [0:2] CTL_ARR_SEL,
+           input CTL_AR00to08load,
+           input CTL_AR09to17load,
+           input CTL_ARRload,
+
+           input CTL_AR00to11clr,
+           input CTL_AR12to17clr,
+           input CTL_ARRclr,
 
            input BRload,
            input BRXload,
@@ -21,23 +33,12 @@ module edp(input clk,
            input [0:1] MQMsel,
            input MQMen,
 
-           input AR00to11clr,
-           input AR12to17clr,
-           input ARRclr,
-
-           input [0:35] ARMM,
            input [0:35] cacheData,
-           input [0:35] ebusIn,
-           input [0:35] SH,
+           input [0:35] EBUS,
+           input [0:35] SHM_SH,
 
            input adToEBUS_L,
            input adToEBUS_R,
-
-           input ADbool,
-           input [0:3] ADsel,
-           input [0:1] ADAsel,
-           input [0:1] ADBsel,
-           input [0:35] ADAen,
 
            input [0:2] fmBlk,
            input [0:3] fmAdr,
@@ -45,24 +46,26 @@ module edp(input clk,
            input fmWrite00_17,
            input fmWrite18_35,
 
-           input [0:8] diag,
+           input [0:8] CRAM_DIAG_FUNC,
            input diagReadFunc12X,
 
            input [0:35] VMAheldOrPC,
            input [0:8] magic,
 
-           output [0:35] AD,
-           output [0:36] ADX,
-           output reg [0:35] MQ,
-           output ADoverflow00,
-           output reg [0:35] AR,
-           output reg [0:35] ARX,
-           output fmWrite,
-           output fmParity,
+           output reg [0:35] EDP_AD,
+           output reg [0:36] EDP_ADX,
+           output reg [0:36] EDP_BR,
+           output reg [0:36] EDP_BRX,
+           output reg [0:35] EDP_MQ,
+           output reg ADoverflow00,
+           output reg [0:35] EDP_AR,
+           output reg [0:35] EDP_ARX,
+           output reg fmWrite,
+           output reg fmParity,
 
-           output ADcarry36,
-           output drivingEBUS,
-           output [0:35] ebusOut
+           output reg ADcarry36,
+           output reg EDPdrivingEBUS,
+           output reg [0:35] EDP_EBUS
            );
 
   // Universal shift register function selector values
@@ -71,7 +74,9 @@ module edp(input clk,
   localparam USR_SHR  = 2'b10;
   localparam USR_HOLD = 2'b11;
   
-  reg [0:36] BR, BRX;
+  /*AUTOWIRE*/
+  /*AUTOREG*/
+
   reg [0:17] ARL;
   reg [0:17] ARXL, ARXR;
 
@@ -99,47 +104,53 @@ module edp(input clk,
   assign ADcarry36 = ADcarry[36];
   assign ADXcarry36 = ADXcarry[36];
 
+  wire ADbool = CRAM_AD[1];
+  wire [0:3] ADsel = CRAM_AD[2:5];
+  wire [0:1] ADAsel = CRAM_ADA[1:2];
+  wire [0:35] ADAen = CRAM_ADA[0];
+  wire [0:1] ADBsel = CRAM_ADB;
+
   // AR including ARL, ARR, and ARM p15.
 
   always @(*) begin
     case (ARLsel)
     3'b000: ARL = ARMM[0:17];
     3'b001: ARL = cacheData[0:17];
-    3'b010: ARL = AD[0:17];
-    3'b011: ARL = ebusIn[0:17];
-    3'b100: ARL = SH[0:17];
-    3'b101: ARL = AD[1:18];
-    3'b110: ARL = ADX[0:17];
-    3'b111: ARL = AD[-2:15];
+    3'b010: ARL = EDP_AD[0:17];
+    3'b011: ARL = EBUS[0:17];
+    3'b100: ARL = SHM_SH[0:17];
+    3'b101: ARL = EDP_AD[1:18];
+    3'b110: ARL = EDP_ADX[0:17];
+    3'b111: ARL = EDP_AD[-2:15];
     endcase
   end
   
   always @(posedge clk) begin
 
     if (AR00to11clr) begin
-      AR[0:11] <= 0;
+      EDP_AR[0:11] <= 0;
     end else if (AR00to08load) begin
-      AR[0:8] <= ARL[0:8];
+      EDP_AR[0:8] <= ARL[0:8];
     end
 
     if (AR12to17clr) begin
-      AR[12:17] <= 0;
+      EDP_AR[12:17] <= 0;
     end else if (AR09to17load) begin
-      AR[9:17] <= ARL[9:17];
+      EDP_AR[9:17] <= ARL[9:17];
     end
 
     if (ARRclr) begin
-      AR[18:35] <= 0;
+      EDP_AR[18:35] <= 0;
     end else if (ARRload) begin
       case (ARRsel)
-      3'b000: AR[18:35] <= ARMM[18:35];
-      3'b001: AR[18:35] <= cacheData[18:35];
-      3'b010: AR[18:35] <= AD[18:35];
-      3'b011: AR[18:35] <= ebusIn[18:35];
-      3'b100: AR[18:35] <= SH[18:35];
-      3'b101: AR[18:35] <= {AD[19:35], ADX[0]};
-      3'b110: AR[18:35] <= ADX[18:35];
-      3'b111: AR[18:35] <= AD[16:33];
+      3'b000: EDP_AR[18:35] <= ARMM[18:35];
+      3'b001: EDP_AR[18:35] <= cacheData[18:35];
+      3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
+      3'b011: EDP_AR[18:35] <= EBUS[18:35];
+      3'b100: EDP_AR[18:35] <= SHM_SH[18:35];
+      3'b101: EDP_AR[18:35] <= {EDP_AD[19:35], EDP_ADX[0]};
+      3'b110: EDP_AR[18:35] <= EDP_ADX[18:35];
+      3'b111: EDP_AR[18:35] <= EDP_AD[16:33];
       endcase
     end
   end
@@ -150,28 +161,28 @@ module edp(input clk,
     case (ARXLsel)
     3'b000: ARXL = 0;
     3'b001: ARXL = cacheData[0:17];
-    3'b010: ARXL = AD[0:17];
-    3'b011: ARXL = MQ[0:17];
-    3'b100: ARXL = SH[0:17];
-    3'b101: ARXL = ADX[1:18];
-    3'b110: ARXL = ADX[0:17];
-    3'b111: ARXL = {AD[34:35], ADX[0:15]};
+    3'b010: ARXL = EDP_AD[0:17];
+    3'b011: ARXL = EDP_MQ[0:17];
+    3'b100: ARXL = SHM_SH[0:17];
+    3'b101: ARXL = EDP_ADX[1:18];
+    3'b110: ARXL = EDP_ADX[0:17];
+    3'b111: ARXL = {EDP_AD[34:35], EDP_ADX[0:15]};
     endcase // case (ARXLsel)
 
     case (ARXRsel)
     3'b000: ARXR = 0;
     3'b001: ARXR = cacheData[18:35];
-    3'b010: ARXR = AD[18:35];
-    3'b011: ARXR = MQ[18:35];
-    3'b100: ARXR = SH[18:35];
-    3'b101: ARXR = {ADX[19:35], MQ[0]};
-    3'b110: ARXR = ADX[18:35];
-    3'b111: ARXR = ADX[16:33];
+    3'b010: ARXR = EDP_AD[18:35];
+    3'b011: ARXR = EDP_MQ[18:35];
+    3'b100: ARXR = SHM_SH[18:35];
+    3'b101: ARXR = {EDP_ADX[19:35], EDP_MQ[0]};
+    3'b110: ARXR = EDP_ADX[18:35];
+    3'b111: ARXR = EDP_ADX[16:33];
     endcase // case (ARXLsel)
   end
 
   always @(posedge clk) begin
-    if (ARXload) ARX <= {ARXL, ARXR};
+    if (ARXload) EDP_ARX <= {ARXL, ARXR};
   end
 
   // MQ/MQM p16.
@@ -180,9 +191,9 @@ module edp(input clk,
     if (MQMen) begin
 
       case (MQMsel)
-      USR_LOAD: MQM = {ADX[34:35], MQ[0:33]};
-      USR_SHL:  MQM = SH;
-      USR_SHR:  MQM = AD;
+      USR_LOAD: MQM = {EDP_ADX[34:35], EDP_MQ[0:33]};
+      USR_SHL:  MQM = SHM_SH;
+      USR_SHR:  MQM = EDP_AD;
       USR_HOLD: MQM = 36'hFFFFFFFFF;
       endcase           // MQMsel
     end else
@@ -192,10 +203,10 @@ module edp(input clk,
   always@(posedge clk) begin
     // MQ: 36-bit MC10141-ish universal shift register
     case (MQsel)
-    USR_LOAD: MQ <= MQM;
-    USR_SHL:  MQ <= {MQM[1:35], ADcarry[-2]};
-    USR_SHR:  MQ <= {MQM[1], MQM[1:35]};
-    USR_HOLD: MQ <= MQ;
+    USR_LOAD: EDP_MQ <= MQM;
+    USR_SHL:  EDP_MQ <= {MQM[1:35], ADcarry[-2]};
+    USR_SHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
+    USR_HOLD: EDP_MQ <= EDP_MQ;
     endcase // case (MQsel)
   end // always@ (posedge clk)
 
@@ -248,7 +259,7 @@ module edp(input clk,
 
   // Look-ahead carry network moved here from IR4 M8522 board.
 
-  assign ADoverflow00 = (AD[-2] ^ AD[-1]) | (AD[0] | AD[-1]);
+  assign ADoverflow00 = (EDP_AD[-2] ^ EDP_AD[-1]) | (EDP_AD[0] | EDP_AD[-1]);
 
   // Instantiate ALU for AD and ADX
   genvar n;
@@ -377,14 +388,14 @@ module edp(input clk,
       always @(*)
         case(ADBsel)
         3'b000: ADB[n-2:n+5] = {{2{FM[n+0]}}, FM[n+0:n+5]};
-        3'b001: ADB[n-2:n+5] = {{2{n == 0 ? BR[n+0] : BR[n+1]}},
-                                BR[n+1:n+4], n < 30 ? BR[n+6] : BRX[0]};
-        3'b010: ADB[n-2:n+5] = {{2{BR[n+0]}}, BR[n+0:n+5]};
-        3'b011: ADB[n-2:n+5] = {n == 0 ? AR[n+0] : AR[n+2],
-                                n == 0 ? AR[n+1] : AR[n+2],
-                                AR[n+2:n+5],
-                                n < 1 ? AR[n+6] : ARX[0],
-                                n < 1 ? AR[n+7] : ARX[1]};
+        3'b001: ADB[n-2:n+5] = {{2{n == 0 ? EDP_BR[n+0] : EDP_BR[n+1]}},
+                                EDP_BR[n+1:n+4], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
+        3'b010: ADB[n-2:n+5] = {{2{EDP_BR[n+0]}}, EDP_BR[n+0:n+5]};
+        3'b011: ADB[n-2:n+5] = {n == 0 ? EDP_AR[n+0] : EDP_AR[n+2],
+                                n == 0 ? EDP_AR[n+1] : EDP_AR[n+2],
+                                EDP_AR[n+2:n+5],
+                                n < 1 ? EDP_AR[n+6] : EDP_ARX[0],
+                                n < 1 ? EDP_AR[n+7] : EDP_ARX[1]};
         endcase // case (ADBsel)
     end // block: ADBmux
   endgenerate
@@ -395,9 +406,9 @@ module edp(input clk,
       always @(*)
         case(ADBsel)
         3'b000: ADXB[n+0:n+5] = magic[n+0:n+5];
-        3'b001: ADXB[n+0:n+5] = n < 30 ? BRX[n+1:n+6] : {BRX[n+1:n+6], 1'b0};
-        3'b010: ADXB[n+0:n+5] = BRX[n+0:n+5];
-        3'b011: ADXB[n+0:n+5] = n < 30 ? ARX[n+2:n+7] : {ARX[n+2:n+5], 2'b00};
+        3'b001: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+6], 1'b0};
+        3'b010: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
+        3'b011: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
         endcase // case (ADBsel)
     end // block: ADXBmux
   endgenerate
@@ -406,7 +417,7 @@ module edp(input clk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXAmux
       always @(*)
-        ADXA[n+0:n+5] = ADAen ? ARX[n+0:n+5] : 6'b0;
+        ADXA[n+0:n+5] = ADAen ? EDP_ARX[n+0:n+5] : 6'b0;
     end // block: ADXAmux
   endgenerate
 
@@ -417,9 +428,9 @@ module edp(input clk,
       always @(*)
         if (ADAen)
           case(ADAsel)
-          2'b00: ADA[n+0:n+5] = AR[n+0:n+5];
-          2'b01: ADA[n+0:n+5] = ARX[n+0:n+5];
-          2'b10: ADA[n+0:n+5] = MQ[n+0:n+5];
+          2'b00: ADA[n+0:n+5] = EDP_AR[n+0:n+5];
+          2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
+          2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
           2'b11: ADA[n+0:n+5] = VMAheldOrPC[n+0:n+5];
           endcase // case (ADAsel)
         else
@@ -433,7 +444,7 @@ module edp(input clk,
 
   fm_mem fm_mem0(.addra(fmAddress),
                  .clka(clk),
-                 .dina(AR),
+                 .dina(EDP_AR),
                  .douta(FM),
                  .wea({fmWrite00_17, fmWrite00_17, fmWrite18_35, fmWrite18_35})
                  );
@@ -449,33 +460,33 @@ module edp(input clk,
 
   // BRX
   always @(posedge clk)
-    if (BRXload) BRX = ARX;
+    if (BRXload) EDP_BRX = EDP_ARX;
 
 
   // BR
   always @(posedge clk)
-    if (BRload) BR = AR;
+    if (BRload) EDP_BR = EDP_AR;
 
 
   // EBUS DIAG mux
   reg [0:35] ebusR;
   reg [0:17] ebusLH, ebusRH;
 
-  assign drivingEBUS = diagReadFunc12X;
+  always @(*) EDPdrivingEBUS = diagReadFunc12X;
   assign EBUS = {ebusLH, ebusRH};
 
   always @(*) begin
 
-    case (diag[4:6])
-    3'b000: ebusR = AR;
-    3'b001: ebusR = BR;
-    3'b010: ebusR = MQ;
+    case (CRAM_DIAG_FUNC[4:6])
+    3'b000: ebusR = EDP_AR;
+    3'b001: ebusR = EDP_BR;
+    3'b010: ebusR = EDP_MQ;
     3'b011: ebusR = FM;
-    3'b100: ebusR = BRX;
-    3'b101: ebusR = ARX;
-    3'b110: ebusR = ADX;
-    3'b111: ebusR = AD;
-    endcase // case (diag[4:6])
+    3'b100: ebusR = EDP_BRX;
+    3'b101: ebusR = EDP_ARX;
+    3'b110: ebusR = EDP_ADX;
+    3'b111: ebusR = EDP_AD;
+    endcase
 
     if (diagReadFunc12X || adToEBUS_L) ebusLH = ebusR[0:17];
     if (diagReadFunc12X || adToEBUS_R) ebusRH = ebusR[18:35];
