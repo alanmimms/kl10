@@ -11,7 +11,7 @@ module mbox(input clk,
             input read,
             input PSE,
             input write
-            );
+            /*AUTOARG*/);
 
   fake_mem mem0(.clka(clk),
                 .addra(vma),
@@ -19,5 +19,8 @@ module mbox(input clk,
                 .douta(cacheDataRead),
                 .ena(1),
                 .wea(write)
-                );
+                /*AUTOINST*/);
 endmodule // mbox
+// Local Variables:
+// verilog-library-files:("../ip/fake_mem/fake_mem_stub.v")
+// End:

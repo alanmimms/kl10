@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="dram_mem_synth_1" LaunchPart="xc7z010clg400-1" LaunchTime="1579115525">
+<GenRun Id="dram_mem_synth_1" LaunchPart="xc7z010clg400-1" LaunchTime="1579208932">
   <File Type="VDS-TIMING-PB" Name="dram_mem_timing_summary_synth.pb"/>
   <File Type="VDS-TIMINGSUMMARY" Name="dram_mem_timing_summary_synth.rpt"/>
   <File Type="RDS-DCP" Name="dram_mem.dcp"/>

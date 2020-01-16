@@ -1,10 +1,10 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
-// Date        : Mon Jan 13 16:45:04 2020
+// Date        : Mon Jan 13 16:45:03 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
-// Command     : write_verilog -force -mode synth_stub
-//               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/processing_system7_0/processing_system7_0_stub.v
+// Command     : write_verilog -force -mode synth_stub -rename_top processing_system7_0 -prefix
+//               processing_system7_0_ processing_system7_0_stub.v
 // Design      : processing_system7_0
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7z010clg400-1

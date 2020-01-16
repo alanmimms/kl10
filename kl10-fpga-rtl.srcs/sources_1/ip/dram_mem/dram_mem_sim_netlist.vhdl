@@ -1,7 +1,7 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
--- Date        : Wed Jan 15 11:13:24 2020
+-- Date        : Thu Jan 16 13:10:11 2020
 -- Host        : alanm running 64-bit Ubuntu 19.10
 -- Command     : write_vhdl -force -mode funcsim
 --               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/dram_mem_sim_netlist.vhdl

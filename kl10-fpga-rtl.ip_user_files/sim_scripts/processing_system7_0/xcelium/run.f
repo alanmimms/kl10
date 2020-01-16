@@ -9,6 +9,12 @@
   "/opt/Xilinx/Vivado/2019.2/data/xilinx_vip/hdl/clk_vip_if.sv" \
   "/opt/Xilinx/Vivado/2019.2/data/xilinx_vip/hdl/rst_vip_if.sv" \
 -endlib
+-makelib xcelium_lib/xpm -sv \
+  "/x/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_memory/hdl/xpm_memory.sv" \
+-endlib
+-makelib xcelium_lib/xpm \
+  "/opt/Xilinx/Vivado/2019.2/data/ip/xpm/xpm_VCOMP.vhd" \
+-endlib
 -makelib xcelium_lib/axi_infrastructure_v1_1_0 \
   "../../../ipstatic/hdl/axi_infrastructure_v1_1_vl_rfs.v" \
 -endlib

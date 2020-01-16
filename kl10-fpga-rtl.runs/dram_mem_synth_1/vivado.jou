@@ -2,8 +2,8 @@
 # Vivado v2019.2.1 (64-bit)
 # SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
 # IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
-# Start of session at: Wed Jan 15 11:12:07 2020
-# Process ID: 10900
+# Start of session at: Thu Jan 16 13:08:54 2020
+# Process ID: 16195
 # Current directory: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/dram_mem_synth_1
 # Command line: vivado -log dram_mem.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source dram_mem.tcl
 # Log file: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/dram_mem_synth_1/dram_mem.vds
