@@ -19,7 +19,7 @@ module ebox(input clk,
             output reg vmaACRef,
 
             input [27:35] mboxGateVMA,
-            input [0:35] cacheData,
+            input [0:35] cacheDataRead,
 
             output reg pageTestPriv,
             output reg pageIllEntry,
@@ -65,6 +65,7 @@ module ebox(input clk,
             output reg anyEboxError,
 
             input [0:35] EBUS,
+            input [0:7] EBUS_DS,
             output reg APRdrivingEBUS,
             output reg [0:35] APR_EBUS,
 
@@ -83,13 +84,11 @@ module ebox(input clk,
             /*AUTOARG*/);
 
   // TEMPORARY
-  wire [7:0] fmAddress;
   wire force1777;
   wire CONDAdr10;
   wire MULdone;
 
   // TEMPORARY
-  assign fmAddress = 0;
   assign FORCE1777 = 0;
   assign CONDAdr10 = 0;
   assign MULdone = 0;
@@ -103,6 +102,8 @@ module ebox(input clk,
   wire                  ADeq0;                  // From ir0 of ir.v
   wire                  ADlong;                 // From ctl0 of ctl.v
   wire                  ADoverflow00;           // From edp0 of edp.v
+  wire [0:3]            APR_FMadr;              // From apr0 of apr.v
+  wire [0:2]            APR_FMblk;              // From apr0 of apr.v
   wire [1:10]           AREAD;                  // From cra0 of cra.v
   wire                  ARextended;             // From shm0 of shm.v
   wire                  ARparityOdd;            // From shm0 of shm.v
@@ -139,6 +140,7 @@ module ebox(input clk,
   wire [11:0]           CRAM_J;                 // From crm0 of crm.v
   wire [1:0]            CRAM_KLPAGE;            // From crm0 of crm.v
   wire [1:0]            CRAM_LONGPC;            // From crm0 of crm.v
+  wire [9:0]            CRAM_MAGIC;             // From crm0 of crm.v
   wire [6:0]            CRAM_MAJVER;            // From crm0 of crm.v
   wire [1:0]            CRAM_MARK;              // From crm0 of crm.v
   wire [9:0]            CRAM_MBOX_CTL;          // From crm0 of crm.v
@@ -166,17 +168,22 @@ module ebox(input clk,
   wire [2:0]            CRAM_TIME;              // From crm0 of crm.v
   wire [2:0]            CRAM_VMA;               // From crm0 of crm.v
   wire [2:0]            CRAM_VMAX;              // From crm0 of crm.v
-  wire [9:0]            CRAM_magic;             // From crm0 of crm.v
   wire                  CRY0;                   // From scd0 of scd.v
   wire                  CRY1;                   // From scd0 of scd.v
   wire                  CTL_AR00to08load;       // From ctl0 of ctl.v
   wire                  CTL_AR00to11clr;        // From ctl0 of ctl.v
   wire                  CTL_AR09to17load;       // From ctl0 of ctl.v
   wire                  CTL_AR12to17clr;        // From ctl0 of ctl.v
-  wire                  CTL_ARL_SEL;            // From ctl0 of ctl.v
-  wire                  CTL_ARR_SEL;            // From ctl0 of ctl.v
+  wire [0:2]            CTL_ARL_SEL;            // From ctl0 of ctl.v
+  wire [0:2]            CTL_ARR_SEL;            // From ctl0 of ctl.v
   wire                  CTL_ARRclr;             // From ctl0 of ctl.v
   wire                  CTL_ARRload;            // From ctl0 of ctl.v
+  wire [2:0]            CTL_ARXL_SEL;           // From ctl0 of ctl.v
+  wire [2:0]            CTL_ARXR_SEL;           // From ctl0 of ctl.v
+  wire                  CTL_ARX_LOAD;           // From ctl0 of ctl.v
+  wire                  CTL_MQM_EN;             // From ctl0 of ctl.v
+  wire [0:1]            CTL_MQM_SEL;            // From ctl0 of ctl.v
+  wire [0:1]            CTL_MQ_SEL;             // From ctl0 of ctl.v
   wire                  DIV_CHK;                // From scd0 of scd.v
   wire [2:0]            DRAM_A;                 // From ir0 of ir.v
   wire [2:0]            DRAM_B;                 // From ir0 of ir.v
@@ -191,6 +198,7 @@ module ebox(input clk,
   wire [0:36]           EDP_BRX;                // From edp0 of edp.v
   wire [0:35]           EDP_MQ;                 // From edp0 of edp.v
   wire                  FEsign;                 // From scd0 of scd.v
+  wire [0:35]           FM;                     // From edp0 of edp.v
   wire                  FOV;                    // From scd0 of scd.v
   wire                  FPD;                    // From scd0 of scd.v
   wire                  FXU;                    // From scd0 of scd.v
@@ -218,6 +226,7 @@ module ebox(input clk,
   wire                  TRAP_REQ2;              // From scd0 of scd.v
   wire                  USER;                   // From scd0 of scd.v
   wire                  USER_IOT;               // From scd0 of scd.v
+  wire [0:35]           VMA_VMAheldOrPC;        // From vma0 of vma.v
   wire                  aprPhysNum;             // From apr0 of apr.v
   wire                  disableCS;              // From apr0 of apr.v
   wire                  dispParity;             // From cra0 of cra.v
@@ -226,7 +235,6 @@ module ebox(input clk,
   wire                  ebusF01;                // From apr0 of apr.v
   wire                  ebusReq;                // From apr0 of apr.v
   wire                  ebusReturn;             // From apr0 of apr.v
-  wire [0:35]           fmOut;                  // From apr0 of apr.v
   wire                  fmParity;               // From edp0 of edp.v
   wire                  fmWrite;                // From edp0 of edp.v
   wire                  indexed;                // From shm0 of shm.v
@@ -284,7 +292,7 @@ module ebox(input clk,
            .CRAM_SPEC                   (CRAM_SPEC[4:0]),
            .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[0:8]),
            .CRAM_MARK                   (CRAM_MARK),
-           .CRAM_magic                  (CRAM_magic[8:0]),
+           .CRAM_MAGIC                  (CRAM_MAGIC[8:0]),
            .EBUS                        (EBUS[0:35]),
            .norm                        (norm[8:10]),
            .NICOND                      (NICOND[0:10]),
@@ -347,7 +355,7 @@ module ebox(input clk,
            .CRAM_DISP                   (CRAM_DISP[5:0]),
            .CRAM_SPEC                   (CRAM_SPEC[5:0]),
            .CRAM_MARK                   (CRAM_MARK[1:0]),
-           .CRAM_magic                  (CRAM_magic[9:0]),
+           .CRAM_MAGIC                  (CRAM_MAGIC[9:0]),
            .CRAM_MAJVER                 (CRAM_MAJVER[6:0]),
            .CRAM_MINVER                 (CRAM_MINVER[3:0]),
            .CRAM_KLPAGE                 (CRAM_KLPAGE[1:0]),
@@ -391,6 +399,7 @@ module ebox(input clk,
            .ADoverflow00                (ADoverflow00),
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
+           .FM                          (FM[0:35]),
            .fmWrite                     (fmWrite),
            .fmParity                    (fmParity),
            .ADcarry36                   (ADcarry36),
@@ -406,6 +415,7 @@ module ebox(input clk,
            .CRAM_ADB                    (CRAM_ADB[0:2]),
            .CRAM_AR                     (CRAM_AR[0:3]),
            .CRAM_ARX                    (CRAM_ARX[0:3]),
+           .CRAM_MAGIC                  (CRAM_MAGIC[0:8]),
            .CTL_ARL_SEL                 (CTL_ARL_SEL[0:2]),
            .CTL_ARR_SEL                 (CTL_ARR_SEL[0:2]),
            .CTL_AR00to08load            (CTL_AR00to08load),
@@ -414,27 +424,26 @@ module ebox(input clk,
            .CTL_AR00to11clr             (CTL_AR00to11clr),
            .CTL_AR12to17clr             (CTL_AR12to17clr),
            .CTL_ARRclr                  (CTL_ARRclr),
+           .CTL_ARXL_SEL                (CTL_ARXL_SEL[2:0]),
+           .CTL_ARXR_SEL                (CTL_ARXR_SEL[2:0]),
+           .CTL_ARX_LOAD                (CTL_ARX_LOAD),
            .BRload                      (BRload),
            .BRXload                     (BRXload),
-           .ARXLsel                     (ARXLsel[2:0]),
-           .ARXRsel                     (ARXRsel[2:0]),
-           .ARXload                     (ARXload),
-           .MQsel                       (MQsel[0:1]),
-           .MQMsel                      (MQMsel[0:1]),
-           .MQMen                       (MQMen),
-           .cacheData                   (cacheData[0:35]),
+           .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
+           .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
+           .CTL_MQM_EN                  (CTL_MQM_EN),
+           .cacheDataRead               (cacheDataRead[0:35]),
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
            .adToEBUS_L                  (adToEBUS_L),
            .adToEBUS_R                  (adToEBUS_R),
-           .fmBlk                       (fmBlk[0:2]),
-           .fmAdr                       (fmAdr[0:3]),
+           .APR_FMblk                   (APR_FMblk[0:2]),
+           .APR_FMadr                   (APR_FMadr[0:3]),
            .fmWrite00_17                (fmWrite00_17),
            .fmWrite18_35                (fmWrite18_35),
            .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[0:8]),
            .diagReadFunc12X             (diagReadFunc12X),
-           .VMAheldOrPC                 (VMAheldOrPC[0:35]),
-           .magic                       (magic[0:8]));
+           .VMA_VMAheldOrPC             (VMA_VMAheldOrPC[0:35]));
 
   ir ir0(/*AUTOINST*/
          // Outputs
@@ -454,10 +463,10 @@ module ebox(input clk,
          .DRAM_ODD_PARITY               (DRAM_ODD_PARITY),
          // Inputs
          .clk                           (clk),
-         .cacheData                     (cacheData[0:35]),
+         .cacheDataRead                 (cacheDataRead[0:35]),
          .EDP_AD                        (EDP_AD[0:35]),
          .CRAM_DIAG_FUNC                (CRAM_DIAG_FUNC[0:8]),
-         .CRAM_magic                    (CRAM_magic[0:8]),
+         .CRAM_MAGIC                    (CRAM_MAGIC[0:8]),
          .mbXfer                        (mbXfer),
          .loadIR                        (loadIR),
          .loadDRAM                      (loadDRAM),
@@ -478,13 +487,13 @@ module ebox(input clk,
   vma vma0(
            /*AUTOINST*/
            // Outputs
+           .VMA_VMAheldOrPC             (VMA_VMAheldOrPC[0:35]),
            .localACAddress              (localACAddress),
            // Inputs
            .clk                         (clk));
 
   apr apr0(/*AUTOINST*/
            // Outputs
-           .fmOut                       (fmOut[0:35]),
            .ebusReturn                  (ebusReturn),
            .ebusReq                     (ebusReq),
            .ebusDemand                  (ebusDemand),
@@ -493,11 +502,13 @@ module ebox(input clk,
            .CONIorDATAI                 (CONIorDATAI),
            .sendF02                     (sendF02),
            .aprPhysNum                  (aprPhysNum),
+           .APR_FMblk                   (APR_FMblk[0:2]),
+           .APR_FMadr                   (APR_FMadr[0:3]),
            .APRdrivingEBUS              (APRdrivingEBUS),
            .APR_EBUS                    (APR_EBUS[0:35]),
            // Inputs
-           .fmIn                        (fmIn[0:35]),
-           .irAC                        (irAC[9:12]),
+           .FM                          (FM[0:35]),
+           .IRAC                        (IRAC[9:12]),
            .EDP_AD                      (EDP_AD[0:35]),
            .cshAdrParErr                (cshAdrParErr),
            .mbParErr                    (mbParErr),
@@ -505,7 +516,7 @@ module ebox(input clk,
            .nxmErr                      (nxmErr),
            .mboxCDirParErr              (mboxCDirParErr),
            .EBUS                        (EBUS[0:35]),
-           .ds                          (ds[0:7]),
+           .EBUS_DS                     (EBUS_DS[0:7]),
            .ebusDSStrobe                (ebusDSStrobe));
 
   mcl mcl0(
@@ -531,14 +542,20 @@ module ebox(input clk,
   ctl ctl0(
            /*AUTOINST*/
            // Outputs
-           .CTL_ARL_SEL                 (CTL_ARL_SEL),
-           .CTL_ARR_SEL                 (CTL_ARR_SEL),
            .CTL_AR00to08load            (CTL_AR00to08load),
            .CTL_AR09to17load            (CTL_AR09to17load),
            .CTL_ARRload                 (CTL_ARRload),
            .CTL_AR00to11clr             (CTL_AR00to11clr),
            .CTL_AR12to17clr             (CTL_AR12to17clr),
            .CTL_ARRclr                  (CTL_ARRclr),
+           .CTL_ARL_SEL                 (CTL_ARL_SEL[0:2]),
+           .CTL_ARR_SEL                 (CTL_ARR_SEL[0:2]),
+           .CTL_ARXL_SEL                (CTL_ARXL_SEL[2:0]),
+           .CTL_ARXR_SEL                (CTL_ARXR_SEL[2:0]),
+           .CTL_ARX_LOAD                (CTL_ARX_LOAD),
+           .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
+           .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
+           .CTL_MQM_EN                  (CTL_MQM_EN),
            .ADXcarry36                  (ADXcarry36),
            .ADlong                      (ADlong),
            // Inputs
@@ -603,7 +620,6 @@ module ebox(input clk,
            .ARXcarry36                  (ARXcarry36),
            .longEnable                  (longEnable),
            .CRAM_SH                     (CRAM_SH[1:0]));
-           .CRAM_SH                     (CRAM_SH),
 
   csh csh0(/*AUTOINST*/
            // Inputs

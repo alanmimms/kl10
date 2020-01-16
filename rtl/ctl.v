@@ -5,8 +5,6 @@ module ctl(input clk,
            input [0:35] EDP_AR,
            input PCplus1inh,
 
-           output reg CTL_ARL_SEL,
-           output reg CTL_ARR_SEL,
            output reg CTL_AR00to08load,
            output reg CTL_AR09to17load,
            output reg CTL_ARRload,
@@ -14,6 +12,19 @@ module ctl(input clk,
            output reg CTL_AR00to11clr,
            output reg CTL_AR12to17clr,
            output reg CTL_ARRclr,
+
+           output reg [0:2] CTL_ARL_SEL,
+           output reg [0:2] CTL_ARR_SEL,
+           output reg [2:0] CTL_ARXL_SEL,
+           output reg [2:0] CTL_ARXR_SEL,
+
+           output reg [2:0] CTL_ARXL_SEL,
+           output reg [2:0] CTL_ARXR_SEL,
+           output reg CTL_ARX_LOAD,
+
+           output reg [0:1] CTL_MQ_SEL,
+           output reg [0:1] CTL_MQM_SEL,
+           output reg CTL_MQM_EN,
 
            output reg ADXcarry36,
            output reg ADlong

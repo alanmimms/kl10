@@ -11,6 +11,7 @@ module edp(input clk,
 
            input [0:3] CRAM_AR,
            input [0:3] CRAM_ARX,
+           input [0:8] CRAM_MAGIC,
 
            input [0:2] CTL_ARL_SEL,
            input [0:2] CTL_ARR_SEL,
@@ -22,26 +23,26 @@ module edp(input clk,
            input CTL_AR12to17clr,
            input CTL_ARRclr,
 
+           input [2:0] CTL_ARXL_SEL,
+           input [2:0] CTL_ARXR_SEL,
+           input CTL_ARX_LOAD,
+
            input BRload,
            input BRXload,
 
-           input [2:0] ARXLsel,
-           input [2:0] ARXRsel,
-           input ARXload,
+           input [0:1] CTL_MQ_SEL,
+           input [0:1] CTL_MQM_SEL,
+           input CTL_MQM_EN,
 
-           input [0:1] MQsel,
-           input [0:1] MQMsel,
-           input MQMen,
-
-           input [0:35] cacheData,
+           input [0:35] cacheDataRead,
            input [0:35] EBUS,
            input [0:35] SHM_SH,
 
            input adToEBUS_L,
            input adToEBUS_R,
 
-           input [0:2] fmBlk,
-           input [0:3] fmAdr,
+           input [0:2] APR_FMblk,
+           input [0:3] APR_FMadr,
 
            input fmWrite00_17,
            input fmWrite18_35,
@@ -49,8 +50,7 @@ module edp(input clk,
            input [0:8] CRAM_DIAG_FUNC,
            input diagReadFunc12X,
 
-           input [0:35] VMAheldOrPC,
-           input [0:8] magic,
+           input [0:35] VMA_VMAheldOrPC,
 
            output reg [0:35] EDP_AD,
            output reg [0:36] EDP_ADX,
@@ -60,6 +60,7 @@ module edp(input clk,
            output reg ADoverflow00,
            output reg [0:35] EDP_AR,
            output reg [0:35] EDP_ARX,
+           output reg [0:35] FM,
            output reg fmWrite,
            output reg fmParity,
 
@@ -92,8 +93,6 @@ module edp(input clk,
   reg [0:35] AD_CG, AD_CP;
   reg [0:35] ADX_CG, ADX_CP;
 
-  wire [0:35] FM;
-
   wire AD_CG06_11, AD_CG12_35, AD_CP06_11, AD_CP12_35;
   wire AD_CG18_23, AD_CG24_35, AD_CP18_23;
   wire AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
@@ -110,12 +109,23 @@ module edp(input clk,
   wire [0:35] ADAen = CRAM_ADA[0];
   wire [0:1] ADBsel = CRAM_ADB;
 
+  wire [0:2] ARRsel = CRAM_AR;
+
+  wire [2:0] ARXLsel = CTL_ARXL_SEL;
+  wire [2:0] ARXRsel = CTL_ARXR_SEL;
+  wire ARXload = CTL_ARX_LOAD;
+  
+  wire [0:1] MQsel = CTL_MQ_SEL;
+  wire [0:1] MQMsel = CTL_MQM_SEL;
+  wire MQMen = CTL_MQM_EN;
+  
+
   // AR including ARL, ARR, and ARM p15.
 
   always @(*) begin
     case (ARLsel)
     3'b000: ARL = ARMM[0:17];
-    3'b001: ARL = cacheData[0:17];
+    3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
     3'b011: ARL = EBUS[0:17];
     3'b100: ARL = SHM_SH[0:17];
@@ -144,7 +154,7 @@ module edp(input clk,
     end else if (ARRload) begin
       case (ARRsel)
       3'b000: EDP_AR[18:35] <= ARMM[18:35];
-      3'b001: EDP_AR[18:35] <= cacheData[18:35];
+      3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
       3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
       3'b011: EDP_AR[18:35] <= EBUS[18:35];
       3'b100: EDP_AR[18:35] <= SHM_SH[18:35];
@@ -160,7 +170,7 @@ module edp(input clk,
 
     case (ARXLsel)
     3'b000: ARXL = 0;
-    3'b001: ARXL = cacheData[0:17];
+    3'b001: ARXL = cacheDataRead[0:17];
     3'b010: ARXL = EDP_AD[0:17];
     3'b011: ARXL = EDP_MQ[0:17];
     3'b100: ARXL = SHM_SH[0:17];
@@ -171,7 +181,7 @@ module edp(input clk,
 
     case (ARXRsel)
     3'b000: ARXR = 0;
-    3'b001: ARXR = cacheData[18:35];
+    3'b001: ARXR = cacheDataRead[18:35];
     3'b010: ARXR = EDP_AD[18:35];
     3'b011: ARXR = EDP_MQ[18:35];
     3'b100: ARXR = SHM_SH[18:35];
@@ -405,7 +415,7 @@ module edp(input clk,
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always @(*)
         case(ADBsel)
-        3'b000: ADXB[n+0:n+5] = magic[n+0:n+5];
+        3'b000: ADXB[n+0:n+5] = CRAM_MAGIC[n+0:n+5];
         3'b001: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+6], 1'b0};
         3'b010: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
         3'b011: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
@@ -431,7 +441,7 @@ module edp(input clk,
           2'b00: ADA[n+0:n+5] = EDP_AR[n+0:n+5];
           2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
           2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
-          2'b11: ADA[n+0:n+5] = VMAheldOrPC[n+0:n+5];
+          2'b11: ADA[n+0:n+5] = VMA_VMAheldOrPC[n+0:n+5];
           endcase // case (ADAsel)
         else
           ADA[n+0:n+5] = 0;
@@ -440,7 +450,7 @@ module edp(input clk,
 
 
   // FM. No static at all!
-  wire [0:6] fmAddress = {fmBlk, fmAdr};
+  wire [0:6] fmAddress = {APR_FMblk, APR_FMadr};
 
   fm_mem fm_mem0(.addra(fmAddress),
                  .clka(clk),

@@ -26,7 +26,6 @@ module top(
   wire                  IRdrivingEBUS;          // From ebox0 of ebox.v
   wire [0:35]           SCD_EBUS;               // From ebox0 of ebox.v
   wire                  SCDdrivingEBUS;         // From ebox0 of ebox.v
-  wire [0:35]           cacheData;              // From mbox0 of mbox.v
   wire                  eboxCCA;                // From ebox0 of ebox.v
   wire                  eboxCache;              // From ebox0 of ebox.v
   wire                  eboxERA;                // From ebox0 of ebox.v
@@ -106,6 +105,7 @@ module top(
   // EBUS as well. (See KL10_BlockDiagrams_May76.pdf p.3.) Therefore
   // top.v is where the EBUS mux belongs.
   reg [0:35] EBUS;
+  reg [0:7] EBUS_DS;
 
   // EBUS is muxed in this design based on each module output
   // XXXdrivingEBUS.
@@ -175,25 +175,27 @@ module top(
              .pfEBOXHandle              (pfEBOXHandle),
              .pfPublic                  (pfPublic),
              .mboxGateVMA               (mboxGateVMA[27:35]),
-             .cacheData                 (cacheData[0:35]),
+             .cacheDataRead             (cacheDataRead[0:35]),
              .pfDisp                    (pfDisp[0:10]),
              .cshAdrParErr              (cshAdrParErr),
              .mbParErr                  (mbParErr),
              .sbusErr                   (sbusErr),
              .nxmErr                    (nxmErr),
              .mboxCDirParErr            (mboxCDirParErr),
-             .EBUS                      (EBUS[0:35]));
+             .EBUS                      (EBUS[0:35]),
+             .EBUS_DS                   (EBUS_DS[0:7]));
 
   mbox mbox0(.clk(mboxClk),
              /*AUTOINST*/
              // Outputs
-             .cacheData                 (cacheData[0:35]),
+             .cacheDataRead             (cacheDataRead[0:35]),
              .pfDisp                    (pfDisp[0:10]),
              // Inputs
              .vma                       (vma[13:35]),
              .vmaACRef                  (vmaACRef),
              .mboxGateVMA               (mboxGateVMA[37:35]),
              .writeData                 (writeData[0:35]),
+             .cacheDataWrite            (cacheDataWrite[0:35]),
              .req                       (req),
              .read                      (read),
              .PSE                       (PSE),

@@ -36,7 +36,7 @@ module crm(input clk,
            output reg [5:0] CRAM_DISP,
            output reg [5:0] CRAM_SPEC,
            output reg [1:0] CRAM_MARK,
-           output reg [9:0] CRAM_magic,
+           output reg [9:0] CRAM_MAGIC,
            output reg [6:0] CRAM_MAJVER,
            output reg [3:0] CRAM_MINVER,
            output reg [1:0] CRAM_KLPAGE,
@@ -99,7 +99,7 @@ module crm(input clk,
   assign CRAM_DISP = CRAMdata[67:71];
   assign CRAM_SPEC = CRAMdata[67:71];
   assign CRAM_MARK = CRAMdata[74:74];
-  assign CRAM_magic = CRAMdata[75:83];
+  assign CRAM_MAGIC = CRAMdata[75:83];
   assign CRAM_MAJVER = CRAMdata[75:80];
   assign CRAM_MINVER = CRAMdata[81:83];
   assign CRAM_KLPAGE = CRAMdata[75:75];

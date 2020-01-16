@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
 // M8522 IR
 module ir(input clk,
-          input [0:35] cacheData,
+          input [0:35] cacheDataRead,
           input [0:35] EDP_AD,
           input [0:8] CRAM_DIAG_FUNC,
-          input [0:8] CRAM_magic,
+          input [0:8] CRAM_MAGIC,
           input mbXfer,
           input loadIR,
           input loadDRAM,
@@ -65,7 +65,7 @@ module ir(input clk,
   assign JRST0 = IR[0:12] === 13'b010_101_100_0000;
 
   // Model mc10173 mux + transparent latches
-  always @(loadIR) if (loadIR) IR_R <= mbXfer ? AD[0:12] : cacheData[0:12];
+  always @(loadIR) if (loadIR) IR_R <= mbXfer ? AD[0:12] : cacheDataRead[0:12];
 
   // XXX In addition to the below, this has two mystery OR term
   // signals on each input to the AND that are unlabeled except for
@@ -126,16 +126,16 @@ module ir(input clk,
 
   // Latch-mux
   always @(loadIR) if (loadIR) begin
-    IR_R <= mbXfer ? AD[0:12] : cacheData[0:12];
+    IR_R <= mbXfer ? AD[0:12] : cacheDataRead[0:12];
     IRAC_R <= enableAC ? IR[9:12] : 4'b0;
   end
 
-  assign magic7eq8 = CRAM_magic[7] ^ CRAM_magic[8];
+  assign magic7eq8 = CRAM_MAGIC[7] ^ CRAM_MAGIC[8];
   assign AgtB = AD[0] ^ ADcarry_02;
   assign ADeq0 = ~|AD;
   assign testSatisfied = |{DRAM_B[1] & ADeq0,                 // EQ
-                           DRAM_B[2] & AgtB & CRAM_magic[7],  // GT
-                           DRAM_B[2] & AD[0] & CRAM_magic[8], // LT
+                           DRAM_B[2] & AgtB & CRAM_MAGIC[7],  // GT
+                           DRAM_B[2] & AD[0] & CRAM_MAGIC[8], // LT
                            ~magic7eq8 & ADcarry_02            // X
                            } ^ DRAM_B[0];
 
