@@ -21,6 +21,7 @@ module top(
   wire [0:35] cacheDataRead;
   wire [0:35] cacheDataWrite;
   wire [10:12] cacheClearer;
+  wire [13:35] eboxVMA;
 
   wire anyEboxError;
 
@@ -36,6 +37,7 @@ module top(
              .sbusErr(0),
              .nxmErr(0),
              .mboxCDirParErr(0),
+
              /*AUTOINST*/
              // Outputs
              .eboxVMA                   (eboxVMA),
@@ -77,7 +79,7 @@ module top(
              .clk                       (clk),
              .cshEBOXT0                 (cshEBOXT0),
              .mboxGateVMA               (mboxGateVMA[27:35]),
-             .cacheData                 (cacheData));
+             .cacheData                 (cacheData[0:35]));
 
   mbox mbox0(.clk(mboxClk),
              .vma(eboxVMA),
