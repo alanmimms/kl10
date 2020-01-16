@@ -152,6 +152,74 @@ module cra(input clk,
     CRADR <= J | {11{force1777}} | dispMux;
   end
 
+  ////////////////////////////////////////////////////////////////
+  // The incredibly baroque call/return stack implementation
+  //
+  // STACK ADDRESS SEQUENCE
+  // Y  ABCD EFGH  Z  |  WRITE  READ
+  // -----------------|------------
+  // 0  1111 000X  0  |   16    10         RESET
+  // 1  0111 1000  1  |   17    14         RESET
+  // 0  1011 1100  0  |   07    16         RESET
+  // 1  0101 1110  0  |   13    17         RESET
+  //                  |
+  // 1  1010 1111  0  |   05    07         RESET
+  // 0  1101 0111  1  |   12    13         RESET
+  // 0  0110 1011  1  |   15    05         RESET
+  // 1  0011 0101  1  |   06    12         RESET
+  //                  |
+  // 0  1001 1010  1  |   03    15         RESET
+  // 0  0100 1101  0  |   11    06         RESET
+  // 0  0010 0110  1  |   04    03         RESET
+  // 1  0001 0011  0  |   02    11         RESET
+  //                  |
+  // 1  1000 1001  1  |   01    04         RESET
+  // 1  1100 0100  1  |   10    02         RESET
+  // 1  1110 0010  0  |   14    01         RESET
+  // 0  1111 0001  0  |   16    10         RESET
+
+  // E56,E57
+  reg [0:7] stackAdrAD, stackAdrEH;
+  wire stackAdrA, stackAdrB, stackAdrC, stackAdrD;
+  wire stackAdrE, stackAdrF, stackAdrG, stackAdrH;
+
+  assign stackAdrA = stackAdrAD[0];
+  assign stackAdrB = stackAdrAD[1];
+  assign stackAdrC = stackAdrAD[2];
+  assign stackAdrD = stackAdrAD[3];
+
+  assign stackAdrE = stackAdrEH[0];
+  assign stackAdrF = stackAdrEH[1];
+  assign stackAdrG = stackAdrEH[2];
+  assign stackAdrH = stackAdrEH[3];
+
+  wire stackAdrY = stackAdrA ^ stackAdrD;
+  wire stackAdrZ = stackAdrF ^ stackAdrE;
+
+  always @(posedge clk) begin
+
+    if (callForce1777 && retNotForce1777) begin // LOAD
+      stackAdrAD <= 4'b1111;
+      stackAdrEH <= 4'b0000;
+    end else if (callForce1777) begin           // 0in+0
+      stackAdrAD <= {stackAdrY, {3{retNotForce1777}}};
+      stackAdrEH <= {stackAdrD, 3'b000};
+    end else if (retNotForce1777) begin         // 3in+3
+      stackAdrAD <= {{3{retNotForce1777}}, stackAdrE};
+      stackAdrEH <= {3'b000, stackAdrZ};
+    end else begin                              // HOLD
+      stackAdrAD <= stackAdrAD;
+      stackAdrEH <= stackAdrEH;
+    end
+
+    // XXX still need to implement remainder of p.346 CRA4.
+
+  end
+
+
+  ////////////////////////////////////////////////////////////////
+  // Diagnostics stuff
+
   always @(*) dispParity = ^{CALL, DISP};
 
   always @(posedge clk) begin
