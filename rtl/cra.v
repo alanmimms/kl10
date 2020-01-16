@@ -28,6 +28,8 @@ module cra(
            input [0:10] NICOND,
            input [0:3] SR,
            input [0:10] pfDisp,
+           input skipEn40_47,
+           input skipEn50_57,
 
            input ADeq0,
            input FEsign,
@@ -36,7 +38,7 @@ module cra(
            input SCADeq0,
 
            output reg [11:0] CRADR,
-           output [1:10] AREAD,
+           output reg [1:10] AREAD,
            output reg dispParity,
            output reg drivingEBUS,
            output reg [0:35] ebusOut
@@ -50,15 +52,28 @@ module cra(
   reg [0:10] loc;
   reg [1:10] AREAD;
 
+  wire dispEn00_03, dispEn00_07, dispEn30_37;
   wire shortIndirWord;
-  wire callResetForce1777;
+  wire callForce1777;
+  wire retNotForce1777;
+  wire ret;
+
+  // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
+  // they are simple CRAM storage mapping to logical fields.
+
+  // Remaining features of E47,E35 are CRAM DISP field decoding.
+  assign dispEn00_03 = DISP[0:4] === 5'b00011;
+  assign dispEn00_07 = DISP[0:4] === 5'b00111;
+  assign dispEn30_37 = DISP[0:4] === 5'b11111;
 
   assign shortIndirWord = ~longEnable | ARX[1];
-  assign callResetForce1777 = callReset | force1777;
+  assign callForce1777 = CALL | force1777;
+  assign retNotForce1777 = RET & ~force1777;
+  assign ret = dispEn00_03 && disp[3] & disp[4];
 
   always @(*) begin
 
-    if (dispMux00_03) begin
+    if (dispEn00_03) begin
       case (DISP[3:4])
       2'b00: dispMux[0:6] <= diagAdr[0:6];
       2'b01: dispMux[0:6] <= {2'b00, DRAM_J[1:4], 2'b00};
@@ -115,14 +130,6 @@ module cra(
     
     CRADR <= J | {11{clkForce1777}} | dispMux;
   end
-
-  // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
-  // they are simple CRAM storage mapping to logical fields.
-
-  // Remaining features of E47,E35 are CRAM DISP field decoding.
-  assign dispEn00_03 = DISP[0:4] === 5'b00011;
-  assign dispEn00_07 = DISP[0:4] === 5'b00111;
-  assign dispEn30_37 = DISP[0:4] === 5'b11111;
 
   always @(*) dispPartity = ^{CRAM_CALL, DISP};
 
