@@ -2,6 +2,7 @@
 // M8525 CON
 module con(input clk,
            output loadIR,
-           output loadDRAM
-          );
+           output loadDRAM,
+           output longEnable
+          /*AUTOARG*/);
 endmodule // con

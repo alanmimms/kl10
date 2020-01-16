@@ -17,6 +17,10 @@ module scd(input clk,
            output [0:35] SCADA,
            output [0:35] SCADB,
            output SC_GE_36,
+           output SCADeq0,
+           output SCADsign,
+           output SCsign,
+           output FEsign,
 
            output OV,
            output CRY0,
@@ -36,5 +40,5 @@ module scd(input clk,
            output PUBLIC,
            output PRIVATE,
            output ADR_BRK_PREVENT
-          );
+          /*AUTOARG*/);
 endmodule // scd

@@ -65,7 +65,7 @@ module ebox(input clk,
 
   // TEMPORARY
   wire [7:0] fmAddress;
-  wire FORCE1777;
+  wire force1777;
   wire CONDAdr10;
   wire MULdone;
 
@@ -111,12 +111,13 @@ module ebox(input clk,
   cra cra0(/*AUTOINST*/
            // Outputs
            .CRADR                       (CRADR[11:0]),
+           .AREAD                       (AREAD[1:10]),
            .dispParity                  (dispParity),
            .drivingEBUS                 (drivingEBUS),
            .ebusOut                     (ebusOut[0:35]),
            // Inputs
            .clk                         (clk),
-           .clkForce1777                (clkForce1777),
+           .force1777                   (force1777),
            .MULdone                     (MULdone),
            .DRAM_A                      (DRAM_A[0:3]),
            .DRAM_B                      (DRAM_B[0:3]),
@@ -132,15 +133,34 @@ module ebox(input clk,
            .magic                       (magic[8:0]),
            .ebusIn                      (ebusIn[0:35]),
            .diag                        (diag[4:6]),
+           .norm                        (norm[8:10]),
            .NICOND                      (NICOND[0:10]),
            .SR                          (SR[0:3]),
+           .SH                          (SH[0:35]),
+           .MQ                          (MQ[0:35]),
+           .BR                          (BR[0:35]),
+           .AD                          (AD[0:35]),
+           .ADX                         (ADX[0:35]),
+           .AR                          (AR[0:35]),
+           .ARX                         (ARX[0:35]),
            .pfDisp                      (pfDisp[0:10]),
-           .AREAD                       (AREAD[0:10]),
+           .eaType                      (eaType[7:10]),
+           .skipEn40_47                 (skipEn40_47),
+           .skipEn50_57                 (skipEn50_57),
+           .diagReadFunc14X             (diagReadFunc14X),
+           .pcSection0                  (pcSection0),
+           .localACAddress              (localACAddress),
+           .longEnable                  (longEnable),
+           .indexed                     (indexed),
+           .ADcarry_02                  (ADcarry_02),
            .ADeq0                       (ADeq0),
+           .ACeq0                       (ACeq0),
            .FEsign                      (FEsign),
            .SCsign                      (SCsign),
            .SCADsign                    (SCADsign),
-           .SCADeq0                     (SCADeq0));
+           .SCADeq0                     (SCADeq0),
+           .FPD                         (FPD),
+           .ARparityOdd                 (ARparityOdd));
 
   crm crm0(.J(CRAM_J),
            .AD(CRAM_AD),
@@ -252,7 +272,7 @@ module ebox(input clk,
            .AR00to11clr                 (AR00to11clr),
            .AR12to17clr                 (AR12to17clr),
            .ARRclr                      (ARRclr),
-           .cacheData                   (cacheData),
+           .cacheData                   (cacheData[0:35]),
            .adToEBUS_L                  (adToEBUS_L),
            .adToEBUS_R                  (adToEBUS_R),
            .ADbool                      (ADbool),
@@ -274,6 +294,7 @@ module ebox(input clk,
          .ACeq0                         (ACeq0),
          .JRST0                         (JRST0),
          .testSatisfied                 (testSatisfied),
+         .norm                          (norm[8:10]),
          .IR                            (IR[0:12]),
          .IRAC                          (IRAC[9:12]),
          .DRAM_A                        (DRAM_A[2:0]),
@@ -282,7 +303,7 @@ module ebox(input clk,
          .DRAM_ODD_PARITY               (DRAM_ODD_PARITY),
          // Inputs
          .clk                           (clk),
-         .cacheData                     (cacheData),
+         .cacheData                     (cacheData[0:35]),
          .CRAM_magic                    (CRAM_magic[0:8]),
          .mbXfer                        (mbXfer),
          .loadIR                        (loadIR),
@@ -304,6 +325,8 @@ module ebox(input clk,
 
   vma vma0(
            /*AUTOINST*/
+           // Outputs
+           .localACAddress              (localACAddress),
            // Inputs
            .clk                         (clk));
 
@@ -344,7 +367,7 @@ module ebox(input clk,
            .mboxXfer                    (mboxXfer),
            .pfHold                      (pfHold),
            .ptPublic                    (ptPublic),
-           .clkForce1777                (clkForce1777),
+           .force1777                   (force1777),
            // Inputs
            .cshEBOXT0                   (cshEBOXT0),
            .cshEBOXRetry                (cshEBOXRetry),
@@ -411,18 +434,19 @@ module ebox(input clk,
 
   shm shm0(.AR(EDP_AR),
            .ARX(EDP_ARX),
-           .AR36(ARcarry36),
-           .ARX36(ARXcarry36),
-           .longEnable(longEnable),
+           .SH                          (SHM_SH),
+           .XR                          (SHM_XR),
+           .CRAM_SH                     (CRAM_SH),
            /*AUTOINST*/
            // Outputs
-           .XR                          (XR[3:0]),
            .indexed                     (indexed),
            .ARextended                  (ARextended),
            .ARparityOdd                 (ARparityOdd),
            // Inputs
            .clk                         (clk),
-           .CRAM_SH                     (CRAM_SH[1:0]));
+           .ARcarry36                   (ARcarry36),
+           .ARXcarry36                  (ARXcarry36),
+           .longEnable                  (longEnable));
 
   csh csh0(
            /*AUTOINST*/

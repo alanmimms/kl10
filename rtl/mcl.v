@@ -10,11 +10,11 @@ module mcl(output eboxReqIn,
            output mboxXfer,
            output pfHold,
            output ptPublic,
-           output clkForce1777,
+           output force1777,
 
            input pcp,
            input iot,
            input user,
            input public
-           );
+           /*AUTOARG*/);
 endmodule // mcl

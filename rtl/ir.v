@@ -22,12 +22,14 @@ module ir(input clk,
           input ADXcarry12,
           input ADXcarry24,
 
+          output ADeq0,
           output IOlegal,
           output ACeq0,
           output JRST0,
           output testSatisfied,
           output drivingEBUS,
           output [0:35] ebusOut,
+          output [8:10] norm,
           output [0:12] IR,
           output [9:12] IRAC,
           output [2:0] DRAM_A,
@@ -78,7 +80,6 @@ module ir(input clk,
   wire enableAC;
   wire magic7eq8;
   wire AgtB;
-  wire ADeq0;
 
   // This mess is p.128 E55,E70,E71,E75,E76
   assign instr7XX = IR[0] & IR[1] & IR[2] & enIO_JRST;
@@ -175,16 +176,14 @@ module ir(input clk,
     enAC <= enJRST6 & (~enJRST7 | enAC);
   end
 
-  wire [8:10] norm;
-
   // p.130 E67 priority encoder
-  assign norm = AD[0] ? 3'b001 :
-                |AD[0:5] || AD[6] ? 3'b010 :
-                AD[7] ? 3'b011 :
-                AD[8] ? 3'b100 :
-                AD[9] ? 3'b101 :
-                AD[10] ? 3'b110 :
-                |AD[6:35];
+  always @(*) norm = AD[0] ? 3'b001 :
+                     |AD[0:5] || AD[6] ? 3'b010 :
+                     AD[7] ? 3'b011 :
+                     AD[8] ? 3'b100 :
+                     AD[9] ? 3'b101 :
+                     AD[10] ? 3'b110 :
+                     |AD[6:35];
 
   assign DRAM_ODD_PARITY = ^{DRAM_A, DRAM_B, DRAM_PAR, DRAM_J[1:4], DRAM_PAR_J[7:10]};
 

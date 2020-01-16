@@ -3,15 +3,16 @@
 module shm(input clk,
            input [0:35] AR,
            input [0:35] ARX,
-           input AR36,
-           input ARX36,
+           input ARcarry36,
+           input ARXcarry36,
            input longEnable,
 
            input [1:0] CRAM_SH,
 
-           output [3:0] XR,
+           output reg [0:35] SH,
+           output reg [3:0] XR,
            output indexed,
            output ARextended,
            output ARparityOdd
-          );
+          /*AUTOARG*/);
 endmodule // shm

@@ -14,6 +14,7 @@
   * Where "xxx" is module's use case (e.g., "cram" or "fm")
   * Where "type" is module's use type (e.g., "mem")
 
+
 ## Differences from KL10PV
 * Multiple drivers on a single bus are not the FPGA Way.
   * EBUS is multiplexed
@@ -24,3 +25,8 @@
     * Each module that inputs from EBUS uses its ebusIn input.
     * Each module that drives EBUS uses its ebusOut output.
   * EBOX/MBOX cacheData split into cacheDataRead/cacheDataWrite
+
+
+# TODO
+- Fix bit ordering in module arguments to be one way or the other.
+- Use sim to see if [0:3] is a four bit field we can use as a number.

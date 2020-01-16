@@ -6,7 +6,7 @@ module ctl(input clk,
            input PCplus1inh,
 
            output ADXcarry36,
-           output ADLONG
+           output ADlong
            /*AUTOARG*/);
 
   wire spec_XCRY_AR0;
