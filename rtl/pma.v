@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module pma(input clk
+module pma(input eboxClk
           );
 endmodule // pma

@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module csh(input clk
+module csh(input eboxClk
           );
 endmodule // csh

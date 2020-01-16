@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8543 CTL
-module ctl(input clk,
+module ctl(input eboxClk,
            input CRAM_ADcarry,
            input [0:35] EDP_AR,
            input PCplus1inh,
@@ -17,17 +17,14 @@ module ctl(input clk,
            output reg [0:2] CTL_ARR_SEL,
            output reg [2:0] CTL_ARXL_SEL,
            output reg [2:0] CTL_ARXR_SEL,
-
-           output reg [2:0] CTL_ARXL_SEL,
-           output reg [2:0] CTL_ARXR_SEL,
            output reg CTL_ARX_LOAD,
 
            output reg [0:1] CTL_MQ_SEL,
            output reg [0:1] CTL_MQM_SEL,
            output reg CTL_MQM_EN,
 
-           output reg ADXcarry36,
-           output reg ADlong
+           output ADXcarry36,
+           output ADlong
            /*AUTOARG*/);
 
   /*AUTOWIRE*/
@@ -37,7 +34,8 @@ module ctl(input clk,
   wire PIcycleSaveFlags;
 
   assign PIcycleSaveFlags = PCplus1inh & spec_XCRY_AR0;
-  assign ADXcarry36 = ~PIcycleSaveFlags & ((ar[0] & spec_XCRY_AR0) ^ CRAM_ADcarry);
+  assign ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM_ADcarry);
+  assign ADlong = 0;            // XXX not right
 
   // XXX this not nearly complete.
 endmodule // ctl

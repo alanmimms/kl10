@@ -1,4 +1,4 @@
 `timescale 1ns / 1ps
-module cha(input clk
+module cha(input eboxClk
           );
 endmodule // cha

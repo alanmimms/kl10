@@ -1,17 +1,5 @@
 `timescale 1ns / 1ps
-module top(
-           input clk,
-
-           input STARTbutton,
-           input CONTINUEbutton,
-
-           output LED0R,
-           output LED0G,
-           output LED0B,
-
-           output LED1R,
-           output LED1G,
-           output LED1B
+module top(input clk
            /*AUTOARG*/);
 
   /*AUTOWIRE*/
@@ -20,6 +8,7 @@ module top(
   wire                  APRdrivingEBUS;         // From ebox0 of ebox.v
   wire [0:35]           CRA_EBUS;               // From ebox0 of ebox.v
   wire                  CRAdrivingEBUS;         // From ebox0 of ebox.v
+  wire [13:35]          EBOX_VMA;               // From ebox0 of ebox.v
   wire [0:35]           EDP_EBUS;               // From ebox0 of ebox.v
   wire                  EDPdrivingEBUS;         // From ebox0 of ebox.v
   wire [0:35]           IR_EBUS;                // From ebox0 of ebox.v
@@ -28,6 +17,7 @@ module top(
   wire                  SCDdrivingEBUS;         // From ebox0 of ebox.v
   wire                  eboxCCA;                // From ebox0 of ebox.v
   wire                  eboxCache;              // From ebox0 of ebox.v
+  wire                  eboxClk;                // From clk0 of clk.v
   wire                  eboxERA;                // From ebox0 of ebox.v
   wire                  eboxEnRefillRAMWr;      // From ebox0 of ebox.v
   wire                  eboxLoadReg;            // From ebox0 of ebox.v
@@ -43,7 +33,9 @@ module top(
   wire                  eboxUser;               // From ebox0 of ebox.v
   wire                  eboxWrite;              // From ebox0 of ebox.v
   wire                  ept;                    // From ebox0 of ebox.v
+  wire                  fastMemClk;             // From clk0 of clk.v
   wire                  ki10PagingMode;         // From ebox0 of ebox.v
+  wire                  mbXfer;                 // From clk0 of clk.v
   wire                  mboxCtl03;              // From ebox0 of ebox.v
   wire                  mboxCtl06;              // From ebox0 of ebox.v
   wire                  pageAdrCond;            // From ebox0 of ebox.v
@@ -59,14 +51,6 @@ module top(
   // End of automatics
 
   /*AUTOREG*/
-  // Beginning of automatic regs (for this module's undeclared outputs)
-  reg                   LED0B;
-  reg                   LED0G;
-  reg                   LED0R;
-  reg                   LED1B;
-  reg                   LED1G;
-  reg                   LED1R;
-  // End of automatics
 
   wire mboxClk;
   wire eboxSync;
@@ -119,14 +103,21 @@ module top(
            EBUS <= SCD_EBUS;
   end
 
+  clk clk0(/*AUTOINST*/
+           // Outputs
+           .mbXfer                      (mbXfer),
+           .eboxClk                     (eboxClk),
+           .fastMemClk                  (fastMemClk));
+
   ebox ebox0(/*AUTOINST*/
              // Outputs
-             .eboxVMA                   (eboxVMA[13:35]),
+             .EBOX_VMA                  (EBOX_VMA[13:35]),
              .cacheClearer              (cacheClearer[10:12]),
              .eboxReq                   (eboxReq),
              .eboxSync                  (eboxSync),
              .mboxClk                   (mboxClk),
              .vmaACRef                  (vmaACRef),
+             .cacheDataWrite            (cacheDataWrite[0:35]),
              .pageTestPriv              (pageTestPriv),
              .pageIllEntry              (pageIllEntry),
              .eboxUser                  (eboxUser),
@@ -167,7 +158,8 @@ module top(
              .SCDdrivingEBUS            (SCDdrivingEBUS),
              .SCD_EBUS                  (SCD_EBUS[0:35]),
              // Inputs
-             .clk                       (clk),
+             .eboxClk                   (eboxClk),
+             .fastMemClk                (fastMemClk),
              .cshEBOXT0                 (cshEBOXT0),
              .cshEBOXRetry              (cshEBOXRetry),
              .mboxRespIn                (mboxRespIn),
@@ -191,10 +183,9 @@ module top(
              .cacheDataRead             (cacheDataRead[0:35]),
              .pfDisp                    (pfDisp[0:10]),
              // Inputs
-             .vma                       (vma[13:35]),
+             .EBOX_VMA                  (EBOX_VMA[13:35]),
              .vmaACRef                  (vmaACRef),
              .mboxGateVMA               (mboxGateVMA[37:35]),
-             .writeData                 (writeData[0:35]),
              .cacheDataWrite            (cacheDataWrite[0:35]),
              .req                       (req),
              .read                      (read),

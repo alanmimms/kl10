@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8540 SHM
-module shm(input clk,
+module shm(input eboxClk,
            input [0:35] EDP_AR,
            input [0:35] EDP_ARX,
            input ARcarry36,

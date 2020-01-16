@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
 // M8538 MTR
-module mtr(input clk
+module mtr(input eboxClk
           );
 endmodule // mtr

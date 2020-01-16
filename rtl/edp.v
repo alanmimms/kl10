@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
-module edp(input clk,
+module edp(input eboxClk,
+           input fastMemClk,
 
            input ADXcarry36, // CTL1
            input ADlong,     // CTL
@@ -35,8 +36,10 @@ module edp(input clk,
            input CTL_MQM_EN,
 
            input [0:35] cacheDataRead,
+           output reg [0:35] cacheDataWrite,
            input [0:35] EBUS,
            input [0:35] SHM_SH,
+           input [0:8] SCD_ARMM,
 
            input adToEBUS_L,
            input adToEBUS_R,
@@ -57,14 +60,14 @@ module edp(input clk,
            output reg [0:36] EDP_BR,
            output reg [0:36] EDP_BRX,
            output reg [0:35] EDP_MQ,
-           output reg ADoverflow00,
+           output wire ADoverflow00,
            output reg [0:35] EDP_AR,
            output reg [0:35] EDP_ARX,
            output reg [0:35] FM,
-           output reg fmWrite,
-           output reg fmParity,
+           output fmWrite,
+           output fmParity,
 
-           output reg ADcarry36,
+           output ADcarry36,
            output reg EDPdrivingEBUS,
            output reg [0:35] EDP_EBUS
            );
@@ -123,8 +126,8 @@ module edp(input clk,
   // AR including ARL, ARR, and ARM p15.
 
   always @(*) begin
-    case (ARLsel)
-    3'b000: ARL = ARMM[0:17];
+    case (CTL_ARL_SEL)
+    3'b000: ARL = SCD_ARMM[0:17];
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
     3'b011: ARL = EBUS[0:17];
@@ -137,23 +140,23 @@ module edp(input clk,
   
   always @(posedge clk) begin
 
-    if (AR00to11clr) begin
+    if (CTL_AR00to11clr) begin
       EDP_AR[0:11] <= 0;
-    end else if (AR00to08load) begin
+    end else if (CTL_AR00to08load) begin
       EDP_AR[0:8] <= ARL[0:8];
     end
 
-    if (AR12to17clr) begin
+    if (CTL_AR12to17clr) begin
       EDP_AR[12:17] <= 0;
-    end else if (AR09to17load) begin
+    end else if (CTL_AR09to17load) begin
       EDP_AR[9:17] <= ARL[9:17];
     end
 
-    if (ARRclr) begin
+    if (CTL_ARRclr) begin
       EDP_AR[18:35] <= 0;
-    end else if (ARRload) begin
+    end else if (CTL_ARRload) begin
       case (ARRsel)
-      3'b000: EDP_AR[18:35] <= ARMM[18:35];
+      3'b000: EDP_AR[18:35] <= SCD_ARMM[18:35];
       3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
       3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
       3'b011: EDP_AR[18:35] <= EBUS[18:35];
@@ -277,9 +280,9 @@ module edp(input clk,
     for (n = 0; n < 36; n = n + 6) begin : ADaluE1
       mc10181(.S(ADsel), .M(ADbool),
               .A({ADA[n+0], ADA[n+0], ADA[n+0], ADA[n+1]}),
-              .B(ADB[n-2:1]),
+              .B(CRAM_ADB[n-2:1]),
               .CIN(ADcarry[n+2]),
-              .F(AD[n-2:n+1]),
+              .F(EDP_AD[n-2:n+1]),
               .CG(AD_CG[n+0]),
               .CP(AD_CP[n+0]),
               .COUT(ADcarry[n-2]));
@@ -292,7 +295,7 @@ module edp(input clk,
               .A(ADA[n+2:n+5]),
               .B(ADB[n+2:n+5]),
               .CIN(n < 30 ? ADcarry[n+6] : ADcarry36),
-              .F(AD[n+2:n+5]),
+              .F(EDP_AD[n+2:n+5]),
               .CG(AD_CG[n+2]),
               .CP(AD_CP[n+2]),
               .COUT(ADcarry[n+2]));
@@ -305,7 +308,7 @@ module edp(input clk,
               .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
               .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
               .CIN(ADXcarry[n+3]),
-              .F(ADX[n:n+2]),
+              .F(EDP_ADX[n:n+2]),
               .CG(ADX_CG[n+0]),
               .CP(ADX_CP[n+0]));
     end
@@ -317,7 +320,7 @@ module edp(input clk,
               .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
               .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
               .CIN(n < 30 ? ADXcarry[n+6] : ADXcarry36),
-              .F(ADX[n+3:n+5]),
+              .F(EDP_ADX[n+3:n+5]),
               .CG(ADX_CG[n+3]),
               .CP(ADX_CP[n+3]));
     end

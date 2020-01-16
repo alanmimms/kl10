@@ -1,6 +1,7 @@
 `timescale 1ns / 1ps
 // M8544 MCL
-module mcl(output eboxReqIn,
+module mcl(input eboxClk,
+           output eboxReqIn,
            input cshEBOXT0,
            input cshEBOXRetry,
            output mboxRespIn,

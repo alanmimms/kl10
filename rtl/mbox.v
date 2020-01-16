@@ -1,9 +1,8 @@
 `timescale 1ns / 1ps
 module mbox(input clk,
-            input [13:35] vma,
+            input [13:35] EBOX_VMA,
             input vmaACRef,
             input [37:35] mboxGateVMA,
-            input [0:35] writeData,
             input [0:35] cacheDataWrite,
             output reg [0:35] cacheDataRead,
             output reg [0:10] pfDisp,
@@ -14,8 +13,8 @@ module mbox(input clk,
             /*AUTOARG*/);
 
   fake_mem mem0(.clka(clk),
-                .addra(vma),
-                .dina(writeData),
+                .addra(EBOX_VMA),
+                .dina(cacheDataWrite),
                 .douta(cacheDataRead),
                 .ena(1),
                 .wea(write)

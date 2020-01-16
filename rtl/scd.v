@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 // M8524 SCD
-module scd(input clk,
+module scd(input eboxClk,
            input [2:0] CRAM_SCAD,
            input [1:0] CRAM_SCADA,
            input [1:0] CRAM_SCADB,
@@ -11,7 +11,7 @@ module scd(input clk,
 
            output SCDdrivingEBUS,
            output [0:35] SCD_EBUS,
-           output [0:35] EDP_ARMM,
+           output [0:8] SCD_ARMM,
            output [0:9] SCD_FE,
            output [0:9] SCD_SC,
            output [0:35] SCD_SCADA,

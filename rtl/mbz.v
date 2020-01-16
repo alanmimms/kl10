@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
 // M8537 MBZ
-module mbz(input clk
+module mbz(input eboxClk
           );
 endmodule // mbz
