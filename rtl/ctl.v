@@ -23,6 +23,9 @@ module ctl(input eboxClk,
            output reg [0:1] CTL_MQM_SEL,
            output reg CTL_MQM_EN,
 
+           output reg CTL_adToEBUS_L,
+           output reg CTL_adToEBUS_R,
+
            output ADXcarry36,
            output ADlong
            /*AUTOARG*/);

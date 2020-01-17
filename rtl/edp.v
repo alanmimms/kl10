@@ -41,30 +41,29 @@ module edp(input eboxClk,
            input [0:35] SHM_SH,
            input [0:8] SCD_ARMM,
 
-           input adToEBUS_L,
-           input adToEBUS_R,
+           input CTL_adToEBUS_L,
+           input CTL_adToEBUS_R,
 
            input [0:2] APR_FMblk,
            input [0:3] APR_FMadr,
 
-           input fmWrite00_17,
-           input fmWrite18_35,
+           input CON_fmWrite00_17,
+           input CON_fmWrite18_35,
 
            input [0:8] CRAM_DIAG_FUNC,
            input diagReadFunc12X,
 
            input [0:35] VMA_VMAheldOrPC,
 
-           output reg [0:35] EDP_AD,
-           output reg [0:36] EDP_ADX,
+           output [0:35] EDP_AD,
+           output [0:36] EDP_ADX,
            output reg [0:36] EDP_BR,
            output reg [0:36] EDP_BRX,
            output reg [0:35] EDP_MQ,
            output wire ADoverflow00,
            output reg [0:35] EDP_AR,
            output reg [0:35] EDP_ARX,
-           output reg [0:35] FM,
-           output fmWrite,
+           output [0:35] FM,
            output fmParity,
 
            output ADcarry36,
@@ -87,14 +86,14 @@ module edp(input eboxClk,
 
   reg [0:35] MQM;
 
-  reg [-2:36] ADcarry;
-  reg [0:36] ADXcarry;
+  wire [-2:36] ADcarry;
+  wire [0:36] ADXcarry;
   
   reg [-2:35] ADA, ADB;
   reg [0:35] ADXA, ADXB;
 
-  reg [0:35] AD_CG, AD_CP;
-  reg [0:35] ADX_CG, ADX_CP;
+  wire [0:35] AD_CG, AD_CP;
+  wire [0:35] ADX_CG, ADX_CP;
 
   wire AD_CG06_11, AD_CG12_35, AD_CP06_11, AD_CP12_35;
   wire AD_CG18_23, AD_CG24_35, AD_CP18_23;
@@ -122,7 +121,6 @@ module edp(input eboxClk,
   wire [0:1] MQMsel = CTL_MQM_SEL;
   wire MQMen = CTL_MQM_EN;
   
-
   // AR including ARL, ARR, and ARM p15.
 
   always @(*) begin
@@ -278,51 +276,51 @@ module edp(input eboxClk,
   genvar n;
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADaluE1
-      mc10181(.S(ADsel), .M(ADbool),
-              .A({ADA[n+0], ADA[n+0], ADA[n+0], ADA[n+1]}),
-              .B(CRAM_ADB[n-2:1]),
-              .CIN(ADcarry[n+2]),
-              .F(EDP_AD[n-2:n+1]),
-              .CG(AD_CG[n+0]),
-              .CP(AD_CP[n+0]),
-              .COUT(ADcarry[n-2]));
+      mc10181 alu0(.S(ADsel), .M(ADbool),
+                   .A({ADA[n+0], ADA[n+0], ADA[n+0], ADA[n+1]}),
+                   .B(CRAM_ADB[n-2:1]),
+                   .CIN(ADcarry[n+2]),
+                   .F(EDP_AD[n-2:n+1]),
+                   .CG(AD_CG[n+0]),
+                   .CP(AD_CP[n+0]),
+                   .COUT(ADcarry[n-2]));
     end // block: ADalu
   endgenerate
   
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADaluE2
-      mc10181(.S(ADsel), .M(ADbool),
-              .A(ADA[n+2:n+5]),
-              .B(ADB[n+2:n+5]),
-              .CIN(n < 30 ? ADcarry[n+6] : ADcarry36),
-              .F(EDP_AD[n+2:n+5]),
-              .CG(AD_CG[n+2]),
-              .CP(AD_CP[n+2]),
-              .COUT(ADcarry[n+2]));
+      mc10181 alu1(.S(ADsel), .M(ADbool),
+                   .A(ADA[n+2:n+5]),
+                   .B(ADB[n+2:n+5]),
+                   .CIN(n < 30 ? ADcarry[n+6] : ADcarry36),
+                   .F(EDP_AD[n+2:n+5]),
+                   .CG(AD_CG[n+2]),
+                   .CP(AD_CP[n+2]),
+                   .COUT(ADcarry[n+2]));
     end // block: ADalu
   endgenerate
   
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3
-      mc10181(.S(ADsel), .M(ADbool),
-              .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
-              .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
-              .CIN(ADXcarry[n+3]),
-              .F(EDP_ADX[n:n+2]),
-              .CG(ADX_CG[n+0]),
-              .CP(ADX_CP[n+0]));
+      mc10181 alu2(.S(ADsel), .M(ADbool),
+                   .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
+                   .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
+                   .CIN(ADXcarry[n+3]),
+                   .F(EDP_ADX[n:n+2]),
+                   .CG(ADX_CG[n+0]),
+                   .CP(ADX_CP[n+0]));
     end
   endgenerate
 
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE4
-      mc10181(.S(ADsel), .M(ADbool),
-              .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
-              .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
-              .CIN(n < 30 ? ADXcarry[n+6] : ADXcarry36),
-              .F(EDP_ADX[n+3:n+5]),
-              .CG(ADX_CG[n+3]),
-              .CP(ADX_CP[n+3]));
+      mc10181 alu3(.S(ADsel), .M(ADbool),
+                   .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
+                   .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
+                   .CIN(n < 30 ? ADXcarry[n+6] : ADXcarry36),
+                   .F(EDP_ADX[n+3:n+5]),
+                   .CG(ADX_CG[n+3]),
+                   .CP(ADX_CP[n+3]));
     end
   endgenerate
 
@@ -337,33 +335,33 @@ module edp(input eboxClk,
 
   // IR4 E7
   mc10179 AD_LCG_E7(.G({AD_CG[6], AD_CG[6], AD_CG[8], AD_CG[8]}),
-                    .P({AD_CP[6],        0,        0, AD_CP[8]}),
+                    .P({AD_CP[6],     1'b0,     1'b0, AD_CP[8]}),
                     .CIN(0),
-                    .GOUT(AD_CG06_11),
-                    .POUT(AD_CP06_11));
+                    .GG(AD_CG06_11),
+                    .PG(AD_CP06_11));
 
   // IR4 E2
   mc10179 AD_LCG_E2(.G({AD_CG[12], AD_CG[14], AD_CG18_23, AD_CG24_35}),
                     .P({AD_CP[12], AD_CP[14], AD_CP18_23, AD_CP24_35}),
                     .CIN(ADcarry36),
-                    .GOUT(AD_CG12_35),
-                    .POUT(AD_CP12_35),
+                    .GG(AD_CG12_35),
+                    .PG(AD_CP12_35),
                     .C8OUT(ADcarry[12]),
                     .C2OUT(ADcarry[18]));
 
   // IR4 E6
   mc10179 AD_LCG_E6(.G({~inhibitCarry18, ~inhibitCarry18, AD_CG[18], AD_CG[20]}),
-                    .P({spec_genCarry18, 0, AD_CP[18], AD_CP[20]}),
+                    .P({spec_genCarry18, 1'b0, AD_CP[18], AD_CP[20]}),
                     .CIN(0),
-                    .GOUT(AD_CG18_23),
-                    .POUT(AD_CP18_23));
+                    .GG(AD_CG18_23),
+                    .PG(AD_CP18_23));
 
   // IR4 E1
   mc10179 AD_LCG_E1(.G({AD_CG[24], AD_CG[26], AD_CG[30], AD_CG[32]}),
                     .P({AD_CP[24], AD_CP[26], AD_CP[30], AD_CP[32]}),
                     .CIN(ADcarry36),
-                    .GOUT(AD_CG24_35),
-                    .POUT(AD_CP24_35),
+                    .GG(AD_CG24_35),
+                    .PG(AD_CP24_35),
                     .C8OUT(ADcarry[24]),
                     .C2OUT(ADcarry[30]));
 
@@ -378,8 +376,8 @@ module edp(input eboxClk,
   mc10179 ADX_LCG_E21(.G({ADX_CG[0], ADX_CG[3], ADX_CG[6], ADX_CG[9]}),
                       .P({ADX_CP[0], ADX_CP[3], ADX_CP[6], ADX_CP[9]}),
                       .CIN(ADXcarry[12]),
-                      .GOUT(ADX_CG00_11),
-                      .POUTT(ADX_CP00_11));
+                      .GG(ADX_CG00_11),
+                      .PG(ADX_CP00_11));
   // IR4 E26
   mc10179 ADX_LCG_E26(.G({ADX_CG[12], ADX_CG[15], ADX_CG[18], ADX_CG[21]}),
                       .P({ADX_CP[12], ADX_CP[15], ADX_CP[18], ADX_CP[21]}),
@@ -390,8 +388,8 @@ module edp(input eboxClk,
   mc10179 ADX_LCG_E16(.G({ADX_CG[24], ADX_CG[27], ADX_CG[30], ADX_CG[33]}),
                       .P({ADX_CP[24], ADX_CP[27], ADX_CP[30], ADX_CP[33]}),
                       .CIN(ADXcarry36),
-                      .GOUT(ADX_CG24_35),
-                      .POUT(ADX_CP24_35),
+                      .GG(ADX_CG24_35),
+                      .PG(ADX_CP24_35),
                       .C8OUT(ADXcarry[24]),
                       .C2OUT(ADXcarry[30]));
 
@@ -456,18 +454,12 @@ module edp(input eboxClk,
   wire [0:6] fmAddress = {APR_FMblk, APR_FMadr};
 
   fm_mem fm_mem0(.addra(fmAddress),
-                 .clka(clk),
+                 .clka(fastMemClk),
                  .dina(EDP_AR),
                  .douta(FM),
                  .wea({fmWrite00_17, fmWrite00_17, fmWrite18_35, fmWrite18_35})
                  );
 
-  reg fmWriteR;
-  always @(*) begin
-    fmWriteR = ~clk & (fmWrite00_17 | fmWrite18_35);
-  end
-
-  assign fmWrite = fmWriteR;
   assign fmParity = ^FM;
 
 
@@ -501,7 +493,7 @@ module edp(input eboxClk,
     3'b111: ebusR = EDP_AD;
     endcase
 
-    if (diagReadFunc12X || adToEBUS_L) ebusLH = ebusR[0:17];
-    if (diagReadFunc12X || adToEBUS_R) ebusRH = ebusR[18:35];
+    if (diagReadFunc12X || CTL_adToEBUS_L) ebusLH = ebusR[0:17];
+    if (diagReadFunc12X || CTL_adToEBUS_R) ebusRH = ebusR[18:35];
   end
 endmodule

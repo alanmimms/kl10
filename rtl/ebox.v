@@ -110,6 +110,8 @@ module ebox(input eboxClk,
   wire                  ARextended;             // From shm0 of shm.v
   wire                  ARparityOdd;            // From shm0 of shm.v
   wire                  CONIorDATAI;            // From apr0 of apr.v
+  wire                  CON_fmWrite00_17;       // From con0 of con.v
+  wire                  CON_fmWrite18_35;       // From con0 of con.v
   wire [11:0]           CRADR;                  // From cra0 of cra.v
   wire [3:0]            CRAM_ACB;               // From crm0 of crm.v
   wire [5:0]            CRAM_AC_OP;             // From crm0 of crm.v
@@ -186,6 +188,8 @@ module ebox(input eboxClk,
   wire                  CTL_MQM_EN;             // From ctl0 of ctl.v
   wire [0:1]            CTL_MQM_SEL;            // From ctl0 of ctl.v
   wire [0:1]            CTL_MQ_SEL;             // From ctl0 of ctl.v
+  wire                  CTL_adToEBUS_L;         // From ctl0 of ctl.v
+  wire                  CTL_adToEBUS_R;         // From ctl0 of ctl.v
   wire                  DIV_CHK;                // From scd0 of scd.v
   wire [2:0]            DRAM_A;                 // From ir0 of ir.v
   wire [2:0]            DRAM_B;                 // From ir0 of ir.v
@@ -238,7 +242,6 @@ module ebox(input eboxClk,
   wire                  ebusReq;                // From apr0 of apr.v
   wire                  ebusReturn;             // From apr0 of apr.v
   wire                  fmParity;               // From edp0 of edp.v
-  wire                  fmWrite;                // From edp0 of edp.v
   wire                  indexed;                // From shm0 of shm.v
   wire                  loadDRAM;               // From con0 of con.v
   wire                  loadIR;                 // From con0 of con.v
@@ -261,6 +264,8 @@ module ebox(input eboxClk,
            .loadIR                      (loadIR),
            .loadDRAM                    (loadDRAM),
            .longEnable                  (longEnable),
+           .CON_fmWrite00_17            (CON_fmWrite00_17),
+           .CON_fmWrite18_35            (CON_fmWrite18_35),
            // Inputs
            .eboxClk                     (eboxClk));
 
@@ -397,7 +402,6 @@ module ebox(input eboxClk,
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
            .FM                          (FM[0:35]),
-           .fmWrite                     (fmWrite),
            .fmParity                    (fmParity),
            .ADcarry36                   (ADcarry36),
            .EDPdrivingEBUS              (EDPdrivingEBUS),
@@ -434,12 +438,12 @@ module ebox(input eboxClk,
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
            .SCD_ARMM                    (SCD_ARMM[0:8]),
-           .adToEBUS_L                  (adToEBUS_L),
-           .adToEBUS_R                  (adToEBUS_R),
+           .CTL_adToEBUS_L              (CTL_adToEBUS_L),
+           .CTL_adToEBUS_R              (CTL_adToEBUS_R),
            .APR_FMblk                   (APR_FMblk[0:2]),
            .APR_FMadr                   (APR_FMadr[0:3]),
-           .fmWrite00_17                (fmWrite00_17),
-           .fmWrite18_35                (fmWrite18_35),
+           .CON_fmWrite00_17            (CON_fmWrite00_17),
+           .CON_fmWrite18_35            (CON_fmWrite18_35),
            .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[0:8]),
            .diagReadFunc12X             (diagReadFunc12X),
            .VMA_VMAheldOrPC             (VMA_VMAheldOrPC[0:35]));
@@ -556,6 +560,8 @@ module ebox(input eboxClk,
            .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
            .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
            .CTL_MQM_EN                  (CTL_MQM_EN),
+           .CTL_adToEBUS_L              (CTL_adToEBUS_L),
+           .CTL_adToEBUS_R              (CTL_adToEBUS_R),
            .ADXcarry36                  (ADXcarry36),
            .ADlong                      (ADlong),
            // Inputs

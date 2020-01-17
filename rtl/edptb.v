@@ -1,42 +1,124 @@
-`timescale 1ns / 1ps
-`ifdef TESTBENCH
+`timescale 1ns / 100ps
 module edptb;
-  reg clk;
+  reg eboxClk;
+  reg fastMemClk;
   
-  reg [0:35] AD;
-  reg [0:36] ADX;
-  reg [0:35] FM;
-  reg ADcarry36, ADXcarry36, ADlong;
+  /*AUTOWIRE*/
+  // Beginning of automatic wires (for undeclared instantiated-module outputs)
+  wire                  ADcarry36;              // From edp0 of edp.v
+  wire                  ADoverflow00;           // From edp0 of edp.v
+  wire [0:35]           EDP_AD;                 // From edp0 of edp.v
+  wire [0:36]           EDP_ADX;                // From edp0 of edp.v
+  wire [0:35]           EDP_AR;                 // From edp0 of edp.v
+  wire [0:35]           EDP_ARX;                // From edp0 of edp.v
+  wire [0:36]           EDP_BR;                 // From edp0 of edp.v
+  wire [0:36]           EDP_BRX;                // From edp0 of edp.v
+  wire [0:35]           EDP_EBUS;               // From edp0 of edp.v
+  wire [0:35]           EDP_MQ;                 // From edp0 of edp.v
+  wire                  EDPdrivingEBUS;         // From edp0 of edp.v
+  wire [0:35]           FM;                     // From edp0 of edp.v
+  wire [0:35]           cacheDataWrite;         // From edp0 of edp.v
+  wire                  fmParity;               // From edp0 of edp.v
+  // End of automatics
+  /*AUTOREG*/
 
-  reg [0:2] ARXLsel;
-  reg [0:2] ARXRsel;
-  reg AR00to08load, AR09to17load, ARRload, ARXload;
-  reg AR00to11clr, AR12to17clr, ARRclr;
+  reg [11:0] CRAM_J;
+  reg [6:0] CRAM_AD;
+  reg [3:0] CRAM_ADA;
+  reg [1:0] CRAM_ADA_EN;
+  reg [2:0] CRAM_ADB;
+  reg [3:0] CRAM_AR;
+  reg [3:0] CRAM_ARX;
+  reg [1:0] CRAM_BR;
+  reg [1:0] CRAM_BRX;
+  reg [1:0] CRAM_MQ;
+  reg [3:0] CRAM_FMADR;
+  reg [3:0] CRAM_SCAD;
+  reg [3:0] CRAM_SCADA;
+  reg [1:0] CRAM_SCADA_EN;
+  reg [2:0] CRAM_SCADB;
+  reg [1:0] CRAM_SC;
+  reg [1:0] CRAM_FE;
+  reg [2:0] CRAM_SH;
+  reg [2:0] CRAM_ARMM;
+  reg [2:0] CRAM_VMAX;
+  reg [2:0] CRAM_VMA;
+  reg [2:0] CRAM_TIME;
+  reg [4:0] CRAM_MEM;
+  reg [6:0] CRAM_SKIP;
+  reg [6:0] CRAM_COND;
+  reg [1:0] CRAM_CALL;
+  reg [5:0] CRAM_DISP;
+  reg [5:0] CRAM_SPEC;
+  reg [1:0] CRAM_MARK;
+  reg [9:0] CRAM_MAGIC;
+  reg [6:0] CRAM_MAJVER;
+  reg [3:0] CRAM_MINVER;
+  reg [1:0] CRAM_KLPAGE;
+  reg [1:0] CRAM_LONGPC;
+  reg [1:0] CRAM_NONSTD;
+  reg [1:0] CRAM_PV;
+  reg [1:0] CRAM_PMOVE;
+  reg [1:0] CRAM_ISTAT;
+  reg [3:0] CRAM_PXCT;
+  reg [3:0] CRAM_ACB;
+  reg [4:0] CRAM_ACmagic;
+  reg [5:0] CRAM_AC_OP;
+  reg [1:0] CRAM_AR0_8;
+  reg [4:0] CRAM_CLR;
+  reg [3:0] CRAM_ARL;
+  reg [3:0] CRAM_AR_CTL;
+  reg [1:0] CRAM_EXP_TST;
+  reg [2:0] CRAM_MQ_CTL;
+  reg [9:0] CRAM_PC_FLAGS;
+  reg [9:0] CRAM_FLAG_CTL;
+  reg [9:0] CRAM_SPEC_INSTR;
+  reg [9:0] CRAM_FETCH;
+  reg [9:0] CRAM_EA_CALC;
+  reg [9:0] CRAM_SP_MEM;
+  reg [9:0] CRAM_MREG_FNC;
+  reg [9:0] CRAM_MBOX_CTL;
+  reg [3:0] CRAM_MTR_CTL;
+  reg [9:0] CRAM_EBUS_CTL;
+  reg [9:0] CRAM_DIAG_FUNC;
 
-  reg BRload, BRXload;
-  reg [0:1] MQsel, MQMsel;
-  reg MQMen;
-  
-  reg [0:35] ARMM, cacheData, ebusD, SH, MQ;
-  
-  reg adToEBUS_L, adToEBUS_R;
-  
-  reg [0:5] ad6bEQ0;
-  reg ADoverflow00;
-  
-  reg ADbool;
-  reg [0:3] ADsel;
-  reg [0:1] ADAsel, ADBsel;
-  reg [0:35] ADAen;
-  
-  reg [0:2] fmBlk;
-  reg [0:3] fmAdr;
-  reg fmWrite00_17, fmWrite18_35, fmWrite, fmParity;
-  reg [0:8] diag;
+  reg CTL_AR00to08load;
+  reg CTL_AR09to17load;
+  reg CTL_ARRload;
+
+  reg CTL_AR00to11clr;
+  reg CTL_AR12to17clr;
+  reg CTL_ARRclr;
+
+  reg [0:2] CTL_ARL_SEL;
+  reg [0:2] CTL_ARR_SEL;
+  reg [2:0] CTL_ARXL_SEL;
+  reg [2:0] CTL_ARXR_SEL;
+  reg CTL_ARX_LOAD;
+
+  reg [0:1] CTL_MQ_SEL;
+  reg [0:1] CTL_MQM_SEL;
+  reg CTL_MQM_EN;
+  reg CTL_adToEBUS_L;
+  reg CTL_adToEBUS_R;
+
+  reg ADXcarry36;
+  reg ADlong;
+
+  reg [0:2] APR_FMblk;
+  reg [0:3] APR_FMadr;
+  reg CON_fmWrite00_17;
+  reg CON_fmWrite18_35;
   reg diagReadFunc12X;
-  
-  reg [0:35] VMAheldOrPC;
-  reg [0:8] magic;
+  reg [0:35] VMA_VMAheldOrPC;
+
+  reg [0:35] cacheDataRead;
+  reg [0:35] EBUS;
+  reg [0:35] SHM_SH;
+  reg [0:8] SCD_ARMM;
+
+  reg BRload;
+  reg BRXload;
 
   edp edp0(/*AUTOINST*/
            // Outputs
@@ -50,7 +132,6 @@ module edptb;
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
            .FM                          (FM[0:35]),
-           .fmWrite                     (fmWrite),
            .fmParity                    (fmParity),
            .ADcarry36                   (ADcarry36),
            .EDPdrivingEBUS              (EDPdrivingEBUS),
@@ -87,83 +168,86 @@ module edptb;
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
            .SCD_ARMM                    (SCD_ARMM[0:8]),
-           .adToEBUS_L                  (adToEBUS_L),
-           .adToEBUS_R                  (adToEBUS_R),
+           .CTL_adToEBUS_L              (CTL_adToEBUS_L),
+           .CTL_adToEBUS_R              (CTL_adToEBUS_R),
            .APR_FMblk                   (APR_FMblk[0:2]),
            .APR_FMadr                   (APR_FMadr[0:3]),
-           .fmWrite00_17                (fmWrite00_17),
-           .fmWrite18_35                (fmWrite18_35),
+           .CON_fmWrite00_17            (CON_fmWrite00_17),
+           .CON_fmWrite18_35            (CON_fmWrite18_35),
            .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[0:8]),
            .diagReadFunc12X             (diagReadFunc12X),
            .VMA_VMAheldOrPC             (VMA_VMAheldOrPC[0:35]));
 
-  always #20 clk = ~clk;
+  always #20 eboxClk = ~eboxClk;
+
+  // fastMemClk is same frequency as eboxClk, but is delayed from
+  // eboxClk posedge and has shorter positive duty cycle.
+  always @(posedge eboxClk) begin
+    #2 fastMemClk = 1;
+    #4 fastMemClk = 0;
+  end
+  
 
   initial begin
+    $output($time, "<< Start EDP test bench >>");
+    $monitor($time, " AD=%09x AR=%09x", EDP_AD, EDP_AR);
+    eboxClk = 0;
+    fastMemClk = 0;
+
     ADXcarry36 = 0;
     ADlong = 0;
-    
-    ARLsel = 0;
-    ARRsel = 0;
-    AR00to08load = 0;
-    AR09to17load = 0;
-    ARRload = 0;
+
+    CTL_AR00to11clr = 0;
+    CTL_AR12to17clr = 0;
+    CTL_ARRclr = 0;
+    CTL_ARXL_SEL = 0;
+    CTL_ARXR_SEL = 0;
+    CTL_ARX_LOAD = 0;
+    CTL_MQ_SEL = 0;
+    CTL_MQM_SEL = 0;
+
+    cacheDataRead = 0;
+    EBUS = 0;
+
+    SHM_SH = 0;
 
     BRload = 0;
     BRXload = 0;
 
-    ARXLsel = 0;
-    ARXRsel = 0;
-    ARXload = 0;
 
-    MQsel = 0;
-    MQMsel = 0;
-    MQMen = 0;
+    APR_FMblk = 0;               // Select a good block number
+    APR_FMadr = 0;               // And a good FM AC #
 
-    AR00to11clr = 0;
-    AR12to17clr = 0;
-    ARRclr = 0;
+    CON_fmWrite00_17 = 0;        // No writing to FM
+    CON_fmWrite18_35 = 0;
 
-    ARMM = 0;
-    cacheData = 0;
-    SH = 0;
-    MQ = 0;
-
-    adToEBUS_L = 0;
-    adToEBUS_R = 0;
-
-    ADbool = 0;
-    ADSel = 0;
-    ADBsel = 0;
-    ADAen = 0;
-
-    fmBlk = 0;
-    fmAdr = 0;
-
-    fmWrite00_17 = 0;
-    fmWrite18_35 = 0;
-
-    diag = 0;
+    CRAM_DIAG_FUNC = 0;          // No diagnostic function
     diagReadFunc12X = 0;
+    VMA_VMAheldOrPC = 0;         // Reset PC for now
 
-    VMAheldOrPC = 0;
-    magic = 0;
+    // Try 123 + 456 = 579 first
+    $output($time, "<< load AR with 0o123 >>");
+    CRAM_AD = 5'b11_111;         // AD/A
+    CRAM_ADA = 3'b000;           // ADA/AR
+    CRAM_ADA_EN = 1'b0;          // enabled
+    CRAM_ADB = 0;                // Not used yet
+    CRAM_AR = 4'b0000;           // ARMM (requires special function)
+    CRAM_ARX = 4'b0000;          // ARX (recirculate)
+    CRAM_MAGIC = 9'b001_010_011; // 0o123
+    SCD_ARMM = 9'b001_010_011;   // Mock SCD ARMM provides CRAM_MAGIC for now
+
+    CTL_ARL_SEL = 4'b0000;       // This is the special function for this TB
+    CTL_ARR_SEL = 4'b0000;       // This is the special function for this TB
+    CTL_AR00to08load = 1;        // Load ARL pieces
+    CTL_AR09to17load = 1;
+    CTL_ARRload = 1;             // Load ARR
+    CTL_adToEBUS_L = 0;          // No EBUS testing for now
+    CTL_adToEBUS_R = 0;          // No EBUS testing for now
+
+    @(negedge eboxClk);
+
+    #50;
+    $display($time, "<<< DONE >>>");
+    $stop;
   end
-
-
-  always @(posedge clk) begin
-/*
-           output wire [0:35] AD,
-           output wire [0:36] ADX,
-           output wire [0:35] FM,
-           output wire ADcarry36,
-           output reg [0:35] MQ,
-           output wire [0:5] ad6bEQ0, // AD 00-05=0, ...
-           output wire ADoverflow00,
-           output wire fmWrite,
-           output wire fmParity,
-*/
-    end // always @ (posedge clk)
-
 endmodule
-`endif
