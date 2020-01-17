@@ -4,30 +4,14 @@ Running: /x/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/xelab -wto d6bd9f2d678743
 Using 8 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
-WARNING: [VRFC 10-526] concatenation with unsized literal; will interpret as 32 bits [/home/alan/kl10-fpga-rtl/rtl/edp.v:338]
-WARNING: [VRFC 10-526] concatenation with unsized literal; will interpret as 32 bits [/home/alan/kl10-fpga-rtl/rtl/edp.v:354]
-ERROR: [VRFC 10-3236] concurrent assignment to a non-net 'FM' is not permitted [/home/alan/kl10-fpga-rtl/rtl/edp.v:459]
-WARNING: [VRFC 10-3091] actual bit length 66 differs from formal bit length 4 for port 'P' [/home/alan/kl10-fpga-rtl/rtl/edp.v:338]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'CIN' [/home/alan/kl10-fpga-rtl/rtl/edp.v:339]
-WARNING: [VRFC 10-3091] actual bit length 35 differs from formal bit length 4 for port 'P' [/home/alan/kl10-fpga-rtl/rtl/edp.v:354]
-WARNING: [VRFC 10-3091] actual bit length 32 differs from formal bit length 1 for port 'CIN' [/home/alan/kl10-fpga-rtl/rtl/edp.v:355]
-WARNING: [VRFC 10-3091] actual bit length 10 differs from formal bit length 4 for port 'B' [/home/alan/kl10-fpga-rtl/rtl/edp.v:281]
-WARNING: [VRFC 10-3091] actual bit length 3 differs from formal bit length 4 for port 'F' [/home/alan/kl10-fpga-rtl/rtl/edp.v:309]
-WARNING: [VRFC 10-3091] actual bit length 3 differs from formal bit length 4 for port 'F' [/home/alan/kl10-fpga-rtl/rtl/edp.v:321]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:144]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:145]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:146]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:147]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:148]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:149]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:150]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edptb.v:177]
-WARNING: [VRFC 10-3283] element index 17 into 'SCD_ARMM' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:128]
-WARNING: [VRFC 10-3283] element index -2 into 'EDP_AD' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:135]
-WARNING: [VRFC 10-3283] element index 18 into 'SCD_ARMM' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:157]
-WARNING: [VRFC 10-3705] select index -2 into 'EDP_AD' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:273]
-WARNING: [VRFC 10-3283] element index -2 into 'CRAM_ADB' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:281]
-WARNING: [VRFC 10-3283] element index -2 into 'EDP_AD' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:283]
-ERROR: [VRFC 10-1219] part-select direction is opposite from prefix index direction [/home/alan/kl10-fpga-rtl/rtl/edp.v:281]
-WARNING: [VRFC 10-3283] element index 11 into 'CRAM_MAGIC' is out of bounds [/home/alan/kl10-fpga-rtl/rtl/edp.v:419]
-ERROR: [XSIM 43-3322] Static elaboration of top level Verilog design unit(s) in library work failed.
+Completed static elaboration
+Starting simulation data flow analysis
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.mc10181
+Compiling module xil_defaultlib.mc10179
+Compiling module xil_defaultlib.fm_mem
+Compiling module xil_defaultlib.edp_default
+Compiling module xil_defaultlib.edptb
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot edptb_behav

@@ -24,8 +24,8 @@ module edp(input eboxClk,
            input CTL_AR12to17clr,
            input CTL_ARRclr,
 
-           input [2:0] CTL_ARXL_SEL,
-           input [2:0] CTL_ARXR_SEL,
+           input [0:2] CTL_ARXL_SEL,
+           input [0:2] CTL_ARXR_SEL,
            input CTL_ARX_LOAD,
 
            input BRload,
@@ -39,7 +39,8 @@ module edp(input eboxClk,
            output reg [0:35] cacheDataWrite,
            input [0:35] EBUS,
            input [0:35] SHM_SH,
-           input [0:8] SCD_ARMM,
+           input [0:8] SCD_ARMMupper,
+           input [13:17] SCD_ARMMlower,
 
            input CTL_adToEBUS_L,
            input CTL_adToEBUS_R,
@@ -55,15 +56,15 @@ module edp(input eboxClk,
 
            input [0:35] VMA_VMAheldOrPC,
 
-           output [0:35] EDP_AD,
-           output [0:36] EDP_ADX,
+           output wire [-2:35] EDP_AD,
+           output wire [0:36] EDP_ADX,
            output reg [0:36] EDP_BR,
            output reg [0:36] EDP_BRX,
            output reg [0:35] EDP_MQ,
            output wire ADoverflow00,
            output reg [0:35] EDP_AR,
            output reg [0:35] EDP_ARX,
-           output [0:35] FM,
+           output wire [0:35] FM,
            output fmParity,
 
            output ADcarry36,
@@ -125,7 +126,7 @@ module edp(input eboxClk,
 
   always @(*) begin
     case (CTL_ARL_SEL)
-    3'b000: ARL = SCD_ARMM[0:17];
+    3'b000: ARL = {SCD_ARMMupper, 5'b0, SCD_ARMMlower};
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
     3'b011: ARL = EBUS[0:17];
@@ -154,7 +155,7 @@ module edp(input eboxClk,
       EDP_AR[18:35] <= 0;
     end else if (CTL_ARRload) begin
       case (ARRsel)
-      3'b000: EDP_AR[18:35] <= SCD_ARMM[18:35];
+      3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
       3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
       3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
       3'b011: EDP_AR[18:35] <= EBUS[18:35];
@@ -278,7 +279,7 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADaluE1
       mc10181 alu0(.S(ADsel), .M(ADbool),
                    .A({ADA[n+0], ADA[n+0], ADA[n+0], ADA[n+1]}),
-                   .B(CRAM_ADB[n-2:1]),
+                   .B(ADB[n-2:n+1]),
                    .CIN(ADcarry[n+2]),
                    .F(EDP_AD[n-2:n+1]),
                    .CG(AD_CG[n+0]),
@@ -300,13 +301,15 @@ module edp(input eboxClk,
     end // block: ADalu
   endgenerate
   
+  wire [0:35] alu2_x1, alu3_x1;
+  
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3
       mc10181 alu2(.S(ADsel), .M(ADbool),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                    .CIN(ADXcarry[n+3]),
-                   .F(EDP_ADX[n:n+2]),
+                   .F({alu2_x1[n], EDP_ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
     end
@@ -318,7 +321,7 @@ module edp(input eboxClk,
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                    .CIN(n < 30 ? ADXcarry[n+6] : ADXcarry36),
-                   .F(EDP_ADX[n+3:n+5]),
+                   .F({alu3_x1[n], EDP_ADX[n+3:n+5]}),
                    .CG(ADX_CG[n+3]),
                    .CP(ADX_CP[n+3]));
     end
@@ -336,7 +339,7 @@ module edp(input eboxClk,
   // IR4 E7
   mc10179 AD_LCG_E7(.G({AD_CG[6], AD_CG[6], AD_CG[8], AD_CG[8]}),
                     .P({AD_CP[6],     1'b0,     1'b0, AD_CP[8]}),
-                    .CIN(0),
+                    .CIN(1'b0),
                     .GG(AD_CG06_11),
                     .PG(AD_CP06_11));
 
@@ -352,7 +355,7 @@ module edp(input eboxClk,
   // IR4 E6
   mc10179 AD_LCG_E6(.G({~inhibitCarry18, ~inhibitCarry18, AD_CG[18], AD_CG[20]}),
                     .P({spec_genCarry18, 1'b0, AD_CP[18], AD_CP[20]}),
-                    .CIN(0),
+                    .CIN(1'b0),
                     .GG(AD_CG18_23),
                     .PG(AD_CP18_23));
 
@@ -416,7 +419,7 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always @(*)
         case(ADBsel)
-        3'b000: ADXB[n+0:n+5] = CRAM_MAGIC[n+0:n+5];
+        3'b000: ADXB[n+0:n+5] = n < 6 ? CRAM_MAGIC[n+0:n+5] : 6'b0;
         3'b001: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+6], 1'b0};
         3'b010: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
         3'b011: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
@@ -457,7 +460,7 @@ module edp(input eboxClk,
                  .clka(fastMemClk),
                  .dina(EDP_AR),
                  .douta(FM),
-                 .wea({fmWrite00_17, fmWrite00_17, fmWrite18_35, fmWrite18_35})
+                 .wea({CON_fmWrite00_17, CON_fmWrite00_17, CON_fmWrite18_35, CON_fmWrite18_35})
                  );
 
   assign fmParity = ^FM;

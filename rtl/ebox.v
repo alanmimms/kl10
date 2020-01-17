@@ -113,65 +113,65 @@ module ebox(input eboxClk,
   wire                  CON_fmWrite00_17;       // From con0 of con.v
   wire                  CON_fmWrite18_35;       // From con0 of con.v
   wire [11:0]           CRADR;                  // From cra0 of cra.v
-  wire [3:0]            CRAM_ACB;               // From crm0 of crm.v
-  wire [5:0]            CRAM_AC_OP;             // From crm0 of crm.v
-  wire [4:0]            CRAM_ACmagic;           // From crm0 of crm.v
-  wire [6:0]            CRAM_AD;                // From crm0 of crm.v
-  wire [3:0]            CRAM_ADA;               // From crm0 of crm.v
-  wire [1:0]            CRAM_ADA_EN;            // From crm0 of crm.v
-  wire [2:0]            CRAM_ADB;               // From crm0 of crm.v
-  wire [3:0]            CRAM_AR;                // From crm0 of crm.v
-  wire [1:0]            CRAM_AR0_8;             // From crm0 of crm.v
-  wire [3:0]            CRAM_ARL;               // From crm0 of crm.v
-  wire [2:0]            CRAM_ARMM;              // From crm0 of crm.v
-  wire [3:0]            CRAM_ARX;               // From crm0 of crm.v
-  wire [3:0]            CRAM_AR_CTL;            // From crm0 of crm.v
-  wire [1:0]            CRAM_BR;                // From crm0 of crm.v
-  wire [1:0]            CRAM_BRX;               // From crm0 of crm.v
-  wire [1:0]            CRAM_CALL;              // From crm0 of crm.v
-  wire [4:0]            CRAM_CLR;               // From crm0 of crm.v
-  wire [6:0]            CRAM_COND;              // From crm0 of crm.v
-  wire [9:0]            CRAM_DIAG_FUNC;         // From crm0 of crm.v
-  wire [5:0]            CRAM_DISP;              // From crm0 of crm.v
-  wire [9:0]            CRAM_EA_CALC;           // From crm0 of crm.v
-  wire [9:0]            CRAM_EBUS_CTL;          // From crm0 of crm.v
-  wire [1:0]            CRAM_EXP_TST;           // From crm0 of crm.v
-  wire [1:0]            CRAM_FE;                // From crm0 of crm.v
-  wire [9:0]            CRAM_FETCH;             // From crm0 of crm.v
-  wire [9:0]            CRAM_FLAG_CTL;          // From crm0 of crm.v
-  wire [3:0]            CRAM_FMADR;             // From crm0 of crm.v
-  wire [1:0]            CRAM_ISTAT;             // From crm0 of crm.v
-  wire [11:0]           CRAM_J;                 // From crm0 of crm.v
-  wire [1:0]            CRAM_KLPAGE;            // From crm0 of crm.v
-  wire [1:0]            CRAM_LONGPC;            // From crm0 of crm.v
-  wire [9:0]            CRAM_MAGIC;             // From crm0 of crm.v
-  wire [6:0]            CRAM_MAJVER;            // From crm0 of crm.v
-  wire [1:0]            CRAM_MARK;              // From crm0 of crm.v
-  wire [9:0]            CRAM_MBOX_CTL;          // From crm0 of crm.v
-  wire [4:0]            CRAM_MEM;               // From crm0 of crm.v
-  wire [3:0]            CRAM_MINVER;            // From crm0 of crm.v
-  wire [1:0]            CRAM_MQ;                // From crm0 of crm.v
-  wire [2:0]            CRAM_MQ_CTL;            // From crm0 of crm.v
-  wire [9:0]            CRAM_MREG_FNC;          // From crm0 of crm.v
-  wire [3:0]            CRAM_MTR_CTL;           // From crm0 of crm.v
-  wire [1:0]            CRAM_NONSTD;            // From crm0 of crm.v
-  wire [9:0]            CRAM_PC_FLAGS;          // From crm0 of crm.v
-  wire [1:0]            CRAM_PMOVE;             // From crm0 of crm.v
-  wire [1:0]            CRAM_PV;                // From crm0 of crm.v
-  wire [3:0]            CRAM_PXCT;              // From crm0 of crm.v
-  wire [1:0]            CRAM_SC;                // From crm0 of crm.v
-  wire [3:0]            CRAM_SCAD;              // From crm0 of crm.v
-  wire [3:0]            CRAM_SCADA;             // From crm0 of crm.v
-  wire [1:0]            CRAM_SCADA_EN;          // From crm0 of crm.v
-  wire [2:0]            CRAM_SCADB;             // From crm0 of crm.v
-  wire [2:0]            CRAM_SH;                // From crm0 of crm.v
-  wire [6:0]            CRAM_SKIP;              // From crm0 of crm.v
-  wire [5:0]            CRAM_SPEC;              // From crm0 of crm.v
-  wire [9:0]            CRAM_SPEC_INSTR;        // From crm0 of crm.v
-  wire [9:0]            CRAM_SP_MEM;            // From crm0 of crm.v
-  wire [2:0]            CRAM_TIME;              // From crm0 of crm.v
-  wire [2:0]            CRAM_VMA;               // From crm0 of crm.v
-  wire [2:0]            CRAM_VMAX;              // From crm0 of crm.v
+  wire [0:3]            CRAM_ACB;               // From crm0 of crm.v
+  wire [0:5]            CRAM_AC_OP;             // From crm0 of crm.v
+  wire [0:4]            CRAM_ACmagic;           // From crm0 of crm.v
+  wire [0:6]            CRAM_AD;                // From crm0 of crm.v
+  wire [0:3]            CRAM_ADA;               // From crm0 of crm.v
+  wire [0:1]            CRAM_ADA_EN;            // From crm0 of crm.v
+  wire [0:2]            CRAM_ADB;               // From crm0 of crm.v
+  wire [0:3]            CRAM_AR;                // From crm0 of crm.v
+  wire [0:1]            CRAM_AR0_8;             // From crm0 of crm.v
+  wire [0:3]            CRAM_ARL;               // From crm0 of crm.v
+  wire [0:2]            CRAM_ARMM;              // From crm0 of crm.v
+  wire [0:3]            CRAM_ARX;               // From crm0 of crm.v
+  wire [0:3]            CRAM_AR_CTL;            // From crm0 of crm.v
+  wire [0:1]            CRAM_BR;                // From crm0 of crm.v
+  wire [0:1]            CRAM_BRX;               // From crm0 of crm.v
+  wire [0:1]            CRAM_CALL;              // From crm0 of crm.v
+  wire [0:4]            CRAM_CLR;               // From crm0 of crm.v
+  wire [0:6]            CRAM_COND;              // From crm0 of crm.v
+  wire [0:9]            CRAM_DIAG_FUNC;         // From crm0 of crm.v
+  wire [0:5]            CRAM_DISP;              // From crm0 of crm.v
+  wire [0:9]            CRAM_EA_CALC;           // From crm0 of crm.v
+  wire [0:9]            CRAM_EBUS_CTL;          // From crm0 of crm.v
+  wire [0:1]            CRAM_EXP_TST;           // From crm0 of crm.v
+  wire [0:1]            CRAM_FE;                // From crm0 of crm.v
+  wire [0:9]            CRAM_FETCH;             // From crm0 of crm.v
+  wire [0:9]            CRAM_FLAG_CTL;          // From crm0 of crm.v
+  wire [0:3]            CRAM_FMADR;             // From crm0 of crm.v
+  wire [0:1]            CRAM_ISTAT;             // From crm0 of crm.v
+  wire [0:11]           CRAM_J;                 // From crm0 of crm.v
+  wire [0:1]            CRAM_KLPAGE;            // From crm0 of crm.v
+  wire [0:1]            CRAM_LONGPC;            // From crm0 of crm.v
+  wire [0:9]            CRAM_MAGIC;             // From crm0 of crm.v
+  wire [0:6]            CRAM_MAJVER;            // From crm0 of crm.v
+  wire [0:1]            CRAM_MARK;              // From crm0 of crm.v
+  wire [0:9]            CRAM_MBOX_CTL;          // From crm0 of crm.v
+  wire [0:4]            CRAM_MEM;               // From crm0 of crm.v
+  wire [0:3]            CRAM_MINVER;            // From crm0 of crm.v
+  wire [0:1]            CRAM_MQ;                // From crm0 of crm.v
+  wire [0:2]            CRAM_MQ_CTL;            // From crm0 of crm.v
+  wire [0:9]            CRAM_MREG_FNC;          // From crm0 of crm.v
+  wire [0:3]            CRAM_MTR_CTL;           // From crm0 of crm.v
+  wire [0:1]            CRAM_NONSTD;            // From crm0 of crm.v
+  wire [0:9]            CRAM_PC_FLAGS;          // From crm0 of crm.v
+  wire [0:1]            CRAM_PMOVE;             // From crm0 of crm.v
+  wire [0:1]            CRAM_PV;                // From crm0 of crm.v
+  wire [0:3]            CRAM_PXCT;              // From crm0 of crm.v
+  wire [0:1]            CRAM_SC;                // From crm0 of crm.v
+  wire [0:3]            CRAM_SCAD;              // From crm0 of crm.v
+  wire [0:3]            CRAM_SCADA;             // From crm0 of crm.v
+  wire [0:1]            CRAM_SCADA_EN;          // From crm0 of crm.v
+  wire [0:2]            CRAM_SCADB;             // From crm0 of crm.v
+  wire [0:2]            CRAM_SH;                // From crm0 of crm.v
+  wire [0:6]            CRAM_SKIP;              // From crm0 of crm.v
+  wire [0:5]            CRAM_SPEC;              // From crm0 of crm.v
+  wire [0:9]            CRAM_SPEC_INSTR;        // From crm0 of crm.v
+  wire [0:9]            CRAM_SP_MEM;            // From crm0 of crm.v
+  wire [0:2]            CRAM_TIME;              // From crm0 of crm.v
+  wire [0:2]            CRAM_VMA;               // From crm0 of crm.v
+  wire [0:2]            CRAM_VMAX;              // From crm0 of crm.v
   wire                  CRY0;                   // From scd0 of scd.v
   wire                  CRY1;                   // From scd0 of scd.v
   wire                  CTL_AR00to08load;       // From ctl0 of ctl.v
@@ -195,7 +195,7 @@ module ebox(input eboxClk,
   wire [2:0]            DRAM_B;                 // From ir0 of ir.v
   wire [10:0]           DRAM_J;                 // From ir0 of ir.v
   wire                  DRAM_ODD_PARITY;        // From ir0 of ir.v
-  wire [0:35]           EDP_AD;                 // From edp0 of edp.v
+  wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
   wire [0:36]           EDP_ADX;                // From edp0 of edp.v
   wire [0:35]           EDP_AR;                 // From edp0 of edp.v
   wire [0:35]           EDP_ARX;                // From edp0 of edp.v
@@ -217,7 +217,8 @@ module ebox(input eboxClk,
   wire                  PUBLIC;                 // From scd0 of scd.v
   wire                  SCADeq0;                // From scd0 of scd.v
   wire                  SCADsign;               // From scd0 of scd.v
-  wire [0:8]            SCD_ARMM;               // From scd0 of scd.v
+  wire [13:17]          SCD_ARMMlower;          // From scd0 of scd.v
+  wire [0:8]            SCD_ARMMupper;          // From scd0 of scd.v
   wire [0:9]            SCD_FE;                 // From scd0 of scd.v
   wire [0:9]            SCD_SC;                 // From scd0 of scd.v
   wire [0:35]           SCD_SCADA;              // From scd0 of scd.v
@@ -327,73 +328,73 @@ module ebox(input eboxClk,
 
   crm crm0(/*AUTOINST*/
            // Outputs
-           .CRAM_J                      (CRAM_J[11:0]),
-           .CRAM_AD                     (CRAM_AD[6:0]),
-           .CRAM_ADA                    (CRAM_ADA[3:0]),
-           .CRAM_ADA_EN                 (CRAM_ADA_EN[1:0]),
-           .CRAM_ADB                    (CRAM_ADB[2:0]),
-           .CRAM_AR                     (CRAM_AR[3:0]),
-           .CRAM_ARX                    (CRAM_ARX[3:0]),
-           .CRAM_BR                     (CRAM_BR[1:0]),
-           .CRAM_BRX                    (CRAM_BRX[1:0]),
-           .CRAM_MQ                     (CRAM_MQ[1:0]),
-           .CRAM_FMADR                  (CRAM_FMADR[3:0]),
-           .CRAM_SCAD                   (CRAM_SCAD[3:0]),
-           .CRAM_SCADA                  (CRAM_SCADA[3:0]),
-           .CRAM_SCADA_EN               (CRAM_SCADA_EN[1:0]),
-           .CRAM_SCADB                  (CRAM_SCADB[2:0]),
-           .CRAM_SC                     (CRAM_SC[1:0]),
-           .CRAM_FE                     (CRAM_FE[1:0]),
-           .CRAM_SH                     (CRAM_SH[2:0]),
-           .CRAM_ARMM                   (CRAM_ARMM[2:0]),
-           .CRAM_VMAX                   (CRAM_VMAX[2:0]),
-           .CRAM_VMA                    (CRAM_VMA[2:0]),
-           .CRAM_TIME                   (CRAM_TIME[2:0]),
-           .CRAM_MEM                    (CRAM_MEM[4:0]),
-           .CRAM_SKIP                   (CRAM_SKIP[6:0]),
-           .CRAM_COND                   (CRAM_COND[6:0]),
-           .CRAM_CALL                   (CRAM_CALL[1:0]),
-           .CRAM_DISP                   (CRAM_DISP[5:0]),
-           .CRAM_SPEC                   (CRAM_SPEC[5:0]),
-           .CRAM_MARK                   (CRAM_MARK[1:0]),
-           .CRAM_MAGIC                  (CRAM_MAGIC[9:0]),
-           .CRAM_MAJVER                 (CRAM_MAJVER[6:0]),
-           .CRAM_MINVER                 (CRAM_MINVER[3:0]),
-           .CRAM_KLPAGE                 (CRAM_KLPAGE[1:0]),
-           .CRAM_LONGPC                 (CRAM_LONGPC[1:0]),
-           .CRAM_NONSTD                 (CRAM_NONSTD[1:0]),
-           .CRAM_PV                     (CRAM_PV[1:0]),
-           .CRAM_PMOVE                  (CRAM_PMOVE[1:0]),
-           .CRAM_ISTAT                  (CRAM_ISTAT[1:0]),
-           .CRAM_PXCT                   (CRAM_PXCT[3:0]),
-           .CRAM_ACB                    (CRAM_ACB[3:0]),
-           .CRAM_ACmagic                (CRAM_ACmagic[4:0]),
-           .CRAM_AC_OP                  (CRAM_AC_OP[5:0]),
-           .CRAM_AR0_8                  (CRAM_AR0_8[1:0]),
-           .CRAM_CLR                    (CRAM_CLR[4:0]),
-           .CRAM_ARL                    (CRAM_ARL[3:0]),
-           .CRAM_AR_CTL                 (CRAM_AR_CTL[3:0]),
-           .CRAM_EXP_TST                (CRAM_EXP_TST[1:0]),
-           .CRAM_MQ_CTL                 (CRAM_MQ_CTL[2:0]),
-           .CRAM_PC_FLAGS               (CRAM_PC_FLAGS[9:0]),
-           .CRAM_FLAG_CTL               (CRAM_FLAG_CTL[9:0]),
-           .CRAM_SPEC_INSTR             (CRAM_SPEC_INSTR[9:0]),
-           .CRAM_FETCH                  (CRAM_FETCH[9:0]),
-           .CRAM_EA_CALC                (CRAM_EA_CALC[9:0]),
-           .CRAM_SP_MEM                 (CRAM_SP_MEM[9:0]),
-           .CRAM_MREG_FNC               (CRAM_MREG_FNC[9:0]),
-           .CRAM_MBOX_CTL               (CRAM_MBOX_CTL[9:0]),
-           .CRAM_MTR_CTL                (CRAM_MTR_CTL[3:0]),
-           .CRAM_EBUS_CTL               (CRAM_EBUS_CTL[9:0]),
-           .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[9:0]),
+           .CRAM_J                      (CRAM_J[0:11]),
+           .CRAM_AD                     (CRAM_AD[0:6]),
+           .CRAM_ADA                    (CRAM_ADA[0:3]),
+           .CRAM_ADA_EN                 (CRAM_ADA_EN[0:1]),
+           .CRAM_ADB                    (CRAM_ADB[0:2]),
+           .CRAM_AR                     (CRAM_AR[0:3]),
+           .CRAM_ARX                    (CRAM_ARX[0:3]),
+           .CRAM_BR                     (CRAM_BR[0:1]),
+           .CRAM_BRX                    (CRAM_BRX[0:1]),
+           .CRAM_MQ                     (CRAM_MQ[0:1]),
+           .CRAM_FMADR                  (CRAM_FMADR[0:3]),
+           .CRAM_SCAD                   (CRAM_SCAD[0:3]),
+           .CRAM_SCADA                  (CRAM_SCADA[0:3]),
+           .CRAM_SCADA_EN               (CRAM_SCADA_EN[0:1]),
+           .CRAM_SCADB                  (CRAM_SCADB[0:2]),
+           .CRAM_SC                     (CRAM_SC[0:1]),
+           .CRAM_FE                     (CRAM_FE[0:1]),
+           .CRAM_SH                     (CRAM_SH[0:2]),
+           .CRAM_ARMM                   (CRAM_ARMM[0:2]),
+           .CRAM_VMAX                   (CRAM_VMAX[0:2]),
+           .CRAM_VMA                    (CRAM_VMA[0:2]),
+           .CRAM_TIME                   (CRAM_TIME[0:2]),
+           .CRAM_MEM                    (CRAM_MEM[0:4]),
+           .CRAM_SKIP                   (CRAM_SKIP[0:6]),
+           .CRAM_COND                   (CRAM_COND[0:6]),
+           .CRAM_CALL                   (CRAM_CALL[0:1]),
+           .CRAM_DISP                   (CRAM_DISP[0:5]),
+           .CRAM_SPEC                   (CRAM_SPEC[0:5]),
+           .CRAM_MARK                   (CRAM_MARK[0:1]),
+           .CRAM_MAGIC                  (CRAM_MAGIC[0:9]),
+           .CRAM_MAJVER                 (CRAM_MAJVER[0:6]),
+           .CRAM_MINVER                 (CRAM_MINVER[0:3]),
+           .CRAM_KLPAGE                 (CRAM_KLPAGE[0:1]),
+           .CRAM_LONGPC                 (CRAM_LONGPC[0:1]),
+           .CRAM_NONSTD                 (CRAM_NONSTD[0:1]),
+           .CRAM_PV                     (CRAM_PV[0:1]),
+           .CRAM_PMOVE                  (CRAM_PMOVE[0:1]),
+           .CRAM_ISTAT                  (CRAM_ISTAT[0:1]),
+           .CRAM_PXCT                   (CRAM_PXCT[0:3]),
+           .CRAM_ACB                    (CRAM_ACB[0:3]),
+           .CRAM_ACmagic                (CRAM_ACmagic[0:4]),
+           .CRAM_AC_OP                  (CRAM_AC_OP[0:5]),
+           .CRAM_AR0_8                  (CRAM_AR0_8[0:1]),
+           .CRAM_CLR                    (CRAM_CLR[0:4]),
+           .CRAM_ARL                    (CRAM_ARL[0:3]),
+           .CRAM_AR_CTL                 (CRAM_AR_CTL[0:3]),
+           .CRAM_EXP_TST                (CRAM_EXP_TST[0:1]),
+           .CRAM_MQ_CTL                 (CRAM_MQ_CTL[0:2]),
+           .CRAM_PC_FLAGS               (CRAM_PC_FLAGS[0:9]),
+           .CRAM_FLAG_CTL               (CRAM_FLAG_CTL[0:9]),
+           .CRAM_SPEC_INSTR             (CRAM_SPEC_INSTR[0:9]),
+           .CRAM_FETCH                  (CRAM_FETCH[0:9]),
+           .CRAM_EA_CALC                (CRAM_EA_CALC[0:9]),
+           .CRAM_SP_MEM                 (CRAM_SP_MEM[0:9]),
+           .CRAM_MREG_FNC               (CRAM_MREG_FNC[0:9]),
+           .CRAM_MBOX_CTL               (CRAM_MBOX_CTL[0:9]),
+           .CRAM_MTR_CTL                (CRAM_MTR_CTL[0:3]),
+           .CRAM_EBUS_CTL               (CRAM_EBUS_CTL[0:9]),
+           .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[0:9]),
            // Inputs
            .eboxClk                     (eboxClk),
-           .CRADR                       (CRADR[11:0]));
+           .CRADR                       (CRADR[0:11]));
 
   edp edp0(/*AUTOINST*/
            // Outputs
            .cacheDataWrite              (cacheDataWrite[0:35]),
-           .EDP_AD                      (EDP_AD[0:35]),
+           .EDP_AD                      (EDP_AD[-2:35]),
            .EDP_ADX                     (EDP_ADX[0:36]),
            .EDP_BR                      (EDP_BR[0:36]),
            .EDP_BRX                     (EDP_BRX[0:36]),
@@ -426,8 +427,8 @@ module ebox(input eboxClk,
            .CTL_AR00to11clr             (CTL_AR00to11clr),
            .CTL_AR12to17clr             (CTL_AR12to17clr),
            .CTL_ARRclr                  (CTL_ARRclr),
-           .CTL_ARXL_SEL                (CTL_ARXL_SEL[2:0]),
-           .CTL_ARXR_SEL                (CTL_ARXR_SEL[2:0]),
+           .CTL_ARXL_SEL                (CTL_ARXL_SEL[0:2]),
+           .CTL_ARXR_SEL                (CTL_ARXR_SEL[0:2]),
            .CTL_ARX_LOAD                (CTL_ARX_LOAD),
            .BRload                      (BRload),
            .BRXload                     (BRXload),
@@ -437,7 +438,8 @@ module ebox(input eboxClk,
            .cacheDataRead               (cacheDataRead[0:35]),
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
-           .SCD_ARMM                    (SCD_ARMM[0:8]),
+           .SCD_ARMMupper               (SCD_ARMMupper[0:8]),
+           .SCD_ARMMlower               (SCD_ARMMlower[13:17]),
            .CTL_adToEBUS_L              (CTL_adToEBUS_L),
            .CTL_adToEBUS_R              (CTL_adToEBUS_R),
            .APR_FMblk                   (APR_FMblk[0:2]),
@@ -574,7 +576,8 @@ module ebox(input eboxClk,
            // Outputs
            .SCDdrivingEBUS              (SCDdrivingEBUS),
            .SCD_EBUS                    (SCD_EBUS[0:35]),
-           .SCD_ARMM                    (SCD_ARMM[0:8]),
+           .SCD_ARMMupper               (SCD_ARMMupper[0:8]),
+           .SCD_ARMMlower               (SCD_ARMMlower[13:17]),
            .SCD_FE                      (SCD_FE[0:9]),
            .SCD_SC                      (SCD_SC[0:9]),
            .SCD_SCADA                   (SCD_SCADA[0:35]),

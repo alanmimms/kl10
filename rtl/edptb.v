@@ -7,7 +7,7 @@ module edptb;
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
   wire                  ADcarry36;              // From edp0 of edp.v
   wire                  ADoverflow00;           // From edp0 of edp.v
-  wire [0:35]           EDP_AD;                 // From edp0 of edp.v
+  wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
   wire [0:36]           EDP_ADX;                // From edp0 of edp.v
   wire [0:35]           EDP_AR;                 // From edp0 of edp.v
   wire [0:35]           EDP_ARX;                // From edp0 of edp.v
@@ -22,65 +22,65 @@ module edptb;
   // End of automatics
   /*AUTOREG*/
 
-  reg [11:0] CRAM_J;
-  reg [6:0] CRAM_AD;
-  reg [3:0] CRAM_ADA;
-  reg [1:0] CRAM_ADA_EN;
-  reg [2:0] CRAM_ADB;
-  reg [3:0] CRAM_AR;
-  reg [3:0] CRAM_ARX;
-  reg [1:0] CRAM_BR;
-  reg [1:0] CRAM_BRX;
-  reg [1:0] CRAM_MQ;
-  reg [3:0] CRAM_FMADR;
-  reg [3:0] CRAM_SCAD;
-  reg [3:0] CRAM_SCADA;
-  reg [1:0] CRAM_SCADA_EN;
-  reg [2:0] CRAM_SCADB;
-  reg [1:0] CRAM_SC;
-  reg [1:0] CRAM_FE;
-  reg [2:0] CRAM_SH;
-  reg [2:0] CRAM_ARMM;
-  reg [2:0] CRAM_VMAX;
-  reg [2:0] CRAM_VMA;
-  reg [2:0] CRAM_TIME;
-  reg [4:0] CRAM_MEM;
-  reg [6:0] CRAM_SKIP;
-  reg [6:0] CRAM_COND;
-  reg [1:0] CRAM_CALL;
-  reg [5:0] CRAM_DISP;
-  reg [5:0] CRAM_SPEC;
-  reg [1:0] CRAM_MARK;
-  reg [9:0] CRAM_MAGIC;
-  reg [6:0] CRAM_MAJVER;
-  reg [3:0] CRAM_MINVER;
-  reg [1:0] CRAM_KLPAGE;
-  reg [1:0] CRAM_LONGPC;
-  reg [1:0] CRAM_NONSTD;
-  reg [1:0] CRAM_PV;
-  reg [1:0] CRAM_PMOVE;
-  reg [1:0] CRAM_ISTAT;
-  reg [3:0] CRAM_PXCT;
-  reg [3:0] CRAM_ACB;
-  reg [4:0] CRAM_ACmagic;
-  reg [5:0] CRAM_AC_OP;
-  reg [1:0] CRAM_AR0_8;
-  reg [4:0] CRAM_CLR;
-  reg [3:0] CRAM_ARL;
-  reg [3:0] CRAM_AR_CTL;
-  reg [1:0] CRAM_EXP_TST;
-  reg [2:0] CRAM_MQ_CTL;
-  reg [9:0] CRAM_PC_FLAGS;
-  reg [9:0] CRAM_FLAG_CTL;
-  reg [9:0] CRAM_SPEC_INSTR;
-  reg [9:0] CRAM_FETCH;
-  reg [9:0] CRAM_EA_CALC;
-  reg [9:0] CRAM_SP_MEM;
-  reg [9:0] CRAM_MREG_FNC;
-  reg [9:0] CRAM_MBOX_CTL;
-  reg [3:0] CRAM_MTR_CTL;
-  reg [9:0] CRAM_EBUS_CTL;
-  reg [9:0] CRAM_DIAG_FUNC;
+  reg [0:11] CRAM_J;
+  reg [0:6] CRAM_AD;
+  reg [0:3] CRAM_ADA;
+  reg [0:1] CRAM_ADA_EN;
+  reg [0:2] CRAM_ADB;
+  reg [0:3] CRAM_AR;
+  reg [0:3] CRAM_ARX;
+  reg [0:1] CRAM_BR;
+  reg [0:1] CRAM_BRX;
+  reg [0:1] CRAM_MQ;
+  reg [0:3] CRAM_FMADR;
+  reg [0:3] CRAM_SCAD;
+  reg [0:3] CRAM_SCADA;
+  reg [0:1] CRAM_SCADA_EN;
+  reg [0:2] CRAM_SCADB;
+  reg [0:1] CRAM_SC;
+  reg [0:1] CRAM_FE;
+  reg [0:2] CRAM_SH;
+  reg [0:2] CRAM_ARMM;
+  reg [0:2] CRAM_VMAX;
+  reg [0:2] CRAM_VMA;
+  reg [0:2] CRAM_TIME;
+  reg [0:4] CRAM_MEM;
+  reg [0:6] CRAM_SKIP;
+  reg [0:6] CRAM_COND;
+  reg [0:1] CRAM_CALL;
+  reg [0:5] CRAM_DISP;
+  reg [0:5] CRAM_SPEC;
+  reg [0:1] CRAM_MARK;
+  reg [0:9] CRAM_MAGIC;
+  reg [0:6] CRAM_MAJVER;
+  reg [0:3] CRAM_MINVER;
+  reg [0:1] CRAM_KLPAGE;
+  reg [0:1] CRAM_LONGPC;
+  reg [0:1] CRAM_NONSTD;
+  reg [0:1] CRAM_PV;
+  reg [0:1] CRAM_PMOVE;
+  reg [0:1] CRAM_ISTAT;
+  reg [0:3] CRAM_PXCT;
+  reg [0:3] CRAM_ACB;
+  reg [0:4] CRAM_ACmagic;
+  reg [0:5] CRAM_AC_OP;
+  reg [0:1] CRAM_AR0_8;
+  reg [0:4] CRAM_CLR;
+  reg [0:3] CRAM_ARL;
+  reg [0:3] CRAM_AR_CTL;
+  reg [0:1] CRAM_EXP_TST;
+  reg [0:2] CRAM_MQ_CTL;
+  reg [0:9] CRAM_PC_FLAGS;
+  reg [0:9] CRAM_FLAG_CTL;
+  reg [0:9] CRAM_SPEC_INSTR;
+  reg [0:9] CRAM_FETCH;
+  reg [0:9] CRAM_EA_CALC;
+  reg [0:9] CRAM_SP_MEM;
+  reg [0:9] CRAM_MREG_FNC;
+  reg [0:9] CRAM_MBOX_CTL;
+  reg [0:3] CRAM_MTR_CTL;
+  reg [0:9] CRAM_EBUS_CTL;
+  reg [0:9] CRAM_DIAG_FUNC;
 
   reg CTL_AR00to08load;
   reg CTL_AR09to17load;
@@ -92,8 +92,8 @@ module edptb;
 
   reg [0:2] CTL_ARL_SEL;
   reg [0:2] CTL_ARR_SEL;
-  reg [2:0] CTL_ARXL_SEL;
-  reg [2:0] CTL_ARXR_SEL;
+  reg [0:2] CTL_ARXL_SEL;
+  reg [0:2] CTL_ARXR_SEL;
   reg CTL_ARX_LOAD;
 
   reg [0:1] CTL_MQ_SEL;
@@ -115,7 +115,8 @@ module edptb;
   reg [0:35] cacheDataRead;
   reg [0:35] EBUS;
   reg [0:35] SHM_SH;
-  reg [0:8] SCD_ARMM;
+  reg [0:8] SCD_ARMMupper;
+  reg [13:17] SCD_ARMMlower;
 
   reg BRload;
   reg BRXload;
@@ -123,7 +124,7 @@ module edptb;
   edp edp0(/*AUTOINST*/
            // Outputs
            .cacheDataWrite              (cacheDataWrite[0:35]),
-           .EDP_AD                      (EDP_AD[0:35]),
+           .EDP_AD                      (EDP_AD[-2:35]),
            .EDP_ADX                     (EDP_ADX[0:36]),
            .EDP_BR                      (EDP_BR[0:36]),
            .EDP_BRX                     (EDP_BRX[0:36]),
@@ -156,8 +157,8 @@ module edptb;
            .CTL_AR00to11clr             (CTL_AR00to11clr),
            .CTL_AR12to17clr             (CTL_AR12to17clr),
            .CTL_ARRclr                  (CTL_ARRclr),
-           .CTL_ARXL_SEL                (CTL_ARXL_SEL[2:0]),
-           .CTL_ARXR_SEL                (CTL_ARXR_SEL[2:0]),
+           .CTL_ARXL_SEL                (CTL_ARXL_SEL[0:2]),
+           .CTL_ARXR_SEL                (CTL_ARXR_SEL[0:2]),
            .CTL_ARX_LOAD                (CTL_ARX_LOAD),
            .BRload                      (BRload),
            .BRXload                     (BRXload),
@@ -167,7 +168,8 @@ module edptb;
            .cacheDataRead               (cacheDataRead[0:35]),
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
-           .SCD_ARMM                    (SCD_ARMM[0:8]),
+           .SCD_ARMMupper               (SCD_ARMMupper[0:8]),
+           .SCD_ARMMlower               (SCD_ARMMlower[13:17]),
            .CTL_adToEBUS_L              (CTL_adToEBUS_L),
            .CTL_adToEBUS_R              (CTL_adToEBUS_R),
            .APR_FMblk                   (APR_FMblk[0:2]),
@@ -189,7 +191,7 @@ module edptb;
   
 
   initial begin
-    $output($time, "<< Start EDP test bench >>");
+    $display($time, "<< Start EDP test bench >>");
     $monitor($time, " AD=%09x AR=%09x", EDP_AD, EDP_AR);
     eboxClk = 0;
     fastMemClk = 0;
@@ -226,7 +228,7 @@ module edptb;
     VMA_VMAheldOrPC = 0;         // Reset PC for now
 
     // Try 123 + 456 = 579 first
-    $output($time, "<< load AR with 0o123 >>");
+    $display($time, "<< load AR with 0o123 >>");
     CRAM_AD = 5'b11_111;         // AD/A
     CRAM_ADA = 3'b000;           // ADA/AR
     CRAM_ADA_EN = 1'b0;          // enabled
@@ -234,7 +236,8 @@ module edptb;
     CRAM_AR = 4'b0000;           // ARMM (requires special function)
     CRAM_ARX = 4'b0000;          // ARX (recirculate)
     CRAM_MAGIC = 9'b001_010_011; // 0o123
-    SCD_ARMM = 9'b001_010_011;   // Mock SCD ARMM provides CRAM_MAGIC for now
+    SCD_ARMMupper = 9'b001_010_011;   // Mock SCD ARMM provides CRAM_MAGIC for now
+    SCD_ARMMlower = 0;
 
     CTL_ARL_SEL = 4'b0000;       // This is the special function for this TB
     CTL_ARR_SEL = 4'b0000;       // This is the special function for this TB
