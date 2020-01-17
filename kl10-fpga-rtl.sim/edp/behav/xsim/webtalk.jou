@@ -2,8 +2,8 @@
 # Webtalk v2019.2.1 (64-bit)
 # SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
 # IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
-# Start of session at: Thu Jan 16 18:52:37 2020
-# Process ID: 18650
+# Start of session at: Fri Jan 17 09:35:47 2020
+# Process ID: 13619
 # Current directory: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim
 # Command line: wbtcv -mode batch -source /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/xsim.dir/edptb_behav/webtalk/xsim_webtalk.tcl -notrace
 # Log file: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/webtalk.log

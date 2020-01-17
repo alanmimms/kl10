@@ -2,13 +2,13 @@
 # Webtalk v2019.2.1 (64-bit)
 # SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
 # IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
-# Start of session at: Thu Jan 16 18:52:37 2020
-# Process ID: 18650
+# Start of session at: Fri Jan 17 09:35:47 2020
+# Process ID: 13619
 # Current directory: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim
 # Command line: wbtcv -mode batch -source /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/xsim.dir/edptb_behav/webtalk/xsim_webtalk.tcl -notrace
 # Log file: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/webtalk.log
 # Journal file: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/webtalk.jou
 #-----------------------------------------------------------
 source /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/xsim.dir/edptb_behav/webtalk/xsim_webtalk.tcl -notrace
-INFO: [Common 17-186] '/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/xsim.dir/edptb_behav/webtalk/usage_statistics_ext_xsim.xml' has been successfully sent to Xilinx on Thu Jan 16 18:52:38 2020. For additional details about this file, please refer to the WebTalk help file at /x/Xilinx/Vivado/2019.2/doc/webtalk_introduction.html.
-INFO: [Common 17-206] Exiting Webtalk at Thu Jan 16 18:52:38 2020...
+INFO: [Common 17-186] '/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/xsim.dir/edptb_behav/webtalk/usage_statistics_ext_xsim.xml' has been successfully sent to Xilinx on Fri Jan 17 09:35:49 2020. For additional details about this file, please refer to the WebTalk help file at /x/Xilinx/Vivado/2019.2/doc/webtalk_introduction.html.
+INFO: [Common 17-206] Exiting Webtalk at Fri Jan 17 09:35:49 2020...

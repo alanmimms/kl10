@@ -14,6 +14,9 @@ module edp(input eboxClk,
            input [0:3] CRAM_ARX,
            input [0:8] CRAM_MAGIC,
 
+           input CRAM_BRload,
+           input CRAM_BRXload,
+
            input [0:2] CTL_ARL_SEL,
            input [0:2] CTL_ARR_SEL,
            input CTL_AR00to08load,
@@ -27,9 +30,6 @@ module edp(input eboxClk,
            input [0:2] CTL_ARXL_SEL,
            input [0:2] CTL_ARXR_SEL,
            input CTL_ARX_LOAD,
-
-           input BRload,
-           input BRXload,
 
            input [0:1] CTL_MQ_SEL,
            input [0:1] CTL_MQM_SEL,
@@ -468,12 +468,12 @@ module edp(input eboxClk,
 
   // BRX
   always @(posedge eboxClk)
-    if (BRXload) EDP_BRX = EDP_ARX;
+    if (CRAM_BRXload) EDP_BRX = EDP_ARX;
 
 
   // BR
   always @(posedge eboxClk)
-    if (BRload) EDP_BR = EDP_AR;
+    if (CRAM_BRload) EDP_BR = EDP_AR;
 
 
   // EBUS DIAG mux

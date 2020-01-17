@@ -118,8 +118,8 @@ module edptb;
   reg [0:8] SCD_ARMMupper;
   reg [13:17] SCD_ARMMlower;
 
-  reg BRload;
-  reg BRXload;
+  reg CRAM_BRload;
+  reg CRAM_BRXload;
 
   edp edp0(/*AUTOINST*/
            // Outputs
@@ -149,6 +149,8 @@ module edptb;
            .CRAM_AR                     (CRAM_AR[0:3]),
            .CRAM_ARX                    (CRAM_ARX[0:3]),
            .CRAM_MAGIC                  (CRAM_MAGIC[0:8]),
+           .CRAM_BRload                 (CRAM_BRload),
+           .CRAM_BRXload                (CRAM_BRXload),
            .CTL_ARL_SEL                 (CTL_ARL_SEL[0:2]),
            .CTL_ARR_SEL                 (CTL_ARR_SEL[0:2]),
            .CTL_AR00to08load            (CTL_AR00to08load),
@@ -160,8 +162,6 @@ module edptb;
            .CTL_ARXL_SEL                (CTL_ARXL_SEL[0:2]),
            .CTL_ARXR_SEL                (CTL_ARXR_SEL[0:2]),
            .CTL_ARX_LOAD                (CTL_ARX_LOAD),
-           .BRload                      (BRload),
-           .BRXload                     (BRXload),
            .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
            .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
            .CTL_MQM_EN                  (CTL_MQM_EN),
@@ -207,14 +207,16 @@ module edptb;
     CTL_ARX_LOAD = 0;
     CTL_MQ_SEL = 0;
     CTL_MQM_SEL = 0;
+    CTL_MQM_EN = 0;
+    CTL_adToEBUS_L = 0;
+    CTL_adToEBUS_R = 0;
 
-    cacheDataRead = 0;
     EBUS = 0;
 
     SHM_SH = 0;
 
-    BRload = 0;
-    BRXload = 0;
+    CRAM_BRload = 0;
+    CRAM_BRXload = 0;
 
 
     APR_FMblk = 0;               // Select a good block number
@@ -223,33 +225,49 @@ module edptb;
     CON_fmWrite00_17 = 0;        // No writing to FM
     CON_fmWrite18_35 = 0;
 
+    SCD_ARMMupper = 0;
+    SCD_ARMMlower = 0;
+
+    CRAM_MAGIC = 0;
     CRAM_DIAG_FUNC = 0;          // No diagnostic function
     diagReadFunc12X = 0;
     VMA_VMAheldOrPC = 0;         // Reset PC for now
 
-    // Try 123 + 456 = 579 first
-    $display($time, "<< load AR with 0o123 >>");
+    // Try 9'h123 + 9'h135 = 9'h258 first
+    $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
+    cacheDataRead = 36'h123456789;
     CRAM_AD = 5'b11_111;         // AD/A
     CRAM_ADA = 3'b000;           // ADA/AR
     CRAM_ADA_EN = 1'b0;          // enabled
     CRAM_ADB = 0;                // Not used yet
-    CRAM_AR = 4'b0000;           // ARMM (requires special function)
-    CRAM_ARX = 4'b0000;          // ARX (recirculate)
-    CRAM_MAGIC = 9'b001_010_011; // 0o123
-    SCD_ARMMupper = 9'b001_010_011;   // Mock SCD ARMM provides CRAM_MAGIC for now
-    SCD_ARMMlower = 0;
-
-    CTL_ARL_SEL = 4'b0000;       // This is the special function for this TB
-    CTL_ARR_SEL = 4'b0000;       // This is the special function for this TB
+    CRAM_AR = 4'b0001;           // CACHE
+    CTL_ARL_SEL = 4'b0001;       // This is the special function for this TB
+    CTL_ARR_SEL = 4'b0001;       // This is the special function for this TB
     CTL_AR00to08load = 1;        // Load ARL pieces
     CTL_AR09to17load = 1;
     CTL_ARRload = 1;             // Load ARR
-    CTL_adToEBUS_L = 0;          // No EBUS testing for now
-    CTL_adToEBUS_R = 0;          // No EBUS testing for now
+    CRAM_BRload = 1;
+    CRAM_ARX = 4'b0000;          // ARX (recirculate)
 
-    @(negedge eboxClk);
 
-    #50;
+    @(negedge eboxClk)
+    $display($time, "<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    cacheDataRead = 36'h123456789;
+    CRAM_AD = 5'b11_111;         // AD/A
+    CRAM_ADA = 3'b000;           // ADA/AR
+    CRAM_ADA_EN = 1'b0;          // enabled
+    CRAM_ADB = 2'b10;            // ADB/BR
+    CRAM_AR = 4'b0001;           // CACHE
+    CTL_ARL_SEL = 4'b0001;       // This is the special function for this TB
+    CTL_ARR_SEL = 4'b0001;       // This is the special function for this TB
+    CTL_AR00to08load = 1;        // Load ARL pieces
+    CTL_AR09to17load = 1;
+    CTL_ARRload = 1;             // Load ARR
+    CRAM_BRload = 1;
+    CRAM_ARX = 4'b0000;          // ARX (recirculate)
+
+    @(posedge eboxClk);
+
     $display($time, "<<< DONE >>>");
     $stop;
   end
