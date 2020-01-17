@@ -138,7 +138,7 @@ module edp(input eboxClk,
     endcase
   end
   
-  always @(posedge clk) begin
+  always @(posedge eboxClk) begin
 
     if (CTL_AR00to11clr) begin
       EDP_AR[0:11] <= 0;
@@ -194,7 +194,7 @@ module edp(input eboxClk,
     endcase // case (ARXLsel)
   end
 
-  always @(posedge clk) begin
+  always @(posedge eboxClk) begin
     if (ARXload) EDP_ARX <= {ARXL, ARXR};
   end
 
@@ -213,15 +213,15 @@ module edp(input eboxClk,
       MQM = 0;
   end // always@ (*)
 
-  always@(posedge clk) begin
+  always@(posedge eboxClk) begin
     // MQ: 36-bit MC10141-ish universal shift register
     case (MQsel)
     USR_LOAD: EDP_MQ <= MQM;
     USR_SHL:  EDP_MQ <= {MQM[1:35], ADcarry[-2]};
     USR_SHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
     USR_HOLD: EDP_MQ <= EDP_MQ;
-    endcase // case (MQsel)
-  end // always@ (posedge clk)
+    endcase
+  end
 
   // AD, p17.
   /*
@@ -472,12 +472,12 @@ module edp(input eboxClk,
 
 
   // BRX
-  always @(posedge clk)
+  always @(posedge eboxClk)
     if (BRXload) EDP_BRX = EDP_ARX;
 
 
   // BR
-  always @(posedge clk)
+  always @(posedge eboxClk)
     if (BRload) EDP_BR = EDP_AR;
 
 
@@ -503,6 +503,5 @@ module edp(input eboxClk,
 
     if (diagReadFunc12X || adToEBUS_L) ebusLH = ebusR[0:17];
     if (diagReadFunc12X || adToEBUS_R) ebusRH = ebusR[18:35];
-  end // always @ (*)
-  
-endmodule // edp
+  end
+endmodule

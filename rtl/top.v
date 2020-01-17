@@ -1,6 +1,5 @@
 `timescale 1ns / 1ps
-module top(input clk
-           /*AUTOARG*/);
+module top;
 
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
@@ -93,7 +92,7 @@ module top(input clk
 
   // EBUS is muxed in this design based on each module output
   // XXXdrivingEBUS.
-  always @(posedge clk) begin
+  always @(posedge eboxClk) begin
 
     if (EDPdrivingEBUS)
       EBUS <= EDP_EBUS;

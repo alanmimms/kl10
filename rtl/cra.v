@@ -70,7 +70,6 @@ module cra(input eboxClk,
   reg [0:10] adr;
   reg [0:10] loc;
 
-  reg [0:4] stackAdr;
   reg [0:10] stack[15:0];
   reg [0:10] sbrRet;
 
@@ -188,26 +187,25 @@ module cra(input eboxClk,
 
   // E56,E57
   reg [0:7] stackAdrAD, stackAdrEH;
-  wire stackAdrA, stackAdrB, stackAdrC, stackAdrD;
-  wire stackAdrE, stackAdrF, stackAdrG, stackAdrH;
-  assign stackAdr = {stackAdrAD, stackAdrEH};
 
-  assign stackAdrA = stackAdrAD[0];
-  assign stackAdrB = stackAdrAD[1];
-  assign stackAdrC = stackAdrAD[2];
-  assign stackAdrD = stackAdrAD[3];
+  wire stackAdrA = stackAdrAD[0];
+  wire stackAdrB = stackAdrAD[1];
+  wire stackAdrC = stackAdrAD[2];
+  wire stackAdrD = stackAdrAD[3];
 
-  assign stackAdrE = stackAdrEH[0];
-  assign stackAdrF = stackAdrEH[1];
-  assign stackAdrG = stackAdrEH[2];
-  assign stackAdrH = stackAdrEH[3];
+  wire stackAdrE = stackAdrEH[0];
+  wire stackAdrF = stackAdrEH[1];
+  wire stackAdrG = stackAdrEH[2];
+  wire stackAdrH = stackAdrEH[3];
 
   wire stackAdrY = stackAdrA ^ stackAdrD;
   wire stackAdrZ = stackAdrF ^ stackAdrE;
 
-  wire selCall = stackWrite | retNotForce1777 | clk;
+  wire stackAdr = {stackAdrAD, stackAdrEH};
+  wire stackWrite = fastMemClk & ~retNotForce1777;
+  wire selCall = stackWrite | ~retNotForce1777;
 
-  always @(posedge clk) begin
+  always @(posedge eboxClk) begin
 
     if (callForce1777 && retNotForce1777) begin // LOAD
       stackAdrAD <= 4'b1111;
@@ -226,17 +224,16 @@ module cra(input eboxClk,
     if (~callForce1777 && ~retNotForce1777) begin
       sbrRet <= stack[stackAdr];
     end
-
-    if (stackWrite) stack[stackAdr] <= loc;
   end
+
+  always @(posedge stackWrite) stack[stackAdr] <= loc;
 
 
   ////////////////////////////////////////////////////////////////
   // Diagnostics stuff
-
   always @(*) dispParity = ^{CRAM_CALL, CRAM_DISP};
 
-  always @(posedge clk) begin
+  always @(posedge eboxClk) begin
 
     if (diaFunc051)
       diagAdr[5:10] <= EBUS[0:5];
