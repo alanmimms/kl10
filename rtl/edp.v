@@ -2,6 +2,7 @@
 module edp(input eboxClk,
            input fastMemClk,
 
+           input CTL_ADcarry36,
            input CTL_ADXcarry36,
            input CTL_ADlong,
 
@@ -34,6 +35,8 @@ module edp(input eboxClk,
            input [0:1] CTL_MQ_SEL,
            input [0:1] CTL_MQM_SEL,
            input CTL_MQM_EN,
+           input CTL_inhibitCarry18,
+           input CTL_SPEC_genCarry18,
 
            input [0:35] cacheDataRead,
            output reg [0:35] cacheDataWrite,
@@ -71,6 +74,7 @@ module edp(input eboxClk,
            output wire [-2:36] EDP_ADcarry,
            output wire [0:36] EDP_ADXcarry,
            output wire [0:35] EDP_ADoverflow,
+           output wire EDP_genCarry36,
 
            output reg EDPdrivingEBUS,
            output reg [0:35] EDP_EBUS
@@ -102,7 +106,7 @@ module edp(input eboxClk,
   wire AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
   wire ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
-  wire inhibitCarry18, spec_genCarry18;
+  wire CTL_inhibitCarry18, CTL_SPEC_genCarry18;
 
   wire ADbool = CRAM_AD[1];
   wire [0:3] ADsel = CRAM_AD[2:5];
@@ -294,6 +298,11 @@ module edp(input eboxClk,
   // Look-ahead carry network moved here from IR4 M8522 board.
   wire [0:35] ADEXxortmp;
 
+
+  // XXX is this completely right?
+  assign EDP_ADcarry[36] = CTL_ADcarry36;
+
+
   // Instantiate ALU for AD and ADX
   genvar n;
   generate
@@ -348,6 +357,8 @@ module edp(input eboxClk,
 
   // AD carry look ahead
   // Moved here from IR4
+  assign EDP_genCarry36 = CTL_ADXcarry36 | CTL_ADlong;
+  
   // IR4 E11
   mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
                      .P({AD_CP[0], AD_CP[2], AD_CP06_11, AD_CP12_35}),
@@ -372,8 +383,8 @@ module edp(input eboxClk,
                     .C2OUT(EDP_ADcarry[18]));
 
   // IR4 E6
-  mc10179 AD_LCG_E6(.G({~inhibitCarry18, ~inhibitCarry18, AD_CG[18], AD_CG[20]}),
-                    .P({spec_genCarry18, 1'b0, AD_CP[18], AD_CP[20]}),
+  mc10179 AD_LCG_E6(.G({~CTL_inhibitCarry18, ~CTL_inhibitCarry18, AD_CG[18], AD_CG[20]}),
+                    .P({CTL_SPEC_genCarry18, 1'b0, AD_CP[18], AD_CP[20]}),
                     .CIN(1'b0),
                     .GG(AD_CG18_23),
                     .PG(AD_CP18_23));
@@ -390,7 +401,7 @@ module edp(input eboxClk,
   // ADX carry look ahead
   // Moved here from IR4
   // IR4 E22
-  mc10179 ADX_LCG_E22(.G({CTL_ADXcarry36 | CTL_ADlong, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
+  mc10179 ADX_LCG_E22(.G({EDP_genCarry36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
                       .P({~CTL_ADlong, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
                       .CIN(CTL_ADXcarry36),
                       .C8OUT(ADcarry36));

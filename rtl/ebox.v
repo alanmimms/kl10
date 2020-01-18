@@ -100,7 +100,6 @@ module ebox(input eboxClk,
   wire                  ACeq0;                  // From ir0 of ir.v
   wire                  ADR_BRK_PREVENT;        // From scd0 of scd.v
   wire                  ADeq0;                  // From ir0 of ir.v
-  wire [0:35]           ADoverflow;             // From edp0 of edp.v
   wire [0:3]            APR_FMadr;              // From apr0 of apr.v
   wire [0:2]            APR_FMblk;              // From apr0 of apr.v
   wire [1:10]           AREAD;                  // From cra0 of cra.v
@@ -172,6 +171,7 @@ module ebox(input eboxClk,
   wire                  CRY0;                   // From scd0 of scd.v
   wire                  CRY1;                   // From scd0 of scd.v
   wire                  CTL_ADXcarry36;         // From ctl0 of ctl.v
+  wire                  CTL_ADcarry36;          // From ctl0 of ctl.v
   wire                  CTL_ADlong;             // From ctl0 of ctl.v
   wire                  CTL_AR00to08load;       // From ctl0 of ctl.v
   wire                  CTL_AR00to11clr;        // From ctl0 of ctl.v
@@ -187,8 +187,10 @@ module ebox(input eboxClk,
   wire                  CTL_MQM_EN;             // From ctl0 of ctl.v
   wire [0:1]            CTL_MQM_SEL;            // From ctl0 of ctl.v
   wire [0:1]            CTL_MQ_SEL;             // From ctl0 of ctl.v
+  wire                  CTL_SPEC_genCarry18;    // From ctl0 of ctl.v
   wire                  CTL_adToEBUS_L;         // From ctl0 of ctl.v
   wire                  CTL_adToEBUS_R;         // From ctl0 of ctl.v
+  wire                  CTL_inhibitCarry18;     // From ctl0 of ctl.v
   wire                  DIV_CHK;                // From scd0 of scd.v
   wire [2:0]            DRAM_A;                 // From ir0 of ir.v
   wire [2:0]            DRAM_B;                 // From ir0 of ir.v
@@ -197,7 +199,7 @@ module ebox(input eboxClk,
   wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
   wire [0:35]           EDP_ADX;                // From edp0 of edp.v
   wire [0:36]           EDP_ADXcarry;           // From edp0 of edp.v
-  wire                  EDP_AD_EX [-2:-1];      // From edp0 of edp.v
+  wire [-2:-1]          EDP_AD_EX;              // From edp0 of edp.v
   wire [-2:36]          EDP_ADcarry;            // From edp0 of edp.v
   wire [0:35]           EDP_ADoverflow;         // From edp0 of edp.v
   wire [0:35]           EDP_AR;                 // From edp0 of edp.v
@@ -205,6 +207,7 @@ module ebox(input eboxClk,
   wire [0:35]           EDP_BR;                 // From edp0 of edp.v
   wire [0:35]           EDP_BRX;                // From edp0 of edp.v
   wire [0:35]           EDP_MQ;                 // From edp0 of edp.v
+  wire                  EDP_genCarry36;         // From edp0 of edp.v
   wire                  FEsign;                 // From scd0 of scd.v
   wire [0:35]           FM;                     // From edp0 of edp.v
   wire                  FOV;                    // From scd0 of scd.v
@@ -402,20 +405,21 @@ module ebox(input eboxClk,
            .EDP_BR                      (EDP_BR[0:35]),
            .EDP_BRX                     (EDP_BRX[0:35]),
            .EDP_MQ                      (EDP_MQ[0:35]),
-           .ADoverflow                  (ADoverflow[0:35]),
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
            .FM                          (FM[0:35]),
            .fmParity                    (fmParity),
-           .EDP_AD_EX                   (EDP_AD_EX/*.[-2:-1]*/),
+           .EDP_AD_EX                   (EDP_AD_EX[-2:-1]),
            .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
            .EDP_ADXcarry                (EDP_ADXcarry[0:36]),
            .EDP_ADoverflow              (EDP_ADoverflow[0:35]),
+           .EDP_genCarry36              (EDP_genCarry36),
            .EDPdrivingEBUS              (EDPdrivingEBUS),
            .EDP_EBUS                    (EDP_EBUS[0:35]),
            // Inputs
            .eboxClk                     (eboxClk),
            .fastMemClk                  (fastMemClk),
+           .CTL_ADcarry36               (CTL_ADcarry36),
            .CTL_ADXcarry36              (CTL_ADXcarry36),
            .CTL_ADlong                  (CTL_ADlong),
            .CRAM_AD                     (CRAM_AD[0:6]),
@@ -441,6 +445,8 @@ module ebox(input eboxClk,
            .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
            .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
            .CTL_MQM_EN                  (CTL_MQM_EN),
+           .CTL_inhibitCarry18          (CTL_inhibitCarry18),
+           .CTL_SPEC_genCarry18         (CTL_SPEC_genCarry18),
            .cacheDataRead               (cacheDataRead[0:35]),
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
@@ -562,8 +568,11 @@ module ebox(input eboxClk,
            .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
            .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
            .CTL_MQM_EN                  (CTL_MQM_EN),
+           .CTL_inhibitCarry18          (CTL_inhibitCarry18),
+           .CTL_SPEC_genCarry18         (CTL_SPEC_genCarry18),
            .CTL_adToEBUS_L              (CTL_adToEBUS_L),
            .CTL_adToEBUS_R              (CTL_adToEBUS_R),
+           .CTL_ADcarry36               (CTL_ADcarry36),
            .CTL_ADXcarry36              (CTL_ADXcarry36),
            .CTL_ADlong                  (CTL_ADlong),
            // Inputs

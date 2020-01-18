@@ -101,8 +101,13 @@ module edptb;
   reg [0:1] CTL_MQ_SEL;
   reg [0:1] CTL_MQM_SEL;
   reg CTL_MQM_EN;
+  reg CTL_inhibitCarry18;
+  reg CTL_SPEC_genCarry18;
+
   reg CTL_adToEBUS_L;
   reg CTL_adToEBUS_R;
+
+  reg CTL_ADcarry36;
   reg CTL_ADXcarry36;
   reg CTL_ADlong;
 
@@ -143,6 +148,7 @@ module edptb;
            // Inputs
            .eboxClk                     (eboxClk),
            .fastMemClk                  (fastMemClk),
+           .CTL_ADcarry36               (CTL_ADcarry36),
            .CTL_ADXcarry36              (CTL_ADXcarry36),
            .CTL_ADlong                  (CTL_ADlong),
            .CRAM_AD                     (CRAM_AD[0:6]),
@@ -168,6 +174,8 @@ module edptb;
            .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
            .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
            .CTL_MQM_EN                  (CTL_MQM_EN),
+           .CTL_inhibitCarry18          (CTL_inhibitCarry18),
+           .CTL_SPEC_genCarry18         (CTL_SPEC_genCarry18),
            .cacheDataRead               (cacheDataRead[0:35]),
            .EBUS                        (EBUS[0:35]),
            .SHM_SH                      (SHM_SH[0:35]),
@@ -200,6 +208,8 @@ module edptb;
     fastMemClk = 0;
 
     cacheDataRead = 0;
+
+    CTL_ADcarry36 = 0;
     CTL_ADXcarry36 = 0;
     CTL_ADlong = 0;
 
@@ -221,6 +231,9 @@ module edptb;
     CTL_MQ_SEL = 0;
     CTL_MQM_SEL = 0;
     CTL_MQM_EN = 0;
+
+    CTL_inhibitCarry18 = 0;
+    CTL_SPEC_genCarry18 = 0;
 
     CTL_adToEBUS_L = 0;
     CTL_adToEBUS_R = 0;
