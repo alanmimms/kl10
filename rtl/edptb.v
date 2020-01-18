@@ -5,11 +5,10 @@ module edptb;
   
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
-  wire [0:35]           ADoverflow;             // From edp0 of edp.v
   wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
   wire [0:35]           EDP_ADX;                // From edp0 of edp.v
   wire [0:36]           EDP_ADXcarry;           // From edp0 of edp.v
-  wire                  EDP_AD_EX [-2:-1];      // From edp0 of edp.v
+  wire [-2:-1]          EDP_AD_EX;              // From edp0 of edp.v
   wire [-2:36]          EDP_ADcarry;            // From edp0 of edp.v
   wire [0:35]           EDP_ADoverflow;         // From edp0 of edp.v
   wire [0:35]           EDP_AR;                 // From edp0 of edp.v
@@ -131,12 +130,11 @@ module edptb;
            .EDP_BR                      (EDP_BR[0:35]),
            .EDP_BRX                     (EDP_BRX[0:35]),
            .EDP_MQ                      (EDP_MQ[0:35]),
-           .ADoverflow                  (ADoverflow[0:35]),
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
            .FM                          (FM[0:35]),
            .fmParity                    (fmParity),
-           .EDP_AD_EX                   (EDP_AD_EX/*.[-2:-1]*/),
+           .EDP_AD_EX                   (EDP_AD_EX[-2:-1]),
            .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
            .EDP_ADXcarry                (EDP_ADXcarry[0:36]),
            .EDP_ADoverflow              (EDP_ADoverflow[0:35]),

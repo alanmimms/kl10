@@ -111,7 +111,7 @@ module ir(input eboxClk,
   end
 
   assign magic7eq8 = CRAM_MAGIC[7] ^ CRAM_MAGIC[8];
-  assign AgtB = EDP_AD[0] ^ EDP_ADcarry[-2]
+  assign AgtB = EDP_AD[0] ^ EDP_ADcarry[-2];
   assign ADeq0 = ~|EDP_AD;
   assign testSatisfied = |{DRAM_B[1] & ADeq0,                     // EQ
                            DRAM_B[2] & AgtB & CRAM_MAGIC[7],      // GT
