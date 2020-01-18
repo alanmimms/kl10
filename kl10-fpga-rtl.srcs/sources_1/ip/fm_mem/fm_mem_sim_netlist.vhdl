@@ -1,11 +1,11 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
--- Date        : Mon Jan 13 17:30:05 2020
+-- Date        : Fri Jan 17 15:10:35 2020
 -- Host        : alanm running 64-bit Ubuntu 19.10
--- Command     : write_vhdl -force -mode funcsim -rename_top fm_mem -prefix
---               fm_mem_ FMmem_sim_netlist.vhdl
--- Design      : FMmem
+-- Command     : write_vhdl -force -mode funcsim
+--               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/fm_mem/fm_mem_sim_netlist.vhdl
+-- Design      : fm_mem
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
 -- Device      : xc7z010clg400-1
@@ -22,6 +22,8 @@ entity fm_mem_blk_mem_gen_prim_wrapper_init is
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of fm_mem_blk_mem_gen_prim_wrapper_init : entity is "blk_mem_gen_prim_wrapper_init";
 end fm_mem_blk_mem_gen_prim_wrapper_init;
 
 architecture STRUCTURE of fm_mem_blk_mem_gen_prim_wrapper_init is
@@ -125,8 +127,8 @@ begin
       SIM_DEVICE => "7SERIES",
       SRVAL_A => X"00000",
       SRVAL_B => X"00000",
-      WRITE_MODE_A => "WRITE_FIRST",
-      WRITE_MODE_B => "WRITE_FIRST",
+      WRITE_MODE_A => "READ_FIRST",
+      WRITE_MODE_B => "READ_FIRST",
       WRITE_WIDTH_A => 18,
       WRITE_WIDTH_B => 18
     )
@@ -180,6 +182,8 @@ entity fm_mem_blk_mem_gen_prim_width is
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of fm_mem_blk_mem_gen_prim_width : entity is "blk_mem_gen_prim_width";
 end fm_mem_blk_mem_gen_prim_width;
 
 architecture STRUCTURE of fm_mem_blk_mem_gen_prim_width is
@@ -205,6 +209,8 @@ entity fm_mem_blk_mem_gen_generic_cstr is
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of fm_mem_blk_mem_gen_generic_cstr : entity is "blk_mem_gen_generic_cstr";
 end fm_mem_blk_mem_gen_generic_cstr;
 
 architecture STRUCTURE of fm_mem_blk_mem_gen_generic_cstr is
@@ -230,6 +236,8 @@ entity fm_mem_blk_mem_gen_top is
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of fm_mem_blk_mem_gen_top : entity is "blk_mem_gen_top";
 end fm_mem_blk_mem_gen_top;
 
 architecture STRUCTURE of fm_mem_blk_mem_gen_top is
@@ -255,6 +263,8 @@ entity fm_mem_blk_mem_gen_v8_4_4_synth is
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of fm_mem_blk_mem_gen_v8_4_4_synth : entity is "blk_mem_gen_v8_4_4_synth";
 end fm_mem_blk_mem_gen_v8_4_4_synth;
 
 architecture STRUCTURE of fm_mem_blk_mem_gen_v8_4_4_synth is
@@ -385,7 +395,7 @@ entity fm_mem_blk_mem_gen_v8_4_4 is
   attribute C_EN_SLEEP_PIN : integer;
   attribute C_EN_SLEEP_PIN of fm_mem_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_EST_POWER_SUMMARY : string;
-  attribute C_EST_POWER_SUMMARY of fm_mem_blk_mem_gen_v8_4_4 : entity is "Estimated Power for IP     :     3.70485 mW";
+  attribute C_EST_POWER_SUMMARY of fm_mem_blk_mem_gen_v8_4_4 : entity is "Estimated Power for IP     :     3.81035 mW";
   attribute C_FAMILY : string;
   attribute C_FAMILY of fm_mem_blk_mem_gen_v8_4_4 : entity is "zynq";
   attribute C_HAS_AXI_ID : integer;
@@ -421,7 +431,7 @@ entity fm_mem_blk_mem_gen_v8_4_4 is
   attribute C_INITB_VAL : string;
   attribute C_INITB_VAL of fm_mem_blk_mem_gen_v8_4_4 : entity is "0";
   attribute C_INIT_FILE : string;
-  attribute C_INIT_FILE of fm_mem_blk_mem_gen_v8_4_4 : entity is "FMmem.mem";
+  attribute C_INIT_FILE of fm_mem_blk_mem_gen_v8_4_4 : entity is "fm_mem.mem";
   attribute C_INIT_FILE_NAME : string;
   attribute C_INIT_FILE_NAME of fm_mem_blk_mem_gen_v8_4_4 : entity is "no_coe_file_loaded";
   attribute C_INTERFACE_TYPE : integer;
@@ -479,7 +489,7 @@ entity fm_mem_blk_mem_gen_v8_4_4 is
   attribute C_WRITE_DEPTH_B : integer;
   attribute C_WRITE_DEPTH_B of fm_mem_blk_mem_gen_v8_4_4 : entity is 128;
   attribute C_WRITE_MODE_A : string;
-  attribute C_WRITE_MODE_A of fm_mem_blk_mem_gen_v8_4_4 : entity is "WRITE_FIRST";
+  attribute C_WRITE_MODE_A of fm_mem_blk_mem_gen_v8_4_4 : entity is "READ_FIRST";
   attribute C_WRITE_MODE_B : string;
   attribute C_WRITE_MODE_B of fm_mem_blk_mem_gen_v8_4_4 : entity is "WRITE_FIRST";
   attribute C_WRITE_WIDTH_A : integer;
@@ -488,6 +498,8 @@ entity fm_mem_blk_mem_gen_v8_4_4 is
   attribute C_WRITE_WIDTH_B of fm_mem_blk_mem_gen_v8_4_4 : entity is 36;
   attribute C_XDEVICEFAMILY : string;
   attribute C_XDEVICEFAMILY of fm_mem_blk_mem_gen_v8_4_4 : entity is "zynq";
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of fm_mem_blk_mem_gen_v8_4_4 : entity is "blk_mem_gen_v8_4_4";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of fm_mem_blk_mem_gen_v8_4_4 : entity is "yes";
 end fm_mem_blk_mem_gen_v8_4_4;
@@ -633,7 +645,7 @@ entity fm_mem is
   attribute NotValidForBitStream : boolean;
   attribute NotValidForBitStream of fm_mem : entity is true;
   attribute CHECK_LICENSE_TYPE : string;
-  attribute CHECK_LICENSE_TYPE of fm_mem : entity is "FMmem,blk_mem_gen_v8_4_4,{}";
+  attribute CHECK_LICENSE_TYPE of fm_mem : entity is "fm_mem,blk_mem_gen_v8_4_4,{}";
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of fm_mem : entity is "yes";
   attribute x_core_info : string;
@@ -708,7 +720,7 @@ architecture STRUCTURE of fm_mem is
   attribute C_EN_SLEEP_PIN : integer;
   attribute C_EN_SLEEP_PIN of U0 : label is 0;
   attribute C_EST_POWER_SUMMARY : string;
-  attribute C_EST_POWER_SUMMARY of U0 : label is "Estimated Power for IP     :     3.70485 mW";
+  attribute C_EST_POWER_SUMMARY of U0 : label is "Estimated Power for IP     :     3.81035 mW";
   attribute C_FAMILY : string;
   attribute C_FAMILY of U0 : label is "zynq";
   attribute C_HAS_AXI_ID : integer;
@@ -744,7 +756,7 @@ architecture STRUCTURE of fm_mem is
   attribute C_INITB_VAL : string;
   attribute C_INITB_VAL of U0 : label is "0";
   attribute C_INIT_FILE : string;
-  attribute C_INIT_FILE of U0 : label is "FMmem.mem";
+  attribute C_INIT_FILE of U0 : label is "fm_mem.mem";
   attribute C_INIT_FILE_NAME : string;
   attribute C_INIT_FILE_NAME of U0 : label is "no_coe_file_loaded";
   attribute C_INTERFACE_TYPE : integer;
@@ -802,7 +814,7 @@ architecture STRUCTURE of fm_mem is
   attribute C_WRITE_DEPTH_B : integer;
   attribute C_WRITE_DEPTH_B of U0 : label is 128;
   attribute C_WRITE_MODE_A : string;
-  attribute C_WRITE_MODE_A of U0 : label is "WRITE_FIRST";
+  attribute C_WRITE_MODE_A of U0 : label is "READ_FIRST";
   attribute C_WRITE_MODE_B : string;
   attribute C_WRITE_MODE_B of U0 : label is "WRITE_FIRST";
   attribute C_WRITE_WIDTH_A : integer;

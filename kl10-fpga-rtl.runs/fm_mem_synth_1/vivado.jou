@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2019.2.1 (64-bit)
+# SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
+# IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
+# Start of session at: Fri Jan 17 15:09:20 2020
+# Process ID: 32431
+# Current directory: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/fm_mem_synth_1
+# Command line: vivado -log fm_mem.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source fm_mem.tcl
+# Log file: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/fm_mem_synth_1/fm_mem.vds
+# Journal file: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/fm_mem_synth_1/vivado.jou
+#-----------------------------------------------------------
+source fm_mem.tcl -notrace

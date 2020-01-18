@@ -1,5 +1,25 @@
 `timescale 1ns / 1ps
 
+// MC10181 from Fairchild ECL datasheet F10181.pdf.
+//
+// S3 S2 S1 S0    M=1 C0=X    M=0 C0=0     M=0 C0=1
+//-------------------------------------------------------
+//  0  0  0  0    ~A          A            A+1
+//  0  0  0  1    ~A|~B       A+(A&~B)     A+(A&~B)+1
+//  0  0  1  0    ~A|B        A+(A&B)      A+(A&B)+1
+//  0  0  1  1    1111        A+A          A+A+1
+//  0  1  0  0    ~A&~B       A|B          (A|B)+1
+//  0  1  0  1    ~B          (A|B)+(A&~B) (A|B)+(A&~B)+1
+//  0  1  1  0    ~(A^B)      A+B          A+B+1
+//  0  1  1  1    A|~B        (A|B)+A      (A|B)+A+1
+//  1  0  0  0    ~A&B        A|~B         (A|~B)+1
+//  1  0  0  1    A^B         A-B-1        A-B
+//  1  0  1  0    B           (A|~B)+(A&B) (A|~B)+(A&B)+1
+//  1  0  1  1    A|B         (A|~B)+A     (A|~B)+A+1
+//  1  1  0  0    0000        -1           0000
+//  1  1  0  1    A&~B        (A&~B)-1     A&~B
+//  1  1  1  0    A&B         (A&B)-1      A&B
+//  1  1  1  1    A           A-1          A
 module mc10181(input [3:0] S,
                input M,
                input [3:0] A,
@@ -13,10 +33,9 @@ module mc10181(input [3:0] S,
 
   wire [3:0] G, P;
   wire notGG;
-  wire [3:0] notF;
 
-  assign G = ~(~(S[3] | B | A) | ~(S[2] | A | ~B));
-  assign P = ~((S[1] | ~B) | ~(S[0] | B) | ~A);
+  assign G = ~(~({4{S[3]}} | B | A) | ~({4{S[2]}} | A  | ~B));
+  assign P = ~( ({4{S[1]}} | ~B   ) | ~({4{S[0]}} | B) | ~A);
   assign F = ~(G ^ P ^
                {~(M | G[2]) |
                 ~(M | P[2] | G[1]) |

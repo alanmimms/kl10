@@ -2,8 +2,8 @@
 module edp(input eboxClk,
            input fastMemClk,
 
-           input ADXcarry36, // CTL1
-           input ADlong,     // CTL
+           input CTL_ADXcarry36,
+           input CTL_ADlong,
 
            input [0:6] CRAM_AD,
            input [0:3] CRAM_ADA,
@@ -57,17 +57,22 @@ module edp(input eboxClk,
            input [0:35] VMA_VMAheldOrPC,
 
            output wire [-2:35] EDP_AD,
-           output wire [0:36] EDP_ADX,
-           output reg [0:36] EDP_BR,
-           output reg [0:36] EDP_BRX,
+           output wire [0:35] EDP_ADX,
+           output reg [0:35] EDP_BR,
+           output reg [0:35] EDP_BRX,
            output reg [0:35] EDP_MQ,
-           output wire ADoverflow00,
+           output wire [0:35] ADoverflow,
            output reg [0:35] EDP_AR,
            output reg [0:35] EDP_ARX,
            output wire [0:35] FM,
            output fmParity,
 
-           output ADcarry36,
+
+           output wire EDP_AD_EX[-2:-1],
+           output wire [-2:36] EDP_ADcarry,
+           output wire [0:36] EDP_ADXcarry,
+           output wire [0:35] EDP_ADoverflow;
+
            output reg EDPdrivingEBUS,
            output reg [0:35] EDP_EBUS
            );
@@ -83,14 +88,11 @@ module edp(input eboxClk,
 
   reg [0:17] ARL;
   reg [0:17] ARXL, ARXR;
-
-
+  
   reg [0:35] MQM;
 
-  wire [-2:36] ADcarry;
-  wire [0:36] ADXcarry;
-  
-  reg [-2:35] ADA, ADB;
+  reg [0:35] ADA;
+  reg [-2:35] ADB;
   reg [0:35] ADXA, ADXB;
 
   wire [0:35] AD_CG, AD_CP;
@@ -102,9 +104,6 @@ module edp(input eboxClk,
   wire ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
   wire inhibitCarry18, spec_genCarry18;
-
-  assign ADcarry36 = ADcarry[36];
-  assign ADXcarry36 = ADXcarry[36];
 
   wire ADbool = CRAM_AD[1];
   wire [0:3] ADsel = CRAM_AD[2:5];
@@ -121,7 +120,31 @@ module edp(input eboxClk,
   wire [0:1] MQsel = CTL_MQ_SEL;
   wire [0:1] MQMsel = CTL_MQM_SEL;
   wire MQMen = CTL_MQM_EN;
+
+  // Set registers we own to initial reset state
+  initial begin
+    ARL = 0;
+    ARXL = 0;
+    ARXR = 0;
+    MQM = 36'd0;
+    ADA = 36'd0;
+    ADB = 38'd0;
+    ADXA = 36'd0;
+    ADXB = 36'd0;
+
+    cacheDataWrite = 0;
+    EDP_BR = 36'd0;
+    EDP_BRX = 36'd0;
+    EDP_MQ = 36'd0;
+    EDP_AR = 36'd0;
+    EDP_ARX = 36'd0;
+    EDPdrivingEBUS = 0;
+    EDP_EBUS = 36'd0;
+  end
   
+  assign ADcarry36 = ADcarry[36];
+  assign ADXcarry36 = ADXcarry[36];
+
   // AR including ARL, ARR, and ARM p15.
 
   always @(*) begin
@@ -133,7 +156,7 @@ module edp(input eboxClk,
     3'b100: ARL = SHM_SH[0:17];
     3'b101: ARL = EDP_AD[1:18];
     3'b110: ARL = EDP_ADX[0:17];
-    3'b111: ARL = EDP_AD[-2:15];
+    3'b111: ARL = {AD_EX[-2:-1], EDP_AD[0:14]};
     endcase
   end
   
@@ -205,11 +228,11 @@ module edp(input eboxClk,
       case (MQMsel)
       USR_LOAD: MQM = {EDP_ADX[34:35], EDP_MQ[0:33]};
       USR_SHL:  MQM = SHM_SH;
-      USR_SHR:  MQM = EDP_AD;
-      USR_HOLD: MQM = 36'hFFFFFFFFF;
+      USR_SHR:  MQM = EDP_AD[0:35];
+      USR_HOLD: MQM = 36'hFFF_FFF_FFF;
       endcase           // MQMsel
     end else
-      MQM = 0;
+      MQM = 36'd0;
   end // always@ (*)
 
   always@(posedge eboxClk) begin
@@ -270,41 +293,44 @@ module edp(input eboxClk,
    */
 
   // Look-ahead carry network moved here from IR4 M8522 board.
-
-  assign ADoverflow00 = (EDP_AD[-2] ^ EDP_AD[-1]) | (EDP_AD[0] | EDP_AD[-1]);
+  reg [0:35] AD_ADEXxortmp;
 
   // Instantiate ALU for AD and ADX
   genvar n;
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADaluE1
+    for (n = 0; n < 36; n = n + 6) begin : ADaluE1E2
+
+      // Misc carry logic, top p.17
+      always @(*) begin
+        AD_ADEXxortmp[n] = EDP_AD[n+0] ^ AD_EX[n-1];
+        // Need to find signal AD EX [n-2:n-1] (coming from outside EDP?)
+        ADcarry[n+1] = ADcarry[n-2] ^ AD_ADEXxortmp[n];
+        ADoverflow[n] = AD_EX[n-2]  ^ AD_ADEXxortmp[n];
+      end
+
       mc10181 alu0(.S(ADsel), .M(ADbool),
-                   .A({ADA[n+0], ADA[n+0], ADA[n+0], ADA[n+1]}),
+                  .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
                    .CIN(ADcarry[n+2]),
-                   .F(EDP_AD[n-2:n+1]),
+                   .F(AD_EX, EDP_AD[n:n+1]), // Note AD_EX is dumping ground when n>0
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0]),
                    .COUT(ADcarry[n-2]));
-    end // block: ADalu
-  endgenerate
-  
-  generate
-    for (n = 0; n < 36; n = n + 6) begin : ADaluE2
       mc10181 alu1(.S(ADsel), .M(ADbool),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
-                   .CIN(n < 30 ? ADcarry[n+6] : ADcarry36),
+                   .CIN(ADcarry[n+6]),
                    .F(EDP_AD[n+2:n+5]),
                    .CG(AD_CG[n+2]),
                    .CP(AD_CP[n+2]),
                    .COUT(ADcarry[n+2]));
-    end // block: ADalu
+    end
   endgenerate
   
-  wire [0:35] alu2_x1, alu3_x1;
+  wire [0:35] alu2_x1 = 36'd0, alu3_x1 = 36'd0;
   
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADXaluE3
+    for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
       mc10181 alu2(.S(ADsel), .M(ADbool),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
@@ -312,18 +338,14 @@ module edp(input eboxClk,
                    .F({alu2_x1[n], EDP_ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
-    end
-  endgenerate
-
-  generate
-    for (n = 0; n < 36; n = n + 6) begin : ADXaluE4
       mc10181 alu3(.S(ADsel), .M(ADbool),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
-                   .CIN(n < 30 ? ADXcarry[n+6] : ADXcarry36),
+                   .CIN(n < 30 ? ADXcarry[n+6] : CTL_ADXcarry36),
                    .F({alu3_x1[n], EDP_ADX[n+3:n+5]}),
                    .CG(ADX_CG[n+3]),
-                   .CP(ADX_CP[n+3]));
+                   .CP(ADX_CP[n+3]),
+                   .COUT(ADXcarry[n+3]));
     end
   endgenerate
 
@@ -371,9 +393,9 @@ module edp(input eboxClk,
   // ADX carry look ahead
   // Moved here from IR4
   // IR4 E22
-  mc10179 ADX_LCG_E22(.G({ADXcarry36 | ADlong, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
-                      .P({~ADlong, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
-                      .CIN(ADXcarry36),
+  mc10179 ADX_LCG_E22(.G({CTL_ADXcarry36 | CTL_ADlong, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
+                      .P({~CTL_ADlong, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
+                      .CIN(CTL_ADXcarry36),
                       .C8OUT(ADcarry36));
   // IR4 E21
   mc10179 ADX_LCG_E21(.G({ADX_CG[0], ADX_CG[3], ADX_CG[6], ADX_CG[9]}),
@@ -390,7 +412,7 @@ module edp(input eboxClk,
   // IR4 E16
   mc10179 ADX_LCG_E16(.G({ADX_CG[24], ADX_CG[27], ADX_CG[30], ADX_CG[33]}),
                       .P({ADX_CP[24], ADX_CP[27], ADX_CP[30], ADX_CP[33]}),
-                      .CIN(ADXcarry36),
+                      .CIN(CTL_ADXcarry36),
                       .GG(ADX_CG24_35),
                       .PG(ADX_CP24_35),
                       .C8OUT(ADXcarry[24]),
@@ -401,17 +423,20 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADBmux
       always @(*)
         case(ADBsel)
-        3'b000: ADB[n-2:n+5] = {{2{FM[n+0]}}, FM[n+0:n+5]};
-        3'b001: ADB[n-2:n+5] = {{2{n == 0 ? EDP_BR[n+0] : EDP_BR[n+1]}},
-                                EDP_BR[n+1:n+4], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
-        3'b010: ADB[n-2:n+5] = {{2{EDP_BR[n+0]}}, EDP_BR[n+0:n+5]};
-        3'b011: ADB[n-2:n+5] = {n == 0 ? EDP_AR[n+0] : EDP_AR[n+2],
-                                n == 0 ? EDP_AR[n+1] : EDP_AR[n+2],
+        3'b000: ADB[n-2:n+5] = {{2{FM[n+0]}},
+                                FM[n+0:n+5]};
+        3'b001: ADB[n-2:n+5] = {{2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}},
+                                EDP_BR[n+1:n+4],
+                                n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
+        3'b010: ADB[n-2:n+5] = {{2{EDP_BR[n+0]}},
+                                EDP_BR[n+0:n+5]};
+        3'b011: ADB[n-2:n+5] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
+                                n === 0 ? EDP_AR[n+1] : EDP_AR[n+2],
                                 EDP_AR[n+2:n+5],
-                                n < 1 ? EDP_AR[n+6] : EDP_ARX[0],
-                                n < 1 ? EDP_AR[n+7] : EDP_ARX[1]};
-        endcase // case (ADBsel)
-    end // block: ADBmux
+                                n < 30 ? EDP_AR[n+6] : EDP_ARX[0],
+                                n < 30 ? EDP_AR[n+7] : EDP_ARX[1]};
+        endcase
+    end
   endgenerate
 
   // ADXB mux
@@ -420,11 +445,11 @@ module edp(input eboxClk,
       always @(*)
         case(ADBsel)
         3'b000: ADXB[n+0:n+5] = n < 6 ? CRAM_MAGIC[n+0:n+5] : 6'b0;
-        3'b001: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+6], 1'b0};
+        3'b001: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
         3'b010: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
         3'b011: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
-        endcase // case (ADBsel)
-    end // block: ADXBmux
+        endcase
+    end
   endgenerate
 
   // ADXA mux
@@ -432,7 +457,7 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADXAmux
       always @(*)
         ADXA[n+0:n+5] = ADAen ? EDP_ARX[n+0:n+5] : 6'b0;
-    end // block: ADXAmux
+    end
   endgenerate
 
 
@@ -446,9 +471,9 @@ module edp(input eboxClk,
           2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
           2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
           2'b11: ADA[n+0:n+5] = VMA_VMAheldOrPC[n+0:n+5];
-          endcase // case (ADAsel)
+          endcase
         else
-          ADA[n+0:n+5] = 0;
+          ADA[n+0:n+5] = 36'd0;
     end
   endgenerate
 
@@ -492,8 +517,8 @@ module edp(input eboxClk,
     3'b011: ebusR = FM;
     3'b100: ebusR = EDP_BRX;
     3'b101: ebusR = EDP_ARX;
-    3'b110: ebusR = EDP_ADX;
-    3'b111: ebusR = EDP_AD;
+    3'b110: ebusR = EDP_ADX[0:35];
+    3'b111: ebusR = EDP_AD[0:35];
     endcase
 
     if (diagReadFunc12X || CTL_adToEBUS_L) ebusLH = ebusR[0:17];

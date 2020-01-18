@@ -26,8 +26,8 @@ module ctl(input eboxClk,
            output reg CTL_adToEBUS_L,
            output reg CTL_adToEBUS_R,
 
-           output ADXcarry36,
-           output ADlong
+           output CTL_ADXcarry36,
+           output CTL_ADlong
            /*AUTOARG*/);
 
   /*AUTOWIRE*/
@@ -37,8 +37,8 @@ module ctl(input eboxClk,
   wire PIcycleSaveFlags;
 
   assign PIcycleSaveFlags = PCplus1inh & spec_XCRY_AR0;
-  assign ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM_ADcarry);
-  assign ADlong = 0;            // XXX not right
+  assign CTL_ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM_ADcarry);
+  assign CTL_ADlong = 0;            // XXX not right
 
   // XXX this not nearly complete.
 endmodule // ctl

@@ -1,18 +1,18 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
-// Date        : Mon Jan 13 17:30:05 2020
+// Date        : Fri Jan 17 15:10:35 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
-// Command     : write_verilog -force -mode funcsim -rename_top fm_mem -prefix
-//               fm_mem_ FMmem_sim_netlist.v
-// Design      : FMmem
+// Command     : write_verilog -force -mode funcsim
+//               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/fm_mem/fm_mem_sim_netlist.v
+// Design      : fm_mem
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
 //               or synthesized. This netlist cannot be used for SDF annotated simulation.
 // Device      : xc7z010clg400-1
 // --------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
-(* CHECK_LICENSE_TYPE = "FMmem,blk_mem_gen_v8_4_4,{}" *) (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "blk_mem_gen_v8_4_4,Vivado 2019.2.1" *) 
+(* CHECK_LICENSE_TYPE = "fm_mem,blk_mem_gen_v8_4_4,{}" *) (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "blk_mem_gen_v8_4_4,Vivado 2019.2.1" *) 
 (* NotValidForBitStream *)
 module fm_mem
    (clka,
@@ -75,7 +75,7 @@ module fm_mem
   (* C_EN_SAFETY_CKT = "0" *) 
   (* C_EN_SHUTDOWN_PIN = "0" *) 
   (* C_EN_SLEEP_PIN = "0" *) 
-  (* C_EST_POWER_SUMMARY = "Estimated Power for IP     :     3.70485 mW" *) 
+  (* C_EST_POWER_SUMMARY = "Estimated Power for IP     :     3.81035 mW" *) 
   (* C_FAMILY = "zynq" *) 
   (* C_HAS_AXI_ID = "0" *) 
   (* C_HAS_ENA = "0" *) 
@@ -93,7 +93,7 @@ module fm_mem
   (* C_HAS_SOFTECC_OUTPUT_REGS_B = "0" *) 
   (* C_INITA_VAL = "0" *) 
   (* C_INITB_VAL = "0" *) 
-  (* C_INIT_FILE = "FMmem.mem" *) 
+  (* C_INIT_FILE = "fm_mem.mem" *) 
   (* C_INIT_FILE_NAME = "no_coe_file_loaded" *) 
   (* C_INTERFACE_TYPE = "0" *) 
   (* C_LOAD_INIT_FILE = "0" *) 
@@ -122,7 +122,7 @@ module fm_mem
   (* C_WEB_WIDTH = "4" *) 
   (* C_WRITE_DEPTH_A = "128" *) 
   (* C_WRITE_DEPTH_B = "128" *) 
-  (* C_WRITE_MODE_A = "WRITE_FIRST" *) 
+  (* C_WRITE_MODE_A = "READ_FIRST" *) 
   (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
   (* C_WRITE_WIDTH_A = "36" *) 
   (* C_WRITE_WIDTH_B = "36" *) 
@@ -194,6 +194,7 @@ module fm_mem
         .web({1'b0,1'b0,1'b0,1'b0}));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_generic_cstr" *) 
 module fm_mem_blk_mem_gen_generic_cstr
    (douta,
     clka,
@@ -220,6 +221,7 @@ module fm_mem_blk_mem_gen_generic_cstr
         .wea(wea));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_prim_width" *) 
 module fm_mem_blk_mem_gen_prim_width
    (douta,
     clka,
@@ -246,6 +248,7 @@ module fm_mem_blk_mem_gen_prim_width
         .wea(wea));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_prim_wrapper_init" *) 
 module fm_mem_blk_mem_gen_prim_wrapper_init
    (douta,
     clka,
@@ -361,8 +364,8 @@ module fm_mem_blk_mem_gen_prim_wrapper_init
     .SIM_DEVICE("7SERIES"),
     .SRVAL_A(18'h00000),
     .SRVAL_B(18'h00000),
-    .WRITE_MODE_A("WRITE_FIRST"),
-    .WRITE_MODE_B("WRITE_FIRST"),
+    .WRITE_MODE_A("READ_FIRST"),
+    .WRITE_MODE_B("READ_FIRST"),
     .WRITE_WIDTH_A(18),
     .WRITE_WIDTH_B(18)) 
     \DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram 
@@ -390,6 +393,7 @@ module fm_mem_blk_mem_gen_prim_wrapper_init
         .WEBWE({1'b0,1'b0,wea[3:2]}));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_top" *) 
 module fm_mem_blk_mem_gen_top
    (douta,
     clka,
@@ -423,13 +427,13 @@ endmodule
 (* C_DISABLE_WARN_BHV_COLL = "0" *) (* C_DISABLE_WARN_BHV_RANGE = "0" *) (* C_ELABORATION_DIR = "./" *) 
 (* C_ENABLE_32BIT_ADDRESS = "0" *) (* C_EN_DEEPSLEEP_PIN = "0" *) (* C_EN_ECC_PIPE = "0" *) 
 (* C_EN_RDADDRA_CHG = "0" *) (* C_EN_RDADDRB_CHG = "0" *) (* C_EN_SAFETY_CKT = "0" *) 
-(* C_EN_SHUTDOWN_PIN = "0" *) (* C_EN_SLEEP_PIN = "0" *) (* C_EST_POWER_SUMMARY = "Estimated Power for IP     :     3.70485 mW" *) 
+(* C_EN_SHUTDOWN_PIN = "0" *) (* C_EN_SLEEP_PIN = "0" *) (* C_EST_POWER_SUMMARY = "Estimated Power for IP     :     3.81035 mW" *) 
 (* C_FAMILY = "zynq" *) (* C_HAS_AXI_ID = "0" *) (* C_HAS_ENA = "0" *) 
 (* C_HAS_ENB = "0" *) (* C_HAS_INJECTERR = "0" *) (* C_HAS_MEM_OUTPUT_REGS_A = "1" *) 
 (* C_HAS_MEM_OUTPUT_REGS_B = "0" *) (* C_HAS_MUX_OUTPUT_REGS_A = "0" *) (* C_HAS_MUX_OUTPUT_REGS_B = "0" *) 
 (* C_HAS_REGCEA = "0" *) (* C_HAS_REGCEB = "0" *) (* C_HAS_RSTA = "0" *) 
 (* C_HAS_RSTB = "0" *) (* C_HAS_SOFTECC_INPUT_REGS_A = "0" *) (* C_HAS_SOFTECC_OUTPUT_REGS_B = "0" *) 
-(* C_INITA_VAL = "0" *) (* C_INITB_VAL = "0" *) (* C_INIT_FILE = "FMmem.mem" *) 
+(* C_INITA_VAL = "0" *) (* C_INITB_VAL = "0" *) (* C_INIT_FILE = "fm_mem.mem" *) 
 (* C_INIT_FILE_NAME = "no_coe_file_loaded" *) (* C_INTERFACE_TYPE = "0" *) (* C_LOAD_INIT_FILE = "0" *) 
 (* C_MEM_TYPE = "0" *) (* C_MUX_PIPELINE_STAGES = "0" *) (* C_PRIM_TYPE = "1" *) 
 (* C_READ_DEPTH_A = "128" *) (* C_READ_DEPTH_B = "128" *) (* C_READ_LATENCY_A = "1" *) 
@@ -439,9 +443,9 @@ endmodule
 (* C_USE_BYTE_WEA = "1" *) (* C_USE_BYTE_WEB = "1" *) (* C_USE_DEFAULT_DATA = "1" *) 
 (* C_USE_ECC = "0" *) (* C_USE_SOFTECC = "0" *) (* C_USE_URAM = "0" *) 
 (* C_WEA_WIDTH = "4" *) (* C_WEB_WIDTH = "4" *) (* C_WRITE_DEPTH_A = "128" *) 
-(* C_WRITE_DEPTH_B = "128" *) (* C_WRITE_MODE_A = "WRITE_FIRST" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
+(* C_WRITE_DEPTH_B = "128" *) (* C_WRITE_MODE_A = "READ_FIRST" *) (* C_WRITE_MODE_B = "WRITE_FIRST" *) 
 (* C_WRITE_WIDTH_A = "36" *) (* C_WRITE_WIDTH_B = "36" *) (* C_XDEVICEFAMILY = "zynq" *) 
-(* downgradeipidentifiedwarnings = "yes" *) 
+(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4" *) (* downgradeipidentifiedwarnings = "yes" *) 
 module fm_mem_blk_mem_gen_v8_4_4
    (clka,
     rsta,
@@ -697,6 +701,7 @@ module fm_mem_blk_mem_gen_v8_4_4
         .wea(wea));
 endmodule
 
+(* ORIG_REF_NAME = "blk_mem_gen_v8_4_4_synth" *) 
 module fm_mem_blk_mem_gen_v8_4_4_synth
    (douta,
     clka,

@@ -99,11 +99,8 @@ module ebox(input eboxClk,
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
   wire                  ACeq0;                  // From ir0 of ir.v
   wire                  ADR_BRK_PREVENT;        // From scd0 of scd.v
-  wire                  ADXcarry36;             // From ctl0 of ctl.v
-  wire                  ADcarry36;              // From edp0 of edp.v
   wire                  ADeq0;                  // From ir0 of ir.v
-  wire                  ADlong;                 // From ctl0 of ctl.v
-  wire                  ADoverflow00;           // From edp0 of edp.v
+  wire [0:35]           ADoverflow;             // From edp0 of edp.v
   wire [0:3]            APR_FMadr;              // From apr0 of apr.v
   wire [0:2]            APR_FMblk;              // From apr0 of apr.v
   wire [1:10]           AREAD;                  // From cra0 of cra.v
@@ -174,6 +171,8 @@ module ebox(input eboxClk,
   wire [0:2]            CRAM_VMAX;              // From crm0 of crm.v
   wire                  CRY0;                   // From scd0 of scd.v
   wire                  CRY1;                   // From scd0 of scd.v
+  wire                  CTL_ADXcarry36;         // From ctl0 of ctl.v
+  wire                  CTL_ADlong;             // From ctl0 of ctl.v
   wire                  CTL_AR00to08load;       // From ctl0 of ctl.v
   wire                  CTL_AR00to11clr;        // From ctl0 of ctl.v
   wire                  CTL_AR09to17load;       // From ctl0 of ctl.v
@@ -196,11 +195,15 @@ module ebox(input eboxClk,
   wire [10:0]           DRAM_J;                 // From ir0 of ir.v
   wire                  DRAM_ODD_PARITY;        // From ir0 of ir.v
   wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
-  wire [0:36]           EDP_ADX;                // From edp0 of edp.v
+  wire [0:35]           EDP_ADX;                // From edp0 of edp.v
+  wire [0:36]           EDP_ADXcarry;           // From edp0 of edp.v
+  wire                  EDP_AD_EX [-2:-1];      // From edp0 of edp.v
+  wire [-2:36]          EDP_ADcarry;            // From edp0 of edp.v
+  wire [0:35]           EDP_ADoverflow;         // From edp0 of edp.v
   wire [0:35]           EDP_AR;                 // From edp0 of edp.v
   wire [0:35]           EDP_ARX;                // From edp0 of edp.v
-  wire [0:36]           EDP_BR;                 // From edp0 of edp.v
-  wire [0:36]           EDP_BRX;                // From edp0 of edp.v
+  wire [0:35]           EDP_BR;                 // From edp0 of edp.v
+  wire [0:35]           EDP_BRX;                // From edp0 of edp.v
   wire [0:35]           EDP_MQ;                 // From edp0 of edp.v
   wire                  FEsign;                 // From scd0 of scd.v
   wire [0:35]           FM;                     // From edp0 of edp.v
@@ -306,6 +309,7 @@ module ebox(input eboxClk,
            .EDP_ADX                     (EDP_ADX[0:35]),
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
+           .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
            .pfDisp                      (pfDisp[0:10]),
            .skipEn40_47                 (skipEn40_47),
            .skipEn50_57                 (skipEn50_57),
@@ -316,7 +320,6 @@ module ebox(input eboxClk,
            .localACAddress              (localACAddress),
            .longEnable                  (longEnable),
            .indexed                     (indexed),
-           .ADcarry_02                  (ADcarry_02),
            .ADeq0                       (ADeq0),
            .ACeq0                       (ACeq0),
            .FEsign                      (FEsign),
@@ -395,23 +398,26 @@ module ebox(input eboxClk,
            // Outputs
            .cacheDataWrite              (cacheDataWrite[0:35]),
            .EDP_AD                      (EDP_AD[-2:35]),
-           .EDP_ADX                     (EDP_ADX[0:36]),
-           .EDP_BR                      (EDP_BR[0:36]),
-           .EDP_BRX                     (EDP_BRX[0:36]),
+           .EDP_ADX                     (EDP_ADX[0:35]),
+           .EDP_BR                      (EDP_BR[0:35]),
+           .EDP_BRX                     (EDP_BRX[0:35]),
            .EDP_MQ                      (EDP_MQ[0:35]),
-           .ADoverflow00                (ADoverflow00),
+           .ADoverflow                  (ADoverflow[0:35]),
            .EDP_AR                      (EDP_AR[0:35]),
            .EDP_ARX                     (EDP_ARX[0:35]),
            .FM                          (FM[0:35]),
            .fmParity                    (fmParity),
-           .ADcarry36                   (ADcarry36),
+           .EDP_AD_EX                   (EDP_AD_EX/*.[-2:-1]*/),
+           .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
+           .EDP_ADXcarry                (EDP_ADXcarry[0:36]),
+           .EDP_ADoverflow              (EDP_ADoverflow[0:35]),
            .EDPdrivingEBUS              (EDPdrivingEBUS),
            .EDP_EBUS                    (EDP_EBUS[0:35]),
            // Inputs
            .eboxClk                     (eboxClk),
            .fastMemClk                  (fastMemClk),
-           .ADXcarry36                  (ADXcarry36),
-           .ADlong                      (ADlong),
+           .CTL_ADXcarry36              (CTL_ADXcarry36),
+           .CTL_ADlong                  (CTL_ADlong),
            .CRAM_AD                     (CRAM_AD[0:6]),
            .CRAM_ADA                    (CRAM_ADA[0:3]),
            .CRAM_ADA_EN                 (CRAM_ADA_EN[0:1]),
@@ -480,14 +486,8 @@ module ebox(input eboxClk,
          .inhibitCarry18                (inhibitCarry18),
          .SPEC_genCarry18               (SPEC_genCarry18),
          .genCarry36                    (genCarry36),
-         .ADcarry_02                    (ADcarry_02),
-         .ADcarry12                     (ADcarry12),
-         .ADcarry18                     (ADcarry18),
-         .ADcarry24                     (ADcarry24),
-         .ADcarry30                     (ADcarry30),
-         .ADcarry36                     (ADcarry36),
-         .ADXcarry12                    (ADXcarry12),
-         .ADXcarry24                    (ADXcarry24));
+         .EDP_ADcarry                   (EDP_ADcarry[-2:36]),
+         .EDP_ADXcarry                  (EDP_ADXcarry[0:36]));
 
   vma vma0(
            /*AUTOINST*/
@@ -564,8 +564,8 @@ module ebox(input eboxClk,
            .CTL_MQM_EN                  (CTL_MQM_EN),
            .CTL_adToEBUS_L              (CTL_adToEBUS_L),
            .CTL_adToEBUS_R              (CTL_adToEBUS_R),
-           .ADXcarry36                  (ADXcarry36),
-           .ADlong                      (ADlong),
+           .CTL_ADXcarry36              (CTL_ADXcarry36),
+           .CTL_ADlong                  (CTL_ADlong),
            // Inputs
            .eboxClk                     (eboxClk),
            .CRAM_ADcarry                (CRAM_ADcarry),

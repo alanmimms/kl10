@@ -13,14 +13,8 @@ module ir(input eboxClk,
           input inhibitCarry18,
           input SPEC_genCarry18,
           input genCarry36,
-          input ADcarry_02,
-          input ADcarry12,
-          input ADcarry18,
-          input ADcarry24,
-          input ADcarry30,
-          input ADcarry36,
-          input ADXcarry12,
-          input ADXcarry24,
+          input [-2:36] EDP_ADcarry,
+          input [0:36] EDP_ADXcarry,
 
           output ADeq0,
           output IOlegal,
@@ -117,12 +111,12 @@ module ir(input eboxClk,
   end
 
   assign magic7eq8 = CRAM_MAGIC[7] ^ CRAM_MAGIC[8];
-  assign AgtB = EDP_AD[0] ^ ADcarry_02;
+  assign AgtB = EDP_AD[0] ^ EDP_ADcarry[-2]
   assign ADeq0 = ~|EDP_AD;
   assign testSatisfied = |{DRAM_B[1] & ADeq0,                     // EQ
                            DRAM_B[2] & AgtB & CRAM_MAGIC[7],      // GT
                            DRAM_B[2] & EDP_AD[0] & CRAM_MAGIC[8], // LT
-                           ~magic7eq8 & ADcarry_02                // X
+                           ~magic7eq8 & EDP_ADcarry[-2]               // X
                            } ^ DRAM_B[0];
 
   // p.130 E57 and friends
@@ -188,9 +182,9 @@ module ir(input eboxClk,
       3'b100: IR_EBUS[0:5] = {testSatisfied, JRST0, DRAM_J[1:4]};
       3'b101: IR_EBUS[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
       3'b110: IR_EBUS[0:5] = {ADeq0, IOlegal, inhibitCarry18,
-                              SPEC_genCarry18, genCarry36, ADcarry_02};
-      3'b111: IR_EBUS[0:5] = {ADcarry12, ADcarry18, ADcarry24,
-                              ADcarry36, ADXcarry12, ADXcarry24};
+                              SPEC_genCarry18, genCarry36, EDP_ADcarry[-2]};
+      3'b111: IR_EBUS[0:5] = {EDP_ADcarry[12], EDP_ADcarry[18], EDP_ADcarry[24],
+                              EDP_ADcarry[36], EDP_ADXcarry[12], EDP_ADXcarry[24]};
       endcase
     end
   end

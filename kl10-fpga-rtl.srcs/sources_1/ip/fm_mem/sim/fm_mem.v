@@ -91,7 +91,7 @@ output wire [35 : 0] douta;
     .C_PRIM_TYPE(1),
     .C_LOAD_INIT_FILE(0),
     .C_INIT_FILE_NAME("no_coe_file_loaded"),
-    .C_INIT_FILE("FMmem.mem"),
+    .C_INIT_FILE("fm_mem.mem"),
     .C_USE_DEFAULT_DATA(1),
     .C_DEFAULT_DATA("0"),
     .C_HAS_RSTA(0),
@@ -102,7 +102,7 @@ output wire [35 : 0] douta;
     .C_HAS_REGCEA(0),
     .C_USE_BYTE_WEA(1),
     .C_WEA_WIDTH(4),
-    .C_WRITE_MODE_A("WRITE_FIRST"),
+    .C_WRITE_MODE_A("READ_FIRST"),
     .C_WRITE_WIDTH_A(36),
     .C_READ_WIDTH_A(36),
     .C_WRITE_DEPTH_A(128),
@@ -148,7 +148,7 @@ output wire [35 : 0] douta;
     .C_DISABLE_WARN_BHV_RANGE(0),
     .C_COUNT_36K_BRAM("0"),
     .C_COUNT_18K_BRAM("1"),
-    .C_EST_POWER_SUMMARY("Estimated Power for IP     :     3.70485 mW")
+    .C_EST_POWER_SUMMARY("Estimated Power for IP     :     3.81035 mW")
   ) inst (
     .clka(clka),
     .rsta(1'D0),
