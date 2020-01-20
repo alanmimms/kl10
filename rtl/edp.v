@@ -111,7 +111,7 @@ module edp(input eboxClk,
   wire ADbool = CRAM_AD[1];
   wire [0:3] ADsel = CRAM_AD[2:5];
   wire [0:1] ADAsel = CRAM_ADA[1:2];
-  wire [0:35] ADAen = CRAM_ADA[0];
+  wire ADAen = ~CRAM_ADA_EN[0];
   wire [0:1] ADBsel = CRAM_ADB;
 
   wire [0:2] ARRsel = CRAM_AR;

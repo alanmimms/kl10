@@ -17,6 +17,7 @@ module edptb;
   wire [0:35]           EDP_BRX;                // From edp0 of edp.v
   wire [0:35]           EDP_EBUS;               // From edp0 of edp.v
   wire [0:35]           EDP_MQ;                 // From edp0 of edp.v
+  wire                  EDP_genCarry36;         // From edp0 of edp.v
   wire                  EDPdrivingEBUS;         // From edp0 of edp.v
   wire [0:35]           FM;                     // From edp0 of edp.v
   wire [0:35]           cacheDataWrite;         // From edp0 of edp.v
@@ -143,6 +144,7 @@ module edptb;
            .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
            .EDP_ADXcarry                (EDP_ADXcarry[0:36]),
            .EDP_ADoverflow              (EDP_ADoverflow[0:35]),
+           .EDP_genCarry36              (EDP_genCarry36),
            .EDPdrivingEBUS              (EDPdrivingEBUS),
            .EDP_EBUS                    (EDP_EBUS[0:35]),
            // Inputs
@@ -325,7 +327,7 @@ module edptb;
     cacheDataRead = 36'h123456789;
     CRAM_AD = 5'b11_111;   // AD/A
     CRAM_ADA = 3'b000;     // ADA/AR
-    CRAM_ADA_EN = 1'b0;    // enabled
+    CRAM_ADA_EN = 1'b0;    // Enabled
     CRAM_ADB = 0;          // Not used yet
     CRAM_AR = 4'b0001;     // CACHE
     CTL_ARL_SEL = 4'b0001; // CACHE
@@ -343,7 +345,7 @@ module edptb;
     cacheDataRead = 36'h987654321;
     CRAM_AD = 5'b00_110;        // AD/A+B
     CRAM_ADA = 3'b000;          // ADA/AR
-    CRAM_ADA_EN = 1'b0;         // enabled
+    CRAM_ADA_EN = 1'b0;         // Enabled
     CRAM_ADB = 2'b10;           // ADB/BR
     CRAM_AR = 4'b0001;          // CACHE
     CTL_ARL_SEL = 4'b0001;      // CACHE

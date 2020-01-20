@@ -112,7 +112,7 @@ module ebox(input eboxClk,
   wire [0:3]            CRAM_ACB;               // From crm0 of crm.v
   wire [0:5]            CRAM_AC_OP;             // From crm0 of crm.v
   wire [0:4]            CRAM_ACmagic;           // From crm0 of crm.v
-  wire [0:6]            CRAM_AD;                // From crm0 of crm.v
+  wire [0:5]            CRAM_AD;                // From crm0 of crm.v
   wire [0:3]            CRAM_ADA;               // From crm0 of crm.v
   wire [0:1]            CRAM_ADA_EN;            // From crm0 of crm.v
   wire [0:2]            CRAM_ADB;               // From crm0 of crm.v
@@ -335,7 +335,7 @@ module ebox(input eboxClk,
   crm crm0(/*AUTOINST*/
            // Outputs
            .CRAM_J                      (CRAM_J[0:11]),
-           .CRAM_AD                     (CRAM_AD[0:6]),
+           .CRAM_AD                     (CRAM_AD[0:5]),
            .CRAM_ADA                    (CRAM_ADA[0:3]),
            .CRAM_ADA_EN                 (CRAM_ADA_EN[0:1]),
            .CRAM_ADB                    (CRAM_ADB[0:2]),

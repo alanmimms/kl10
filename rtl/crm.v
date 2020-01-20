@@ -8,7 +8,7 @@
 module crm(input eboxClk,
            input [0:11] CRADR,
            output reg [0:11] CRAM_J,
-           output reg [0:6] CRAM_AD,
+           output reg [0:5] CRAM_AD,
            output reg [0:3] CRAM_ADA,
            output reg [0:1] CRAM_ADA_EN,
            output reg [0:2] CRAM_ADB,
