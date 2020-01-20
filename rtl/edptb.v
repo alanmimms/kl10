@@ -304,20 +304,20 @@ module edptb;
     CRAM_MTR_CTL = 0;
     CRAM_EBUS_CTL = 0;
 
-    CRAM_FMADR = 0;
-    APR_FMblk = 0;               // Select a good block number
-    APR_FMadr = 0;               // And a good FM AC #
+    CRAM_FMADR = 0;             // XXX this should select an FM address source
+    APR_FMblk = 0;              // Select a good block number
+    APR_FMadr = 7;              // And a good FM AC #
 
-    CON_fmWrite00_17 = 0;        // No writing to FM
+    CON_fmWrite00_17 = 0;       // No writing to FM
     CON_fmWrite18_35 = 0;
 
     SCD_ARMMupper = 0;
     SCD_ARMMlower = 0;
 
     CRAM_MAGIC = 0;
-    CRAM_DIAG_FUNC = 0;          // No diagnostic function
+    CRAM_DIAG_FUNC = 0;         // No diagnostic function
     diagReadFunc12X = 0;
-    VMA_VMAheldOrPC = 0;         // Reset PC for now
+    VMA_VMAheldOrPC = 0;        // Reset PC for now
 
     // Try 9'h123 + 9'h135 = 9'h258 first
     @(negedge eboxClk)
@@ -341,7 +341,7 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = 5'b11_111;        // AD/A
+    CRAM_AD = 5'b00_110;        // AD/A+B
     CRAM_ADA = 3'b000;          // ADA/AR
     CRAM_ADA_EN = 1'b0;         // enabled
     CRAM_ADB = 2'b10;           // ADB/BR

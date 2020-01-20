@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="dram_mem_synth_1" LaunchPart="xc7z010clg400-1" LaunchTime="1579208932">
-  <File Type="VDS-TIMING-PB" Name="dram_mem_timing_summary_synth.pb"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="dram_mem_timing_summary_synth.rpt"/>
-  <File Type="RDS-DCP" Name="dram_mem.dcp"/>
-  <File Type="REPORTS-TCL" Name="dram_mem_reports.tcl"/>
-  <File Type="PA-TCL" Name="dram_mem.tcl"/>
-  <File Type="RDS-RDS" Name="dram_mem.vds"/>
-  <File Type="RDS-PROPCONSTRS" Name="dram_mem_drc_synth.rpt"/>
-  <File Type="RDS-UTIL" Name="dram_mem_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="dram_mem_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="dram_mem_utilization_synth.rpt"/>
+  <File Type="RDS-RDS" Name="dram_mem.vds"/>
+  <File Type="RDS-DCP" Name="dram_mem.dcp"/>
+  <File Type="PA-TCL" Name="dram_mem.tcl"/>
+  <File Type="REPORTS-TCL" Name="dram_mem_reports.tcl"/>
   <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/dram_mem">
     <File Path="$PSRCDIR/sources_1/ip/dram_mem/dram_mem.xci">
       <FileInfo>
@@ -42,9 +39,7 @@
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2019">
-      <Desc>Vivado Synthesis Defaults</Desc>
-    </StratHandle>
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2019"/>
     <Step Id="synth_design"/>
   </Strategy>
 </GenRun>

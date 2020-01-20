@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="ebox_clocks_synth_1" LaunchPart="xc7z010clg400-1" LaunchTime="1579217229">
-  <File Type="VDS-TIMING-PB" Name="ebox_clocks_timing_summary_synth.pb"/>
-  <File Type="VDS-TIMINGSUMMARY" Name="ebox_clocks_timing_summary_synth.rpt"/>
-  <File Type="RDS-DCP" Name="ebox_clocks.dcp"/>
-  <File Type="REPORTS-TCL" Name="ebox_clocks_reports.tcl"/>
-  <File Type="PA-TCL" Name="ebox_clocks.tcl"/>
-  <File Type="RDS-RDS" Name="ebox_clocks.vds"/>
-  <File Type="RDS-PROPCONSTRS" Name="ebox_clocks_drc_synth.rpt"/>
-  <File Type="RDS-UTIL" Name="ebox_clocks_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="ebox_clocks_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="ebox_clocks_utilization_synth.rpt"/>
+  <File Type="RDS-RDS" Name="ebox_clocks.vds"/>
+  <File Type="RDS-DCP" Name="ebox_clocks.dcp"/>
+  <File Type="PA-TCL" Name="ebox_clocks.tcl"/>
+  <File Type="REPORTS-TCL" Name="ebox_clocks_reports.tcl"/>
   <FileSet Name="sources" Type="BlockSrcs" RelSrcDir="$PSRCDIR/ebox_clocks">
     <File Path="$PSRCDIR/sources_1/ip/ebox_clocks/ebox_clocks.xci">
       <FileInfo>
@@ -42,9 +39,7 @@
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2019">
-      <Desc>Vivado Synthesis Defaults</Desc>
-    </StratHandle>
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2019"/>
     <Step Id="synth_design"/>
   </Strategy>
 </GenRun>
