@@ -6,10 +6,10 @@ module edp(input eboxClk,
            input CTL_ADXcarry36,
            input CTL_ADlong,
 
-           input [0:6] CRAM_AD,
+           input [0:5] CRAM_AD,
            input [0:3] CRAM_ADA,
            input [0:1] CRAM_ADA_EN,
-           input [0:2] CRAM_ADB,
+           input [0:1] CRAM_ADB,
 
            input [0:3] CRAM_AR,
            input [0:3] CRAM_ARX,
@@ -314,7 +314,7 @@ module edp(input eboxClk,
       assign EDP_ADoverflow[n] = EDP_AD_EX[n-2]  ^ ADEXxortmp[n];
 
       mc10181 alu0(.S(ADsel), .M(ADbool),
-                  .A({{3{ADA[n+0]}}, ADA[n+1]}),
+                   .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
                    .CIN(EDP_ADcarry[n+2]),
                    // Note EDP_AD_EX is dumping ground when n>0
@@ -337,21 +337,21 @@ module edp(input eboxClk,
   
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
-      mc10181 alu2(.S(ADsel), .M(ADbool),
-                   .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
-                   .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
-                   .CIN(EDP_ADXcarry[n+3]),
-                   .F({alu2_x1[n], EDP_ADX[n:n+2]}),
-                   .CG(ADX_CG[n+0]),
-                   .CP(ADX_CP[n+0]));
-      mc10181 alu3(.S(ADsel), .M(ADbool),
-                   .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
-                   .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
-                   .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),
-                   .F({alu3_x1[n], EDP_ADX[n+3:n+5]}),
-                   .CG(ADX_CG[n+3]),
-                   .CP(ADX_CP[n+3]),
-                   .COUT(EDP_ADXcarry[n+3]));
+        mc10181 alu2(.S(ADsel), .M(ADbool),
+                     .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
+                     .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
+                     .CIN(EDP_ADXcarry[n+3]),
+                     .F({alu2_x1[n], EDP_ADX[n:n+2]}),
+                     .CG(ADX_CG[n+0]),
+                     .CP(ADX_CP[n+0]));
+        mc10181 alu3(.S(ADsel), .M(ADbool),
+                     .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
+                     .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
+                     .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),
+                     .F({alu3_x1[n], EDP_ADX[n+3:n+5]}),
+                     .CG(ADX_CG[n+3]),
+                     .CP(ADX_CP[n+3]),
+                     .COUT(EDP_ADXcarry[n+3]));
     end
   endgenerate
 
@@ -431,18 +431,18 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADBmux
       always @(*)
         case(ADBsel)
-        3'b000: ADB[n-2:n+5] = {{2{FM[n+0]}},
-                                FM[n+0:n+5]};
-        3'b001: ADB[n-2:n+5] = {{2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}},
-                                EDP_BR[n+1:n+4],
-                                n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
-        3'b010: ADB[n-2:n+5] = {{2{EDP_BR[n+0]}},
-                                EDP_BR[n+0:n+5]};
-        3'b011: ADB[n-2:n+5] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
-                                n === 0 ? EDP_AR[n+1] : EDP_AR[n+2],
-                                EDP_AR[n+2:n+5],
-                                n < 30 ? EDP_AR[n+6] : EDP_ARX[0],
-                                n < 30 ? EDP_AR[n+7] : EDP_ARX[1]};
+        2'b00: ADB[n-2:n+5] = {{2{FM[n+0]}},
+                               FM[n+0:n+5]};
+        2'b01: ADB[n-2:n+5] = {{2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}},
+                               EDP_BR[n+1:n+4],
+                               n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
+        2'b10: ADB[n-2:n+5] = {{2{EDP_BR[n+0]}},
+                               EDP_BR[n+0:n+5]};
+        2'b11: ADB[n-2:n+5] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
+                               n === 0 ? EDP_AR[n+1] : EDP_AR[n+2],
+                               EDP_AR[n+2:n+5],
+                               n < 30 ? EDP_AR[n+6] : EDP_ARX[0],
+                               n < 30 ? EDP_AR[n+7] : EDP_ARX[1]};
         endcase
     end
   endgenerate
@@ -452,10 +452,10 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always @(*)
         case(ADBsel)
-        3'b000: ADXB[n+0:n+5] = n < 6 ? CRAM_MAGIC[n+0:n+5] : 6'b0;
-        3'b001: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
-        3'b010: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
-        3'b011: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
+        2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM_MAGIC[n+0:n+5] : 6'b0;
+        2'b01: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
+        2'b10: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
+        2'b11: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
         endcase
     end
   endgenerate

@@ -26,10 +26,10 @@ module edptb;
   /*AUTOREG*/
 
   reg [0:11] CRAM_J;
-  reg [0:6] CRAM_AD;
+  reg [0:5] CRAM_AD;
   reg [0:3] CRAM_ADA;
   reg [0:1] CRAM_ADA_EN;
-  reg [0:2] CRAM_ADB;
+  reg [0:1] CRAM_ADB;
   reg [0:3] CRAM_AR;
   reg [0:3] CRAM_ARX;
   reg [0:1] CRAM_BR;
@@ -153,10 +153,10 @@ module edptb;
            .CTL_ADcarry36               (CTL_ADcarry36),
            .CTL_ADXcarry36              (CTL_ADXcarry36),
            .CTL_ADlong                  (CTL_ADlong),
-           .CRAM_AD                     (CRAM_AD[0:6]),
+           .CRAM_AD                     (CRAM_AD[0:5]),
            .CRAM_ADA                    (CRAM_ADA[0:3]),
            .CRAM_ADA_EN                 (CRAM_ADA_EN[0:1]),
-           .CRAM_ADB                    (CRAM_ADB[0:2]),
+           .CRAM_ADB                    (CRAM_ADB[0:1]),
            .CRAM_AR                     (CRAM_AR[0:3]),
            .CRAM_ARX                    (CRAM_ARX[0:3]),
            .CRAM_MAGIC                  (CRAM_MAGIC[0:8]),
