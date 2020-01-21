@@ -199,7 +199,7 @@ module ebox(input eboxClk,
   wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
   wire [0:35]           EDP_ADX;                // From edp0 of edp.v
   wire [0:36]           EDP_ADXcarry;           // From edp0 of edp.v
-  wire [-2:-1]          EDP_AD_EX;              // From edp0 of edp.v
+  wire [-2:35]          EDP_AD_EX;              // From edp0 of edp.v
   wire [-2:36]          EDP_ADcarry;            // From edp0 of edp.v
   wire [0:35]           EDP_ADoverflow;         // From edp0 of edp.v
   wire [0:35]           EDP_AR;                 // From edp0 of edp.v
@@ -409,7 +409,7 @@ module ebox(input eboxClk,
            .EDP_ARX                     (EDP_ARX[0:35]),
            .FM                          (FM[0:35]),
            .fmParity                    (fmParity),
-           .EDP_AD_EX                   (EDP_AD_EX[-2:-1]),
+           .EDP_AD_EX                   (EDP_AD_EX[-2:35]),
            .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
            .EDP_ADXcarry                (EDP_ADXcarry[0:36]),
            .EDP_ADoverflow              (EDP_ADoverflow[0:35]),

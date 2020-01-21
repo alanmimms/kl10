@@ -1,3 +1,5 @@
+// XXX TODO: Refactor this into six instances of the same module wired
+// together in ebox.v.
 `timescale 1ns / 1ps
 module edp(input eboxClk,
            input fastMemClk,
@@ -70,7 +72,7 @@ module edp(input eboxClk,
            output fmParity,
 
 
-           output wire [-2:-1] EDP_AD_EX,
+           output wire [-2:35] EDP_AD_EX,
            output wire [-2:36] EDP_ADcarry,
            output wire [0:36] EDP_ADXcarry,
            output wire [0:35] EDP_ADoverflow,
@@ -106,8 +108,6 @@ module edp(input eboxClk,
   wire AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
   wire ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
-  wire CTL_inhibitCarry18, CTL_SPEC_genCarry18;
-
   wire ADbool = CRAM_AD[1];
   wire [0:3] ADsel = CRAM_AD[2:5];
   wire [0:1] ADAsel = CRAM_ADA[1:2];
@@ -126,6 +126,9 @@ module edp(input eboxClk,
 
   wire ADcarry36 = EDP_ADcarry[36];
   wire ADXcarry36 = EDP_ADXcarry[36];
+
+  // XXX is this completely right?
+  assign EDP_ADcarry[36] = CTL_ADcarry36;
 
   // Set registers we own to initial reset state
   initial begin
@@ -298,11 +301,6 @@ module edp(input eboxClk,
   // Look-ahead carry network moved here from IR4 M8522 board.
   wire [0:35] ADEXxortmp;
 
-
-  // XXX is this completely right?
-  assign EDP_ADcarry[36] = CTL_ADcarry36;
-
-
   // Instantiate ALU for AD and ADX
   genvar n;
   generate
@@ -318,7 +316,7 @@ module edp(input eboxClk,
                    .B(ADB[n-2:n+1]),
                    .CIN(EDP_ADcarry[n+2]),
                    // Note EDP_AD_EX is dumping ground when n>0
-                   .F({EDP_AD_EX, EDP_AD[n:n+1]}),
+                   .F({EDP_AD_EX[n-2:n-1], EDP_AD[n:n+1]}),
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0]),
                    .COUT(EDP_ADcarry[n-2]));
@@ -429,21 +427,33 @@ module edp(input eboxClk,
   // ADB mux
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADBmux
-      always @(*)
+
+      always @(*) begin
+        // The irregular part of ADB mux: E22 and E21.
+        // When N==0, D4..D7 inputs are selected else D0..D3.
+        //
+        // In the real KL10 EDP the ADB[-2],ADB[-1] are handled by
+        // this logic. But when N > 0, they wire-OR with other
+        // signals. I am resolving this by forcing this logic only for
+        // N=0.
+        if (n === 0) begin
+          case(ADBsel)
+          2'b00: ADB[n-2:n-1] = {2{FM[n+0]}};
+          2'b01: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
+          2'b10: ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
+          2'b11: ADB[n-2:n-1] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
+                                 n === 0 ? EDP_AR[n+1] : EDP_AR[n+2]};
+          endcase
+        end
+
+        // The regular part of ADB mux: E23, E26, and E19.
         case(ADBsel)
-        2'b00: ADB[n-2:n+5] = {{2{FM[n+0]}},
-                               FM[n+0:n+5]};
-        2'b01: ADB[n-2:n+5] = {{2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}},
-                               EDP_BR[n+1:n+4],
-                               n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
-        2'b10: ADB[n-2:n+5] = {{2{EDP_BR[n+0]}},
-                               EDP_BR[n+0:n+5]};
-        2'b11: ADB[n-2:n+5] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
-                               n === 0 ? EDP_AR[n+1] : EDP_AR[n+2],
-                               EDP_AR[n+2:n+5],
-                               n < 30 ? EDP_AR[n+6] : EDP_ARX[0],
-                               n < 30 ? EDP_AR[n+7] : EDP_ARX[1]};
+        2'b00: ADB[n:n+5] = FM[n+0:n+5];
+        2'b01: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
+        2'b10: ADB[n:n+5] = EDP_BR[n+0:n+5];
+        2'b11: ADB[n:n+5] = {EDP_AR[n+2:n+5], n < 30 ? EDP_AR[n+6:n+7] : EDP_ARX[0:1]};
         endcase
+      end
     end
   endgenerate
 
@@ -489,11 +499,14 @@ module edp(input eboxClk,
   // FM. No static at all!
   wire [0:6] fmAddress = {APR_FMblk, APR_FMadr};
 
+  // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
+  // halfword writes by writing two "bytes" at a time.
   fm_mem fm_mem0(.addra(fmAddress),
                  .clka(fastMemClk),
                  .dina(EDP_AR),
                  .douta(FM),
-                 .wea({CON_fmWrite00_17, CON_fmWrite00_17, CON_fmWrite18_35, CON_fmWrite18_35})
+                 .wea({CON_fmWrite00_17, CON_fmWrite00_17,
+                       CON_fmWrite18_35, CON_fmWrite18_35})
                  );
 
   assign fmParity = ^FM;

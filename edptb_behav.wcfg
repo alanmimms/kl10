@@ -13,13 +13,13 @@
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
       <ZoomEndTime time="330780fs"></ZoomEndTime>
-      <Cursor1Time time="200000fs"></Cursor1Time>
+      <Cursor1Time time="119866fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="157"></NameColumnWidth>
       <ValueColumnWidth column_width="129"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="137" />
+   <WVObjectSize size="113" />
    <wvobject type="logic" fp_name="/edptb/eboxClk">
       <obj_property name="ElementShortName">eboxClk</obj_property>
       <obj_property name="ObjectShortName">eboxClk</obj_property>
@@ -29,8 +29,8 @@
       <obj_property name="ObjectShortName">fastMemClk</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/CRAM_AD">
-      <obj_property name="ElementShortName">CRAM_AD[0:6]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_AD[0:6]</obj_property>
+      <obj_property name="ElementShortName">CRAM_AD[0:5]</obj_property>
+      <obj_property name="ObjectShortName">CRAM_AD[0:5]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/CRAM_ADA">
@@ -42,8 +42,8 @@
       <obj_property name="ObjectShortName">CRAM_ADA_EN[0:1]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/CRAM_ADB">
-      <obj_property name="ElementShortName">CRAM_ADB[0:2]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_ADB[0:2]</obj_property>
+      <obj_property name="ElementShortName">CRAM_ADB[0:1]</obj_property>
+      <obj_property name="ObjectShortName">CRAM_ADB[0:1]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/EDP_AD">
       <obj_property name="ElementShortName">EDP_AD[-2:35]</obj_property>
@@ -65,103 +65,6 @@
       <obj_property name="ElementShortName">EDP_BR[0:35]</obj_property>
       <obj_property name="ObjectShortName">EDP_BR[0:35]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /S">
-      <obj_property name="ElementShortName">S[3:0]</obj_property>
-      <obj_property name="ObjectShortName">S[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /M">
-      <obj_property name="ElementShortName">M</obj_property>
-      <obj_property name="ObjectShortName">M</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /A">
-      <obj_property name="ElementShortName">A[3:0]</obj_property>
-      <obj_property name="ObjectShortName">A[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /B">
-      <obj_property name="ElementShortName">B[3:0]</obj_property>
-      <obj_property name="ObjectShortName">B[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /CIN">
-      <obj_property name="ElementShortName">CIN</obj_property>
-      <obj_property name="ObjectShortName">CIN</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /F">
-      <obj_property name="ElementShortName">F[3:0]</obj_property>
-      <obj_property name="ObjectShortName">F[3:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /CG">
-      <obj_property name="ElementShortName">CG</obj_property>
-      <obj_property name="ObjectShortName">CG</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /CP">
-      <obj_property name="ElementShortName">CP</obj_property>
-      <obj_property name="ObjectShortName">CP</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /COUT">
-      <obj_property name="ElementShortName">COUT</obj_property>
-      <obj_property name="ObjectShortName">COUT</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /G">
-      <obj_property name="ElementShortName">G[3:0]</obj_property>
-      <obj_property name="ObjectShortName">G[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /P">
-      <obj_property name="ElementShortName">P[3:0]</obj_property>
-      <obj_property name="ObjectShortName">P[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /notGG">
-      <obj_property name="ElementShortName">notGG</obj_property>
-      <obj_property name="ObjectShortName">notGG</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /S">
-      <obj_property name="ElementShortName">S[3:0]</obj_property>
-      <obj_property name="ObjectShortName">S[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /M">
-      <obj_property name="ElementShortName">M</obj_property>
-      <obj_property name="ObjectShortName">M</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /A">
-      <obj_property name="ElementShortName">A[3:0]</obj_property>
-      <obj_property name="ObjectShortName">A[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /B">
-      <obj_property name="ElementShortName">B[3:0]</obj_property>
-      <obj_property name="ObjectShortName">B[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /CIN">
-      <obj_property name="ElementShortName">CIN</obj_property>
-      <obj_property name="ObjectShortName">CIN</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /F">
-      <obj_property name="ElementShortName">F[3:0]</obj_property>
-      <obj_property name="ObjectShortName">F[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /CG">
-      <obj_property name="ElementShortName">CG</obj_property>
-      <obj_property name="ObjectShortName">CG</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /CP">
-      <obj_property name="ElementShortName">CP</obj_property>
-      <obj_property name="ObjectShortName">CP</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /COUT">
-      <obj_property name="ElementShortName">COUT</obj_property>
-      <obj_property name="ObjectShortName">COUT</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /G">
-      <obj_property name="ElementShortName">G[3:0]</obj_property>
-      <obj_property name="ObjectShortName">G[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /P">
-      <obj_property name="ElementShortName">P[3:0]</obj_property>
-      <obj_property name="ObjectShortName">P[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /notGG">
-      <obj_property name="ElementShortName">notGG</obj_property>
-      <obj_property name="ObjectShortName">notGG</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/edptb/EDP_ADX">
       <obj_property name="ElementShortName">EDP_ADX[0:35]</obj_property>
       <obj_property name="ObjectShortName">EDP_ADX[0:35]</obj_property>
@@ -171,8 +74,8 @@
       <obj_property name="ObjectShortName">EDP_ADXcarry[0:36]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/EDP_AD_EX">
-      <obj_property name="ElementShortName">EDP_AD_EX[-2:-1]</obj_property>
-      <obj_property name="ObjectShortName">EDP_AD_EX[-2:-1]</obj_property>
+      <obj_property name="ElementShortName">EDP_AD_EX[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_AD_EX[-2:35]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/EDP_ADcarry">
       <obj_property name="ElementShortName">EDP_ADcarry[-2:36]</obj_property>

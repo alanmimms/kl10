@@ -1,6 +1,5 @@
 INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/edp.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module edp
-WARNING: [VRFC 10-3676] redeclaration of ansi port 'CTL_inhibitCarry18' is not allowed [/home/alan/kl10-fpga-rtl/rtl/edp.v:109]
 INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/fm_mem/fm_mem_stub.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module fm_mem
 INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/mc10179.v" into library xil_defaultlib
