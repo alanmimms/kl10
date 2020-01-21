@@ -321,7 +321,7 @@ module edptb;
     diagReadFunc12X = 0;
     VMA_VMAheldOrPC = 0;        // Reset PC for now
 
-    // Try 9'h123 + 9'h135 = 9'h258 first
+    // Try AD/A first
     @(negedge eboxClk)
     $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
@@ -340,6 +340,46 @@ module edptb;
     CRAM_ARX = 4'b0000;    // ARX (recirculate)
 
 
+    // Try AD/B
+    @(posedge eboxClk) ;
+    @(negedge eboxClk)
+    $display($time, "<< AD/B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    cacheDataRead = 36'h987654321;
+    CRAM_AD = 5'b11_010;        // AD/B
+    CRAM_ADA = 3'b000;          // ADA/AR
+    CRAM_ADA_EN = 1'b0;         // Enabled
+    CRAM_ADB = 2'b10;           // ADB/BR
+    CRAM_AR = 4'b0001;          // CACHE
+    CTL_ARL_SEL = 4'b0001;      // CACHE
+    CTL_ARR_SEL = 4'b0001;      // CACHE
+    CTL_AR00to08load = 1;       // Load ARL pieces
+    CTL_AR09to17load = 1;
+    CTL_ARRload = 1;            // Load ARR
+    CRAM_BR = 1'b1;             // BR/AR
+    CRAM_BRload = 1;
+    CRAM_ARX = 4'b0000;         // ARX (recirculate)
+
+    // Try AD/0S
+    @(posedge eboxClk) ;
+    @(negedge eboxClk)
+    $display($time, "<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    cacheDataRead = 36'h987654321;
+    CRAM_AD = 5'b11_100;        // AD/0S
+    CRAM_ADA = 3'b000;          // ADA/AR
+    CRAM_ADA_EN = 1'b0;         // Enabled
+    CRAM_ADB = 2'b10;           // ADB/BR
+    CRAM_AR = 4'b0001;          // CACHE
+    CTL_ARL_SEL = 4'b0001;      // CACHE
+    CTL_ARR_SEL = 4'b0001;      // CACHE
+    CTL_AR00to08load = 1;       // Load ARL pieces
+    CTL_AR09to17load = 1;
+    CTL_ARRload = 1;            // Load ARR
+    CRAM_BR = 1'b1;             // BR/AR
+    CRAM_BRload = 1;
+    CRAM_ARX = 4'b0000;         // ARX (recirculate)
+
+    // Now add 987654321 and 123456789
+    @(posedge eboxClk) ;
     @(negedge eboxClk)
     $display($time, "<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
