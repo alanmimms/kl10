@@ -35,7 +35,7 @@ module mc10181(input [3:0] S,
   wire notGG;
 
   assign G = ~(~({4{S[3]}} | B | A) | ~({4{S[2]}} | A  | ~B));
-  assign P = ~( ({4{S[1]}} | ~B   ) | ~({4{S[0]}} | B) | ~A);
+  assign P = ~(~({4{S[1]}} | ~B   ) | ~({4{S[0]}} | B) | ~A);
   assign F = ~(G ^ P ^
                {~(M | G[2]) |
                 ~(M | P[2] | G[1]) |

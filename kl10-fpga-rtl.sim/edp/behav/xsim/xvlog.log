@@ -1,0 +1,11 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/edp.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module edp
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/fm_mem/fm_mem_stub.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module fm_mem
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/mc10179.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module mc10179
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/mc10181.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module mc10181
+INFO: [VRFC 10-311] analyzing module mc10181_tb
+INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10-fpga-rtl/rtl/edptb.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module edptb
