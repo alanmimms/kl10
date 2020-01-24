@@ -1,4 +1,5 @@
 `timescale 1ns / 100ps
+`include "cram-defs.svh"
 module edptb;
   reg eboxClk;
   reg fastMemClk;
@@ -26,7 +27,7 @@ module edptb;
   /*AUTOREG*/
 
   reg [0:11] CRAM_J;
-  reg [0:5] CRAM_AD;
+  tCRAM_AD CRAM_AD;
   reg [0:3] CRAM_ADA;
   reg [0:1] CRAM_ADA_EN;
   reg [0:1] CRAM_ADB;
@@ -54,7 +55,7 @@ module edptb;
   reg [0:5] CRAM_DISP;
   reg [0:5] CRAM_SPEC;
   reg [0:1] CRAM_MARK;
-  reg [0:9] CRAM_MAGIC;
+  reg [0:8] CRAM_MAGIC;
   reg [0:6] CRAM_MAJVER;
   reg [0:3] CRAM_MINVER;
   reg [0:1] CRAM_KLPAGE;
@@ -73,17 +74,17 @@ module edptb;
   reg [0:3] CRAM_AR_CTL;
   reg [0:1] CRAM_EXP_TST;
   reg [0:2] CRAM_MQ_CTL;
-  reg [0:9] CRAM_PC_FLAGS;
-  reg [0:9] CRAM_FLAG_CTL;
-  reg [0:9] CRAM_SPEC_INSTR;
-  reg [0:9] CRAM_FETCH;
-  reg [0:9] CRAM_EA_CALC;
-  reg [0:9] CRAM_SP_MEM;
-  reg [0:9] CRAM_MREG_FNC;
-  reg [0:9] CRAM_MBOX_CTL;
+  reg [0:8] CRAM_PC_FLAGS;
+  reg [0:8] CRAM_FLAG_CTL;
+  reg [0:8] CRAM_SPEC_INSTR;
+  reg [0:8] CRAM_FETCH;
+  reg [0:8] CRAM_EA_CALC;
+  reg [0:8] CRAM_SP_MEM;
+  reg [0:8] CRAM_MREG_FNC;
+  reg [0:8] CRAM_MBOX_CTL;
   reg [0:3] CRAM_MTR_CTL;
-  reg [0:9] CRAM_EBUS_CTL;
-  reg [0:9] CRAM_DIAG_FUNC;
+  reg [0:8] CRAM_EBUS_CTL;
+  reg [0:8] CRAM_DIAG_FUNC;
 
   reg CTL_AR00to08load;
   reg CTL_AR09to17load;
@@ -128,70 +129,7 @@ module edptb;
   reg CRAM_BRload;
   reg CRAM_BRXload;
 
-  edp edp0(/*AUTOINST*/
-           // Outputs
-           .cacheDataWrite              (cacheDataWrite[0:35]),
-           .EDP_AD                      (EDP_AD[-2:35]),
-           .EDP_ADX                     (EDP_ADX[0:35]),
-           .EDP_BR                      (EDP_BR[0:35]),
-           .EDP_BRX                     (EDP_BRX[0:35]),
-           .EDP_MQ                      (EDP_MQ[0:35]),
-           .EDP_AR                      (EDP_AR[0:35]),
-           .EDP_ARX                     (EDP_ARX[0:35]),
-           .FM                          (FM[0:35]),
-           .fmParity                    (fmParity),
-           .EDP_AD_EX                   (EDP_AD_EX[-2:35]),
-           .EDP_ADcarry                 (EDP_ADcarry[-2:36]),
-           .EDP_ADXcarry                (EDP_ADXcarry[0:36]),
-           .EDP_ADoverflow              (EDP_ADoverflow[0:35]),
-           .EDP_genCarry36              (EDP_genCarry36),
-           .EDPdrivingEBUS              (EDPdrivingEBUS),
-           .EDP_EBUS                    (EDP_EBUS[0:35]),
-           // Inputs
-           .eboxClk                     (eboxClk),
-           .fastMemClk                  (fastMemClk),
-           .CTL_ADcarry36               (CTL_ADcarry36),
-           .CTL_ADXcarry36              (CTL_ADXcarry36),
-           .CTL_ADlong                  (CTL_ADlong),
-           .CRAM_AD                     (CRAM_AD[0:5]),
-           .CRAM_ADA                    (CRAM_ADA[0:3]),
-           .CRAM_ADA_EN                 (CRAM_ADA_EN[0:1]),
-           .CRAM_ADB                    (CRAM_ADB[0:1]),
-           .CRAM_AR                     (CRAM_AR[0:3]),
-           .CRAM_ARX                    (CRAM_ARX[0:3]),
-           .CRAM_MAGIC                  (CRAM_MAGIC[0:8]),
-           .CRAM_BRload                 (CRAM_BRload),
-           .CRAM_BRXload                (CRAM_BRXload),
-           .CTL_ARL_SEL                 (CTL_ARL_SEL[0:2]),
-           .CTL_ARR_SEL                 (CTL_ARR_SEL[0:2]),
-           .CTL_AR00to08load            (CTL_AR00to08load),
-           .CTL_AR09to17load            (CTL_AR09to17load),
-           .CTL_ARRload                 (CTL_ARRload),
-           .CTL_AR00to11clr             (CTL_AR00to11clr),
-           .CTL_AR12to17clr             (CTL_AR12to17clr),
-           .CTL_ARRclr                  (CTL_ARRclr),
-           .CTL_ARXL_SEL                (CTL_ARXL_SEL[0:2]),
-           .CTL_ARXR_SEL                (CTL_ARXR_SEL[0:2]),
-           .CTL_ARX_LOAD                (CTL_ARX_LOAD),
-           .CTL_MQ_SEL                  (CTL_MQ_SEL[0:1]),
-           .CTL_MQM_SEL                 (CTL_MQM_SEL[0:1]),
-           .CTL_MQM_EN                  (CTL_MQM_EN),
-           .CTL_inhibitCarry18          (CTL_inhibitCarry18),
-           .CTL_SPEC_genCarry18         (CTL_SPEC_genCarry18),
-           .cacheDataRead               (cacheDataRead[0:35]),
-           .EBUS                        (EBUS[0:35]),
-           .SHM_SH                      (SHM_SH[0:35]),
-           .SCD_ARMMupper               (SCD_ARMMupper[0:8]),
-           .SCD_ARMMlower               (SCD_ARMMlower[13:17]),
-           .CTL_adToEBUS_L              (CTL_adToEBUS_L),
-           .CTL_adToEBUS_R              (CTL_adToEBUS_R),
-           .APR_FMblk                   (APR_FMblk[0:2]),
-           .APR_FMadr                   (APR_FMadr[0:3]),
-           .CON_fmWrite00_17            (CON_fmWrite00_17),
-           .CON_fmWrite18_35            (CON_fmWrite18_35),
-           .CRAM_DIAG_FUNC              (CRAM_DIAG_FUNC[0:8]),
-           .diagReadFunc12X             (diagReadFunc12X),
-           .VMA_VMAheldOrPC             (VMA_VMAheldOrPC[0:35]));
+  edp edp0(.*);
 
   always #20 eboxClk = ~eboxClk;
 
@@ -244,7 +182,7 @@ module edptb;
 
     SHM_SH = 0;
 
-    CRAM_AD = 0;
+    CRAM_AD = adAplus1;
     CRAM_ADA = 0;
     CRAM_ADA_EN = 0;
     CRAM_ADB = 0;
@@ -325,7 +263,7 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
-    CRAM_AD = 5'b11_111;   // AD/A
+    CRAM_AD = adA;         // AD/A
     CRAM_ADA = 3'b000;     // ADA/AR
     CRAM_ADA_EN = 1'b0;    // Enabled
     CRAM_ADB = 0;          // Not used yet
@@ -344,7 +282,7 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
-    CRAM_AD = 5'b11_111;   // AD/A
+    CRAM_AD = adA;         // AD/A
     CRAM_ADA = 3'b000;     // ADA/AR
     CRAM_ADA_EN = 1'b0;    // Enabled
     CRAM_ADB = 0;          // Not used yet
@@ -364,7 +302,7 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = 5'b11_010;        // AD/B
+    CRAM_AD = adB;              // AD/B
     CRAM_ADA = 3'b000;          // ADA/AR
     CRAM_ADA_EN = 1'b0;         // Enabled
     CRAM_ADB = 2'b10;           // ADB/BR
@@ -383,7 +321,7 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = 5'b11_100;        // AD/0S
+    CRAM_AD = adZEROS;          // AD/0S
     CRAM_ADA = 3'b000;          // ADA/AR
     CRAM_ADA_EN = 1'b0;         // Enabled
     CRAM_ADB = 2'b10;           // ADB/BR
@@ -402,7 +340,7 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = 5'b00_110;        // AD/A+B
+    CRAM_AD = adAplusB;         // AD/A+B
     CRAM_ADA = 3'b000;          // ADA/AR
     CRAM_ADA_EN = 1'b0;         // Enabled
     CRAM_ADB = 2'b10;           // ADB/BR

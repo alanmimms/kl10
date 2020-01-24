@@ -4,7 +4,8 @@ Nov  6 2019
 21:42:20
 /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/fm_mem/fm_mem_stub.v,1579302635,verilog,,/home/alan/kl10-fpga-rtl/rtl/mc10179.v,,fm_mem,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
 /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/glbl.v,1573089660,verilog,,,,glbl,,,,,,,,
-/home/alan/kl10-fpga-rtl/rtl/edp.v,1579572744,verilog,,/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/fm_mem/fm_mem_stub.v,,edp,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
-/home/alan/kl10-fpga-rtl/rtl/edptb.v,1579653690,verilog,,,,edptb,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
-/home/alan/kl10-fpga-rtl/rtl/mc10179.v,1579333132,verilog,,/home/alan/kl10-fpga-rtl/rtl/mc10181.v,,mc10179,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
-/home/alan/kl10-fpga-rtl/rtl/mc10181.v,1579728147,verilog,,/home/alan/kl10-fpga-rtl/rtl/edptb.v,,mc10181;mc10181_tb,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
+/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,1579890113,verilog,,,,,,,,,,,,
+/home/alan/kl10-fpga-rtl/rtl/edp.sv,1579888778,systemVerilog,/home/alan/kl10-fpga-rtl/rtl/edptb.sv;/home/alan/kl10-fpga-rtl/rtl/mc10179.sv;/home/alan/kl10-fpga-rtl/rtl/mc10181.sv,/home/alan/kl10-fpga-rtl/rtl/mc10179.sv,/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,$unit_edp_sv;edp,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
+/home/alan/kl10-fpga-rtl/rtl/edptb.sv,1579890180,systemVerilog,,,/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,edptb,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
+/home/alan/kl10-fpga-rtl/rtl/mc10179.sv,1579333132,systemVerilog,,/home/alan/kl10-fpga-rtl/rtl/mc10181.sv,,mc10179,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
+/home/alan/kl10-fpga-rtl/rtl/mc10181.sv,1579728147,systemVerilog,,/home/alan/kl10-fpga-rtl/rtl/edptb.sv,,mc10181;mc10181_tb,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,

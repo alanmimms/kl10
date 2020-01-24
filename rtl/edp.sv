@@ -1,6 +1,8 @@
 // XXX TODO: Refactor this into six instances of the same module wired
 // together in ebox.v.
 `timescale 1ns / 1ps
+`include "cram-defs.svh"
+
 module edp(input eboxClk,
            input fastMemClk,
 
@@ -109,7 +111,6 @@ module edp(input eboxClk,
   wire ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
   wire ADbool = CRAM_AD[1];
-  wire [0:3] ADsel = CRAM_AD[2:5];
   wire [0:1] ADAsel = CRAM_ADA[1:2];
   wire ADAen = ~CRAM_ADA_EN[0];
   wire [0:1] ADBsel = CRAM_ADB;
@@ -235,7 +236,7 @@ module edp(input eboxClk,
       USR_LOAD: MQM = {EDP_ADX[34:35], EDP_MQ[0:33]};
       USR_SHL:  MQM = SHM_SH;
       USR_SHR:  MQM = EDP_AD[0:35];
-      USR_HOLD: MQM = 36'hFFF_FFF_FFF;
+      USR_HOLD: MQM = '1;
       endcase           // MQMsel
     end else
       MQM = 36'd0;
@@ -311,7 +312,7 @@ module edp(input eboxClk,
       assign EDP_ADcarry[n+1] = EDP_ADcarry[n-2] ^ ADEXxortmp[n];
       assign EDP_ADoverflow[n] = EDP_AD_EX[n-2]  ^ ADEXxortmp[n];
 
-      mc10181 alu0(.S(ADsel), .M(ADbool),
+      mc10181 alu0(.S(CRAM_AD[2:5]), .M(ADbool),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
                    .CIN(EDP_ADcarry[n+2]),
@@ -320,7 +321,7 @@ module edp(input eboxClk,
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0]),
                    .COUT(EDP_ADcarry[n-2]));
-      mc10181 alu1(.S(ADsel), .M(ADbool),
+      mc10181 alu1(.S(CRAM_AD[2:5]), .M(ADbool),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
                    .CIN(EDP_ADcarry[n+6]),
@@ -335,14 +336,14 @@ module edp(input eboxClk,
   
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
-        mc10181 alu2(.S(ADsel), .M(ADbool),
+        mc10181 alu2(.S(CRAM_AD[2:5]), .M(ADbool),
                      .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                      .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                      .CIN(EDP_ADXcarry[n+3]),
                      .F({alu2_x1[n], EDP_ADX[n:n+2]}),
                      .CG(ADX_CG[n+0]),
                      .CP(ADX_CP[n+0]));
-        mc10181 alu3(.S(ADsel), .M(ADbool),
+        mc10181 alu3(.S(CRAM_AD[2:5]), .M(ADbool),
                      .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                      .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                      .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),

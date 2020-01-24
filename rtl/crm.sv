@@ -1,4 +1,7 @@
 `timescale 1ns / 1ps
+
+`include "cram-defs.svh"
+
 // M8548 CRM
 //
 // 2K words of CRAM storage.
@@ -8,7 +11,7 @@
 module crm(input eboxClk,
            input [0:11] CRADR,
            output reg [0:11] CRAM_J,
-           output reg [0:5] CRAM_AD,
+           output tCRAM_AD CRAM_AD,
            output reg [0:3] CRAM_ADA,
            output reg [0:1] CRAM_ADA_EN,
            output reg [0:2] CRAM_ADB,
@@ -36,7 +39,7 @@ module crm(input eboxClk,
            output reg [0:5] CRAM_DISP,
            output reg [0:5] CRAM_SPEC,
            output reg [0:1] CRAM_MARK,
-           output reg [0:9] CRAM_MAGIC,
+           output reg [0:8] CRAM_MAGIC,
            output reg [0:6] CRAM_MAJVER,
            output reg [0:3] CRAM_MINVER,
            output reg [0:1] CRAM_KLPAGE,
@@ -55,17 +58,17 @@ module crm(input eboxClk,
            output reg [0:3] CRAM_AR_CTL,
            output reg [0:1] CRAM_EXP_TST,
            output reg [0:2] CRAM_MQ_CTL,
-           output reg [0:9] CRAM_PC_FLAGS,
-           output reg [0:9] CRAM_FLAG_CTL,
-           output reg [0:9] CRAM_SPEC_INSTR,
-           output reg [0:9] CRAM_FETCH,
-           output reg [0:9] CRAM_EA_CALC,
-           output reg [0:9] CRAM_SP_MEM,
-           output reg [0:9] CRAM_MREG_FNC,
-           output reg [0:9] CRAM_MBOX_CTL,
+           output reg [0:8] CRAM_PC_FLAGS,
+           output reg [0:8] CRAM_FLAG_CTL,
+           output reg [0:8] CRAM_SPEC_INSTR,
+           output reg [0:8] CRAM_FETCH,
+           output reg [0:8] CRAM_EA_CALC,
+           output reg [0:8] CRAM_SP_MEM,
+           output reg [0:8] CRAM_MREG_FNC,
+           output reg [0:8] CRAM_MBOX_CTL,
            output reg [0:3] CRAM_MTR_CTL,
-           output reg [0:9] CRAM_EBUS_CTL,
-           output reg [0:9] CRAM_DIAG_FUNC
+           output reg [0:8] CRAM_EBUS_CTL,
+           output reg [0:8] CRAM_DIAG_FUNC
            /*AUTOARG*/);
 
   wire [0:83] CRAMdata;
