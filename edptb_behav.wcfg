@@ -13,14 +13,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="320001fs"></ZoomEndTime>
-      <Cursor1Time time="320000fs"></Cursor1Time>
+      <ZoomEndTime time="341804fs"></ZoomEndTime>
+      <Cursor1Time time="71824fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="157"></NameColumnWidth>
       <ValueColumnWidth column_width="117"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="137" />
+   <WVObjectSize size="65" />
    <wvobject type="logic" fp_name="/edptb/eboxClk">
       <obj_property name="ElementShortName">eboxClk</obj_property>
       <obj_property name="ObjectShortName">eboxClk</obj_property>
@@ -33,7 +33,6 @@
       <obj_property name="ElementShortName">CRAM_AD[0:5]</obj_property>
       <obj_property name="ObjectShortName">CRAM_AD[0:5]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
-      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/CRAM_ADA">
       <obj_property name="ElementShortName">CRAM_ADA[0:1]</obj_property>
@@ -66,102 +65,6 @@
    <wvobject type="array" fp_name="/edptb/EDP_BR">
       <obj_property name="ElementShortName">EDP_BR[0:35]</obj_property>
       <obj_property name="ObjectShortName">EDP_BR[0:35]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /S">
-      <obj_property name="ElementShortName">S[3:0]</obj_property>
-      <obj_property name="ObjectShortName">S[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /M">
-      <obj_property name="ElementShortName">M</obj_property>
-      <obj_property name="ObjectShortName">M</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /A">
-      <obj_property name="ElementShortName">A[3:0]</obj_property>
-      <obj_property name="ObjectShortName">A[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /B">
-      <obj_property name="ElementShortName">B[3:0]</obj_property>
-      <obj_property name="ObjectShortName">B[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /CIN">
-      <obj_property name="ElementShortName">CIN</obj_property>
-      <obj_property name="ObjectShortName">CIN</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /F">
-      <obj_property name="ElementShortName">F[3:0]</obj_property>
-      <obj_property name="ObjectShortName">F[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /CG">
-      <obj_property name="ElementShortName">CG</obj_property>
-      <obj_property name="ObjectShortName">CG</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /CP">
-      <obj_property name="ElementShortName">CP</obj_property>
-      <obj_property name="ObjectShortName">CP</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /COUT">
-      <obj_property name="ElementShortName">COUT</obj_property>
-      <obj_property name="ObjectShortName">COUT</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /G">
-      <obj_property name="ElementShortName">G[3:0]</obj_property>
-      <obj_property name="ObjectShortName">G[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /P">
-      <obj_property name="ElementShortName">P[3:0]</obj_property>
-      <obj_property name="ObjectShortName">P[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu1 /notGG">
-      <obj_property name="ElementShortName">notGG</obj_property>
-      <obj_property name="ObjectShortName">notGG</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /S">
-      <obj_property name="ElementShortName">S[3:0]</obj_property>
-      <obj_property name="ObjectShortName">S[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /M">
-      <obj_property name="ElementShortName">M</obj_property>
-      <obj_property name="ObjectShortName">M</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /A">
-      <obj_property name="ElementShortName">A[3:0]</obj_property>
-      <obj_property name="ObjectShortName">A[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /B">
-      <obj_property name="ElementShortName">B[3:0]</obj_property>
-      <obj_property name="ObjectShortName">B[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /CIN">
-      <obj_property name="ElementShortName">CIN</obj_property>
-      <obj_property name="ObjectShortName">CIN</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /F">
-      <obj_property name="ElementShortName">F[3:0]</obj_property>
-      <obj_property name="ObjectShortName">F[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /CG">
-      <obj_property name="ElementShortName">CG</obj_property>
-      <obj_property name="ObjectShortName">CG</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /CP">
-      <obj_property name="ElementShortName">CP</obj_property>
-      <obj_property name="ObjectShortName">CP</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /COUT">
-      <obj_property name="ElementShortName">COUT</obj_property>
-      <obj_property name="ObjectShortName">COUT</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /G">
-      <obj_property name="ElementShortName">G[3:0]</obj_property>
-      <obj_property name="ObjectShortName">G[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /P">
-      <obj_property name="ElementShortName">P[3:0]</obj_property>
-      <obj_property name="ObjectShortName">P[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/edp0/\ADaluE1E2[30].alu0 /notGG">
-      <obj_property name="ElementShortName">notGG</obj_property>
-      <obj_property name="ObjectShortName">notGG</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/EDP_ADX">
       <obj_property name="ElementShortName">EDP_ADX[0:35]</obj_property>
@@ -199,25 +102,9 @@
       <obj_property name="ElementShortName">EDP_MQ[0:35]</obj_property>
       <obj_property name="ObjectShortName">EDP_MQ[0:35]</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/edptb/EDPdrivingEBUS">
-      <obj_property name="ElementShortName">EDPdrivingEBUS</obj_property>
-      <obj_property name="ObjectShortName">EDPdrivingEBUS</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/FM">
-      <obj_property name="ElementShortName">FM[0:35]</obj_property>
-      <obj_property name="ObjectShortName">FM[0:35]</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/edptb/cacheDataRead">
       <obj_property name="ElementShortName">cacheDataRead[0:35]</obj_property>
       <obj_property name="ObjectShortName">cacheDataRead[0:35]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/cacheDataWrite">
-      <obj_property name="ElementShortName">cacheDataWrite[0:35]</obj_property>
-      <obj_property name="ObjectShortName">cacheDataWrite[0:35]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/fmParity">
-      <obj_property name="ElementShortName">fmParity</obj_property>
-      <obj_property name="ObjectShortName">fmParity</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/edptb/CRAM_J">
       <obj_property name="ElementShortName">CRAM_J[0:10]</obj_property>
@@ -247,130 +134,6 @@
       <obj_property name="ElementShortName">CRAM_FMADR[0:2]</obj_property>
       <obj_property name="ObjectShortName">CRAM_FMADR[0:2]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SCAD">
-      <obj_property name="ElementShortName">CRAM_SCAD[0:2]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SCAD[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SCADA">
-      <obj_property name="ElementShortName">CRAM_SCADA[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SCADA[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="other" fp_name="/edptb/CRAM_SCADA_EN">
-      <obj_property name="ElementShortName">CRAM_SCADA_EN</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SCADA_EN</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SCADB">
-      <obj_property name="ElementShortName">CRAM_SCADB[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SCADB[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="other" fp_name="/edptb/CRAM_SC">
-      <obj_property name="ElementShortName">CRAM_SC</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SC</obj_property>
-   </wvobject>
-   <wvobject type="other" fp_name="/edptb/CRAM_FE">
-      <obj_property name="ElementShortName">CRAM_FE</obj_property>
-      <obj_property name="ObjectShortName">CRAM_FE</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SH">
-      <obj_property name="ElementShortName">CRAM_SH[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SH[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_ARMM">
-      <obj_property name="ElementShortName">CRAM_ARMM[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_ARMM[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_VMAX">
-      <obj_property name="ElementShortName">CRAM_VMAX[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_VMAX[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_VMA">
-      <obj_property name="ElementShortName">CRAM_VMA[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_VMA[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_TIME">
-      <obj_property name="ElementShortName">CRAM_TIME[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_TIME[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MEM">
-      <obj_property name="ElementShortName">CRAM_MEM[0:3]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MEM[0:3]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SKIP">
-      <obj_property name="ElementShortName">CRAM_SKIP[0:5]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SKIP[0:5]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_COND">
-      <obj_property name="ElementShortName">CRAM_COND[0:5]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_COND[0:5]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_CALL">
-      <obj_property name="ElementShortName">CRAM_CALL</obj_property>
-      <obj_property name="ObjectShortName">CRAM_CALL</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_DISP">
-      <obj_property name="ElementShortName">CRAM_DISP[0:4]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_DISP[0:4]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SPEC">
-      <obj_property name="ElementShortName">CRAM_SPEC[0:4]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SPEC[0:4]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_MARK">
-      <obj_property name="ElementShortName">CRAM_MARK</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MARK</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MAGIC">
-      <obj_property name="ElementShortName">CRAM_MAGIC[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MAGIC[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MAJVER">
-      <obj_property name="ElementShortName">CRAM_MAJVER[0:5]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MAJVER[0:5]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MINVER">
-      <obj_property name="ElementShortName">CRAM_MINVER[0:2]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MINVER[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_KLPAGE">
-      <obj_property name="ElementShortName">CRAM_KLPAGE</obj_property>
-      <obj_property name="ObjectShortName">CRAM_KLPAGE</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_LONGPC">
-      <obj_property name="ElementShortName">CRAM_LONGPC</obj_property>
-      <obj_property name="ObjectShortName">CRAM_LONGPC</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_NONSTD">
-      <obj_property name="ElementShortName">CRAM_NONSTD</obj_property>
-      <obj_property name="ObjectShortName">CRAM_NONSTD</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_PV">
-      <obj_property name="ElementShortName">CRAM_PV</obj_property>
-      <obj_property name="ObjectShortName">CRAM_PV</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_PMOVE">
-      <obj_property name="ElementShortName">CRAM_PMOVE</obj_property>
-      <obj_property name="ObjectShortName">CRAM_PMOVE</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_ISTAT">
-      <obj_property name="ElementShortName">CRAM_ISTAT</obj_property>
-      <obj_property name="ObjectShortName">CRAM_ISTAT</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_PXCT">
-      <obj_property name="ElementShortName">CRAM_PXCT[0:2]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_PXCT[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_ACB">
-      <obj_property name="ElementShortName">CRAM_ACB[0:2]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_ACB[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_ACmagic">
-      <obj_property name="ElementShortName">CRAM_ACmagic[0:3]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_ACmagic[0:3]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_AC_OP">
-      <obj_property name="ElementShortName">CRAM_AC_OP[0:5]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_AC_OP[0:5]</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/edptb/CRAM_AR0_8">
       <obj_property name="ElementShortName">CRAM_AR0_8</obj_property>
       <obj_property name="ObjectShortName">CRAM_AR0_8</obj_property>
@@ -386,58 +149,6 @@
    <wvobject type="array" fp_name="/edptb/CRAM_AR_CTL">
       <obj_property name="ElementShortName">CRAM_AR_CTL[0:2]</obj_property>
       <obj_property name="ObjectShortName">CRAM_AR_CTL[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/edptb/CRAM_EXP_TST">
-      <obj_property name="ElementShortName">CRAM_EXP_TST</obj_property>
-      <obj_property name="ObjectShortName">CRAM_EXP_TST</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MQ_CTL">
-      <obj_property name="ElementShortName">CRAM_MQ_CTL[0:1]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MQ_CTL[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_PC_FLAGS">
-      <obj_property name="ElementShortName">CRAM_PC_FLAGS[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_PC_FLAGS[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_FLAG_CTL">
-      <obj_property name="ElementShortName">CRAM_FLAG_CTL[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_FLAG_CTL[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SPEC_INSTR">
-      <obj_property name="ElementShortName">CRAM_SPEC_INSTR[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SPEC_INSTR[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_FETCH">
-      <obj_property name="ElementShortName">CRAM_FETCH[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_FETCH[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_EA_CALC">
-      <obj_property name="ElementShortName">CRAM_EA_CALC[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_EA_CALC[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_SP_MEM">
-      <obj_property name="ElementShortName">CRAM_SP_MEM[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_SP_MEM[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MREG_FNC">
-      <obj_property name="ElementShortName">CRAM_MREG_FNC[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MREG_FNC[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MBOX_CTL">
-      <obj_property name="ElementShortName">CRAM_MBOX_CTL[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MBOX_CTL[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_MTR_CTL">
-      <obj_property name="ElementShortName">CRAM_MTR_CTL[0:2]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_MTR_CTL[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_EBUS_CTL">
-      <obj_property name="ElementShortName">CRAM_EBUS_CTL[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_EBUS_CTL[0:8]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/edptb/CRAM_DIAG_FUNC">
-      <obj_property name="ElementShortName">CRAM_DIAG_FUNC[0:8]</obj_property>
-      <obj_property name="ObjectShortName">CRAM_DIAG_FUNC[0:8]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/edptb/CTL_AR00to08load">
       <obj_property name="ElementShortName">CTL_AR00to08load</obj_property>

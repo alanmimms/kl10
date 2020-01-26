@@ -1,3 +1,5 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10-fpga-rtl/rtl/crm.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module crm
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10-fpga-rtl/rtl/edp.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module edp
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10-fpga-rtl/rtl/mc10179.sv" into library xil_defaultlib

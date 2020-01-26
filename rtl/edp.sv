@@ -11,17 +11,7 @@ module edp(input eboxClk,
            input CTL_ADXcarry36,
            input CTL_ADlong,
 
-           input tCRAM_AD CRAM_AD,
-           input tCRAM_ADA CRAM_ADA,
-           input tCRAM_ADA_EN CRAM_ADA_EN,
-           input tCRAM_ADB CRAM_ADB,
-
-           input tCRAM_AR CRAM_AR,
-           input tCRAM_ARX CRAM_ARX,
-           input [0:8] CRAM_MAGIC,
-
-           input CRAM_BRload,
-           input CRAM_BRXload,
+           input tuCRAM CRAM,
 
            input [0:2] CTL_ARL_SEL,
            input [0:2] CTL_ARR_SEL,
@@ -59,7 +49,6 @@ module edp(input eboxClk,
            input CON_fmWrite00_17,
            input CON_fmWrite18_35,
 
-           input tCRAM_DIAG_FUNC CRAM_DIAG_FUNC,
            input diagReadFunc12X,
 
            input [0:35] VMA_VMAheldOrPC,
@@ -110,8 +99,12 @@ module edp(input eboxClk,
   logic AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
   logic ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
+  // CRAM field/subfield aliases
+  logic [0:8] DIAG_FUNC = CRAM.f.MAGIC;
+  logic ADA_EN;
+  assign ADA_EN = CRAM.f.ADA[0];
   logic ADbool;
-  assign ADbool = CRAM_AD[1];
+  assign ADbool = CRAM.f.AD[1];
 
   // XXX probably not completely right
   assign EDP_ADcarry[36] = CTL_ADcarry36;
@@ -159,7 +152,7 @@ module edp(input eboxClk,
       if (CTL_ARRclr) begin
         EDP_AR[18:35] <= 0;
       end else if (CTL_ARRload) begin
-        case (CRAM_AR)
+        case (CRAM.f.AR)
         3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
         3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
         3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
@@ -249,7 +242,7 @@ module edp(input eboxClk,
       assign EDP_ADcarry[n+1] = EDP_ADcarry[n-2] ^ ADEXxortmp[n];
       assign EDP_ADoverflow[n] = EDP_AD_EX[n-2]  ^ ADEXxortmp[n];
 
-      mc10181 alu0(.S(CRAM_AD[2:5]), .M(ADbool),
+      mc10181 alu0(.S(CRAM.f.AD[2:5]), .M(ADbool),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
                    .CIN(EDP_ADcarry[n+2]),
@@ -258,7 +251,7 @@ module edp(input eboxClk,
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0]),
                    .COUT(EDP_ADcarry[n-2]));
-      mc10181 alu1(.S(CRAM_AD[2:5]), .M(ADbool),
+      mc10181 alu1(.S(CRAM.f.AD[2:5]), .M(ADbool),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
                    .CIN(EDP_ADcarry[n+6]),
@@ -275,14 +268,14 @@ module edp(input eboxClk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
 
-      mc10181 alu2(.S(CRAM_AD[2:5]), .M(ADbool),
+      mc10181 alu2(.S(CRAM.f.AD[2:5]), .M(ADbool),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                    .CIN(EDP_ADXcarry[n+3]),
                    .F({alu2_x1[n], EDP_ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
-      mc10181 alu3(.S(CRAM_AD[2:5]), .M(ADbool),
+      mc10181 alu3(.S(CRAM.f.AD[2:5]), .M(ADbool),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                    .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),
@@ -377,7 +370,7 @@ module edp(input eboxClk,
         // signals. I am resolving this by forcing this logic only for
         // N=0.
         if (n === 0) begin
-          case(CRAM_ADB)
+          case(CRAM.f.ADB)
           2'b00: ADB[n-2:n-1] = {2{FM[n+0]}};
           2'b01: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
           2'b10: ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
@@ -387,7 +380,7 @@ module edp(input eboxClk,
         end
 
         // The regular part of ADB mux: E23, E26, and E19.
-        case(CRAM_ADB)
+        case(CRAM.f.ADB)
         2'b00: ADB[n:n+5] = FM[n+0:n+5];
         2'b01: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
         2'b10: ADB[n:n+5] = EDP_BR[n+0:n+5];
@@ -401,8 +394,8 @@ module edp(input eboxClk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
-        case(CRAM_ADB)
-        2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM_MAGIC[n+0:n+5] : 6'b0;
+        case(CRAM.f.ADB)
+        2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM.f.MAGIC[n+0:n+5] : 6'b0;
         2'b01: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
         2'b10: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
         2'b11: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
@@ -413,7 +406,7 @@ module edp(input eboxClk,
   // ADXA mux
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXAmux
-      always_comb ADXA[n+0:n+5] = CRAM_ADA_EN === adaEnable ? EDP_ARX[n+0:n+5] : 6'b0;
+      always_comb ADXA[n+0:n+5] = ADA_EN ? 6'b0 : EDP_ARX[n+0:n+5];
     end
   endgenerate
 
@@ -422,8 +415,8 @@ module edp(input eboxClk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADAmux
       always_comb
-        if (CRAM_ADA_EN === adaEnable)
-          case(CRAM_ADA)
+        if (~ADA_EN)
+          case(CRAM.f.ADA)
           2'b00: ADA[n+0:n+5] = EDP_AR[n+0:n+5];
           2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
           2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
@@ -455,7 +448,7 @@ module edp(input eboxClk,
   always_ff @(posedge eboxClk)
 
     if (eboxReset) EDP_BRX = 0;
-    else if (CRAM_BRXload)
+    else if (CRAM.f.BRX === brxARX)
       EDP_BRX = EDP_ARX;
 
 
@@ -463,13 +456,13 @@ module edp(input eboxClk,
   always_ff @(posedge eboxClk)
 
     if (eboxReset) EDP_BR = 0;
-  else if (CRAM_BRload)
+  else if (CRAM.f.BR === brAR)
     EDP_BR = EDP_AR;
 
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{R,L} is lit we force AD as the source
-  logic [0:2] ebusSel = (CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : CRAM_DIAG_FUNC[4:6];
+  logic [0:2] ebusSel = (CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6];
   logic [0:35] ebusR;
 
   always_comb

@@ -26,65 +26,8 @@ module edptb;
   // End of automatics
   /*AUTOREG*/
 
-  logic [0:10] CRAM_J;
-  tCRAM_AD CRAM_AD;
-  tCRAM_ADA CRAM_ADA;
-  tCRAM_ADA_EN CRAM_ADA_EN;
-  tCRAM_ADB CRAM_ADB;
-  tCRAM_AR CRAM_AR;
-  tCRAM_ARX CRAM_ARX;
-  tCRAM_BR CRAM_BR;
-  tCRAM_BRX CRAM_BRX;
-  tCRAM_MQ CRAM_MQ;
-  tCRAM_FMADR CRAM_FMADR;
-  tCRAM_SCAD CRAM_SCAD;
-  tCRAM_SCADA CRAM_SCADA;
-  tCRAM_SCADA_EN CRAM_SCADA_EN;
-  tCRAM_SCADB CRAM_SCADB;
-  tCRAM_SC CRAM_SC;
-  tCRAM_FE CRAM_FE;
-  tCRAM_SH CRAM_SH;
-  tCRAM_ARMM CRAM_ARMM;
-  tCRAM_VMAX CRAM_VMAX;
-  tCRAM_VMA CRAM_VMA;
-  tCRAM_TIME CRAM_TIME;
-  tCRAM_MEM CRAM_MEM;
-  tCRAM_SKIP CRAM_SKIP;
-  tCRAM_COND CRAM_COND;
-  logic CRAM_CALL;
-  tCRAM_DISP CRAM_DISP;
-  tCRAM_SPEC CRAM_SPEC;
-  logic CRAM_MARK;
-  logic [0:8] CRAM_MAGIC;
-  logic [0:5] CRAM_MAJVER;
-  logic [0:2] CRAM_MINVER;
-  logic CRAM_KLPAGE;
-  logic CRAM_LONGPC;
-  logic CRAM_NONSTD;
-  logic CRAM_PV;
-  logic CRAM_PMOVE;
-  logic  CRAM_ISTAT;
-  logic [0:2] CRAM_PXCT;
-  tCRAM_ACB CRAM_ACB;
-  logic [0:3] CRAM_ACmagic;
-  tCRAM_AC_OP CRAM_AC_OP;
-  logic CRAM_AR0_8;
-  tCRAM_CLR CRAM_CLR;
-  tCRAM_ARL CRAM_ARL;
-  tCRAM_AR_CTL CRAM_AR_CTL;
-  logic CRAM_EXP_TST;
-  tCRAM_MQ_CTL CRAM_MQ_CTL;
-  tCRAM_PC_FLAGS CRAM_PC_FLAGS;
-  tCRAM_FLAG_CTL CRAM_FLAG_CTL;
-  tCRAM_SPEC_INSTR CRAM_SPEC_INSTR;
-  tCRAM_FETCH CRAM_FETCH;
-  tCRAM_EA_CALC CRAM_EA_CALC;
-  tCRAM_SP_MEM CRAM_SP_MEM;
-  tCRAM_MREG_FNC CRAM_MREG_FNC;
-  tCRAM_MBOX_CTL CRAM_MBOX_CTL;
-  tCRAM_MTR_CTL CRAM_MTR_CTL;
-  tCRAM_EBUS_CTL CRAM_EBUS_CTL;
-  tCRAM_DIAG_FUNC CRAM_DIAG_FUNC;
+  tuCRAM CRAM;
+  tCRADR CRADR;
 
   logic eboxReset;
   logic CTL_AR00to08load;
@@ -127,10 +70,11 @@ module edptb;
   logic [0:8] SCD_ARMMupper;
   logic [13:17] SCD_ARMMlower;
 
-  logic CRAM_BRload;
-  logic CRAM_BRXload;
+  logic ADA_EN;
+  assign ADA_EN = CRAM.f.ADA[0];
 
   edp edp0(.*);
+  crm crm0(.*);
 
   always #20 eboxClk = ~eboxClk;
 
@@ -188,53 +132,9 @@ module edptb;
 
     SHM_SH = 0;
 
-    CRAM_AD = adAplus1;
-    CRAM_ADA = adaAR;
-    CRAM_ADA_EN = adaEnable;
-    CRAM_ADB = adbFM;
-    CRAM_AR = arAR;
-    CRAM_ARX = arxARX;
-    CRAM_BR = brRECIRC;
-    CRAM_BRX = brxRECIRC;
-    CRAM_BRload = 0;
-    CRAM_BRXload = 0;
-    CRAM_MQ = mqRECIRC;
+    CRAM.all = 84'd0;
 
-    // Initialize all CRAM fields we do not use but may someday
-    CRAM_J = 0;
-    CRAM_SCAD = scadA;
-    CRAM_SCADA = scadaFE;
-    CRAM_SCADA_EN = scadaEnable;
-    CRAM_SCADB = scadbSC;
-    CRAM_SC = scRECIRC;
-    CRAM_FE = feRECIRC;
-    CRAM_SH = shAR;
-    CRAM_ARMM = armmMAGIC;
-    CRAM_VMAX = vmaxVMAX;
-    CRAM_VMA = vmaVMA;
-    CRAM_TIME = time2T;
-    CRAM_MEM = memNOP;
-    CRAM_SKIP = skipNOP;
-    CRAM_COND = condNOP;
-    CRAM_CALL = 0;
-    CRAM_DISP = dispDIAG;
-    CRAM_SPEC = specNOP;
-    CRAM_MARK = 0;
-    CRAM_MAJVER = 0;
-    CRAM_MINVER = 0;
-    CRAM_KLPAGE = 0;
-    CRAM_LONGPC = 0;
-    CRAM_NONSTD = 0;
-    CRAM_PV = 0;
-    CRAM_PMOVE = 0;
-    CRAM_ISTAT = 0;
-    CRAM_PXCT = 0;
-    CRAM_ACB = acbMICROB;
-    CRAM_ACmagic = 0;
-    CRAM_CLR = clrNOP;
-    CRAM_MAGIC = 0;
-
-    CRAM_FMADR = fmadrAC0;
+    CRAM.f.FMADR = fmadrAC0;
     APR_FMblk = 0;              // Select a good block number
     APR_FMadr = 7;              // And a good FM AC #
 
@@ -251,38 +151,34 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
-    CRAM_AD = adA;
-    CRAM_ADA = adaAR;
-    CRAM_ADA_EN = adaEnable;
-    CRAM_ADB = adbBR;          // Not used yet
-    CRAM_AR = arCACHE;
+    CRAM.f.AD = adA;
+    CRAM.f.ADA = adaAR;
+    CRAM.f.ADB = adbBR;          // Not used yet
+    CRAM.f.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
     CTL_AR00to08load = 1;  // Load ARL pieces
     CTL_AR09to17load = 1;
     CTL_ARRload = 1;       // Load ARR
-    CRAM_BR = brAR;
-    CRAM_BRload = 1;
-    CRAM_ARX = arxARX;
+    CRAM.f.BR = brAR;
+    CRAM.f.ARX = arxARX;
 
 
     // Try AD/A first
     @(negedge eboxClk)
     $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
-    CRAM_AD = adA;
-    CRAM_ADA = adaAR;
-    CRAM_ADA_EN = adaEnable;
-    CRAM_ADB = adbBR;          // Not used yet
-    CRAM_AR = arCACHE;
+    CRAM.f.AD = adA;
+    CRAM.f.ADA = adaAR;
+    CRAM.f.ADB = adbBR;          // Not used yet
+    CRAM.f.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
     CTL_AR00to08load = 1;  // Load ARL pieces
     CTL_AR09to17load = 1;
     CTL_ARRload = 1;       // Load ARR
-    CRAM_BR = brAR;
-    CRAM_BRload = 1;
-    CRAM_ARX = arxARX;
+    CRAM.f.BR = brAR;
+    CRAM.f.ARX = arxARX;
 
 
     // Try AD/B
@@ -290,57 +186,51 @@ module edptb;
     @(negedge eboxClk)
     $display($time, "<< AD/B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = adA;
-    CRAM_ADA = adaAR;
-    CRAM_ADA_EN = adaEnable;
-    CRAM_ADB = adbBR;
-    CRAM_AR = arCACHE;
+    CRAM.f.AD = adA;
+    CRAM.f.ADA = adaAR;
+    CRAM.f.ADB = adbBR;
+    CRAM.f.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
     CTL_AR00to08load = 1;  // Load ARL pieces
     CTL_AR09to17load = 1;
     CTL_ARRload = 1;       // Load ARR
-    CRAM_BR = brAR;
-    CRAM_BRload = 1;
-    CRAM_ARX = arxARX;
+    CRAM.f.BR = brAR;
+    CRAM.f.ARX = arxARX;
 
     // Try AD/0S
     @(posedge eboxClk) ;
     @(negedge eboxClk)
     $display($time, "<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = adZEROS;          // AD/0S
-    CRAM_ADA = adaAR;
-    CRAM_ADA_EN = adaEnable;
-    CRAM_ADB = adbBR;
-    CRAM_AR = arCACHE;
+    CRAM.f.AD = adZEROS;          // AD/0S
+    CRAM.f.ADA = adaAR;
+    CRAM.f.ADB = adbBR;
+    CRAM.f.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
     CTL_AR00to08load = 1;  // Load ARL pieces
     CTL_AR09to17load = 1;
     CTL_ARRload = 1;       // Load ARR
-    CRAM_BR = brAR;
-    CRAM_BRload = 1;
-    CRAM_ARX = arxARX;
+    CRAM.f.BR = brAR;
+    CRAM.f.ARX = arxARX;
 
     // Now add 987654321 and 123456789
     @(posedge eboxClk) ;
     @(negedge eboxClk)
     $display($time, "<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
-    CRAM_AD = adAplusB;         // AD/A+B
-    CRAM_ADA = adaAR;
-    CRAM_ADA_EN = adaEnable;
-    CRAM_ADB = adbBR;
-    CRAM_AR = arCACHE;
+    CRAM.f.AD = adAplusB;         // AD/A+B
+    CRAM.f.ADA = adaAR;
+    CRAM.f.ADB = adbBR;
+    CRAM.f.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
     CTL_AR00to08load = 1;  // Load ARL pieces
     CTL_AR09to17load = 1;
     CTL_ARRload = 1;       // Load ARR
-    CRAM_BR = brAR;
-    CRAM_BRload = 1;
-    CRAM_ARX = arxARX;
+    CRAM.f.BR = brAR;
+    CRAM.f.ARX = arxARX;
 
     @(posedge eboxClk);
     @(negedge eboxClk);

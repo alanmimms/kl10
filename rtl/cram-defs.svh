@@ -1,6 +1,15 @@
 `ifndef _CRAM_DEFS_
  `define _CRAM_DEFS_ 1
 
+typedef logic [0:10] tCRADR;
+typedef logic [0:10] tJ;
+typedef logic [0:8] tMAGIC;
+typedef logic [0:5] tMAJVER;
+typedef logic [0:2] tMINVER;
+typedef logic [0:2] tPXCT;
+typedef logic [0:3] tACmagic;
+typedef logic [0:83] tCRAM;
+
 // CRAM_AD flag bits
  `define adCARRY 6'b100_000
  `define adBOOLEAN 6'b010_000
@@ -49,25 +58,22 @@ typedef enum logic [0:5] {
                           // BOOLEAN FUNCTIONS FOR WHICH CRY0 IS INTERESTING
                           adCRY_A_EQ_minus1 =`adCARRY |`adBOOLEAN | 6'b000_000,
                           adCRY_A_GE_B =`adCARRY |`adBOOLEAN | 6'b001_001
-                          } tCRAM_AD;
+                          } tAD;
 
-typedef enum logic [0:1] {
-	                  adaAR=2'b000,
-	                  adaARX=2'b001,
-	                  adaMQ=2'b010,
-	                  adaPC=2'b011
-                          } tCRAM_ADA;
-typedef enum logic {
-                    adaEnable = 1'b0,
-	            adaZEROS=1'b1
-                    } tCRAM_ADA_EN;
+typedef enum logic [0:2] {
+	                  adaAR = 3'b000,
+	                  adaARX = 3'b001,
+	                  adaMQ = 3'b010,
+	                  adaPC = 3'b011,
+                          adaZEROS = 3'b100
+                          } tADA;
 
 typedef enum logic [0:1] {
                           adbFM = 2'b00,
                           adbBRx2 = 2'b01,
                           adbBR = 2'b10,
                           adbARx4 = 2'b11
-                          } tCRAM_ADB;
+                          } tADB;
 
 typedef enum logic [0:2] {
                           arAR = 3'b000, // also arARMM, arMEM
@@ -78,7 +84,7 @@ typedef enum logic [0:2] {
                           arADx2 = 3'b101,
                           arADX = 3'b110,
                           arADdiv4 = 3'b111
-                          } tCRAM_AR;
+                          } tAR;
 
 typedef enum logic [0:2] {
                           arxARX = 3'b000, // Also MEM
@@ -89,22 +95,22 @@ typedef enum logic [0:2] {
                           arxADXx2 = 3'b101,
                           arxADX = 3'b110,
                           arxADXdiv4 = 3'b111
-                          } tCRAM_ARX;
+                          } tARX;
 
 typedef enum logic {
                     brRECIRC = 1'b0,
                     brAR = 1'b1
-                    } tCRAM_BR;
+                    } tBR;
 
 typedef enum logic {
                     brxRECIRC = 1'b0,
                     brxARX = 1'b1
-                    } tCRAM_BRX;
+                    } tBRX;
 
 typedef enum logic {
                     mqRECIRC = 1'b0,
                     mqSH = 1'b1
-                    } tCRAM_MQ;
+                    } tMQ;
 
 typedef enum logic [0:2] {
                           fmadrAC0 = 3'b000,
@@ -115,7 +121,7 @@ typedef enum logic [0:2] {
                           fmadrAC3 = 3'b101,
                           fmadrACplusMAGIC = 3'b110,
                           fmadrMAGIC = 3'b111
-                          } tCRAM_FMADR;
+                          } tFMADR;
 
 typedef enum logic [0:2] {
                           scadA = 3'b000,
@@ -126,37 +132,32 @@ typedef enum logic [0:2] {
                           scadAminusB = 3'b101,
                           scadOR = 3'b110,
                           scadAND = 3'b111
-                          } tCRAM_SCAD;
+                          } tSCAD;
 
-typedef enum logic [0:1] {
-                          scadaFE = 2'b00,
-                          scadaAR0_5 = 2'b01,
-                          scadaAR_EXP = 2'b10,
-                          scadaMAGIC = 2'b11
-                          } tCRAM_SCADA;
-
-typedef enum logic {
-                    scadaEnable = 1'b0,
-                    scadaZEROS = 1'b1
-                    } tCRAM_SCADA_EN;
-
+typedef enum logic [0:2] {
+                          scadaFE = 3'b000,
+                          scadaAR0_5 = 3'b001,
+                          scadaAR_EXP = 3'b010,
+                          scadaMAGIC = 3'b011,
+                          scadaZEROS = 3'b100
+                          } tSCADA;
 
 typedef enum logic [0:1] {
                           scadbSC = 2'b00,
                           scadbAR6_11 = 2'b01,
                           scadbAR0_8 = 2'b10,
                           scadbMAGIC = 2'b11
-                          } tCRAM_SCADB;
+                          } tSCADB;
 
 typedef enum logic {
                     scRECIRC = 1'b0,
                     scSCAD = 1'b1
-                    } tCRAM_SC;
+                    } tSC;
 
 typedef enum logic {
                     feRECIRC = 1'b0,
                     feSCAD = 1'b1
-                    } tCRAM_FE;
+                    } tFE;
 
 
 typedef enum logic [0:1] {
@@ -164,21 +165,21 @@ typedef enum logic [0:1] {
                           shAR = 2'b01,
                           shARX = 2'b10,
                           shAR_SWAP = 2'b11
-                          } tCRAM_SH;
+                          } tSH;
 
 typedef enum logic [0:1] {
                           armmMAGIC = 2'b00,
                           armmEXP_SIGN = 2'b01,
                           armmSCAD_EXP = 2'b10,
                           armmSCAD_POS = 2'b11
-                          } tCRAM_ARMM;
+                          } tARMM;
 
 typedef enum logic [0:1] {
                           vmaxVMAX = 2'b00,
                           vmaxPC_SEC = 2'b01,
                           vmaxPREV_SEC = 2'b10,
                           vmaxAD12_17 = 2'b11
-                          } tCRAM_VMAX;
+                          } tVMAX;
 
 
 typedef enum logic [0:1] {
@@ -186,14 +187,14 @@ typedef enum logic [0:1] {
                           vmaPC = 2'b01,
                           vmaPCplus1 = 2'b10,
                           vmaAD = 2'b11
-                          } tCRAM_VMA;
+                          } tVMA;
 
 typedef enum logic [0:1] {
                           time2T = 2'b00,
                           time3T = 2'b01,
                           time4T = 2'b10,
                           time5T = 2'b11
-                          } tCRAM_TIME;
+                          } tTIME;
 
 typedef enum logic [0:3] {
                           memNOP = 4'b0000,
@@ -212,7 +213,7 @@ typedef enum logic [0:3] {
                           memRPW = 4'b1101,
                           memWRITE = 4'b1110,
                           memIFET = 4'b1111
-                          } tCRAM_MEM;
+                          } tMEM;
 
 typedef enum logic [0:5] {
                           skipNOP = 6'b000_000,
@@ -250,7 +251,7 @@ typedef enum logic [0:5] {
                           skipNotVMA_SEC0 = 6'b111_101,
                           skipAC_REF = 6'b111_110,
                           skipNotMTR_REQ = 6'b111_111
-                          } tCRAM_SKIP;
+                          } tSKIP;
 
 typedef enum logic [0:5] {
                           condNOP = 6'b000_000,
@@ -286,7 +287,7 @@ typedef enum logic [0:5] {
                           condVMA_DEC = 6'b011_101,
                           condVMA_INC = 6'b011_110,
                           condLD_VMA_HELD = 6'b011_111
-                          } tCRAM_COND;
+                          } tCOND;
 
 
 typedef enum logic [0:4] {
@@ -306,7 +307,7 @@ typedef enum logic [0:4] {
                           dispBYTE = 5'b11_100,
                           dispNORM = 5'b11_101,
                           dispEA_MOD = 5'b11_110
-                          } tCRAM_DISP;
+                          } tDISP;
 
 typedef enum logic [0:4] {
                           specNOP = 5'b01_000,
@@ -325,19 +326,19 @@ typedef enum logic [0:4] {
                           specSAVE_FLAGS = 5'b10_101,
                           specSP_MEM_CYCLE = 5'b10_110,
                           specAD_LONG = 5'b10_111
-                          } tCRAM_SPEC;
+                          } tSPEC;
 
 
 typedef enum logic [0:2] {
                           acbPAGB = 3'b110,
                           acbMICROB = 3'b111
-                          } tCRAM_ACB;
+                          } tACB;
 
 typedef enum logic [0:5] {
                           acopACplusMAGIC = 6'b000_110,
                           acopMAGIC = 6'b011_010,
                           acopOR_ACnumber = 6'b011_011
-                          } tCRAM_AC_OP;
+                          } tAC_OP;
 
 
 typedef enum logic [0:3] {
@@ -355,7 +356,7 @@ typedef enum logic [0:3] {
                           clrARXplusMQ = 4'b1_100,
                           clrARLplusARXlusMQ = 4'b1_110,
                           clrARplusARXplusMQ = 4'b1_111
-                          } tCRAM_CLR;
+                          } tCLR;
 
 typedef enum logic [0:2] {
                           arlARL = 3'b000,
@@ -366,7 +367,7 @@ typedef enum logic [0:2] {
                           arlADx2 = 3'b101,
                           arlADX = 3'b110,
                           arlADdiv4 = 3'b111
-                          } tCRAM_ARL;
+                          } tARL;
 
 typedef enum logic [0:2] {
                           arctlNOP = 3'b000,
@@ -374,14 +375,14 @@ typedef enum logic [0:2] {
                           arctlAR9_17 = 3'b010,
                           arctlAR0_8 = 3'b100,
                           arctlARL_LOAD = 3'b110
-                          } tCRAM_AR_CTL;
+                          } tAR_CTL;
 
 typedef enum logic [0:1] {
                           mqctlMQ = 2'b00,
                           mqctlMQx2 = 2'b01,
                           mqctlMQdiv2 = 2'b10,
                           mqctlZEROS = 2'b11
-                          } tCRAM_MQ_CTL;
+                          } tMQ_CTL;
 
 typedef enum logic [0:8] {
                           pcflagsNONE = 9'b000_000_000,
@@ -397,7 +398,7 @@ typedef enum logic [0:8] {
                           pcflagsFXU = 9'b110_011_000,
                           pcflagsDIV_CHK = 9'b100_010_100,
                           pcflagsFDV_CHK = 9'b110_010_100
-                          } tCRAM_PC_FLAGS;
+                          } tPC_FLAGS;
 
 typedef enum logic [0:8] {
                           flagctlNOP = 9'b000_000_000,
@@ -409,7 +410,7 @@ typedef enum logic [0:8] {
                           flagctlHALT = 9'b100_100_010,
                           flagctlSET_FLAGS = 9'b000_000_010,
                           flagctlPORTAL = 9'b100_001_010
-                          } tCRAM_FLAG_CTL;
+                          } tFLAG_CTL;
 
 typedef enum logic [0:8] {
                           specinstrSET_PI_CYCLE = 9'b111_001_100,
@@ -422,7 +423,7 @@ typedef enum logic [0:8] {
                           specinstrHALTED = 9'b011_000_010,
                           specinstrCONS_XCT = 9'b011_001_000,
                           specinstrCONT = 9'b000_000_000
-                          } tCRAM_SPEC_INSTR;
+                          } tSPEC_INSTR;
 
 typedef enum logic [0:8] {
                           fetchUNCOND = 9'b100_000_000,
@@ -431,7 +432,7 @@ typedef enum logic [0:8] {
                           fetchTEST = 9'b010_000_011,
                           fetchJUMP = 9'b101_000_010,
                           fetchJFCL = 9'b101_000_011
-                          } tCRAM_FETCH;
+                          } tFETCH;
 
 typedef enum logic [0:8] {
                           eacalcLOAD_AR = 9'b100_000_000,
@@ -456,7 +457,7 @@ typedef enum logic [0:8] {
                           eacalcLD_AR_EA = 9'b100_100_010,
                           eacalcLD_ARplusWR = 9'b100_100_000,
                           eacalcLD_ARXplusWR = 9'b010_100_000
-                          } tCRAM_EA_CALC;
+                          } tEA_CALC;
 
 
 typedef enum logic [0:8] {
@@ -476,7 +477,7 @@ typedef enum logic [0:8] {
                           spmemUPT_FETCH = 9'b110_010_011,
                           spmemPT = 9'b000_011_011,
                           spmemPT_FETCH = 9'b100_100_011
-                          } tCRAM_SP_MEM;
+                          } tSP_MEM;
 
 typedef enum logic [0:8] {
                           mregfncSBUS_DIAG = 9'b100_000_111,
@@ -488,7 +489,7 @@ typedef enum logic [0:8] {
                           mregfncLOAD_UBR = 9'b110_000_010,
                           mregfncLOAD_EBR = 9'b110_000_011,
                           mregfncMAP = 9'b001_100_000
-                          } tCRAM_MREG_FNC;
+                          } tMREG_FNC;
 
 typedef enum logic [0:8] {
                           mboxctlSET_PAGE_FAIL = 9'b010_000_000,
@@ -500,7 +501,7 @@ typedef enum logic [0:8] {
                           mboxctlPT_WR = 9'b000_001_000,
                           mboxctlPT_DIR_CLR = 9'b000_000_001,
                           mboxctlNORMAL = 9'b000_000_000
-                          } tCRAM_MBOX_CTL;
+                          } tMBOX_CTL;
 
 typedef enum logic [0:2] {
                           mtrctlCLR_TIME = 3'b000,
@@ -511,7 +512,7 @@ typedef enum logic [0:2] {
                           mtrctlLD_PA_RH = 3'b101,
                           mtrctlCONO_MTR = 3'b110,
                           mtrctlCONO_TIM = 3'b111
-                          } tCRAM_MTR_CTL;
+                          } tMTR_CTL;
 
 // ;I/O FUNCTIONS
 
@@ -529,7 +530,7 @@ typedef enum logic [0:8] {
                           ebusctlDATAO = 9'b000_010_110,
                           ebusctlDATAI = 9'b000_010_111,
                           ebusctlREL_EEBUS = 9'b000_000_000
-                          } tCRAM_EBUS_CTL;
+                          } tEBUS_CTL;
 
 typedef enum logic [0:8] {
                           diagfunc500_NS = 9'b100_000_000,
@@ -557,5 +558,43 @@ typedef enum logic [0:8] {
                           diagfuncCONI_PI_PAR = 9'b101_011_000,
                           diagfuncCONI_PAG = 9'b101_011_001,
                           diagfuncRD_EBUS_REG = 9'b101_110_111
-                          } tCRAM_DIAG_FUNC;
+                          } tDIAG_FUNC;
+
+typedef union packed {
+  struct packed {
+    logic u0;
+    tJ J;
+    tAD AD;
+    tADA ADA;
+    logic u21;
+    tADB ADB;
+    tAR AR;
+    tARX ARX;
+    tBR BR;
+    tBRX BRX;
+    tMQ MQ;
+    tFMADR FMADR;
+    tSCAD SCAD;
+    tSCADA SCADA;
+    logic u42;
+    tSCADB SCADB;
+    logic u45;
+    tSC SC;
+    tFE FE;
+    logic u48;
+    tSH SH;
+    logic u51;
+    tVMA VMA;
+    tTIME TIME;
+    tMEM MEM;
+    tCOND COND;
+    logic CALL;
+    tDISP DISP;
+    logic [72:73] u73;
+    logic MARK;
+    tMAGIC MAGIC;
+  } f;
+
+  logic [0:83] all;
+} tuCRAM;
 `endif
