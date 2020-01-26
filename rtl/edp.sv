@@ -10,13 +10,13 @@ module edp(input eboxClk,
            input CTL_ADXcarry36,
            input CTL_ADlong,
 
-           input [0:5] CRAM_AD,
-           input [0:3] CRAM_ADA,
-           input [0:1] CRAM_ADA_EN,
-           input [0:1] CRAM_ADB,
+           input tCRAM_AD CRAM_AD,
+           input tCRAM_ADA CRAM_ADA,
+           input tCRAM_ADA_EN CRAM_ADA_EN,
+           input tCRAM_ADB CRAM_ADB,
 
-           input [0:3] CRAM_AR,
-           input [0:3] CRAM_ARX,
+           input tCRAM_AR CRAM_AR,
+           input tCRAM_ARX CRAM_ARX,
            input [0:8] CRAM_MAGIC,
 
            input CRAM_BRload,
@@ -58,7 +58,7 @@ module edp(input eboxClk,
            input CON_fmWrite00_17,
            input CON_fmWrite18_35,
 
-           input [0:8] CRAM_DIAG_FUNC,
+           input tCRAM_DIAG_FUNC CRAM_DIAG_FUNC,
            input diagReadFunc12X,
 
            input [0:35] VMA_VMAheldOrPC,
@@ -111,8 +111,8 @@ module edp(input eboxClk,
   wire ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
   wire ADbool = CRAM_AD[1];
-  wire [0:1] ADAsel = CRAM_ADA[1:2];
-  wire ADAen = ~CRAM_ADA_EN[0];
+  wire [0:1] ADAsel = CRAM_ADA;
+  wire ADAen = ~CRAM_ADA_EN;
   wire [0:1] ADBsel = CRAM_ADB;
 
   wire [0:2] ARRsel = CRAM_AR;

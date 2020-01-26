@@ -5,9 +5,8 @@
  `define adfCARRY 6'b100_000
  `define adfBOOLEAN 6'b010_000
 
-
+// CRAM_AD values
 typedef enum logic [0:5] {
-                          // CRAM_AD values
                           // ADDER LOGICAL FUNCTIONS
                           adSETCA =`adfBOOLEAN | 6'b000_000,
                           adORC =`adfBOOLEAN | 6'b000_001,      // NAND
@@ -53,10 +52,10 @@ typedef enum logic [0:5] {
                           } tCRAM_AD;
 
 typedef enum logic [0:1] {
-	                  adaAR=3'b000,
-	                  adaARX=3'b001,
-	                  adaMQ=3'b010,
-	                  adaPC=3'b011
+	                  adaAR=2'b000,
+	                  adaARX=2'b001,
+	                  adaMQ=2'b010,
+	                  adaPC=2'b011
                           } tCRAM_ADA;
 typedef enum logic {
                     adaEnable = 1'b0,
@@ -120,7 +119,7 @@ typedef enum logic [0:2] {
 
 typedef enum logic [0:2] {
                           scadA = 3'b000,
-                          scadAminusB = 3'b001,
+                          scadAminusBminus1 = 3'b001,
                           scadAplusB = 3'b010,
                           scadAminus1 = 3'b011,
                           scadAplus1 = 3'b100,
@@ -130,7 +129,7 @@ typedef enum logic [0:2] {
                           } tCRAM_SCAD;
 
 typedef enum logic [0:1] {
-                          scadaFE = 1'b00,
+                          scadaFE = 2'b00,
                           scadaAR0_5 = 2'b01,
                           scadaAR_EXP = 2'b10,
                           scadaMAGIC = 2'b11
@@ -143,12 +142,12 @@ typedef enum logic {
 
 
 typedef enum logic [0:1] {
-                          scadbSC = 1'b00,
+                          scadbSC = 2'b00,
                           scadbAR6_11 = 2'b01,
                           scadbAR0_8 = 2'b10,
                           scadbMAGIC = 2'b11
                           } tCRAM_SCADB;
-                          
+
 typedef enum logic {
                     scRECIRC = 1'b0,
                     scSCAD = 1'b1
@@ -216,6 +215,7 @@ typedef enum logic [0:3] {
                           } tCRAM_MEM;
 
 typedef enum logic [0:5] {
+                          skipNOP = 6'b000_000,
                           skipEVEN_PAR = 6'b100_001,
                           skipBR0 = 6'b100_010,
                           skipARX0 = 6'b100_011,
@@ -329,49 +329,19 @@ typedef enum logic [0:4] {
 
 
 typedef enum logic [0:2] {
-                          adbPAGB = 3'b110,
-                          adbMICROB = 3'b111
+                          acbPAGB = 3'b110,
+                          acbMICROB = 3'b111
                           } tCRAM_ACB;
 
 typedef enum logic [0:5] {
-                          // ADDER LOGICAL FUNCTIONS
-                          acopSETCA =`adfBOOLEAN | 6'b000_000,
-                          acopORC =`adfBOOLEAN | 6'b000_001,      // NAND
-                          acopORCA =`adfBOOLEAN | 6'b000_010,
-                          acopONES =`adfBOOLEAN | 6'b000_011,
-                          acopNOR =`adfBOOLEAN | 6'b000_100,
-                          //      adANDC =`adfBOOLEAN | adNOR,
-                          acopSETCB =`adfBOOLEAN | 6'b000_101,
-                          acopEQV =`adfBOOLEAN | 6'b000_110,
-                          acopORCB =`adfBOOLEAN | 6'b000_111,
-                          acopANDCA =`adfBOOLEAN | 6'b001_000,
-                          acopXOR =`adfBOOLEAN | 6'b001_001,
-                          acopB =`adfBOOLEAN | 6'b001_010,
-                          acopOR =`adfBOOLEAN | 6'b001_011,
-                          acopZEROS =`adfBOOLEAN | 6'b001_100,
-                          acopANDCB =`adfBOOLEAN | 6'b001_101,
-                          acopAND =`adfBOOLEAN | 6'b001_110,
-                          acopA =`adfBOOLEAN | 6'b001_111,
-                          // ADDER ARITHMETIC FUNCTIONS
-                          acopAplusXCRY = 6'b000_000,
-                          acopAplusANDCB = 6'b000_001,
-                          acopAplusAND = 6'b000_010,
-                          acopA__2 = 6'b000_011,
-                          acopORplusANDCB = 6'b000_101,
-                          acopAplusB = 6'b000_110,
-                          acopAplusOR = 6'b000_111,
-                          acopAminusBminus1 = 6'b001_001,
-                          acopANDCBminus1 = 6'b001_101,
-                          acopANDminus1 = 6'b001_110,
-                          acopAminus1 = 6'b001_111,
-
-                          acopACplusMAGIC = 5'b00_110,
-                          acopMAGIC = 5'b011_010,
-                          acopOR_ACnumber = 5'b011_011
+                          acopACplusMAGIC = 6'b000_110,
+                          acopMAGIC = 6'b011_010,
+                          acopOR_ACnumber = 6'b011_011
                           } tCRAM_AC_OP;
 
 
 typedef enum logic [0:3] {
+                          clrNOP = 4'b0_000,
                           clrARR = 4'b0_001,
                           clrARL = 4'b0_010,
                           clrAR = 4'b0_011,
@@ -399,6 +369,7 @@ typedef enum logic [0:2] {
                           } tCRAM_ARL;
 
 typedef enum logic [0:2] {
+                          arctlNOP = 3'b000,
                           arctlARR_LOAD = 3'b001,
                           arctlAR9_17 = 3'b010,
                           arctlAR0_8 = 3'b100,
@@ -413,6 +384,7 @@ typedef enum logic [0:1] {
                           } tCRAM_MQ_CTL;
 
 typedef enum logic [0:8] {
+                          pcflagsNONE = 9'b000_000_000,
                           pcflagsOVERF = 9'b100_000_000,
                           pcflagsFLOVERF = 9'b010_000_000,
                           pcflagsFPD = 9'b001_000_000,
@@ -428,6 +400,7 @@ typedef enum logic [0:8] {
                           } tCRAM_PC_FLAGS;
 
 typedef enum logic [0:8] {
+                          flagctlNOP = 9'b000_000_000,
                           flagctlRSTR_FLAGS = 9'b100_010_000,
                           flagctlJFCL = 9'b110_000_010,
                           flagctlJFCLplusLD = 9'b110_010_010,
@@ -443,7 +416,7 @@ typedef enum logic [0:8] {
                           specinstrKERNEL_CYCLE = 9'b010_000_000,
                           specinstrINH_PCplus1 = 9'b001_000_000,
                           specinstrSXCT = 9'b000_100_000,
-                          specinstrPXCT = 9'b000_010_000
+                          specinstrPXCT = 9'b000_010_000,
                           specinstrINTRPT_INH = 9'b000_001_000,
                           specinstrINSTR_ABORT = 9'b000_000_100,
                           specinstrHALTED = 9'b011_000_010,
@@ -472,13 +445,12 @@ typedef enum logic [0:8] {
                           eacalcA_IND = 9'b010_011_000,
                           eacalcBYTE_LD = 9'b100_010_000,
                           eacalcBYTE_RD = 9'b110_010_000,
-                          eacalcBYTE_RD_PC = 9'b110_010_001,
+                          eacalcBYTE_RD_PCorPOP_AR_ARX = 9'b110_010_001,
                           eacalcBYTE_RPW = 9'b111_110_000,
-                          eacalcBYTE_IND = 9'b110_010_000,
+                          eacalcBYTE_IND = 9'b110_001_000,
                           eacalcPUSH = 9'b000_100_001,
                           eacalcPOP_AR = 9'b100_010_001,
                           eacalcPOP_ARX = 9'b010_010_001,
-                          eacalcPOP_AR_ARX = 9'b110_010_001,
                           eacalcWRITE_E = 9'b000_100_010,
                           eacalcWRITE_EA = 9'b100_000_010,
                           eacalcLD_AR_EA = 9'b100_100_010,
@@ -496,16 +468,14 @@ typedef enum logic [0:8] {
                           spmemEPT_EN = 9'b000_001_000,
                           spmemCACHE_INC = 9'b000_000_010,
                           spmemUNCSHplusUNPAGE = 9'b001_000_011,
-                          spmemUNPAGEDplusCACHED = 9'b001_000_001
-
-                          spmemUNPAGED = 9'b001_000_011,
+                          spmemUNPAGEDplusCACHED = 9'b001_000_001,
                           spmemEPT = 9'b001_001_011,
                           spmemEPT_CACHE = 9'b001_001_001,
                           spmemEPT_FETCH = 9'b101_001_011,
                           spmemUPT = 9'b010_010_011,
                           spmemUPT_FETCH = 9'b110_010_011,
                           spmemPT = 9'b000_011_011,
-                          spmemPT_FETCH = 9'b100_100_011,
+                          spmemPT_FETCH = 9'b100_100_011
                           } tCRAM_SP_MEM;
 
 typedef enum logic [0:8] {
@@ -529,77 +499,63 @@ typedef enum logic [0:8] {
                           mboxctlPT_DIR_WR = 9'b000_010_000,
                           mboxctlPT_WR = 9'b000_001_000,
                           mboxctlPT_DIR_CLR = 9'b000_000_001,
-                          mboxctlNORMAL = 9'b000_000_000,
+                          mboxctlNORMAL = 9'b000_000_000
                           } tCRAM_MBOX_CTL;
 
-MBOX CTL/=<75:83>	;ENABLED BY COND/MBOX CTL (APR5)
-	SET PAGE FAIL=200
-	SET IO PF ERR=100
-	CLR PT LINE(NK)=61,,1;[333] Clear valid if no Keep bit set
-	PT DIR CLR(NK)=41;Enable clear of PT DIR for non keep entries
-	CLR PT LINE=31,,1;CLEAR VALID FOR 4 ENTRIES (new pager board) [342]
-	PT DIR WR=20,1	;WRITE PAGE TABLE DIRECTORY
-	PT WR=10,1	;WRITE PAGE TABLE ENTRY SELECTED BY VMA
-	PT DIR CLR=1	;SELECT FOR CLEARING PT DIR (PAG3)
-	NORMAL=0	;RESET PT WR SELECTION
-MTR CTL/=<81:83>	;FUNCTION DECODING FOR METERS (MTR3)
-	CLR TIME=0		; USUALLY USED WITH DIAG FUNC
-	CLR PERF=1
-	CLR E CNT=2
-	CLR M CNT=3
-	LD PA LH=4
-	LD PA RH=5
-	CONO MTR=6
-	CONO TIM=7
+typedef enum logic [0:2] {
+                          mtrctlCLR_TIME = 3'b000,
+                          mtrctlCLR_PERF = 3'b001,
+                          mtrctlCLR_E_CNT = 3'b010,
+                          mtrctlCLR_M_CNT = 3'b011,
+                          mtrctlLD_PA_LH = 3'b100,
+                          mtrctlLD_PA_RH = 3'b101,
+                          mtrctlCONO_MTR = 3'b110,
+                          mtrctlCONO_TIM = 3'b111
+                          } tCRAM_MTR_CTL;
 
-;I/O FUNCTIONS
+// ;I/O FUNCTIONS
 
-EBUS CTL/=<75:83>	;ENABLED BY COND/EBUS CTL (APR3)
-	GRAB EEBUS=400	;"EBUS RETURN" TAKES ECL EBUS FOR EBOX
-	REQ EBUS=200
-	REL EBUS=100	; (CON3)
-	EBUS DEMAND=60	;ASSERT DEMAND, KEEP CS, FUNC
-	EBUS NODEMAND=20;DROP DEMAND, KEEP CS, FUNC
-;	CTL_IR=10	;SELECT F01 & F02 FROM IR
-;	DISABLE CS=4	;TURN OFF CONTROLLER SELECT
-;	DATAIO=2	;0 FOR CONI/O
-;	INPUT=1		;0 FOR OUTPUT
-	IO INIT=30	;ENABLE IR3-9 TO EBUS CONTROLLER SELECT,
-			; IR10-12 (DECODED) TO FUNCTION
-			; AND AR ONTO EBUS IF FUNCTION IS OUTPUT
-	DATAO=26	;0'S TO CS, DATAO TO FCN, AND AR TO EBUS
-	DATAI=27	;0'S TO CS, DATAI TO FCN
-	REL EEBUS=0	;LEGGO
-DIAG FUNC/=<75:83>	;ENABLED BY COND/DIAG FUNC (CTL3)
-	.5 USEC=400,3		;STRETCH CLOCK TO LET EBUS SETTLE (CON?)
-	LD PA LEFT=404,3	;LH PERF ANAL CONTROLS FROM RH (MTR)
-	LD PA RIGHT=405,3	;RH PA CONTROLS FROM RH (MTR)
-	CONO MTR=406,3		;ACCOUNTING CONTROLS (MTR)
-	CONO TIM=407,3		;INTERVAL TIMER CONTROLS (MTR)
-	CONO APR=414,3		; (CON3)
-	CONO PI=415,3		; (CON3)
-	CONO PAG=416,3		;CACHE & PAGING CTL (CON3)
-	DATAO APR=417,3		;ADDRESS BREAK (CON3)
-	DATAO PAG=620,3		;AC BLOCKS & PREV CONTXT (CON3)
-	LD AC BLKS=425,3	;FORCE LOADING AC BLOCKS
-	LD PCS+CWSX=426,3	;FORCE LOADING PREV CONTXT SEC, CWSX
-	CONI PI(R)=500,3	;PI HOLD & ACTIVE TO LH (PI)
-	CONI PI(L)=501,3	;PI GEN TO LH (PI)
-	CONI APR(R)=510,3	;APR INTERRUPT & PIA TO LH (APR6)
-	RD TIME=510,3		;TIME BASE TO RH (MTR5)
-	DATAI PAG(L)=511,3	;AC BLOCKS, PREV CONTXT TO LH (APR6)
-	RD PERF CNT=511,3	;PERFORMANCE COUNT TO RH (MTR5)
-	CONI APR(L)=512,3	;APR INTERRUPT ENABLES TO LH (APR6)
-	RD EBOX CNT=512,3	;EBOX COUNT TO RH (MTR5)
-	DATAI APR=513,3		;ADDR BREAK CONDITIONS TO LH (APR6)
-	RD CACHE CNT=513,3	;CACHE COUNT TO RH (MTR5)
-	RD INTRVL=514,3		;INTERVAL TIMER TO RH (MTR5)
-	RD PERIOD=515,3		;PERIOD REGISTER TO RH (MTR5)
-	CONI MTR=516,3		;CONTROLS & PIA TO RH (MTR5)
-	RD MTR REQ=517,3	;ENCODED UPDATE REQUEST TO 20-22 (MTR5)
-	CONI PI(PAR)=530,3	;WRITE EVEN PARITY ENABLES TO RH (CON1)
-	CONI PAG=531,3		;CACHE & TRAP CTL TO RH (CON1)
-	RD EBUS REG=567,3	;EBUS REGISTER IN MBOX (MBZ1 & MBC1)
+typedef enum logic [0:8] {
+                          ebusctlGRAB_EEBUS = 9'b100_000_000,
+                          ebusctlREQ_EBUS = 9'b010_000_000,
+                          ebusctlREL_EBUS = 9'b001_000_000,
+                          ebusctlEBUS_DEMAND = 9'b000_110_000,
+                          ebusctlEBUS_NODEMAND = 9'b000_010_000,
+                          ebusctlCTL_IR = 9'b000_001_000,
+                          ebusctlDISABLE_CS = 9'b000_000_100,
+                          ebusctlDATAIO = 9'b000_000_010,
+                          ebusctlINPUT = 9'b000_000_001,
+                          ebusctlIO_INIT = 9'b000_011_000,
+                          ebusctlDATAO = 9'b000_010_110,
+                          ebusctlDATAI = 9'b000_010_111,
+                          ebusctlREL_EEBUS = 9'b000_000_000
+                          } tCRAM_EBUS_CTL;
 
-
+typedef enum logic [0:8] {
+                          diagfunc500_NS = 9'b100_000_000,
+                          diagfuncLD_PA_LEFT = 9'b100_000_100,
+                          diagfuncLD_PA_RIGHT = 9'b100_000_101,
+                          diagfuncCONO_MTR = 9'b100_000_110,
+                          diagfuncCONO_TIM = 9'b100_000_111,
+                          diagfuncCONO_APR = 9'b100_001_100,
+                          diagfuncCONO_PI = 9'b100_001_101,
+                          diagfuncCONO_PAG = 9'b100_001_110,
+                          diagfuncDATAO_APR = 9'b100_001_111,
+                          diagfuncDATAO_PAG = 9'b110_010_000,
+                          diagfuncLD_AC_BLKS = 9'b100_010_101,
+                          diagfuncLD_PCSplusCWSX = 9'b100_010_110,
+                          diagfuncCONI_PI_R = 9'b101_000_000,
+                          diagfuncCONI_PI_L = 9'b101_000_001,
+                          diagfuncRD_TIME = 9'b101_010_000,
+                          diagfuncDATAI_PAG_LorRD_PERF_CNT = 9'b101_001_001,
+                          diagfuncCONI_APR_LorRD_EBOX_CNT = 9'b101_001_010,
+                          diagfuncDATAI_APRorRD_CACHE_CNT = 9'b101_001_011,
+                          diagfuncRD_INTRVL = 9'b101_001_100,
+                          diagfuncRD_PERIOD = 9'b101_001_101,
+                          diagfuncCONI_MTR = 9'b101_001_110,
+                          diagfuncRD_MTR_REQ = 9'b101_001_111,
+                          diagfuncCONI_PI_PAR = 9'b101_011_000,
+                          diagfuncCONI_PAG = 9'b101_011_001,
+                          diagfuncRD_EBUS_REG = 9'b101_110_111
+                          } tCRAM_DIAG_FUNC;
 `endif
