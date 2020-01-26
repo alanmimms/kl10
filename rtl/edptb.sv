@@ -70,8 +70,7 @@ module edptb;
   logic [0:8] SCD_ARMMupper;
   logic [13:17] SCD_ARMMlower;
 
-  logic ADA_EN;
-  assign ADA_EN = CRAM.f.ADA[0];
+`include "cram-aliases.svh"
 
   edp edp0(.*);
   crm crm0(.*);

@@ -99,13 +99,8 @@ module edp(input eboxClk,
   logic AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
   logic ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
-  // CRAM field/subfield aliases
-  logic [0:8] DIAG_FUNC = CRAM.f.MAGIC;
-  logic ADA_EN;
-  assign ADA_EN = CRAM.f.ADA[0];
-  logic ADbool;
-  assign ADbool = CRAM.f.AD[1];
-
+`include "cram-aliases.svh"
+  
   // XXX probably not completely right
   assign EDP_ADcarry[36] = CTL_ADcarry36;
 
