@@ -40,9 +40,10 @@ module ctl(input eboxClk,
   wire PIcycleSaveFlags;
 
   assign PIcycleSaveFlags = PCplus1inh & spec_XCRY_AR0;
-  assign CTL_ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM_ADcarry);
+  assign CTL_ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM_AD[0]);
 
   assign CTL_ADcarry36 = 0;         // XXX not right
+
   assign CTL_ADlong = 0;            // XXX not right
   assign CTL_SPEC_genCarry18 = 0;   // XXX not right
   assign CTL_inhibitCarry18 = 0;    // XXX not right
