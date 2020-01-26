@@ -2,53 +2,53 @@
  `define _CRAM_DEFS_ 1
 
 // CRAM_AD flag bits
- `define adfCARRY 6'b100_000
- `define adfBOOLEAN 6'b010_000
+ `define adCARRY 6'b100_000
+ `define adBOOLEAN 6'b010_000
 
 // CRAM_AD values
 typedef enum logic [0:5] {
                           // ADDER LOGICAL FUNCTIONS
-                          adSETCA =`adfBOOLEAN | 6'b000_000,
-                          adORC =`adfBOOLEAN | 6'b000_001,      // NAND
-                          adORCA =`adfBOOLEAN | 6'b000_010,
-                          adONES =`adfBOOLEAN | 6'b000_011,
-                          adNOR =`adfBOOLEAN | 6'b000_100,
-                          //      adANDC =`adfBOOLEAN | adNOR,
-                          adSETCB =`adfBOOLEAN | 6'b000_101,
-                          adEQV =`adfBOOLEAN | 6'b000_110,
-                          adORCB =`adfBOOLEAN | 6'b000_111,
-                          adANDCA =`adfBOOLEAN | 6'b001_000,
-                          adXOR =`adfBOOLEAN | 6'b001_001,
-                          adB =`adfBOOLEAN | 6'b001_010,
-                          adOR =`adfBOOLEAN | 6'b001_011,
-                          adZEROS =`adfBOOLEAN | 6'b001_100,
-                          adANDCB =`adfBOOLEAN | 6'b001_101,
-                          adAND =`adfBOOLEAN | 6'b001_110,
-                          adA =`adfBOOLEAN | 6'b001_111,
+                          adSETCA =`adBOOLEAN | 6'b000_000,
+                          adORC =`adBOOLEAN | 6'b000_001,      // NAND
+                          adORCA =`adBOOLEAN | 6'b000_010,
+                          adONES =`adBOOLEAN | 6'b000_011,
+                          adNOR =`adBOOLEAN | 6'b000_100,
+                          //      adANDC =`adBOOLEAN | adNOR,
+                          adSETCB =`adBOOLEAN | 6'b000_101,
+                          adEQV =`adBOOLEAN | 6'b000_110,
+                          adORCB =`adBOOLEAN | 6'b000_111,
+                          adANDCA =`adBOOLEAN | 6'b001_000,
+                          adXOR =`adBOOLEAN | 6'b001_001,
+                          adB =`adBOOLEAN | 6'b001_010,
+                          adOR =`adBOOLEAN | 6'b001_011,
+                          adZEROS =`adBOOLEAN | 6'b001_100,
+                          adANDCB =`adBOOLEAN | 6'b001_101,
+                          adAND =`adBOOLEAN | 6'b001_110,
+                          adA =`adBOOLEAN | 6'b001_111,
                           // ADDER ARITHMETIC FUNCTIONS
-                          adAplus1 =`adfCARRY | 6'b000_000,
+                          adAplus1 =`adCARRY | 6'b000_000,
                           adAplusXCRY = 6'b000_000,
                           adAplusANDCB = 6'b000_001,
                           adAplusAND = 6'b000_010,
                           adA__2 = 6'b000_011,
-                          adA__2plus1 =`adfCARRY | adA__2,
-                          adORplus1 =`adfCARRY | 6'b000_100,
+                          adA__2plus1 =`adCARRY | adA__2,
+                          adORplus1 =`adCARRY | 6'b000_100,
                           adORplusANDCB = 6'b000_101,
                           adAplusB = 6'b000_110,
-                          adAplusBplus1 =`adfCARRY | adAplusB,
+                          adAplusBplus1 =`adCARRY | adAplusB,
                           adAplusOR = 6'b000_111,
-                          adORCBplus1 =`adfCARRY | adORCB,
+                          adORCBplus1 =`adCARRY | adORCB,
                           adAminusBminus1 = 6'b001_001,
-                          adAminusB =`adfCARRY | adAminusBminus1,
-                          adANDplusORCB =`adfCARRY | 6'b001_010,
-                          adAplusORCB =`adfCARRY | 6'b001_011,
-                          adXCRYminus1 =`adfCARRY | 6'b001_100,
+                          adAminusB =`adCARRY | adAminusBminus1,
+                          adANDplusORCB =`adCARRY | 6'b001_010,
+                          adAplusORCB =`adCARRY | 6'b001_011,
+                          adXCRYminus1 =`adCARRY | 6'b001_100,
                           adANDCBminus1 = 6'b001_101,
                           adANDminus1 = 6'b001_110,
                           adAminus1 = 6'b001_111,
                           // BOOLEAN FUNCTIONS FOR WHICH CRY0 IS INTERESTING
-                          adCRY_A_EQ_minus1 =`adfCARRY |`adfBOOLEAN | 6'b000_000,
-                          adCRY_A_GE_B =`adfCARRY |`adfBOOLEAN | 6'b001_001
+                          adCRY_A_EQ_minus1 =`adCARRY |`adBOOLEAN | 6'b000_000,
+                          adCRY_A_GE_B =`adCARRY |`adBOOLEAN | 6'b001_001
                           } tCRAM_AD;
 
 typedef enum logic [0:1] {
