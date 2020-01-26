@@ -6,22 +6,22 @@ module edptb;
   
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
-  wire [-2:35]          EDP_AD;                 // From edp0 of edp.v
-  wire [0:35]           EDP_ADX;                // From edp0 of edp.v
-  wire [0:36]           EDP_ADXcarry;           // From edp0 of edp.v
-  wire [-2:35]          EDP_AD_EX;              // From edp0 of edp.v
-  wire [-2:36]          EDP_ADcarry;            // From edp0 of edp.v
-  wire [0:35]           EDP_ADoverflow;         // From edp0 of edp.v
-  wire [0:35]           EDP_AR;                 // From edp0 of edp.v
-  wire [0:35]           EDP_ARX;                // From edp0 of edp.v
-  wire [0:35]           EDP_BR;                 // From edp0 of edp.v
-  wire [0:35]           EDP_BRX;                // From edp0 of edp.v
-  wire [0:35]           EDP_EBUS;               // From edp0 of edp.v
-  wire [0:35]           EDP_MQ;                 // From edp0 of edp.v
-  wire                  EDP_genCarry36;         // From edp0 of edp.v
-  wire                  EDPdrivingEBUS;         // From edp0 of edp.v
-  wire [0:35]           FM;                     // From edp0 of edp.v
-  wire [0:35]           cacheDataWrite;         // From edp0 of edp.v
+  logic [-2:35]         EDP_AD;                 // From edp0 of edp.v
+  logic [0:35]          EDP_ADX;                // From edp0 of edp.v
+  logic [0:36]          EDP_ADXcarry;           // From edp0 of edp.v
+  logic [-2:35]         EDP_AD_EX;              // From edp0 of edp.v
+  logic [-2:36]         EDP_ADcarry;            // From edp0 of edp.v
+  logic [0:35]          EDP_ADoverflow;         // From edp0 of edp.v
+  logic [0:35]          EDP_AR;                 // From edp0 of edp.v
+  logic [0:35]          EDP_ARX;                // From edp0 of edp.v
+  logic [0:35]          EDP_BR;                 // From edp0 of edp.v
+  logic [0:35]          EDP_BRX;                // From edp0 of edp.v
+  logic [0:35]          EDP_EBUS;               // From edp0 of edp.v
+  logic [0:35]          EDP_MQ;                 // From edp0 of edp.v
+  logic                 EDP_genCarry36;         // From edp0 of edp.v
+  logic                 EDPdrivingEBUS;         // From edp0 of edp.v
+  logic [0:35]          FM;                     // From edp0 of edp.v
+  logic [0:35]          cacheDataWrite;         // From edp0 of edp.v
   wire                  fmParity;               // From edp0 of edp.v
   // End of automatics
   /*AUTOREG*/
@@ -86,48 +86,49 @@ module edptb;
   tCRAM_EBUS_CTL CRAM_EBUS_CTL;
   tCRAM_DIAG_FUNC CRAM_DIAG_FUNC;
 
-  reg CTL_AR00to08load;
-  reg CTL_AR09to17load;
-  reg CTL_ARRload;
+  logic eboxReset;
+  logic CTL_AR00to08load;
+  logic CTL_AR09to17load;
+  logic CTL_ARRload;
 
-  reg CTL_AR00to11clr;
-  reg CTL_AR12to17clr;
-  reg CTL_ARRclr;
+  logic CTL_AR00to11clr;
+  logic CTL_AR12to17clr;
+  logic CTL_ARRclr;
 
-  reg [0:2] CTL_ARL_SEL;
-  reg [0:2] CTL_ARR_SEL;
-  reg [0:2] CTL_ARXL_SEL;
-  reg [0:2] CTL_ARXR_SEL;
-  reg CTL_ARX_LOAD;
+  logic [0:2] CTL_ARL_SEL;
+  logic [0:2] CTL_ARR_SEL;
+  logic [0:2] CTL_ARXL_SEL;
+  logic [0:2] CTL_ARXR_SEL;
+  logic CTL_ARX_LOAD;
 
-  reg [0:1] CTL_MQ_SEL;
-  reg [0:1] CTL_MQM_SEL;
-  reg CTL_MQM_EN;
-  reg CTL_inhibitCarry18;
-  reg CTL_SPEC_genCarry18;
+  logic [0:1] CTL_MQ_SEL;
+  logic [0:1] CTL_MQM_SEL;
+  logic CTL_MQM_EN;
+  logic CTL_inhibitCarry18;
+  logic CTL_SPEC_genCarry18;
 
-  reg CTL_adToEBUS_L;
-  reg CTL_adToEBUS_R;
+  logic CTL_adToEBUS_L;
+  logic CTL_adToEBUS_R;
 
-  reg CTL_ADcarry36;
-  reg CTL_ADXcarry36;
-  reg CTL_ADlong;
+  logic CTL_ADcarry36;
+  logic CTL_ADXcarry36;
+  logic CTL_ADlong;
 
-  reg [0:2] APR_FMblk;
-  reg [0:3] APR_FMadr;
-  reg CON_fmWrite00_17;
-  reg CON_fmWrite18_35;
-  reg diagReadFunc12X;
-  reg [0:35] VMA_VMAheldOrPC;
+  logic [0:2] APR_FMblk;
+  logic [0:3] APR_FMadr;
+  logic CON_fmWrite00_17;
+  logic CON_fmWrite18_35;
+  logic diagReadFunc12X;
+  logic [0:35] VMA_VMAheldOrPC;
 
-  reg [0:35] cacheDataRead;
-  reg [0:35] EBUS;
-  reg [0:35] SHM_SH;
-  reg [0:8] SCD_ARMMupper;
-  reg [13:17] SCD_ARMMlower;
+  logic [0:35] cacheDataRead;
+  logic [0:35] EBUS;
+  logic [0:35] SHM_SH;
+  logic [0:8] SCD_ARMMupper;
+  logic [13:17] SCD_ARMMlower;
 
-  reg CRAM_BRload;
-  reg CRAM_BRXload;
+  logic CRAM_BRload;
+  logic CRAM_BRXload;
 
   edp edp0(.*);
 
@@ -140,6 +141,11 @@ module edptb;
     #4 fastMemClk = 0;
   end
   
+
+  initial begin
+    eboxReset = 1;
+    #75 eboxReset = 0;
+  end
 
   initial begin
     $display($time, "<< Start EDP test bench >>");
