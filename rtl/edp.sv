@@ -2,6 +2,7 @@
 // XXX TODO: Refactor this into six instances of the same module wired
 // together in ebox.v?
 `include "cram-defs.svh"
+`include "ebus-defs.svh"
 
 module edp(input eboxClk,
            input fastMemClk,

@@ -104,9 +104,10 @@ module ctl(input eboxClk,
   // Diagnostic functions
   logic CTL_DIAG_STROBE;
   assign CTL_DIAG_STROBE = EBUS_DS_STROBE;
-
+/*
   assign CTL_DIAG_CTL_FUNC_00x = ;
 
   assign CTLdrivingEBUS = DIAG_READ_FUNC_10x;
+*/
 
 endmodule // ctl

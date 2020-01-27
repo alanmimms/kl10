@@ -2,12 +2,10 @@
 2019.2
 Nov  6 2019
 21:42:20
-/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/cram_mem/cram_mem_stub.v,1579208993,verilog,,/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/fm_mem/fm_mem_stub.v,,cram_mem,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
-/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.ip_user_files/ip/fm_mem/fm_mem_stub.v,1579302635,verilog,,/home/alan/kl10-fpga-rtl/rtl/mc10179.v,,fm_mem,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
-/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/glbl.v,1573089660,verilog,,,,glbl,,,,,,,,
+/home/alan/kl10-fpga-rtl/kl10-fpga-rtl.sim/edp/behav/xsim/glbl.v,1580105499,verilog,,,,glbl,,,,,,,,
 /home/alan/kl10-fpga-rtl/rtl/cram-aliases.svh,1580071453,verilog,,,,,,,,,,,,
-/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,1580071108,verilog,,,,,,,,,,,,
-/home/alan/kl10-fpga-rtl/rtl/crm.sv,1580070384,systemVerilog,/home/alan/kl10-fpga-rtl/rtl/edp.sv;/home/alan/kl10-fpga-rtl/rtl/edptb.sv;/home/alan/kl10-fpga-rtl/rtl/mc10179.sv;/home/alan/kl10-fpga-rtl/rtl/mc10181.sv,/home/alan/kl10-fpga-rtl/rtl/edp.sv,/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,$unit_crm_sv;crm,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
+/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,1580105499,verilog,,,,,,,,,,,,
+/home/alan/kl10-fpga-rtl/rtl/crm.sv,1580106700,systemVerilog,/home/alan/kl10-fpga-rtl/rtl/edptb.sv,/home/alan/kl10-fpga-rtl/rtl/edptb.sv,/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh,$unit_crm_sv;crm,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
 /home/alan/kl10-fpga-rtl/rtl/edp.sv,1580075968,systemVerilog,/home/alan/kl10-fpga-rtl/rtl/edptb.sv;/home/alan/kl10-fpga-rtl/rtl/mc10179.sv;/home/alan/kl10-fpga-rtl/rtl/mc10181.sv,/home/alan/kl10-fpga-rtl/rtl/mc10179.sv,/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh;/home/alan/kl10-fpga-rtl/rtl/cram-aliases.svh,edp,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
 /home/alan/kl10-fpga-rtl/rtl/edptb.sv,1580075984,systemVerilog,,,/home/alan/kl10-fpga-rtl/rtl/cram-defs.svh;/home/alan/kl10-fpga-rtl/rtl/cram-aliases.svh,edptb,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
 /home/alan/kl10-fpga-rtl/rtl/mc10179.sv,1579333132,systemVerilog,,/home/alan/kl10-fpga-rtl/rtl/mc10181.sv,,mc10179,,,../../../../kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks,TESTBENCH=1,,,,
