@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 // M8544 MCL
 module mcl(input eboxClk,
            output eboxReqIn,
@@ -17,6 +18,4 @@ module mcl(input eboxClk,
            input user,
            input public
            /*AUTOARG*/);
-  timeunit 1ns;
-  timeprecision 1ps;
 endmodule // mcl

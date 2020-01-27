@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 module mc10179(input [3:0] G,
                input [3:0] P,
                input CIN,
@@ -7,9 +8,6 @@ module mc10179(input [3:0] G,
                output C8OUT,
                output C2OUT
                );
-
-  timeunit 1ns;
-  timeprecision 1ps;
 
   assign C8OUT = ~|{~G[3],
                     ~|{P[3], G[2]},

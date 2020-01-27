@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 // M8524 SCD
 module scd(input eboxClk,
            input [2:0] CRAM_SCAD,
@@ -41,6 +42,4 @@ module scd(input eboxClk,
            output PRIVATE,
            output ADR_BRK_PREVENT
           /*AUTOARG*/);
-  timeunit 1ns;
-  timeprecision 1ps;
 endmodule // scd

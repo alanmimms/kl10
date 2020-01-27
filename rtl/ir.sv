@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 // M8522 IR
 module ir(input eboxClk,
           input [0:35] cacheDataRead,
@@ -30,9 +31,6 @@ module ir(input eboxClk,
           output logic [10:0] DRAM_J,
           output DRAM_ODD_PARITY
           /*AUTOARG*/);
-
-  timeunit 1ns;
-  timeprecision 1ps;
 
   logic [23:0] DRAMdata;
   logic [0:12] DRADR;

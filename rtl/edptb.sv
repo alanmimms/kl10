@@ -1,8 +1,6 @@
+`timescale 1ns/1ns
 `include "cram-defs.svh"
 module edptb;
-  timeunit 1ns;
-  timeprecision 1ps;
-
   logic eboxClk;
   logic fastMemClk;
   

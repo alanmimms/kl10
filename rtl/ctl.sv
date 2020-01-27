@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 `include "cram-defs.svh"
 
 // M8543 CTL
@@ -43,9 +44,6 @@ module ctl(input eboxClk,
 
            output logic CTL_ADcarry36,
            output logic CTL_ADXcarry36);
-
-  timeunit 1ns;
-  timeprecision 1ps;
 
   logic spec_XCRY_AR0;
   logic PIcycleSaveFlags;
@@ -94,7 +92,7 @@ module ctl(input eboxClk,
   assign CTL_SPEC_CLR_FPD = CRAM.f.SPEC === specCLR_FPD;
   assign CTL_SPEC_LOAD_PC = CRAM.f.SPEC === specLOAD_PC;
   assign CTL_SPEC_XCRY_AR0 = CRAM.f.SPEC === specXCRY_AR0;
-  assign CTL_SPEC_GEN_CRY_18 = CRAM.f.SPEC === specGEN_CRY18
+  assign CTL_SPEC_GEN_CRY_18 = CRAM.f.SPEC === specGEN_CRY18;
   assign CTL_SPEC_STACK_UPDATE = CRAM.f.SPEC === specSTACK_UPDATE;
   assign CTL_SPEC_ARL_IND = CRAM.f.SPEC === specARL_IND;
   assign CTL_SPEC_FLAG_CTL = CRAM.f.SPEC === specFLAG_CTL;

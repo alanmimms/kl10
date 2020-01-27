@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 // XXX TODO: Refactor this into six instances of the same module wired
 // together in ebox.v?
 `include "cram-defs.svh"
@@ -68,9 +69,6 @@ module edp(input eboxClk,
            output logic [0:35] EDP_ADoverflow,
            output logic EDP_genCarry36
            );
-
-  timeunit 1ns;
-  timeprecision 1ps;
 
   // Universal shift register function selector values
   localparam USR_LOAD = 2'b00;

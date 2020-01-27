@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 `include "cram-defs.svh"
 
 // M8541 CRA
@@ -55,9 +56,6 @@ module cra(input eboxClk,
            output logic dispParity,
            output logic CRAdrivingEBUS,
            output logic [0:35] CRA_EBUS);
-
-  timeunit 1ns;
-  timeprecision 1ps;
 
   logic [0:11] dispMux;
   logic [0:10] diagAdr;
@@ -121,7 +119,7 @@ module cra(input eboxClk,
       3'b001: dispMux[7:10] <= {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
       3'b010: dispMux[7:10] <= {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
       3'b011: dispMux[7:10] <= {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[7:10] <= {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2];
+      3'b100: dispMux[7:10] <= {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
       3'b101: dispMux[7:10] <= {1'b0, norm[8:10], EDP_AD[0]};
       3'b110: dispMux[7:10] <= {~longEnable | EDP_ARX[0], shortIndirWord,
                                 EDP_ARX[13], indexed, ~ADeq0};

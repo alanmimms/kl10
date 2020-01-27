@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 // MC10181 from Fairchild ECL datasheet F10181.pdf.
 //
 // S3 S2 S1 S0    M=1 C0=X    M=0 C0=0     M=0 C0=1
@@ -28,9 +29,6 @@ module mc10181(input [3:0] S,
                output CP,
                output COUT
                );
-
-  timeunit 1ns;
-  timeprecision 1ps;
 
   logic [3:0] G, P;
   logic notGG;

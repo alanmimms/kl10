@@ -1,3 +1,5 @@
+`timescale 1ns/1ns
+
 // M8540 SHM
 module shm(input eboxClk,
            input [0:35] EDP_AR,
@@ -14,6 +16,4 @@ module shm(input eboxClk,
            output ARextended,
            output ARparityOdd
           /*AUTOARG*/);
-  timeunit 1ns;
-  timeprecision 1ps;
 endmodule // shm

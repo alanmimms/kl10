@@ -1,3 +1,4 @@
+`timescale 1ns/1ns
 `include "cram-defs.svh"
 module ebox(input eboxClk,
             input fastMemClk,
@@ -68,12 +69,7 @@ module ebox(input eboxClk,
             input mboxCDirParErr,
             output logic anyEboxError,
 
-            input tEBUS EBUS,
-
-            /*AUTOARG*/);
-
-  timeunit 1ns;
-  timeprecision 1ps;
+            input tEBUS EBUS);
 
   // TEMPORARY
   logic force1777;
