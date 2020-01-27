@@ -1,0 +1,2 @@
+dram_mem.v,verilog,xil_defaultlib,../../../ip/dram_mem/sim/dram_mem.v,
+glbl.v,Verilog,xil_defaultlib,glbl.v
