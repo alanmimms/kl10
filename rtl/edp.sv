@@ -36,7 +36,8 @@ module edp(input eboxClk,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
-           inout tEBUS EBUS,
+           tEBUS EBUS,
+           output reg [0:35] EDP_EBUS,
            input [0:35] SHM_SH,
            input [0:8] SCD_ARMMupper,
            input [13:17] SCD_ARMMlower,
@@ -127,7 +128,7 @@ module edp(input eboxClk,
 
     // RESET
     if (eboxReset) begin
-      EDP_AR = 36'd0;
+      EDP_AR = '0;
     end else begin
 
       if (CTL_AR00to11clr) begin
@@ -190,7 +191,7 @@ module edp(input eboxClk,
 
     // RESET
     if (eboxReset) begin
-      EDP_ARX = 36'd0;
+      EDP_ARX = '0;
       EBUS.drivers.EDP = '0;
     end else if (CTL_ARX_LOAD)
       EDP_ARX <= {ARXL, ARXR};
@@ -208,7 +209,7 @@ module edp(input eboxClk,
       USR_HOLD: MQM = '1;
       endcase
     end else
-      MQM = 36'd0;
+      MQM = '0;
   end
 
   // MQ mux and register
@@ -255,7 +256,7 @@ module edp(input eboxClk,
     end
   endgenerate
   
-  logic [0:35] alu2_x1 = 36'd0, alu3_x1 = 36'd0;
+  logic [0:35] alu2_x1 = '0, alu3_x1 = '0;
   
   // ADX
   generate
@@ -416,7 +417,7 @@ module edp(input eboxClk,
           2'b11: ADA[n+0:n+5] = VMA_VMAheldOrPC[n+0:n+5];
           endcase
         else
-          ADA[n+0:n+5] = 36'd0;
+          ADA[n+0:n+5] = '0;
     end
   endgenerate
 
@@ -457,7 +458,7 @@ module edp(input eboxClk,
   // If either CTL_adToEBUS_{R,L} is lit we force AD as the source
 
   always_comb
-    EDPdrivingEBUS = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
+    EBUS.drivers.EDP = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
 
   logic [0:35] ebusR;
 
@@ -477,7 +478,7 @@ module edp(input eboxClk,
       endcase
     end
 
-    if (diagReadFunc12X || CTL_adToEBUS_L) EBUS.data[0:17] = ebusR[0:17];
-    if (diagReadFunc12X || CTL_adToEBUS_R) EBUS.data[18:35] = ebusR[18:35];
+    if (diagReadFunc12X || CTL_adToEBUS_L) EDP_EBUS[0:17] <= ebusR[0:17];
+    if (diagReadFunc12X || CTL_adToEBUS_R) EDP_EBUS[18:35] <= ebusR[18:35];
   end
 endmodule

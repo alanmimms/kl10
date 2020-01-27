@@ -1,7 +1,7 @@
 `ifndef _EBUS_DEFS_
  `define _EBUS_DEFS_ 1
 
-typedef logic enum {
+typedef enum logic [0:2] {
                     ebusfCONO = 3'b000,
                     ebusfCONI = 3'b001,
                     ebusfDATAO = 3'b010,
@@ -14,7 +14,7 @@ typedef struct packed {
   logic [0:35] data;            // Driven by EBUS mux
   logic dataParity;             // Parity for what exactly? XXX
   logic [0:6] cs;               // EBOX -> dev Controller select
-  logic [0:2] func;             // EBOX -> dev Function
+  tEBUSfunction func;           // EBOX -> dev Function
   logic demand;                 // EBOX -> dev
   logic [0:7] pi;               // Dev -> EBOX Priority Interrupt
   logic ack;                    // Dev -> EBOX acknowledge

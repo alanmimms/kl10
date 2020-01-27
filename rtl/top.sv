@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
-`include "ebus-defs.svh"
 module top;
+`include "ebus-defs.svh"
 
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
@@ -68,9 +68,9 @@ module top;
   reg mboxCDirParErr = 0;
 
 
-  // This is the multiplexed current EBUS multiplexed by the
-  // EBUS.driving.XXX signal coming from each module to determine who
-  // gets to provide EBUS its content.
+  // This is the multiplexed EBUS, enabled by the EBUS.driving.XXX
+  // signal coming from each module to determine who gets to provide
+  // EBUS its content.
   //
   // While it might appear with an EBOX-centric viewpoint that EBUS is
   // entirely contained within the EBOX and should therefore be muxed
@@ -84,12 +84,9 @@ module top;
   mbox mbox0(.*);
 
   always_comb begin
-
-    unique case (1'b1)
-    EBUS.drivers.EDP: EBUS.data = EDP_EBUS;
-    EBUS.drivers.IR: EBUS.data = IR_EBUS;
-    EBUS.data.SCD: EBUS.data = SCD_EBUS;
-    default: EBUS.data = 'z;
-    endcase
+    if (EBUS.drivers.EDP) EBUS.data = EDP_EBUS;
+    else if (EBUS.drivers.IR) EBUS.data = IR_EBUS;
+    else if (EBUS.drivers.SCD) EBUS.data = SCD_EBUS;
+    else EBUS.data = 'z;
   end
 endmodule

@@ -1,5 +1,7 @@
 `timescale 1ns/1ns
 `include "cram-defs.svh"
+`include "ebus-defs.svh"
+
 module edptb;
   logic eboxClk;
   logic fastMemClk;
@@ -16,13 +18,12 @@ module edptb;
   logic [0:35]          EDP_ARX;                // From edp0 of edp.v
   logic [0:35]          EDP_BR;                 // From edp0 of edp.v
   logic [0:35]          EDP_BRX;                // From edp0 of edp.v
-  logic [0:35]          EDP_EBUS;               // From edp0 of edp.v
+  wire [0:35]           EDP_EBUS;               // From edp0 of edp.v
   logic [0:35]          EDP_MQ;                 // From edp0 of edp.v
   logic                 EDP_genCarry36;         // From edp0 of edp.v
-  logic                 EDPdrivingEBUS;         // From edp0 of edp.v
   logic [0:35]          FM;                     // From edp0 of edp.v
   logic [0:35]          cacheDataWrite;         // From edp0 of edp.v
-  logic                 fmParity;               // From edp0 of edp.v
+  wire                  fmParity;               // From edp0 of edp.v
   // End of automatics
   /*AUTOREG*/
 
@@ -65,10 +66,11 @@ module edptb;
   logic [0:35] VMA_VMAheldOrPC;
 
   logic [0:35] cacheDataRead;
-  logic [0:35] EBUS;
   logic [0:35] SHM_SH;
   logic [0:8] SCD_ARMMupper;
   logic [13:17] SCD_ARMMlower;
+
+  tEBUS EBUS;
 
 `include "cram-aliases.svh"
 
@@ -86,15 +88,11 @@ module edptb;
   
 
   initial begin
-    eboxReset = 1;
-    #75 eboxReset = 0;
-  end
-
-  initial begin
-    $display($time, "<< Start EDP test bench >>");
-    $monitor($time, " AD=%09x AR=%09x", EDP_AD, EDP_AR);
+    $display($time, "<<<<<<<<<<<<<<<<<< Start EDP test bench >>");
+    $monitor($time, " AD=%09x AR=%09x BR=%09x", EDP_AD, EDP_AR, EDP_BR);
     eboxClk = 0;
     fastMemClk = 0;
+    eboxReset = 1;
 
     cacheDataRead = 0;
 
@@ -127,7 +125,7 @@ module edptb;
     CTL_adToEBUS_L = 0;
     CTL_adToEBUS_R = 0;
 
-    EBUS = 0;
+    EBUS.data = 0;
 
     SHM_SH = 0;
 
@@ -146,9 +144,13 @@ module edptb;
     diagReadFunc12X = 0;
     VMA_VMAheldOrPC = 0;        // Reset PC for now
 
+
+    #75 $display($time, "<<<<<<<<<<<<<<<<<< Release EBOX reset >>");
+    eboxReset = 0;
+
     // Load AR with 123456789
     @(negedge eboxClk)
-    $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
     CRAM.f.AD = adA;
     CRAM.f.ADA = adaAR;
@@ -165,7 +167,7 @@ module edptb;
 
     // Try AD/A first
     @(negedge eboxClk)
-    $display($time, "<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
     cacheDataRead = 36'h123456789;
     CRAM.f.AD = adA;
     CRAM.f.ADA = adaAR;
@@ -183,7 +185,7 @@ module edptb;
     // Try AD/B
     @(posedge eboxClk) ;
     @(negedge eboxClk)
-    $display($time, "<< AD/B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.f.AD = adA;
     CRAM.f.ADA = adaAR;
@@ -200,7 +202,7 @@ module edptb;
     // Try AD/0S
     @(posedge eboxClk) ;
     @(negedge eboxClk)
-    $display($time, "<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.f.AD = adZEROS;          // AD/0S
     CRAM.f.ADA = adaAR;
@@ -217,7 +219,7 @@ module edptb;
     // Now add 987654321 and 123456789
     @(posedge eboxClk) ;
     @(negedge eboxClk)
-    $display($time, "<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.f.AD = adAplusB;         // AD/A+B
     CRAM.f.ADA = adaAR;
@@ -240,7 +242,7 @@ module edptb;
     @(posedge eboxClk);
     @(negedge eboxClk);
 
-    $display($time, "<<< DONE >>>");
+    $display($time, "<<<<<<<<<<<<<<<<<< DONE >>");
     $stop;
   end
 endmodule
