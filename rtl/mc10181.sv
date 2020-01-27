@@ -49,7 +49,10 @@ module mc10181(input [3:0] S,
                 ~(M | P[0] | CIN),
 
                 ~(M | CIN)});
-  assign notGG = ~G[3] | ~(P[3] | G[2]) | ~(P[3] | P[2] | G[1]) | ~(P[3] | P[2] | P[1] | G[0]);
+  assign notGG = ~G[3] |
+                 ~(P[3] | G[2]) |
+                 ~(P[3] | P[2] | G[1]) |
+                 ~(P[3] | P[2] | P[1] | G[0]);
   assign CG = ~notGG;
   assign CP = ~|P;
   assign COUT = ~(notGG | ~(CP | CIN));

@@ -88,12 +88,16 @@ module edptb;
   
 
   initial begin
-    $display($time, "<<<<<<<<<<<<<<<<<< Start EDP test bench >>");
-    $monitor($time, " AD=%09x AR=%09x BR=%09x", EDP_AD, EDP_AR, EDP_BR);
+    $monitor($time, " eboxReset=%b AD=%09x AR=%09x BR=%09x",
+             eboxReset, EDP_AD, EDP_AR, EDP_BR);
+
+    $display("Start EDP test bench; reset EBOX>");
+
     eboxClk = 0;
     fastMemClk = 0;
     eboxReset = 1;
 
+    CRADR = 0;
     cacheDataRead = 0;
 
     CTL_ADcarry36 = 0;
@@ -150,8 +154,8 @@ module edptb;
 
     // Load AR with 123456789
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
-    cacheDataRead = 36'h123456789;
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=5A5AE7C3F, BR/AR >>");
+    cacheDataRead = 36'h5a5ae7c3f;
     CRAM.f.AD = adA;
     CRAM.f.ADA = adaAR;
     CRAM.f.ADB = adbBR;          // Not used yet
@@ -167,8 +171,8 @@ module edptb;
 
     // Try AD/A first
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=36'h123456789, BR/AR >>");
-    cacheDataRead = 36'h123456789;
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=5A5AE7C3F, BR/AR >>");
+    cacheDataRead = 36'h5a5ae7c3f;
     CRAM.f.AD = adA;
     CRAM.f.ADA = adaAR;
     CRAM.f.ADB = adbBR;          // Not used yet
@@ -183,9 +187,8 @@ module edptb;
 
 
     // Try AD/B
-    @(posedge eboxClk) ;
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.f.AD = adA;
     CRAM.f.ADA = adaAR;
@@ -200,9 +203,8 @@ module edptb;
     CRAM.f.ARX = arxARX;
 
     // Try AD/0S
-    @(posedge eboxClk) ;
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.f.AD = adZEROS;          // AD/0S
     CRAM.f.ADA = adaAR;
@@ -217,9 +219,8 @@ module edptb;
     CRAM.f.ARX = arxARX;
 
     // Now add 987654321 and 123456789
-    @(posedge eboxClk) ;
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=36'h987654321 >>");
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.f.AD = adAplusB;         // AD/A+B
     CRAM.f.ADA = adaAR;
@@ -233,16 +234,13 @@ module edptb;
     CRAM.f.BR = brAR;
     CRAM.f.ARX = arxARX;
 
-    @(posedge eboxClk);
     @(negedge eboxClk);
 
-    @(posedge eboxClk);
     @(negedge eboxClk);
 
-    @(posedge eboxClk);
     @(negedge eboxClk);
 
-    $display($time, "<<<<<<<<<<<<<<<<<< DONE >>");
-    $stop;
+    $display($time, "DONE");
+//    $stop;
   end
 endmodule

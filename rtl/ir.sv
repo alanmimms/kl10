@@ -1,4 +1,5 @@
 `timescale 1ns/1ns
+`include "ebus-defs.svh"
 // M8522 IR
 module ir(input eboxClk,
           input [0:35] cacheDataRead,
@@ -21,7 +22,6 @@ module ir(input eboxClk,
           output ACeq0,
           output JRST0,
           output testSatisfied,
-          output IRdrivingEBUS,
           output logic [0:35] IR_EBUS,
           output logic [8:10] norm,
           output logic [0:12] IR,
@@ -168,11 +168,11 @@ module ir(input eboxClk,
   assign DRAM_ODD_PARITY = ^{DRAM_A, DRAM_B, DRAM_PAR, DRAM_J[1:4], DRAM_PAR_J[7:10]};
 
   // Diagnostics to drive EBUS
-  assign IRdrivingEBUS = diagReadFunc13X;
+  assign EBUS.drivers.IR = diagReadFunc13X;
 
   always @(*) begin
 
-    if (IRdrivingEBUS) begin
+    if (EBUS.drivers.IR) begin
 
       case (CRAM_DIAG_FUNC[4:6])
       3'b000: IR_EBUS[0:5] = {norm, DRADR[0:2]};
@@ -186,7 +186,8 @@ module ir(input eboxClk,
       3'b111: IR_EBUS[0:5] = {EDP_ADcarry[12], EDP_ADcarry[18], EDP_ADcarry[24],
                               EDP_ADcarry[36], EDP_ADXcarry[12], EDP_ADXcarry[24]};
       endcase
-    end
+    end else
+      IR_EBUS = 'z;
   end
 
   // Look-ahead carry functions have been moved from IR to EDP.

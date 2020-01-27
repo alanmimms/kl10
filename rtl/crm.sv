@@ -8,7 +8,6 @@
 // In a real KL10PV there are five instances of M8548. This is coded
 // to act as all five slots.
 module crm(input eboxClk,
-           input eboxReset,
            input tCRADR CRADR,
            output tuCRAM CRAM);
 
@@ -81,10 +80,6 @@ module crm(input eboxClk,
     CRAM_DIAG_FUNC = tCRAM_DIAG_FUNC'(CRAMdata[75:83]);
   end
 */
-  
-  always_ff @(posedge eboxClk) begin
-    if (eboxReset) CRAM.all = 84'd0;
-  end
 endmodule
 // Local Variables:
 // verilog-library-files:("../ip/cram_mem/cram_mem_stub.v")

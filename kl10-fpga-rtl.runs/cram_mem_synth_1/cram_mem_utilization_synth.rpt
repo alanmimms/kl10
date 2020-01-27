@@ -1,7 +1,7 @@
 Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -----------------------------------------------------------------------------------------------------------
-| Tool Version : Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
-| Date         : Thu Jan 16 13:09:53 2020
+| Tool Version : Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
+| Date         : Mon Jan 27 11:55:11 2020
 | Host         : alanm running 64-bit Ubuntu 19.10
 | Command      : report_utilization -file cram_mem_utilization_synth.rpt -pb cram_mem_utilization_synth.pb
 | Design       : cram_mem

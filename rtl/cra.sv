@@ -1,5 +1,6 @@
 `timescale 1ns/1ns
 `include "cram-defs.svh"
+`include "ebus-defs.svh"
 
 // M8541 CRA
 //
@@ -11,6 +12,7 @@
 // This has been moved to crm.v in a single unified storage module.
 module cra(input eboxClk,
            input fastMemClk,
+           input eboxReset,
            input force1777,
            input MULdone,
 
@@ -52,10 +54,9 @@ module cra(input eboxClk,
            input ARparityOdd,
 
            output tCRADR CRADR,
-           output logic [10:1] AREAD,
-           output logic dispParity,
-           output logic CRAdrivingEBUS,
-           output logic [0:35] CRA_EBUS);
+           output [10:1] AREAD,
+           output dispParity,
+           output [0:35] CRA_EBUS);
 
   logic [0:11] dispMux;
   logic [0:10] diagAdr;
@@ -231,9 +232,9 @@ module cra(input eboxClk,
   always @(posedge eboxClk) begin
 
     if (diaFunc051)
-      diagAdr[5:10] <= EBUS[0:5];
+      diagAdr[5:10] <= EBUS.data[0:5];
     else if (diaFunc052)
-      diagAdr[0:4] <= EBUS[1:5];
+      diagAdr[0:4] <= EBUS.data[1:5];
 
     loc <= adr;
 
@@ -241,18 +242,22 @@ module cra(input eboxClk,
   end
 
   // Diagnostics driving EBUS
+  assign EBUS.drivers.CRA = diagReadFunc14X;
   always @(*) begin
-    CRAdrivingEBUS <= diagReadFunc14X;
 
-    case (DIAG_FUNC[4:6])
-    3'b000: CRA_EBUS <= {dispEn00_07, dispEn00_03, stackAdr};
-    3'b001: CRA_EBUS <= {CRAM.f.CALL, CRAM.f.DISP[0:4], stackAdr};
-    3'b010: CRA_EBUS <= sbrRet[5:10];
-    3'b011: CRA_EBUS <= {dispEn30_37, sbrRet[0:4]};
-    3'b100: CRA_EBUS <= adr[5:10];
-    3'b101: CRA_EBUS <= {dispParity, adr[0:4]};
-    3'b110: CRA_EBUS <= loc[5:10];
-    3'b111: CRA_EBUS <= {1'b0, loc[0:4]};
-    endcase
+    if (EBUS.drivers.CRA) begin
+
+      case (DIAG_FUNC[4:6])
+      3'b000: CRA_EBUS <= {dispEn00_07, dispEn00_03, stackAdr};
+      3'b001: CRA_EBUS <= {CRAM.f.CALL, CRAM.f.DISP[0:4], stackAdr};
+      3'b010: CRA_EBUS <= sbrRet[5:10];
+      3'b011: CRA_EBUS <= {dispEn30_37, sbrRet[0:4]};
+      3'b100: CRA_EBUS <= adr[5:10];
+      3'b101: CRA_EBUS <= {dispParity, adr[0:4]};
+      3'b110: CRA_EBUS <= loc[5:10];
+      3'b111: CRA_EBUS <= {1'b0, loc[0:4]};
+      endcase
+    end else
+      CRA_EBUS <= 'z;
   end
 endmodule

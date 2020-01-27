@@ -1,15 +1,13 @@
 `timescale 1ns/1ns
+`include "cram-defs.svh"
+`include "ebus-defs.svh"
 // M8524 SCD
 module scd(input eboxClk,
-           input [2:0] CRAM_SCAD,
-           input [1:0] CRAM_SCADA,
-           input [1:0] CRAM_SCADB,
            input [0:35] EDP_AR,
-           input [0:8] CRAM_MAGIC,
-           input [0:8] CRAM_DIAG_FUNC,
            input DIAG_READ_FUNC_13X,
 
-           output SCDdrivingEBUS,
+           tuCRAM CRAM,
+           tEBUS EBUS,
            output [0:35] SCD_EBUS,
            output [0:8] SCD_ARMMupper,
            output [13:17] SCD_ARMMlower,

@@ -37,7 +37,7 @@ module edp(input eboxClk,
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
            tEBUS EBUS,
-           output reg [0:35] EDP_EBUS,
+           output [0:35] EDP_EBUS,
            input [0:35] SHM_SH,
            input [0:8] SCD_ARMMupper,
            input [13:17] SCD_ARMMlower,
@@ -192,7 +192,6 @@ module edp(input eboxClk,
     // RESET
     if (eboxReset) begin
       EDP_ARX = '0;
-      EBUS.drivers.EDP = '0;
     end else if (CTL_ARX_LOAD)
       EDP_ARX <= {ARXL, ARXR};
   end
@@ -214,13 +213,19 @@ module edp(input eboxClk,
 
   // MQ mux and register
   always_ff @(posedge eboxClk) begin
-    // MQ: 36-bit MC10141-ish universal shift register
-    case (CTL_MQ_SEL)
-    USR_LOAD: EDP_MQ <= MQM;
-    USR_SHL:  EDP_MQ <= {MQM[1:35], EDP_ADcarry[-2]};
-    USR_SHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
-    USR_HOLD: EDP_MQ <= EDP_MQ;
-    endcase
+
+    if (eboxReset) begin
+      EDP_MQ <= 0;
+    end else begin
+      
+      // MQ: 36-bit MC10141-ish universal shift register
+      case (CTL_MQ_SEL)
+      USR_LOAD: EDP_MQ <= MQM;
+      USR_SHL:  EDP_MQ <= {MQM[1:35], EDP_ADcarry[-2]};
+      USR_SHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
+      USR_HOLD: EDP_MQ <= EDP_MQ;
+      endcase
+    end
   end
 
   // Look-ahead carry network moved here from IR4 M8522 board.
@@ -236,16 +241,18 @@ module edp(input eboxClk,
       assign EDP_ADcarry[n+1] = EDP_ADcarry[n-2] ^ ADEXxortmp[n];
       assign EDP_ADoverflow[n] = EDP_AD_EX[n-2]  ^ ADEXxortmp[n];
 
-      mc10181 alu0(.S(CRAM.f.AD[2:5]), .M(ADbool),
+      mc10181 alu0(.M(ADbool),
+                   .S(CRAM.f.AD[2:5]),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
                    .CIN(EDP_ADcarry[n+2]),
-                   // Note EDP_AD_EX is dumping ground when n>0
+                   // Note EDP_AD_EX is a dumping ground when n>0
                    .F({EDP_AD_EX[n-2:n-1], EDP_AD[n:n+1]}),
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0]),
                    .COUT(EDP_ADcarry[n-2]));
-      mc10181 alu1(.S(CRAM.f.AD[2:5]), .M(ADbool),
+      mc10181 alu1(.M(ADbool),
+                   .S(CRAM.f.AD[2:5]),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
                    .CIN(EDP_ADcarry[n+6]),
@@ -262,14 +269,16 @@ module edp(input eboxClk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
 
-      mc10181 alu2(.S(CRAM.f.AD[2:5]), .M(ADbool),
+      mc10181 alu2(.M(ADbool),
+                   .S(CRAM.f.AD[2:5]),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                    .CIN(EDP_ADXcarry[n+3]),
                    .F({alu2_x1[n], EDP_ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
-      mc10181 alu3(.S(CRAM.f.AD[2:5]), .M(ADbool),
+      mc10181 alu3(.M(ADbool),
+                   .S(CRAM.f.AD[2:5]),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                    .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),
@@ -441,44 +450,46 @@ module edp(input eboxClk,
   // BRX
   always_ff @(posedge eboxClk)
 
-    if (eboxReset) EDP_BRX = 0;
+    if (eboxReset)
+      EDP_BRX <= 0;
     else if (CRAM.f.BRX === brxARX)
-      EDP_BRX = EDP_ARX;
+      EDP_BRX <= EDP_ARX;
 
 
   // BR
   always_ff @(posedge eboxClk)
 
-    if (eboxReset) EDP_BR = 0;
-  else if (CRAM.f.BR === brAR)
-    EDP_BR = EDP_AR;
+    if (eboxReset)
+      EDP_BR <= 0;
+    else if (CRAM.f.BR === brAR)
+      EDP_BR <= EDP_AR;
 
 
   // DIAG or AD driving EBUS
-  // If either CTL_adToEBUS_{R,L} is lit we force AD as the source
-
-  always_comb
-    EBUS.drivers.EDP = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
+  // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
+  assign EBUS.drivers.EDP = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
+  assign EDP_EBUS[0:17] = (diagReadFunc12X || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
+  assign EDP_EBUS[18:35] = (diagReadFunc12X || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
 
   logic [0:35] ebusR;
 
-  always_ff @(posedge eboxClk iff eboxReset == 0) begin
+  always_ff @(posedge eboxClk) begin
 
-    if (EBUS.drivers.EDP) begin
+    if (eboxReset) begin
+      EBUS.drivers.EDP <= '0;
+    end else if (EBUS.drivers.EDP) begin
 
       case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
-      3'b000: ebusR = EDP_AR;
-      3'b001: ebusR = EDP_BR;
-      3'b010: ebusR = EDP_MQ;
-      3'b011: ebusR = FM;
-      3'b100: ebusR = EDP_BRX;
-      3'b101: ebusR = EDP_ARX;
-      3'b110: ebusR = EDP_ADX[0:35];
-      3'b111: ebusR = EDP_AD[0:35];
+      3'b000: ebusR <= EDP_AR;
+      3'b001: ebusR <= EDP_BR;
+      3'b010: ebusR <= EDP_MQ;
+      3'b011: ebusR <= FM;
+      3'b100: ebusR <= EDP_BRX;
+      3'b101: ebusR <= EDP_ARX;
+      3'b110: ebusR <= EDP_ADX[0:35];
+      3'b111: ebusR <= EDP_AD[0:35];
       endcase
-    end
-
-    if (diagReadFunc12X || CTL_adToEBUS_L) EDP_EBUS[0:17] <= ebusR[0:17];
-    if (diagReadFunc12X || CTL_adToEBUS_R) EDP_EBUS[18:35] <= ebusR[18:35];
+    end else
+      ebusR <= 'z;
   end
 endmodule

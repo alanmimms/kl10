@@ -1,5 +1,6 @@
 `timescale 1ns/1ns
 `include "cram-defs.svh"
+`include "ebus-defs.svh"
 
 // M8543 CTL
 module ctl(input eboxClk,
@@ -7,9 +8,8 @@ module ctl(input eboxClk,
            input [0:35] EDP_AR,
            input PCplus1inh,
 
-           input logic [0:35] EBUS,
+           tEBUS EBUS,
            input logic EBUS_DS_STROBE,
-           output logic CTLdrivingEBUS,
            output logic [0:35] CTL_EBUS,
 
            output logic CTL_AR00to08load,

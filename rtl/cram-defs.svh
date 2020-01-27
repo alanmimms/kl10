@@ -561,6 +561,7 @@ typedef enum logic [0:8] {
                           } tDIAG_FUNC;
 
 typedef union packed {
+
   struct packed {
     logic u0;
     tJ J;

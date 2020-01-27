@@ -1,4 +1,5 @@
 `timescale 1ns/1ns
+`include "ebus-defs.svh"
 // M8545 APR
 module apr(input [0:35] FM,
            input [9:12] IRAC,
@@ -22,9 +23,8 @@ module apr(input [0:35] FM,
            output [0:2] APR_FMblk,
            output [0:3] APR_FMadr,
 
-           output APRdrivingEBUS,
            output [0:35] APR_EBUS,
-           input [0:35] EBUS,
+           tEBUS EBUS,
 
            input [0:7] EBUS_DS,
            input ebusDSStrobe

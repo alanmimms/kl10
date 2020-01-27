@@ -1,5 +1,7 @@
 `timescale 1ns/1ns
 `include "cram-defs.svh"
+`include "ebus-defs.svh"
+
 module ebox(input eboxClk,
             input fastMemClk,
 

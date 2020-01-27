@@ -1,10 +1,10 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
--- Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
--- Date        : Thu Jan 16 13:09:54 2020
+-- Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
+-- Date        : Mon Jan 27 11:55:12 2020
 -- Host        : alanm running 64-bit Ubuntu 19.10
 -- Command     : write_vhdl -force -mode funcsim
---               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/cram_mem/cram_mem_sim_netlist.vhdl
+--               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/cram_mem_synth_1/cram_mem_sim_netlist.vhdl
 -- Design      : cram_mem
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -2022,7 +2022,7 @@ entity cram_mem is
   attribute downgradeipidentifiedwarnings : string;
   attribute downgradeipidentifiedwarnings of cram_mem : entity is "yes";
   attribute x_core_info : string;
-  attribute x_core_info of cram_mem : entity is "blk_mem_gen_v8_4_4,Vivado 2019.2.1";
+  attribute x_core_info of cram_mem : entity is "blk_mem_gen_v8_4_4,Vivado 2019.2";
 end cram_mem;
 
 architecture STRUCTURE of cram_mem is

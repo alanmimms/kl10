@@ -87,6 +87,6 @@ module top;
     if (EBUS.drivers.EDP) EBUS.data = EDP_EBUS;
     else if (EBUS.drivers.IR) EBUS.data = IR_EBUS;
     else if (EBUS.drivers.SCD) EBUS.data = SCD_EBUS;
-    else EBUS.data = 'z;
+    else EBUS.data = '0;
   end
 endmodule
