@@ -19,7 +19,7 @@ module cra(input eboxClk,
            input [0:3] DRAM_A,
            input [0:3] DRAM_B,
            input [0:9] DRAM_J,
-           input tCRAM CRAM,
+           tuCRAM CRAM,
 
            input [0:35] EBUS,
            input [8:10] norm,

@@ -1,4 +1,4 @@
-Running: xsim.dir/edptb_behav/xsimk -simmode gui -wdb edptb_behav.wdb -simrunnum 0 -socket 47723
+Running: xsim.dir/edptb_behav/xsimk -simmode gui -wdb edptb_behav.wdb -simrunnum 0 -socket 52033
 Design successfully loaded
-Design Loading Memory Usage: 34028 KB (Peak: 34028 KB)
+Design Loading Memory Usage: 34040 KB (Peak: 34040 KB)
 Design Loading CPU Usage: 20 ms

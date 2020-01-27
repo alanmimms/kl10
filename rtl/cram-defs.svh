@@ -8,7 +8,7 @@ typedef logic [0:5] tMAJVER;
 typedef logic [0:2] tMINVER;
 typedef logic [0:2] tPXCT;
 typedef logic [0:3] tACmagic;
-typedef logic [0:83] tCRAM;
+typedef logic [0:83] tCRAM_ALL;
 
 // CRAM_AD flag bits
  `define adCARRY 6'b100_000
@@ -596,6 +596,6 @@ typedef union packed {
     tMAGIC MAGIC;
   } f;
 
-  logic [0:83] all;
+  tCRAM_ALL all;
 } tuCRAM;
 `endif

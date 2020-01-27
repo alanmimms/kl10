@@ -73,10 +73,7 @@ module edp(input eboxClk,
            );
 
   // Universal shift register function selector values
-  localparam USR_LOAD = 2'b00;
-  localparam USR_SHL  = 2'b01;
-  localparam USR_SHR  = 2'b10;
-  localparam USR_HOLD = 2'b11;
+  enum logic [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
   
   /*AUTOWIRE*/
   /*AUTOREG*/
@@ -105,13 +102,13 @@ module edp(input eboxClk,
 
   // Miscellaneous reset (XXX)
   always_ff @(posedge eboxClk iff eboxReset) begin
-    cacheDataWrite = 0;
+    cacheDataWrite <= 0;
   end
   
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
   always_comb begin
-    case (CTL_ARL_SEL)
+    unique case (CTL_ARL_SEL)
     3'b000: ARL = {SCD_ARMMupper, 5'b0, SCD_ARMMlower};
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
@@ -128,7 +125,7 @@ module edp(input eboxClk,
 
     // RESET
     if (eboxReset) begin
-      EDP_AR = '0;
+      EDP_AR <= '0;
     end else begin
 
       if (CTL_AR00to11clr) begin
@@ -146,7 +143,7 @@ module edp(input eboxClk,
       if (CTL_ARRclr) begin
         EDP_AR[18:35] <= 0;
       end else if (CTL_ARRload) begin
-        case (CRAM.f.AR)
+        unique case (CRAM.f.AR)
         3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
         3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
         3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
@@ -163,7 +160,7 @@ module edp(input eboxClk,
   // ARX muxes p16.
   always_comb begin
 
-    case (CTL_ARXL_SEL)
+    unique case (CTL_ARXL_SEL)
     3'b000: ARXL = 0;
     3'b001: ARXL = cacheDataRead[0:17];
     3'b010: ARXL = EDP_AD[0:17];
@@ -174,7 +171,7 @@ module edp(input eboxClk,
     3'b111: ARXL = {EDP_AD[34:35], EDP_ADX[0:15]};
     endcase
 
-    case (CTL_ARXR_SEL)
+    unique case (CTL_ARXR_SEL)
     3'b000: ARXR = 0;
     3'b001: ARXR = cacheDataRead[18:35];
     3'b010: ARXR = EDP_AD[18:35];
@@ -191,7 +188,7 @@ module edp(input eboxClk,
 
     // RESET
     if (eboxReset) begin
-      EDP_ARX = '0;
+      EDP_ARX <= '0;
     end else if (CTL_ARX_LOAD)
       EDP_ARX <= {ARXL, ARXR};
   end
@@ -201,11 +198,11 @@ module edp(input eboxClk,
 
     if (CTL_MQM_EN) begin
 
-      case (CTL_MQM_SEL)
-      USR_LOAD: MQM = {EDP_ADX[34:35], EDP_MQ[0:33]};
-      USR_SHL:  MQM = SHM_SH;
-      USR_SHR:  MQM = EDP_AD[0:35];
-      USR_HOLD: MQM = '1;
+      unique case (CTL_MQM_SEL)
+      usrLOAD: MQM = {EDP_ADX[34:35], EDP_MQ[0:33]};
+      usrSHL:  MQM = SHM_SH;
+      usrSHR:  MQM = EDP_AD[0:35];
+      usrHOLD: MQM = '1;
       endcase
     end else
       MQM = '0;
@@ -219,17 +216,21 @@ module edp(input eboxClk,
     end else begin
       
       // MQ: 36-bit MC10141-ish universal shift register
-      case (CTL_MQ_SEL)
-      USR_LOAD: EDP_MQ <= MQM;
-      USR_SHL:  EDP_MQ <= {MQM[1:35], EDP_ADcarry[-2]};
-      USR_SHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
-      USR_HOLD: EDP_MQ <= EDP_MQ;
+      unique case (CTL_MQ_SEL)
+      usrLOAD: EDP_MQ <= MQM;
+      usrSHL:  EDP_MQ <= {MQM[1:35], EDP_ADcarry[-2]};
+      usrSHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
+      usrHOLD: EDP_MQ <= EDP_MQ;
       endcase
     end
   end
 
   // Look-ahead carry network moved here from IR4 M8522 board.
   logic [0:35] ADEXxortmp;
+
+  // Why is this necessary?
+  logic [0:3] S;
+  assign S = CRAM.f.AD[2:5];
 
   // AD
   genvar n;
@@ -242,7 +243,7 @@ module edp(input eboxClk,
       assign EDP_ADoverflow[n] = EDP_AD_EX[n-2]  ^ ADEXxortmp[n];
 
       mc10181 alu0(.M(ADbool),
-                   .S(CRAM.f.AD[2:5]),
+                   .S(S),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
                    .CIN(EDP_ADcarry[n+2]),
@@ -252,7 +253,7 @@ module edp(input eboxClk,
                    .CP(AD_CP[n+0]),
                    .COUT(EDP_ADcarry[n-2]));
       mc10181 alu1(.M(ADbool),
-                   .S(CRAM.f.AD[2:5]),
+                   .S(S),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
                    .CIN(EDP_ADcarry[n+6]),
@@ -270,7 +271,7 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
 
       mc10181 alu2(.M(ADbool),
-                   .S(CRAM.f.AD[2:5]),
+                   .S(S),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                    .CIN(EDP_ADXcarry[n+3]),
@@ -278,7 +279,7 @@ module edp(input eboxClk,
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
       mc10181 alu3(.M(ADbool),
-                   .S(CRAM.f.AD[2:5]),
+                   .S(S),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                    .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),
@@ -373,7 +374,7 @@ module edp(input eboxClk,
         // signals. I am resolving this by forcing this logic only for
         // N=0.
         if (n === 0) begin
-          case(CRAM.f.ADB)
+          unique case(CRAM.f.ADB)
           2'b00: ADB[n-2:n-1] = {2{FM[n+0]}};
           2'b01: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
           2'b10: ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
@@ -383,7 +384,7 @@ module edp(input eboxClk,
         end
 
         // The regular part of ADB mux: E23, E26, and E19.
-        case(CRAM.f.ADB)
+        unique case(CRAM.f.ADB)
         2'b00: ADB[n:n+5] = FM[n+0:n+5];
         2'b01: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
         2'b10: ADB[n:n+5] = EDP_BR[n+0:n+5];
@@ -397,7 +398,7 @@ module edp(input eboxClk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
-        case(CRAM.f.ADB)
+        unique case(CRAM.f.ADB)
         2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM.f.MAGIC[n+0:n+5] : 6'b0;
         2'b01: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
         2'b10: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
@@ -419,7 +420,7 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADAmux
       always_comb
         if (~ADA_EN)
-          case(CRAM.f.ADA)
+          unique case(CRAM.f.ADA)
           2'b00: ADA[n+0:n+5] = EDP_AR[n+0:n+5];
           2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
           2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
@@ -479,7 +480,7 @@ module edp(input eboxClk,
       EBUS.drivers.EDP <= '0;
     end else if (EBUS.drivers.EDP) begin
 
-      case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
+      unique case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
       3'b000: ebusR <= EDP_AR;
       3'b001: ebusR <= EDP_BR;
       3'b010: ebusR <= EDP_MQ;
