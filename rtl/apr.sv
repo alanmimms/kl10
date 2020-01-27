@@ -1,5 +1,4 @@
-`timescale 1ns / 1ps
-// M8545 APR
+`// M8545 APR
 module apr(input [0:35] FM,
            input [9:12] IRAC,
            input [0:35] EDP_AD,
@@ -29,4 +28,6 @@ module apr(input [0:35] FM,
            input [0:7] EBUS_DS,
            input ebusDSStrobe
            /*AUTOARG*/);
+  timeunit 1ns;
+  timeprecision 1ps;
 endmodule // apr

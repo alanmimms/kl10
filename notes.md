@@ -27,7 +27,7 @@
 
 # Documentation Pointers
 
-* EBUS/MBUS interface is shown in
+* EBOX/MBUS interface is shown in
   * EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf starting on p.48
 
 * EBUS in EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf starting on p.81

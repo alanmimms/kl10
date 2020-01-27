@@ -1,8 +1,10 @@
-`timescale 1ns / 100ps
 `include "cram-defs.svh"
 module edptb;
-  reg eboxClk;
-  reg fastMemClk;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  logic eboxClk;
+  logic fastMemClk;
   
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
@@ -22,7 +24,7 @@ module edptb;
   logic                 EDPdrivingEBUS;         // From edp0 of edp.v
   logic [0:35]          FM;                     // From edp0 of edp.v
   logic [0:35]          cacheDataWrite;         // From edp0 of edp.v
-  wire                  fmParity;               // From edp0 of edp.v
+  logic                 fmParity;               // From edp0 of edp.v
   // End of automatics
   /*AUTOREG*/
 
@@ -55,7 +57,7 @@ module edptb;
 
   logic CTL_ADcarry36;
   logic CTL_ADXcarry36;
-  logic CTL_ADlong;
+  logic CTL_SPEC_AD_LONG;
 
   logic [0:2] APR_FMblk;
   logic [0:3] APR_FMadr;
@@ -100,7 +102,7 @@ module edptb;
 
     CTL_ADcarry36 = 0;
     CTL_ADXcarry36 = 0;
-    CTL_ADlong = 0;
+    CTL_SPEC_AD_LONG = 0;
 
     CTL_ARL_SEL = 0;
     CTL_ARR_SEL = 0;

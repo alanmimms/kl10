@@ -1,4 +1,5 @@
-`timescale 1ns / 1ps
+`include "cram-defs.svh"
+
 // M8541 CRA
 //
 // Addressing for 2K words CRAM
@@ -11,19 +12,12 @@ module cra(input eboxClk,
            input fastMemClk,
            input force1777,
            input MULdone,
+
            input [0:3] DRAM_A,
            input [0:3] DRAM_B,
            input [0:9] DRAM_J,
-           input [10:0] CRAM_J,
-           input [3:0] CRAM_MEM,
-           input [5:0] CRAM_SKIP,
-           input [5:0] CRAM_COND,
-           input CRAM_CALL,
-           input [4:0] CRAM_DISP,
-           input [4:0] CRAM_SPEC,
-           input [0:8] CRAM_DIAG_FUNC,
-           input CRAM_MARK,
-           input [8:0] CRAM_MAGIC,
+           input tCRAM CRAM,
+
            input [0:35] EBUS,
            input [8:10] norm,
            input [0:10] NICOND,
@@ -56,59 +50,62 @@ module cra(input eboxClk,
            input FPD,
            input ARparityOdd,
 
-           output reg [11:0] CRADR,
-           output reg [1:10] AREAD,
-           output reg dispParity,
-           output reg CRAdrivingEBUS,
-           output reg [0:35] CRA_EBUS
-           /*AUTOARG*/);
+           output tCRADR CRADR,
+           output logic [10:1] AREAD,
+           output logic dispParity,
+           output logic CRAdrivingEBUS,
+           output logic [0:35] CRA_EBUS);
 
-  initial CRADR <= 0;
+  timeunit 1ns;
+  timeprecision 1ps;
 
-  reg [0:11] dispMux;
-  reg [0:10] diagAdr;
-  reg [0:10] adr;
-  reg [0:10] loc;
+  logic [0:11] dispMux;
+  logic [0:10] diagAdr;
+  logic [0:10] adr;
+  logic [0:10] loc;
 
-  reg [0:10] stack[15:0];
-  reg [0:10] sbrRet;
+  logic [0:10] stack[15:0];
+  logic [0:10] sbrRet;
 
-  wire dispEn00_03, dispEn00_07, dispEn30_37;
-  wire shortIndirWord;
-  wire callForce1777;
-  wire retNotForce1777;
-  wire ret;
+  logic dispEn00_03, dispEn00_07, dispEn30_37;
+  logic shortIndirWord;
+  logic callForce1777;
+  logic retNotForce1777;
+  logic ret;
 
   // TEMPORARY? This looks like it belongs to an incompletely
   // implemented feature that might have been called DISP/EA TYPE
   // (37). This dispatch is never used in microcode.
-  wire [7:10] eaType = 0;
+  logic [7:10] eaType = 0;
 
+`include "cram-aliases.svh"
+
+  initial CRADR <= 0;
 
   // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
   // they are simple CRAM storage mapping to logical fields.
 
   // Remaining features of E47,E35 are CRAM DISP field decoding.
-  assign dispEn00_03 = CRAM_DISP[0:4] === 5'b00011;
-  assign dispEn00_07 = CRAM_DISP[0:4] === 5'b00111;
-  assign dispEn30_37 = CRAM_DISP[0:4] === 5'b11111;
+  assign dispEn00_03 = CRAM.f.DISP[0:4] === 5'b00011;
+  assign dispEn00_07 = CRAM.f.DISP[0:4] === 5'b00111;
+  assign dispEn30_37 = CRAM.f.DISP[0:4] === 5'b11111;
 
   assign shortIndirWord = ~longEnable | EDP_ARX[1];
-  assign callForce1777 = CRAM_CALL | force1777;
-  assign ret = dispEn00_03 && CRAM_DISP[3] & CRAM_DISP[4];
+  assign callForce1777 = CRAM.f.CALL | force1777;
+  assign ret = dispEn00_03 && CRAM.f.DISP[3] & CRAM.f.DISP[4];
   assign retNotForce1777 = ret & ~force1777;
 
   always @(*) begin
 
     if (dispEn00_03) begin
-      case (CRAM_DISP[3:4])
+      case (CRAM.f.DISP[3:4])
       2'b00: dispMux[0:6] <= diagAdr[0:6];
       2'b01: dispMux[0:6] <= {2'b00, DRAM_J[1:4], 2'b00};
       2'b10: dispMux[0:6] <= {2'b00, AREAD[1:4], 2'b00};
       2'b11: dispMux[0:6] <= sbrRet;
       endcase
     end else if (dispEn00_07) begin
-      case (CRAM_DISP[2:4])
+      case (CRAM.f.DISP[2:4])
       3'b000: dispMux[7:10] <= diagAdr[7:10];
       3'b001: dispMux[7:10] <= DRAM_J[7:10];
       3'b010: dispMux[7:10] <= AREAD[7:10];
@@ -119,19 +116,19 @@ module cra(input eboxClk,
       3'b111: dispMux[7:10] <= SHM_SH[0:3];
       endcase
     end else if (dispEn30_37) begin
-      case (CRAM_DISP[2:4])
+      case (CRAM.f.DISP[2:4])
       3'b000: dispMux[7:10] <= {1'b0, FEsign, EDP_MQ[34:35], pcSection0};
-      3'b001: dispMux[7:10] <= {1'b0, FEsign, EDP_BR[0], ADcarry_02, SCADsign};
+      3'b001: dispMux[7:10] <= {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
       3'b010: dispMux[7:10] <= {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
       3'b011: dispMux[7:10] <= {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[7:10] <= {1'b0, FPD, EDP_AR[12], SCADsign, ADcarry_02};
+      3'b100: dispMux[7:10] <= {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2];
       3'b101: dispMux[7:10] <= {1'b0, norm[8:10], EDP_AD[0]};
       3'b110: dispMux[7:10] <= {~longEnable | EDP_ARX[0], shortIndirWord,
                                 EDP_ARX[13], indexed, ~ADeq0};
       3'b111: dispMux[7:10] <= {eaType[7:10], localACAddress};
       endcase
     end else if (skipEn40_47) begin
-      case (CRAM_COND[3:5])
+      case (CRAM.f.COND[3:5])
       3'b000: dispMux[10] <= 0;
       3'b001: dispMux[10] <= ARparityOdd;
       3'b010: dispMux[10] <= EDP_BR[0];
@@ -142,12 +139,12 @@ module cra(input eboxClk,
       3'b111: dispMux[10] <= SCsign;
       endcase
     end else if (skipEn50_57) begin
-      case (CRAM_COND[3:5])
+      case (CRAM.f.COND[3:5])
       3'b000: dispMux[10] <= pcSection0;
-      3'b001: dispMux[10] <= {1'b0, FEsign, EDP_BR[0], ADcarry_02, SCADsign};
+      3'b001: dispMux[10] <= {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
       3'b010: dispMux[10] <= {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
       3'b011: dispMux[10] <= {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[10] <= {1'b0, FPD, EDP_AR[12], SCADsign, ADcarry_02};
+      3'b100: dispMux[10] <= {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
       3'b101: dispMux[10] <= {1'b0, norm[8:10], EDP_AD[0]};
       3'b110: dispMux[10] <= {~longEnable | EDP_ARX[0], shortIndirWord,
                               EDP_ARX[13], indexed, ~ADeq0};
@@ -156,7 +153,7 @@ module cra(input eboxClk,
     end else
       dispMux <= 0;
     
-    CRADR <= CRAM_J | {11{force1777}} | dispMux;
+    CRADR <= CRAM.f.J | {11{force1777}} | dispMux;
   end
 
   ////////////////////////////////////////////////////////////////
@@ -186,24 +183,24 @@ module cra(input eboxClk,
   // 0  1111 0001  0  |   16    10         RESET
 
   // E56,E57
-  reg [0:7] stackAdrAD, stackAdrEH;
+  logic [0:7] stackAdrAD, stackAdrEH;
 
-  wire stackAdrA = stackAdrAD[0];
-  wire stackAdrB = stackAdrAD[1];
-  wire stackAdrC = stackAdrAD[2];
-  wire stackAdrD = stackAdrAD[3];
+  logic stackAdrA = stackAdrAD[0];
+  logic stackAdrB = stackAdrAD[1];
+  logic stackAdrC = stackAdrAD[2];
+  logic stackAdrD = stackAdrAD[3];
 
-  wire stackAdrE = stackAdrEH[0];
-  wire stackAdrF = stackAdrEH[1];
-  wire stackAdrG = stackAdrEH[2];
-  wire stackAdrH = stackAdrEH[3];
+  logic stackAdrE = stackAdrEH[0];
+  logic stackAdrF = stackAdrEH[1];
+  logic stackAdrG = stackAdrEH[2];
+  logic stackAdrH = stackAdrEH[3];
 
-  wire stackAdrY = stackAdrA ^ stackAdrD;
-  wire stackAdrZ = stackAdrF ^ stackAdrE;
+  logic stackAdrY = stackAdrA ^ stackAdrD;
+  logic stackAdrZ = stackAdrF ^ stackAdrE;
 
-  wire stackAdr = {stackAdrAD, stackAdrEH};
-  wire stackWrite = fastMemClk & ~retNotForce1777;
-  wire selCall = stackWrite | ~retNotForce1777;
+  logic stackAdr = {stackAdrAD, stackAdrEH};
+  logic stackWrite = fastMemClk & ~retNotForce1777;
+  logic selCall = stackWrite | ~retNotForce1777;
 
   always @(posedge eboxClk) begin
 
@@ -231,7 +228,7 @@ module cra(input eboxClk,
 
   ////////////////////////////////////////////////////////////////
   // Diagnostics stuff
-  always @(*) dispParity = ^{CRAM_CALL, CRAM_DISP};
+  always @(*) dispParity = ^{CRAM.f.CALL, CRAM.f.DISP};
 
   always @(posedge eboxClk) begin
 
@@ -249,9 +246,9 @@ module cra(input eboxClk,
   always @(*) begin
     CRAdrivingEBUS <= diagReadFunc14X;
 
-    case (CRAM_DIAG_FUNC[4:6])
+    case (DIAG_FUNC[4:6])
     3'b000: CRA_EBUS <= {dispEn00_07, dispEn00_03, stackAdr};
-    3'b001: CRA_EBUS <= {CRAM_CALL, CRAM_DISP[0:4], stackAdr};
+    3'b001: CRA_EBUS <= {CRAM.f.CALL, CRAM.f.DISP[0:4], stackAdr};
     3'b010: CRA_EBUS <= sbrRet[5:10];
     3'b011: CRA_EBUS <= {dispEn30_37, sbrRet[0:4]};
     3'b100: CRA_EBUS <= adr[5:10];

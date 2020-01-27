@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 `include "cram-defs.svh"
 
 // M8548 CRM
@@ -8,11 +6,13 @@
 //
 // In a real KL10PV there are five instances of M8548. This is coded
 // to act as all five slots.
-module crm(input eboxClk,
-           input eboxReset,
-           input tCRADR CRADR,
+module crm(eboxClk,
+           eboxReset,
+           tCRADR CRADR,
            output tuCRAM CRAM);
 
+  timeunit 1ns;
+  timeprecision 1ps;
 
   cram_mem cram0(.clka(eboxClk),
                  .addra(CRADR),

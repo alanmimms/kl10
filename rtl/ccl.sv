@@ -1,5 +1,7 @@
-`timescale 1ns / 1ps
 // M8536 CCL
-module ccl(input eboxClk
+module ccl(input eboxClk,
+           input eboxReset,
           /*AUTOARG*/);
+  timeunit 1ns;
+  timeprecision 1ps;
 endmodule // ccl

@@ -1,6 +1,5 @@
 // XXX TODO: Refactor this into six instances of the same module wired
-// together in ebox.v.
-`timescale 1ns / 1ps
+// together in ebox.v?
 `include "cram-defs.svh"
 
 module edp(input eboxClk,
@@ -9,7 +8,7 @@ module edp(input eboxClk,
 
            input CTL_ADcarry36,
            input CTL_ADXcarry36,
-           input CTL_ADlong,
+           input CTL_SPEC_AD_LONG,
 
            input tuCRAM CRAM,
 
@@ -35,7 +34,7 @@ module edp(input eboxClk,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
-           input [0:35] EBUS,
+           inout tEBUS EBUS,
            input [0:35] SHM_SH,
            input [0:8] SCD_ARMMupper,
            input [13:17] SCD_ARMMlower,
@@ -67,11 +66,11 @@ module edp(input eboxClk,
            output logic [-2:36] EDP_ADcarry,
            output logic [0:36] EDP_ADXcarry,
            output logic [0:35] EDP_ADoverflow,
-           output logic EDP_genCarry36,
-
-           output logic EDPdrivingEBUS,
-           output logic [0:35] EDP_EBUS
+           output logic EDP_genCarry36
            );
+
+  timeunit 1ns;
+  timeprecision 1ps;
 
   // Universal shift register function selector values
   localparam USR_LOAD = 2'b00;
@@ -116,7 +115,7 @@ module edp(input eboxClk,
     3'b000: ARL = {SCD_ARMMupper, 5'b0, SCD_ARMMlower};
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
-    3'b011: ARL = EBUS[0:17];
+    3'b011: ARL = EBUS.data[0:17];
     3'b100: ARL = SHM_SH[0:17];
     3'b101: ARL = EDP_AD[1:18];
     3'b110: ARL = EDP_ADX[0:17];
@@ -151,7 +150,7 @@ module edp(input eboxClk,
         3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
         3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
         3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
-        3'b011: EDP_AR[18:35] <= EBUS[18:35];
+        3'b011: EDP_AR[18:35] <= EBUS.data[18:35];
         3'b100: EDP_AR[18:35] <= SHM_SH[18:35];
         3'b101: EDP_AR[18:35] <= {EDP_AD[19:35], EDP_ADX[0]};
         3'b110: EDP_AR[18:35] <= EDP_ADX[18:35];
@@ -193,7 +192,7 @@ module edp(input eboxClk,
     // RESET
     if (eboxReset) begin
       EDP_ARX = 36'd0;
-      EDP_EBUS = 36'd0;
+      EBUS.drivers.EDP = '0;
     end else if (CTL_ARX_LOAD)
       EDP_ARX <= {ARXL, ARXR};
   end
@@ -283,7 +282,7 @@ module edp(input eboxClk,
 
   // AD carry look ahead
   // Moved here from IR4
-  assign EDP_genCarry36 = CTL_ADXcarry36 | CTL_ADlong;
+  assign EDP_genCarry36 = CTL_ADXcarry36 | CTL_SPEC_AD_LONG;
   
   // IR4 E11
   mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
@@ -327,8 +326,8 @@ module edp(input eboxClk,
   // ADX carry look ahead
   // Moved here from IR4
   // IR4 E22
-  mc10179 ADX_LCG_E22(.G({EDP_genCarry36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
-                      .P({~CTL_ADlong, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
+  mc10179 ADX_LCG_E22(.G({   EDP_genCarry36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
+                      .P({~CTL_SPEC_AD_LONG, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
                       .CIN(CTL_ADXcarry36),
                       .C8OUT(EDP_ADcarry[36]));
   // IR4 E21
@@ -457,26 +456,29 @@ module edp(input eboxClk,
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{R,L} is lit we force AD as the source
-  logic [0:2] ebusSel = (CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6];
-  logic [0:35] ebusR;
 
   always_comb
     EDPdrivingEBUS = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
 
+  logic [0:35] ebusR;
+
   always_ff @(posedge eboxClk iff eboxReset == 0) begin
 
-    case (ebusSel)
-    3'b000: ebusR = EDP_AR;
-    3'b001: ebusR = EDP_BR;
-    3'b010: ebusR = EDP_MQ;
-    3'b011: ebusR = FM;
-    3'b100: ebusR = EDP_BRX;
-    3'b101: ebusR = EDP_ARX;
-    3'b110: ebusR = EDP_ADX[0:35];
-    3'b111: ebusR = EDP_AD[0:35];
-    endcase
+    if (EBUS.drivers.EDP) begin
 
-    if (diagReadFunc12X || CTL_adToEBUS_L) EDP_EBUS[0:17] = ebusR[0:17];
-    if (diagReadFunc12X || CTL_adToEBUS_R) EDP_EBUS[18:35] = ebusR[18:35];
+      case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
+      3'b000: ebusR = EDP_AR;
+      3'b001: ebusR = EDP_BR;
+      3'b010: ebusR = EDP_MQ;
+      3'b011: ebusR = FM;
+      3'b100: ebusR = EDP_BRX;
+      3'b101: ebusR = EDP_ARX;
+      3'b110: ebusR = EDP_ADX[0:35];
+      3'b111: ebusR = EDP_AD[0:35];
+      endcase
+    end
+
+    if (diagReadFunc12X || CTL_adToEBUS_L) EBUS.data[0:17] = ebusR[0:17];
+    if (diagReadFunc12X || CTL_adToEBUS_R) EBUS.data[18:35] = ebusR[18:35];
   end
 endmodule

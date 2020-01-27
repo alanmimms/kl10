@@ -1,4 +1,3 @@
-`timescale 1ns / 1ps
 // M8522 IR
 module ir(input eboxClk,
           input [0:35] cacheDataRead,
@@ -22,20 +21,23 @@ module ir(input eboxClk,
           output JRST0,
           output testSatisfied,
           output IRdrivingEBUS,
-          output reg [0:35] IR_EBUS,
-          output reg [8:10] norm,
-          output reg [0:12] IR,
-          output reg [9:12] IRAC,
-          output reg [2:0] DRAM_A,
-          output reg [2:0] DRAM_B,
-          output reg [10:0] DRAM_J,
+          output logic [0:35] IR_EBUS,
+          output logic [8:10] norm,
+          output logic [0:12] IR,
+          output logic [9:12] IRAC,
+          output logic [2:0] DRAM_A,
+          output logic [2:0] DRAM_B,
+          output logic [10:0] DRAM_J,
           output DRAM_ODD_PARITY
           /*AUTOARG*/);
 
-  reg [23:0] DRAMdata;
-  reg [0:12] DRADR;
+  timeunit 1ns;
+  timeprecision 1ps;
 
-  wire [8:10] DRAM_J_X, DRAM_J_Y;
+  logic [23:0] DRAMdata;
+  logic [0:12] DRADR;
+
+  logic [8:10] DRAM_J_X, DRAM_J_Y;
 
   dram_mem dram(.clka(clk),
                 .addra(DRADR),
@@ -49,7 +51,7 @@ module ir(input eboxClk,
   // p.210 shows older KL10 DRAM addressing.
 
   // JRST is 0o254,F
-  wire JRST;
+  logic JRST;
   assign JRST = IR[0:8] === 13'b010_101_100;
   assign JRST0 = IR[0:12] === 13'b010_101_100_0000;
 
@@ -62,19 +64,19 @@ module ir(input eboxClk,
   assign IOlegal = &IR[3:6];
   assign ACeq0 = IR[9:12] === 4'b0;
 
-  reg enIO_JRST;
-  reg enAC;
+  logic enIO_JRST;
+  logic enAC;
 
-  wire instr7XX;
-  wire enableAC;
-  wire magic7eq8;
-  wire AgtB;
+  logic instr7XX;
+  logic enableAC;
+  logic magic7eq8;
+  logic AgtB;
 
   // This mess is p.128 E55,E70,E71,E75,E76
   assign instr7XX = IR[0] & IR[1] & IR[2] & enIO_JRST;
   assign instr774 = &IR[3:6];
 
-  wire [3:8] ioDRADR;
+  logic [3:8] ioDRADR;
   assign ioDRADR[3:5] = instr7XX ? (IR[7:9] | {3{instr774}}) : IR[3:5];
   assign ioDRADR[6:8] = instr7XX ? IR[6:8] : IR[10:12];
 
@@ -82,9 +84,9 @@ module ir(input eboxClk,
     DRADR <= {IR[0:2], instr7XX ? IR[3:8] : ioDRADR};
   end
 
-  wire [0:2] DRAM_A_X, DRAM_A_Y, DRAM_B_X, DRAM_B_Y;
-  reg [8:10] DRAM_PAR_J;
-  reg DRAM_PAR;
+  logic [0:2] DRAM_A_X, DRAM_A_Y, DRAM_B_X, DRAM_B_Y;
+  logic [8:10] DRAM_PAR_J;
+  logic DRAM_PAR;
 
   // XXX THIS SIGNAL does not appear to be defined in IR or anywhere.
   // It would seem it is to be combinatorially drived from
@@ -120,9 +122,9 @@ module ir(input eboxClk,
                            } ^ DRAM_B[0];
 
   // p.130 E57 and friends
-  reg dramLoadXYeven, dramLoadXYodd;
-  reg dramLoadJcommon, dramLoadJeven, dramLoadJodd;
-  reg enJRST5, enJRST6, enJRST7;
+  logic dramLoadXYeven, dramLoadXYodd;
+  logic dramLoadJcommon, dramLoadJeven, dramLoadJodd;
+  logic enJRST5, enJRST6, enJRST7;
 
   // Inferred latch initialization
   initial begin

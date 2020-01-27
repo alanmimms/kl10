@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 // MC10181 from Fairchild ECL datasheet F10181.pdf.
 //
 // S3 S2 S1 S0    M=1 C0=X    M=0 C0=0     M=0 C0=1
@@ -31,8 +29,11 @@ module mc10181(input [3:0] S,
                output COUT
                );
 
-  wire [3:0] G, P;
-  wire notGG;
+  timeunit 1ns;
+  timeprecision 1ps;
+
+  logic [3:0] G, P;
+  logic notGG;
 
   assign G = ~(~({4{S[3]}} | B | A) | ~({4{S[2]}} | A  | ~B));
   assign P = ~(~({4{S[1]}} | ~B   ) | ~({4{S[0]}} | B) | ~A);
@@ -60,13 +61,13 @@ endmodule // mc10181
 `ifdef TESTBENCH
 module mc10181_tb;
 
-  reg clk;
-  reg [3:0] S, A, B;
-  wire [3:0] F;
-  reg M, CIN;
-  wire CG, CP, COUT;
-  reg [31:0] s, a, b;
-  reg [31:0] m, cin;
+  logic clk;
+  logic [3:0] S, A, B;
+  logic [3:0] F;
+  logic M, CIN;
+  logic CG, CP, COUT;
+  logic [31:0] s, a, b;
+  logic [31:0] m, cin;
 
   mc10181 mc10181(.S(S), .M(M), .A(A), .B(B), .CIN(CIN), .F(F), .CG(CG), .CP(CP), .COUT(COUT));
 

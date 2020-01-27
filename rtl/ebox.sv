@@ -1,63 +1,64 @@
-`timescale 1ns / 1ps
 `include "cram-defs.svh"
 module ebox(input eboxClk,
             input fastMemClk,
 
-            output reg [13:35] EBOX_VMA,
-            output reg [10:12] cacheClearer,
+            output logic eboxReset,
 
-            output reg eboxReq,
+            output logic [13:35] EBOX_VMA,
+            output logic [10:12] cacheClearer,
+
+            output logic eboxReq,
             input cshEBOXT0,
             input  cshEBOXRetry,
             input mboxRespIn,
 
-            output reg eboxSync,
-            output reg mboxClk,
+            output logic eboxSync,
+            output logic mboxClk,
 
             input pfHold,
             input pfEBOXHandle,
             input pfPublic,
 
-            output reg vmaACRef,
+            output logic vmaACRef,
 
             input [27:35] mboxGateVMA,
             input [0:35] cacheDataRead,
             output [0:35] cacheDataWrite,
 
-            output reg pageTestPriv,
-            output reg pageIllEntry,
-            output reg eboxUser,
+            output logic pageTestPriv,
+            output logic pageIllEntry,
+            output logic eboxUser,
 
-            output reg eboxMayBePaged,
-            output reg eboxCache,
-            output reg eboxLookEn,
-            output reg ki10PagingMode,
-            output reg pageAdrCond,
+            output logic eboxMayBePaged,
+            output logic eboxCache,
+            output logic eboxLookEn,
+            output logic ki10PagingMode,
+            output logic pageAdrCond,
 
-            output reg eboxMap,
+            output logic eboxMap,
 
-            output reg eboxRead,
-            output reg eboxPSE,
-            output reg eboxWrite,
+            output logic eboxRead,
+            output logic eboxPSE,
+            output logic eboxWrite,
 
-            output reg upt,
-            output reg ept,
-            output reg userRef,
+            output logic upt,
+            output logic ept,
+            output logic userRef,
 
-            output reg eboxCCA,
-            output reg eboxUBR,
-            output reg eboxERA,
-            output reg eboxEnRefillRAMWr,
-            output reg eboxSBUSDiag,
-            output reg eboxLoadReg,
-            output reg eboxReadReg,
+            output logic eboxCCA,
+            output logic eboxUBR,
+            output logic eboxERA,
+            output logic eboxEnRefillRAMWr,
+            output logic eboxSBUSDiag,
+            output logic eboxLoadReg,
+            output logic eboxReadReg,
 
-            output reg ptDirWrite,
-            output reg ptWr,
-            output reg mboxCtl03,
-            output reg mboxCtl06,
-            output reg wrPtSel0,
-            output reg wrPtSel1,
+            output logic ptDirWrite,
+            output logic ptWr,
+            output logic mboxCtl03,
+            output logic mboxCtl06,
+            output logic wrPtSel0,
+            output logic wrPtSel1,
 
             input [0:10] pfDisp,
             input cshAdrParErr,
@@ -65,31 +66,19 @@ module ebox(input eboxClk,
             input sbusErr,
             input nxmErr,
             input mboxCDirParErr,
-            output reg anyEboxError,
+            output logic anyEboxError,
 
-            input [0:35] EBUS,
-            input [0:7] EBUS_DS,
-            output reg APRdrivingEBUS,
-            output reg [0:35] APR_EBUS,
-
-            output reg CRAdrivingEBUS,
-            output reg [0:35] CRA_EBUS,
-
-            output reg EDPdrivingEBUS,
-            output reg [0:35] EDP_EBUS,
-
-            output reg IRdrivingEBUS,
-            output reg [0:35] IR_EBUS,
-
-            output reg SCDdrivingEBUS,
-            output reg [0:35] SCD_EBUS
+            input tEBUS EBUS,
 
             /*AUTOARG*/);
 
+  timeunit 1ns;
+  timeprecision 1ps;
+
   // TEMPORARY
-  wire force1777;
-  wire CONDAdr10;
-  wire MULdone;
+  logic force1777;
+  logic CONDAdr10;
+  logic MULdone;
 
   // TEMPORARY
   assign FORCE1777 = 0;
