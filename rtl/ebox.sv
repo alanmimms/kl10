@@ -71,7 +71,135 @@ module ebox(input eboxClk,
             input mboxCDirParErr,
             output logic anyEboxError,
 
-            input tEBUS EBUS);
+            iEBUS EBUS);
+
+  tEBUSdriver APR_EBUS;
+  tEBUSdriver CRA_EBUS;
+  tEBUSdriver CTL_EBUS;
+  tEBUSdriver EDP_EBUS;
+  tEBUSdriver IR_EBUS;
+
+  logic [0:2] APR_FMblk;
+  logic [0:3] APR_FMadr;
+
+  logic [0:35] SHM_SH;
+
+  logic loadIR;
+  logic loadDRAM;
+  logic longEnable;
+  logic CTL_ADcarry36;
+  logic CTL_ADXcarry36;
+
+  logic CON_fmWrite00_17;
+  logic CON_fmWrite18_35;
+
+  logic [8:10] norm;
+  logic [0:12] IR;
+  logic [9:12] IRAC;
+  logic [0:2] DRAM_A;
+  logic [0:2] DRAM_B;
+  logic [0:10] DRAM_J;
+  logic DRAM_ODD_PARITY;
+
+  logic NICOND;
+  logic PCplus1inh;
+
+  logic [0:3] SR;
+
+  logic CTL_SPEC_AD_LONG;
+  logic CTL_AR00to08load;
+  logic CTL_AR09to17load;
+  logic CTL_ARRload;
+
+  logic CTL_AR00to11clr;
+  logic CTL_AR12to17clr;
+  logic CTL_ARRclr;
+
+  logic [0:2] CTL_ARL_SEL;
+  logic [0:2] CTL_ARR_SEL;
+  logic [0:2] CTL_ARXL_SEL;
+  logic [0:2] CTL_ARXR_SEL;
+  logic CTL_ARX_LOAD;
+
+  logic [0:1] CTL_MQ_SEL;
+  logic [0:1] CTL_MQM_SEL;
+  logic CTL_MQM_EN;
+  logic CTL_inhibitCarry18;
+  logic CTL_SPEC_genCarry18;
+
+  logic CTL_adToEBUS_L;
+  logic CTL_adToEBUS_R;
+
+  logic CTL_DISP_NICOND;
+  logic CTL_SPEC_SCM_ALT;
+  logic CTL_SPEC_CLR_FPD;
+  logic CTL_SPEC_FLAG_CTL;
+  logic CTL_SPEC_SP_MEM_CYCLE;
+  logic CTL_SPEC_SAVE_FLAGS;
+
+  logic CTL_diagLoadFunc06x;
+  logic CTL_diagReadFunc13x;
+  logic CTL_diagReadFunc14X;
+  logic CTL_diagReadFunc12x;
+  logic CTL_diaFunc051;
+  logic CTL_diaFunc052;
+
+  logic inhibitCarry18;
+  logic SPEC_genCarry18;
+  logic genCarry36;
+
+  logic ADeq0;
+  logic IOlegal;
+  logic ACeq0;
+  logic JRST0;
+  logic testSatisfied;
+
+
+  logic [0:8] SCD_ARMMupper;
+  logic [13:17] SCD_ARMMlower;
+
+
+  logic [0:35] VMA_VMAheldOrPC;
+
+  logic [-2:35] EDP_AD;
+  logic [0:35] EDP_ADX;
+  logic [0:35] EDP_BR;
+  logic [0:35] EDP_BRX;
+  logic [0:35] EDP_MQ;
+  logic [0:35] EDP_AR;
+  logic [0:35] EDP_ARX;
+  logic [0:35] FM;
+  logic fmParity;
+
+  logic [-2:35] EDP_AD_EX;
+  logic [-2:36] EDP_ADcarry;
+  logic [0:36] EDP_ADXcarry;
+  logic [0:35] EDP_ADoverflow;
+  logic EDP_genCarry36;
+
+
+  logic skipEn40_47;
+  logic skipEn50_57;
+
+  logic pcSection0;
+  logic localACAddress;
+  logic longEnable;
+  logic indexed;
+  logic FEsign;
+  logic SCsign;
+  logic SCADsign;
+  logic SCADeq0;
+  logic FPD;
+  logic ARparityOdd;
+
+  logic [10:1] AREAD;
+  logic dispParity;
+
+  logic mbXfer;
+
+  tCRADR CRADR;
+
+  iCRAM CRAM();
 
   // TEMPORARY
   logic force1777;
@@ -79,34 +207,15 @@ module ebox(input eboxClk,
   logic MULdone;
 
   // TEMPORARY
-  assign FORCE1777 = 0;
+  assign force1777 = 0;
   assign CONDAdr10 = 0;
   assign MULdone = 0;
 
+  apr apr0(.*, .EBUSdriver(APR_EBUS));
   con con0(.*);
-  cra cra0(.*);
+  cra cra0(.*, .EBUSdriver(CRA_EBUS));
   crm crm0(.*);
-  edp edp0(.*);
-  ir ir0(.*);
-  vma vma0(.*);
-  apr apr0(.*);
-  mcl mcl0(.*);
-  ctl ctl0(.*);
-  scd scd0(.*);
-  shm shm0(.*);
-  csh csh0(.*);
-  cha cha0(.*);
-  chx chx0(.*);
-  pma pma0(.*);
-  pag pag0(.*);
-  chd chd0(.*);
-  mbc mbc0(.*);
-  mbz mbz0(.*);
-  pic pic0(.*);
-  chc chc0(.*);
-  ccw ccw0(.*);
-  crc crc0(.*);
-  ccl ccl0(.*);
-  mtr mtr0(.*);
-  dps dps0(.*);
+  ctl ctl0(.*, .EBUSdriver(CTL_EBUS));
+  edp edp0(.*, .EBUSdriver(EDP_EBUS));
+  ir  ir0 (.*, .EBUSdriver(IR_EBUS));
 endmodule // ebox

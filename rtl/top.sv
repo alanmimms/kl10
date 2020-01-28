@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
-module top;
 `include "ebus-defs.svh"
 
+module top(input masterClk);
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
   wire                  eboxCCA;                // From ebox0 of ebox.v
@@ -39,54 +39,76 @@ module top;
   wire                  wrPtSel1;               // From ebox0 of ebox.v
   // End of automatics
 
-  /*AUTOREG*/
+  logic mboxClk;
+  logic eboxSync;
+  logic vmaACRef;
+  logic [27:35] mboxGateVMA;
+  logic [0:35] cacheDataRead;
+  logic [0:35] cacheDataWrite;
+  logic [10:12] cacheClearer;
+  logic [13:35] eboxVMA;
 
-  reg mboxClk;
-  reg eboxSync;
-  reg vmaACRef;
-  reg [37:35] mboxGateVMA;
-  reg [0:35] cacheDataRead;
-  reg [0:35] cacheDataWrite;
-  reg [10:12] cacheClearer;
-  reg [13:35] eboxVMA;
+  logic anyEboxError;
 
-  reg anyEboxError;
+  logic eboxReset = 0;
+  logic [13:35] EBOX_VMA;
+  logic req;
+  logic PSE;
+  logic read;
+  logic write;
 
 
   // TEMPORARY
-  reg cshEBOXRetry = 0;
-  reg mboxRespIn = 0;
+  logic cshEBOXT0 = 0;
+  logic cshEBOXRetry = 0;
+  logic mboxRespIn = 0;
 
-  reg pfHold = 0;
-  reg pfEBOXHandle = 0;
-  reg pfPublic = 0;
+  logic pfHold = 0;
+  logic pfEBOXHandle = 0;
+  logic pfPublic = 0;
 
-  reg cshAdrParErr = 0;
-  reg mbParErr = 0;
-  reg sbusErr = 0;
-  reg nxmErr = 0;
-  reg mboxCDirParErr = 0;
+  logic cshAdrParErr = 0;
+  logic mbParErr = 0;
+  logic sbusErr = 0;
+  logic nxmErr = 0;
+  logic mboxCDirParErr = 0;
 
 
-  // This is the multiplexed EBUS, enabled by the EBUS.driving.XXX
-  // signal coming from each module to determine who gets to provide
-  // EBUS its content.
-  //
   // While it might appear with an EBOX-centric viewpoint that EBUS is
   // entirely contained within the EBOX and should therefore be muxed
   // in ebox.v, note that control of RH20 and DTE20 devices relies on
   // EBUS as well. (See KL10_BlockDiagrams_May76.pdf p.3.) Therefore
   // top.v is where the EBUS mux belongs.
-  tEBUS EBUS;
+
+  // This is the multiplexed EBUS, enabled by the tEBUSdriver
+  // interface coming from each module to determine who gets to
+  // provide EBUS its content.
+  iEBUS EBUS();
+
+  tEBUSdriver APR_EBUS;
+  tEBUSdriver CON_EBUS;
+  tEBUSdriver CRA_EBUS;
+  tEBUSdriver CTL_EBUS;
+  tEBUSdriver EDP_EBUS;
+  tEBUSdriver IR_EBUS;
+  tEBUSdriver SCD_EBUS;
+  tEBUSdriver SHM_EBUS;
+  tEBUSdriver VMA_EBUS;
 
   clk clk0(.*);
   ebox ebox0(.*);
   mbox mbox0(.*);
 
   always_comb begin
-    if (EBUS.drivers.EDP) EBUS.data = EDP_EBUS;
-    else if (EBUS.drivers.IR) EBUS.data = IR_EBUS;
-    else if (EBUS.drivers.SCD) EBUS.data = SCD_EBUS;
+    if (APR_EBUS.driving)       EBUS.data = APR_EBUS.data;
+    else if (CON_EBUS.driving)  EBUS.data = CON_EBUS.data;
+    else if (CRA_EBUS.driving)  EBUS.data = CRA_EBUS.data;
+    else if (CTL_EBUS.driving)  EBUS.data = CTL_EBUS.data;
+    else if (EDP_EBUS.driving)  EBUS.data = EDP_EBUS.data;
+    else if (IR_EBUS.driving)   EBUS.data = IR_EBUS.data;
+    else if (SCD_EBUS.driving)  EBUS.data = SCD_EBUS.data;
+    else if (SHM_EBUS.driving)  EBUS.data = SHM_EBUS.data;
+    else if (VMA_EBUS.driving)  EBUS.data = VMA_EBUS.data;
     else EBUS.data = '0;
   end
 endmodule

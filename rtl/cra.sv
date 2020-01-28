@@ -10,58 +10,56 @@
 //
 // In a real KL10PV, M8541 contains the last six bits of CRAM storage.
 // This has been moved to crm.v in a single unified storage module.
-module cra(input eboxClk,
-           input fastMemClk,
-           input eboxReset,
-           input force1777,
-           input MULdone,
+module cra(input logic eboxClk,
+           input logic fastMemClk,
+           input logic eboxReset,
+           input logic force1777,
+           input logic MULdone,
 
-           input [0:3] DRAM_A,
-           input [0:3] DRAM_B,
-           input [0:9] DRAM_J,
-           tuCRAM CRAM,
+           input logic [0:2] DRAM_A,
+           input logic [0:2] DRAM_B,
+           input logic [0:10] DRAM_J,
+           iCRAM CRAM,
 
-           input [0:35] EBUS,
-           input [8:10] norm,
-           input [0:10] NICOND,
-           input [0:3] SR,
-           input [0:35] SHM_SH,
-           input [0:35] EDP_MQ,
-           input [0:35] EDP_BR,
-           input [0:35] EDP_AD,
-           input [0:35] EDP_ADX,
-           input [0:35] EDP_AR,
-           input [0:35] EDP_ARX,
-           input [-2:36] EDP_ADcarry,
-           input [0:10] pfDisp,
-           input skipEn40_47,
-           input skipEn50_57,
-           input diagReadFunc14X,
-           input diaFunc051,
-           input diaFunc052,
+           input logic [8:10] norm,
+           input logic [0:10] NICOND,
+           input logic [0:3] SR,
+           input logic [0:35] SHM_SH,
+           input logic [0:35] EDP_MQ,
+           input logic [0:35] EDP_BR,
+           input logic [0:35] EDP_AD,
+           input logic [0:35] EDP_ADX,
+           input logic [0:35] EDP_AR,
+           input logic [0:35] EDP_ARX,
+           input logic [-2:36] EDP_ADcarry,
+           input logic [0:10] pfDisp,
+           input logic skipEn40_47,
+           input logic skipEn50_57,
+           input logic CTL_diagReadFunc14X,
+           input logic CTL_diaFunc051,
+           input logic CTL_diaFunc052,
 
-           input pcSection0,
-           input localACAddress,
-           input longEnable,
-           input indexed,
-           input ADeq0,
-           input ACeq0,
-           input FEsign,
-           input SCsign,
-           input SCADsign,
-           input SCADeq0,
-           input FPD,
-           input ARparityOdd,
+           input logic pcSection0,
+           input logic localACAddress,
+           input logic longEnable,
+           input logic indexed,
+           input logic ADeq0,
+           input logic ACeq0,
+           input logic FEsign,
+           input logic SCsign,
+           input logic SCADsign,
+           input logic SCADeq0,
+           input logic FPD,
+           input logic ARparityOdd,
 
            output tCRADR CRADR,
-           output [10:1] AREAD,
-           output dispParity,
-           output [0:35] CRA_EBUS);
+           output logic [1:10] AREAD,
+           output logic dispParity,
+           iEBUS EBUS,
+           tEBUSdriver EBUSdriver);
 
   logic [0:11] dispMux;
   logic [0:10] diagAdr;
-  logic [0:10] adr;
-  logic [0:10] loc;
 
   logic [0:10] stack[15:0];
   logic [0:10] sbrRet;
@@ -79,81 +77,85 @@ module cra(input eboxClk,
 
 `include "cram-aliases.svh"
 
-  initial CRADR <= 0;
-
   // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
   // they are simple CRAM storage mapping to logical fields.
 
   // Remaining features of E47,E35 are CRAM DISP field decoding.
-  assign dispEn00_03 = CRAM.f.DISP[0:4] === 5'b00011;
-  assign dispEn00_07 = CRAM.f.DISP[0:4] === 5'b00111;
-  assign dispEn30_37 = CRAM.f.DISP[0:4] === 5'b11111;
+  assign dispEn00_03 = CRAM.DISP[0:4] === 5'b00011;
+  assign dispEn00_07 = CRAM.DISP[0:4] === 5'b00111;
+  assign dispEn30_37 = CRAM.DISP[0:4] === 5'b11111;
 
   assign shortIndirWord = ~longEnable | EDP_ARX[1];
-  assign callForce1777 = CRAM.f.CALL | force1777;
-  assign ret = dispEn00_03 && CRAM.f.DISP[3] & CRAM.f.DISP[4];
+  assign callForce1777 = CRAM.CALL | force1777;
+  assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
   assign retNotForce1777 = ret & ~force1777;
 
-  always @(*) begin
+  always_comb begin
 
     if (dispEn00_03) begin
-      case (CRAM.f.DISP[3:4])
-      2'b00: dispMux[0:6] <= diagAdr[0:6];
-      2'b01: dispMux[0:6] <= {2'b00, DRAM_J[1:4], 2'b00};
-      2'b10: dispMux[0:6] <= {2'b00, AREAD[1:4], 2'b00};
-      2'b11: dispMux[0:6] <= sbrRet;
+      case (CRAM.DISP[3:4])
+      2'b00: dispMux[0:6] = diagAdr[0:6];
+      2'b01: dispMux[0:6] = {2'b00, DRAM_J[1:4], 2'b00};
+      2'b10: dispMux[0:6] = {2'b00, AREAD[1:4], 2'b00};
+      2'b11: dispMux[0:6] = sbrRet;
       endcase
     end else if (dispEn00_07) begin
-      case (CRAM.f.DISP[2:4])
-      3'b000: dispMux[7:10] <= diagAdr[7:10];
-      3'b001: dispMux[7:10] <= DRAM_J[7:10];
-      3'b010: dispMux[7:10] <= AREAD[7:10];
-      3'b011: dispMux[7:10] <= sbrRet[7:10];
-      3'b100: dispMux[7:10] <= pfDisp[7:10];
-      3'b101: dispMux[7:10] <= SR[0:3];
-      3'b110: dispMux[7:10] <= NICOND[7:10];
-      3'b111: dispMux[7:10] <= SHM_SH[0:3];
+      case (CRAM.DISP[2:4])
+      3'b000: dispMux[7:10] = diagAdr[7:10];
+      3'b001: dispMux[7:10] = DRAM_J[7:10];
+      3'b010: dispMux[7:10] = AREAD[7:10];
+      3'b011: dispMux[7:10] = sbrRet[7:10];
+      3'b100: dispMux[7:10] = pfDisp[7:10];
+      3'b101: dispMux[7:10] = SR[0:3];
+      3'b110: dispMux[7:10] = NICOND[7:10];
+      3'b111: dispMux[7:10] = SHM_SH[0:3];
       endcase
     end else if (dispEn30_37) begin
-      case (CRAM.f.DISP[2:4])
-      3'b000: dispMux[7:10] <= {1'b0, FEsign, EDP_MQ[34:35], pcSection0};
-      3'b001: dispMux[7:10] <= {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
-      3'b010: dispMux[7:10] <= {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
-      3'b011: dispMux[7:10] <= {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[7:10] <= {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
-      3'b101: dispMux[7:10] <= {1'b0, norm[8:10], EDP_AD[0]};
-      3'b110: dispMux[7:10] <= {~longEnable | EDP_ARX[0], shortIndirWord,
-                                EDP_ARX[13], indexed, ~ADeq0};
-      3'b111: dispMux[7:10] <= {eaType[7:10], localACAddress};
+      case (CRAM.DISP[2:4])
+      3'b000: dispMux[7:10] = {1'b0, FEsign, EDP_MQ[34:35], pcSection0};
+      3'b001: dispMux[7:10] = {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
+      3'b010: dispMux[7:10] = {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
+      3'b011: dispMux[7:10] = {1'b0, DRAM_B[0:2], EDP_ADX[0]};
+      3'b100: dispMux[7:10] = {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
+      3'b101: dispMux[7:10] = {1'b0, norm[8:10], EDP_AD[0]};
+      3'b110: dispMux[7:10] = {~longEnable | EDP_ARX[0], shortIndirWord,
+                               EDP_ARX[13], indexed, ~ADeq0};
+      3'b111: dispMux[7:10] = {eaType[7:10], localACAddress};
       endcase
     end else if (skipEn40_47) begin
-      case (CRAM.f.COND[3:5])
-      3'b000: dispMux[10] <= 0;
-      3'b001: dispMux[10] <= ARparityOdd;
-      3'b010: dispMux[10] <= EDP_BR[0];
-      3'b011: dispMux[10] <= EDP_ARX[0];
-      3'b100: dispMux[10] <= EDP_AR[18];
-      3'b101: dispMux[10] <= EDP_AR[0];
-      3'b110: dispMux[10] <= ACeq0;
-      3'b111: dispMux[10] <= SCsign;
+      case (CRAM.COND[3:5])
+      3'b000: dispMux[10] = 0;
+      3'b001: dispMux[10] = ARparityOdd;
+      3'b010: dispMux[10] = EDP_BR[0];
+      3'b011: dispMux[10] = EDP_ARX[0];
+      3'b100: dispMux[10] = EDP_AR[18];
+      3'b101: dispMux[10] = EDP_AR[0];
+      3'b110: dispMux[10] = ACeq0;
+      3'b111: dispMux[10] = SCsign;
       endcase
     end else if (skipEn50_57) begin
-      case (CRAM.f.COND[3:5])
-      3'b000: dispMux[10] <= pcSection0;
-      3'b001: dispMux[10] <= {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
-      3'b010: dispMux[10] <= {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
-      3'b011: dispMux[10] <= {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[10] <= {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
-      3'b101: dispMux[10] <= {1'b0, norm[8:10], EDP_AD[0]};
-      3'b110: dispMux[10] <= {~longEnable | EDP_ARX[0], shortIndirWord,
-                              EDP_ARX[13], indexed, ~ADeq0};
-      3'b111: dispMux[10] <= {eaType[7:10], localACAddress};
+      case (CRAM.COND[3:5])
+      3'b000: dispMux[10] = pcSection0;
+      3'b001: dispMux[10] = {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
+      3'b010: dispMux[10] = {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
+      3'b011: dispMux[10] = {1'b0, DRAM_B[0:2], EDP_ADX[0]};
+      3'b100: dispMux[10] = {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
+      3'b101: dispMux[10] = {1'b0, norm[8:10], EDP_AD[0]};
+      3'b110: dispMux[10] = {~longEnable | EDP_ARX[0], shortIndirWord,
+                             EDP_ARX[13], indexed, ~ADeq0};
+      3'b111: dispMux[10] = {eaType[7:10], localACAddress};
       endcase
     end else
-      dispMux <= 0;
-    
-    CRADR <= CRAM.f.J | {11{force1777}} | dispMux;
+      dispMux = 0;
   end
+
+
+  // CRADR
+  always @(posedge eboxClk) begin
+    if (eboxReset) CRADR <= 0;
+    CRADR = CRAM.J | {11{force1777}} | dispMux;
+  end
+  
 
   ////////////////////////////////////////////////////////////////
   // The incredibly baroque call/return stack implementation
@@ -208,56 +210,55 @@ module cra(input eboxClk,
       stackAdrEH <= 4'b0000;
     end else if (callForce1777) begin           // 0in+0
       stackAdrAD <= {stackAdrY, {3{retNotForce1777}}};
-      stackAdrEH <= {stackAdrD, 3'b000};
-    end else if (retNotForce1777) begin         // 3in+3
-      stackAdrAD <= {{3{retNotForce1777}}, stackAdrE};
-      stackAdrEH <= {3'b000, stackAdrZ};
-    end else begin                              // HOLD
-      stackAdrAD <= stackAdrAD;
-      stackAdrEH <= stackAdrEH;
-    end
+             stackAdrEH <= {stackAdrD, 3'b000};
+           end else if (retNotForce1777) begin         // 3in+3
+             stackAdrAD <= {{3{retNotForce1777}}, stackAdrE};
+             stackAdrEH <= {3'b000, stackAdrZ};
+           end else begin                              // HOLD
+             stackAdrAD <= stackAdrAD;
+             stackAdrEH <= stackAdrEH;
+           end
 
     if (~callForce1777 && ~retNotForce1777) begin
       sbrRet <= stack[stackAdr];
     end
   end
 
-  always @(posedge stackWrite) stack[stackAdr] <= loc;
+  always @(posedge stackWrite) stack[stackAdr] <= CRADR;
 
 
   ////////////////////////////////////////////////////////////////
   // Diagnostics stuff
-  always @(*) dispParity = ^{CRAM.f.CALL, CRAM.f.DISP};
+  assign dispParity = ^{CRAM.CALL, CRAM.DISP};
 
-  always @(posedge eboxClk) begin
+  always_comb begin
 
-    if (diaFunc051)
-      diagAdr[5:10] <= EBUS.data[0:5];
-    else if (diaFunc052)
-      diagAdr[0:4] <= EBUS.data[1:5];
+    if (CTL_diaFunc051)
+      diagAdr[5:10] = EBUS.data[0:5];
+    else if (CTL_diaFunc052)
+      diagAdr[0:4] = EBUS.data[1:5];
 
-    loc <= adr;
-
-    AREAD <= DRAM_A === 3'b000 ? DRAM_J : 0;
+    AREAD = DRAM_A === 3'b000 ? DRAM_J : 0;
   end
 
   // Diagnostics driving EBUS
-  assign EBUS.drivers.CRA = diagReadFunc14X;
-  always @(*) begin
+  assign EBUSdriver.driving = CTL_diagReadFunc14X;
 
-    if (EBUS.drivers.CRA) begin
+  always_comb begin
+
+    if (EBUSdriver.driving) begin
 
       case (DIAG_FUNC[4:6])
-      3'b000: CRA_EBUS <= {dispEn00_07, dispEn00_03, stackAdr};
-      3'b001: CRA_EBUS <= {CRAM.f.CALL, CRAM.f.DISP[0:4], stackAdr};
-      3'b010: CRA_EBUS <= sbrRet[5:10];
-      3'b011: CRA_EBUS <= {dispEn30_37, sbrRet[0:4]};
-      3'b100: CRA_EBUS <= adr[5:10];
-      3'b101: CRA_EBUS <= {dispParity, adr[0:4]};
-      3'b110: CRA_EBUS <= loc[5:10];
-      3'b111: CRA_EBUS <= {1'b0, loc[0:4]};
+      3'b000: EBUSdriver.data = {dispEn00_07, dispEn00_03, stackAdr};
+      3'b001: EBUSdriver.data = {CRAM.CALL, CRAM.DISP[0:4], stackAdr};
+      3'b010: EBUSdriver.data = sbrRet[5:10];
+      3'b011: EBUSdriver.data = {dispEn30_37, sbrRet[0:4]};
+      3'b100: EBUSdriver.data = CRADR[5:10];
+      3'b101: EBUSdriver.data = {dispParity, CRADR[0:4]};
+      3'b110: EBUSdriver.data = CRADR[5:10];
+      3'b111: EBUSdriver.data = {1'b0, CRADR[0:4]};
       endcase
     end else
-      CRA_EBUS <= 'z;
+      EBUSdriver.data = 'z;
   end
 endmodule

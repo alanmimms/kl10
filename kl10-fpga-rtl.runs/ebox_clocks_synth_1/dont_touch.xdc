@@ -16,6 +16,10 @@ set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet
 # XDC: The top module name and the constraint reference have the same name: 'ebox_clocks'. Do not add the DONT_TOUCH constraint.
 #dup# set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet
 
+# XDC: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks_late.xdc
+# XDC: The top module name and the constraint reference have the same name: 'ebox_clocks'. Do not add the DONT_TOUCH constraint.
+#dup# set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet
+
 # IP: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks.xci
 # IP: The module: 'ebox_clocks' is the root of the design. Do not add the DONT_TOUCH constraint.
 
@@ -28,5 +32,9 @@ set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet
 #dup# set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet
 
 # XDC: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks_ooc.xdc
+# XDC: The top module name and the constraint reference have the same name: 'ebox_clocks'. Do not add the DONT_TOUCH constraint.
+#dup# set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet
+
+# XDC: /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks_late.xdc
 # XDC: The top module name and the constraint reference have the same name: 'ebox_clocks'. Do not add the DONT_TOUCH constraint.
 #dup# set_property DONT_TOUCH TRUE [get_cells inst -quiet] -quiet

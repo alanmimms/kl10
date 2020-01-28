@@ -5,6 +5,5 @@ module con(input eboxClk,
            output loadDRAM,
            output longEnable,
            output CON_fmWrite00_17,
-           output CON_fmWrite18_35
-          /*AUTOARG*/);
+           output CON_fmWrite18_35);
 endmodule // con

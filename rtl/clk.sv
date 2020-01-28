@@ -1,12 +1,13 @@
 `timescale 1ns/1ns
 // M8526 CLK
-module clk(output mbXfer,
-           output eboxClk,
-           output fastMemClk
+module clk(input logic masterClk,
+           input logic eboxReset,
+           output logic mbXfer,
+           output logic eboxClk,
+           output logic fastMemClk
            );
 
-  ebox_clocks clk0(.eboxClk(eboxClk),
-                   .fastMemClk(fastMemClk));
+  ebox_clocks clk0(.clk_in1(masterClk), .*);
   
 endmodule // clk
 // Local Variables:

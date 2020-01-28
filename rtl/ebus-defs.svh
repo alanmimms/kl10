@@ -2,15 +2,24 @@
  `define _EBUS_DEFS_ 1
 
 typedef enum logic [0:2] {
-                    ebusfCONO = 3'b000,
-                    ebusfCONI = 3'b001,
-                    ebusfDATAO = 3'b010,
-                    ebusfDATAI = 3'b011,
-                    ebusfPIserved = 3'b100,
-                    ebusfPIaddrIn = 3'b101
-                    } tEBUSfunction;
+                          ebusfCONO = 3'b000,
+                          ebusfCONI = 3'b001,
+                          ebusfDATAO = 3'b010,
+                          ebusfDATAI = 3'b011,
+                          ebusfPIserved = 3'b100,
+                          ebusfPIaddrIn = 3'b101
+                          } tEBUSfunction;
 
-typedef struct packed {
+
+// Each driver of EBUS gets its own instance of this. These are all
+// muxed onto the iEBUS.data member based on the one-hot
+// tEBUSdriver.driving indicator.
+typedef struct packed{
+  logic [0:35] data;
+  logic driving;
+} tEBUSdriver;
+
+interface iEBUS;
   logic [0:35] data;            // Driven by EBUS mux
   logic dataParity;             // Parity for what exactly? XXX
   logic [0:6] cs;               // EBOX -> dev Controller select
@@ -23,16 +32,6 @@ typedef struct packed {
   logic [0:7] ds;               // Dev -> EBOX??? Diagnostic Select
   logic diagStrobe;             // Dev -> EBOX Diagnostic strobe
   logic dfunc;                  // Dev -> EBOX Diagnostic function
-
-  // One-hot indicators for each module to get ownership of EBUS.data mux
-  struct packed {
-    logic APR;
-    logic CRA;
-    logic CTL;
-    logic EDP;
-    logic IR;
-    logic SCD;
-  } drivers;
-} tEBUS;
+endinterface
 
 `endif

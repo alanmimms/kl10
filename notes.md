@@ -1,3 +1,10 @@
+# TODO
+* Convert cram-defs.svh to package
+* Convert ebus-defs.svh to package
+* Use associative array to build list of iEBUSdriver modules for top.v synthesis?
+* Define methods for EBUS access in iEBUS
+
+
 # Notes About This Implementation
 
 ## Coding Conventions

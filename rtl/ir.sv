@@ -1,16 +1,16 @@
 `timescale 1ns/1ns
+`include "cram-defs.svh"
 `include "ebus-defs.svh"
 // M8522 IR
 module ir(input eboxClk,
           input [0:35] cacheDataRead,
-          input [0:35] EDP_AD,
-          input [0:8] CRAM_DIAG_FUNC,
-          input [0:8] CRAM_MAGIC,
+          input [-2:35] EDP_AD,
+          iCRAM CRAM,
           input mbXfer,
           input loadIR,
           input loadDRAM,
-          input diagLoadFunc06X,
-          input diagReadFunc13X,
+          input CTL_diagLoadFunc06x,
+          input CTL_diagReadFunc13x,
           input inhibitCarry18,
           input SPEC_genCarry18,
           input genCarry36,
@@ -22,27 +22,31 @@ module ir(input eboxClk,
           output ACeq0,
           output JRST0,
           output testSatisfied,
-          output logic [0:35] IR_EBUS,
+
+          iEBUS EBUS,
+          tEBUSdriver EBUSdriver,
+
           output logic [8:10] norm,
           output logic [0:12] IR,
           output logic [9:12] IRAC,
-          output logic [2:0] DRAM_A,
-          output logic [2:0] DRAM_B,
-          output logic [10:0] DRAM_J,
-          output DRAM_ODD_PARITY
-          /*AUTOARG*/);
+          output logic [0:2] DRAM_A,
+          output logic [0:2] DRAM_B,
+          output logic [0:10] DRAM_J,
+          output DRAM_ODD_PARITY);
 
-  logic [23:0] DRAMdata;
-  logic [0:12] DRADR;
+`include "cram-aliases.svh"
+
+  logic [0:14] DRAMdata;
+  logic [0:8] DRADR;
 
   logic [8:10] DRAM_J_X, DRAM_J_Y;
 
-  dram_mem dram(.clka(clk),
+  dram_mem dram(.clka(eboxClk),
                 .addra(DRADR),
                 .douta(DRAMdata),
-                .dina(0),
-                .wea(0),
-                .ena(1)
+                .dina('0),
+                .wea(1'b0),
+                .ena(1'b1)
                 /*AUTOINST*/);
 
 
@@ -65,7 +69,7 @@ module ir(input eboxClk,
   logic enIO_JRST;
   logic enAC;
 
-  logic instr7XX;
+  logic instr7XX, instr744;
   logic enableAC;
   logic magic7eq8;
   logic AgtB;
@@ -83,13 +87,13 @@ module ir(input eboxClk,
   end
 
   logic [0:2] DRAM_A_X, DRAM_A_Y, DRAM_B_X, DRAM_B_Y;
-  logic [8:10] DRAM_PAR_J;
+  logic [7:10] DRAM_PAR_J;
   logic DRAM_PAR;
 
   // XXX THIS SIGNAL does not appear to be defined in IR or anywhere.
   // It would seem it is to be combinatorially drived from
   // DRAM_PAR_X/DRAM_PAR_Y. But I can find no logic to do this.
-  initial DRAM_PAR <= 0;
+  initial DRAM_PAR = 0;
 
   // Latch-mux
   always @(loadDRAM) if (loadDRAM) begin
@@ -110,12 +114,12 @@ module ir(input eboxClk,
     IRAC <= enableAC ? IR[9:12] : 4'b0;
   end
 
-  assign magic7eq8 = CRAM_MAGIC[7] ^ CRAM_MAGIC[8];
+  assign magic7eq8 = CRAM.MAGIC[7] ^ CRAM.MAGIC[8];
   assign AgtB = EDP_AD[0] ^ EDP_ADcarry[-2];
   assign ADeq0 = ~|EDP_AD;
   assign testSatisfied = |{DRAM_B[1] & ADeq0,                     // EQ
-                           DRAM_B[2] & AgtB & CRAM_MAGIC[7],      // GT
-                           DRAM_B[2] & EDP_AD[0] & CRAM_MAGIC[8], // LT
+                           DRAM_B[2] & AgtB & CRAM.MAGIC[7],      // GT
+                           DRAM_B[2] & EDP_AD[0] & CRAM.MAGIC[8], // LT
                            ~magic7eq8 & EDP_ADcarry[-2]               // X
                            } ^ DRAM_B[0];
 
@@ -132,7 +136,7 @@ module ir(input eboxClk,
 
   always @(*) begin
 
-    if (diagLoadFunc06X) begin
+    if (CTL_diagLoadFunc06x) begin
       dramLoadXYeven <= 3'b000;
       dramLoadXYodd <= 3'b001;
       dramLoadJcommon <= 3'b010;
@@ -168,26 +172,26 @@ module ir(input eboxClk,
   assign DRAM_ODD_PARITY = ^{DRAM_A, DRAM_B, DRAM_PAR, DRAM_J[1:4], DRAM_PAR_J[7:10]};
 
   // Diagnostics to drive EBUS
-  assign EBUS.drivers.IR = diagReadFunc13X;
+  assign EBUSdriver.driving = CTL_diagReadFunc13x;
 
   always @(*) begin
 
-    if (EBUS.drivers.IR) begin
+    if (EBUSdriver.driving) begin
 
-      case (CRAM_DIAG_FUNC[4:6])
-      3'b000: IR_EBUS[0:5] = {norm, DRADR[0:2]};
-      3'b001: IR_EBUS[0:5] = DRADR[3:8];
-      3'b010: IR_EBUS[0:5] = {enIO_JRST, enAC, IRAC[9:12]};
-      3'b011: IR_EBUS[0:5] = {DRAM_A[0:2], DRAM_B[0:2]};
-      3'b100: IR_EBUS[0:5] = {testSatisfied, JRST0, DRAM_J[1:4]};
-      3'b101: IR_EBUS[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
-      3'b110: IR_EBUS[0:5] = {ADeq0, IOlegal, inhibitCarry18,
-                              SPEC_genCarry18, genCarry36, EDP_ADcarry[-2]};
-      3'b111: IR_EBUS[0:5] = {EDP_ADcarry[12], EDP_ADcarry[18], EDP_ADcarry[24],
-                              EDP_ADcarry[36], EDP_ADXcarry[12], EDP_ADXcarry[24]};
+      case (DIAG_FUNC[4:6])
+      3'b000: EBUSdriver.data[0:5] = {norm, DRADR[0:2]};
+      3'b001: EBUSdriver.data[0:5] = DRADR[3:8];
+      3'b010: EBUSdriver.data[0:5] = {enIO_JRST, enAC, IRAC};
+      3'b011: EBUSdriver.data[0:5] = {DRAM_A, DRAM_B};
+      3'b100: EBUSdriver.data[0:5] = {testSatisfied, JRST0, DRAM_J[1:4]};
+      3'b101: EBUSdriver.data[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
+      3'b110: EBUSdriver.data[0:5] = {ADeq0, IOlegal, inhibitCarry18,
+                                      SPEC_genCarry18, genCarry36, EDP_ADcarry[-2]};
+      3'b111: EBUSdriver.data[0:5] = {EDP_ADcarry[12], EDP_ADcarry[18], EDP_ADcarry[24],
+                                      EDP_ADcarry[36], EDP_ADXcarry[12], EDP_ADXcarry[24]};
       endcase
     end else
-      IR_EBUS = 'z;
+      EBUSdriver.data = 'z;
   end
 
   // Look-ahead carry functions have been moved from IR to EDP.

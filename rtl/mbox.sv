@@ -2,7 +2,7 @@
 module mbox(input mboxClk,
             input [13:35] EBOX_VMA,
             input vmaACRef,
-            input [37:35] mboxGateVMA,
+            input [27:35] mboxGateVMA,
             input [0:35] cacheDataWrite,
             output logic [0:35] cacheDataRead,
             output logic [0:10] pfDisp,
@@ -12,10 +12,10 @@ module mbox(input mboxClk,
             input write
             /*AUTOARG*/);
   fake_mem mem0(.clka(mboxClk),
-                .addra(EBOX_VMA),
+                .addra(EBOX_VMA[24:35]), // XXX remove slice when using real memory
                 .dina(cacheDataWrite),
                 .douta(cacheDataRead),
-                .ena(1),
+                .ena(1'b1),
                 .wea(write)
                 /*AUTOINST*/);
 endmodule // mbox

@@ -36,6 +36,7 @@ read_ip -quiet /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clo
 set_property used_in_implementation false [get_files -all /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks_board.xdc]
 set_property used_in_implementation false [get_files -all /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks.xdc]
 set_property used_in_implementation false [get_files -all /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks_ooc.xdc]
+set_property used_in_implementation false [get_files -all /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/ebox_clocks/ebox_clocks_late.xdc]
 
 # Mark all dcp files as not used in implementation to prevent them from being
 # stitched into the results of this synthesis run. Any black boxes in the

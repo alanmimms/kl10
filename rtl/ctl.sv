@@ -4,13 +4,11 @@
 
 // M8543 CTL
 module ctl(input eboxClk,
-           input CRAM_ADcarry,
            input [0:35] EDP_AR,
            input PCplus1inh,
 
-           tEBUS EBUS,
-           input logic EBUS_DS_STROBE,
-           output logic [0:35] CTL_EBUS,
+           iEBUS EBUS,
+           tEBUSdriver EBUSdriver,
 
            output logic CTL_AR00to08load,
            output logic CTL_AR09to17load,
@@ -63,11 +61,12 @@ module ctl(input eboxClk,
   logic CTL_SPEC_STACK_UPDATE;
   logic CTL_SPEC_ARL_IND;
   logic CTL_SPEC_AD_LONG;
+  logic CTL_SPEC_MTR_CTL;
 
 `include "cram-aliases.svh"
 
   assign PIcycleSaveFlags = PCplus1inh & spec_XCRY_AR0;
-  assign CTL_ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM.f.AD[0]);
+  assign CTL_ADXcarry36 = ~PIcycleSaveFlags & ((EDP_AR[0] & spec_XCRY_AR0) ^ CRAM.AD[0]);
 
   assign CTL_ADcarry36 = 0;         // XXX not right
 
@@ -77,33 +76,33 @@ module ctl(input eboxClk,
 
   // p.364: Decode all the things.
   // Dispatches
-  assign CTL_DISP_AREAD = CRAM.f.DISP === dispDRAM_A_RD;
-  assign CTL_DISP_RETURN = CRAM.f.DISP === dispRETURN;
-  assign CTL_DISP_NICOND = CRAM.f.DISP === dispNICOND;
-  assign CTL_DISP_MUL = CRAM.f.DISP === dispMUL;
-  assign CTL_DISP_DIV = CRAM.f.DISP === dispDIV;
-  assign CTL_DISP_NORM = CRAM.f.DISP === dispNORM;
-  assign CTL_DISP_EA_MOD = CRAM.f.DISP === dispEA_MOD;
+  assign CTL_DISP_AREAD = CRAM.DISP === dispDRAM_A_RD;
+  assign CTL_DISP_RETURN = CRAM.DISP === dispRETURN;
+  assign CTL_DISP_NICOND = CRAM.DISP === dispNICOND;
+  assign CTL_DISP_MUL = CRAM.DISP === dispMUL;
+  assign CTL_DISP_DIV = CRAM.DISP === dispDIV;
+  assign CTL_DISP_NORM = CRAM.DISP === dispNORM;
+  assign CTL_DISP_EA_MOD = CRAM.DISP === dispEA_MOD;
   
   // Special functions
-  assign CTL_SPEC_INC_CRY_18 = CRAM.f.SPEC === specINH_CRY18;
-  assign CTL_SPEC_MQ_SHIFT = CRAM.f.SPEC === specMQ_SHIFT;
-  assign CTL_SPEC_SCM_ALT = CRAM.f.SPEC === specSCM_ALT;
-  assign CTL_SPEC_CLR_FPD = CRAM.f.SPEC === specCLR_FPD;
-  assign CTL_SPEC_LOAD_PC = CRAM.f.SPEC === specLOAD_PC;
-  assign CTL_SPEC_XCRY_AR0 = CRAM.f.SPEC === specXCRY_AR0;
-  assign CTL_SPEC_GEN_CRY_18 = CRAM.f.SPEC === specGEN_CRY18;
-  assign CTL_SPEC_STACK_UPDATE = CRAM.f.SPEC === specSTACK_UPDATE;
-  assign CTL_SPEC_ARL_IND = CRAM.f.SPEC === specARL_IND;
-  assign CTL_SPEC_FLAG_CTL = CRAM.f.SPEC === specFLAG_CTL;
-  assign CTL_SPEC_SAVE_FLAGS = CRAM.f.SPEC === specSAVE_FLAGS;
-  assign CTL_SPEC_SP_MEM_CYCLE = CRAM.f.SPEC === specSP_MEM_CYCLE;
-  assign CTL_SPEC_AD_LONG = CRAM.f.SPEC === specAD_LONG;
-  assign CTL_SPEC_MTR_CTL = CRAM.f.SPEC === specMTR_CTL;
+  assign CTL_SPEC_INC_CRY_18 = SPEC === specINH_CRY18;
+  assign CTL_SPEC_MQ_SHIFT = SPEC === specMQ_SHIFT;
+  assign CTL_SPEC_SCM_ALT = SPEC === specSCM_ALT;
+  assign CTL_SPEC_CLR_FPD = SPEC === specCLR_FPD;
+  assign CTL_SPEC_LOAD_PC = SPEC === specLOAD_PC;
+  assign CTL_SPEC_XCRY_AR0 = SPEC === specXCRY_AR0;
+  assign CTL_SPEC_GEN_CRY_18 = SPEC === specGEN_CRY18;
+  assign CTL_SPEC_STACK_UPDATE = SPEC === specSTACK_UPDATE;
+  assign CTL_SPEC_ARL_IND = SPEC === specARL_IND;
+  assign CTL_SPEC_FLAG_CTL = SPEC === specFLAG_CTL;
+  assign CTL_SPEC_SAVE_FLAGS = SPEC === specSAVE_FLAGS;
+  assign CTL_SPEC_SP_MEM_CYCLE = SPEC === specSP_MEM_CYCLE;
+  assign CTL_SPEC_AD_LONG = SPEC === specAD_LONG;
+  assign CTL_SPEC_MTR_CTL = SPEC === specMTR_CTL;
 
   // Diagnostic functions
   logic CTL_DIAG_STROBE;
-  assign CTL_DIAG_STROBE = EBUS_DS_STROBE;
+  assign CTL_DIAG_STROBE = EBUS.diagStrobe;
 /*
   assign CTL_DIAG_CTL_FUNC_00x = ;
 

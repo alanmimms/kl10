@@ -6,9 +6,7 @@ module scd(input eboxClk,
            input [0:35] EDP_AR,
            input DIAG_READ_FUNC_13X,
 
-           tuCRAM CRAM,
-           tEBUS EBUS,
-           output [0:35] SCD_EBUS,
+           iCRAM CRAM,
            output [0:8] SCD_ARMMupper,
            output [13:17] SCD_ARMMlower,
            output [0:9] SCD_FE,
@@ -38,6 +36,6 @@ module scd(input eboxClk,
            output USER_IOT,
            output PUBLIC,
            output PRIVATE,
-           output ADR_BRK_PREVENT
-          /*AUTOARG*/);
+           output ADR_BRK_PREVENT);
+
 endmodule // scd

@@ -18,7 +18,6 @@ module edptb;
   logic [0:35]          EDP_ARX;                // From edp0 of edp.v
   logic [0:35]          EDP_BR;                 // From edp0 of edp.v
   logic [0:35]          EDP_BRX;                // From edp0 of edp.v
-  wire [0:35]           EDP_EBUS;               // From edp0 of edp.v
   logic [0:35]          EDP_MQ;                 // From edp0 of edp.v
   logic                 EDP_genCarry36;         // From edp0 of edp.v
   logic [0:35]          FM;                     // From edp0 of edp.v
@@ -69,13 +68,13 @@ module edptb;
   logic [0:8] SCD_ARMMupper;
   logic [13:17] SCD_ARMMlower;
 
-  tEBUS EBUS;
+  iEBUS EBUS();
+  tEBUSdriver EDP_EBUS;
 
 `include "cram-aliases.svh"
 
   iCRAM CRAM();
-
-  edp edp0(.*);
+  edp edp0(.*, EBUSdriver(EDP_EBUS));
 //  crm crm0(.*);
 
   always #20 eboxClk = ~eboxClk;

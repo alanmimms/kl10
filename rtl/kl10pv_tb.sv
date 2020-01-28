@@ -1,5 +1,10 @@
-`ifdef TESTBENCH
 module kl10pv_tb;
-  top kl10pv0();
+  logic masterClk;
+  top kl10pv0(.masterClk);
+
+  always #20 masterClk = ~masterClk;
+
+  initial begin
+    masterClk = 0;
+  end
 endmodule
-`endif

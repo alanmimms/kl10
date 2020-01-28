@@ -118,6 +118,12 @@ wire clk_in2_ebox_clocks;
   wire        clkout6_unused;
   wire        clkfbstopped_unused;
   wire        clkinstopped_unused;
+  (* KEEP = "TRUE" *) 
+  (* ASYNC_REG = "TRUE" *)
+  reg  [7 :0] seq_reg1 = 0;
+  (* KEEP = "TRUE" *) 
+  (* ASYNC_REG = "TRUE" *)
+  reg  [7 :0] seq_reg2 = 0;
 
   MMCME2_ADV
   #(.BANDWIDTH            ("OPTIMIZED"),
@@ -193,14 +199,32 @@ wire clk_in2_ebox_clocks;
 
 
 
-  BUFG clkout1_buf
+
+  BUFGCE clkout1_buf
    (.O   (eboxClk),
+    .CE  (seq_reg1[7]),
     .I   (eboxClk_ebox_clocks));
 
+  BUFH clkout1_buf_en
+   (.O   (eboxClk_ebox_clocks_en_clk),
+    .I   (eboxClk_ebox_clocks));
+  always @(posedge eboxClk_ebox_clocks_en_clk)
+        seq_reg1 <= {seq_reg1[6:0],locked_int};
 
-  BUFG clkout2_buf
+
+  BUFGCE clkout2_buf
    (.O   (fastMemClk),
+    .CE  (seq_reg2[7]),
     .I   (fastMemClk_ebox_clocks));
+ 
+  BUFH clkout2_buf_en
+   (.O   (fastMemClk_ebox_clocks_en_clk),
+    .I   (fastMemClk_ebox_clocks));
+ 
+  always @(posedge fastMemClk_ebox_clocks_en_clk)
+        seq_reg2 <= {seq_reg2[6:0],locked_int};
+
+
 
 
 

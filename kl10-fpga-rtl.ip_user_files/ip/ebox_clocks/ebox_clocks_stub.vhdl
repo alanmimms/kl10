@@ -1,7 +1,7 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
--- Date        : Mon Jan 27 14:06:07 2020
+-- Date        : Tue Jan 28 12:50:23 2020
 -- Host        : alanm running 64-bit Ubuntu 19.10
 -- Command     : write_vhdl -force -mode synth_stub
 --               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/ebox_clocks_synth_1/ebox_clocks_stub.vhdl

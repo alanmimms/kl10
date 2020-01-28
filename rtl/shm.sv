@@ -14,6 +14,6 @@ module shm(input eboxClk,
            output logic [3:0] SHM_XR,
            output indexed,
            output ARextended,
-           output ARparityOdd
-          /*AUTOARG*/);
+           output ARparityOdd);
+
 endmodule // shm

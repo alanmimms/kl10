@@ -36,8 +36,8 @@ module edp(input eboxClk,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
-           tEBUS EBUS,
-           output [0:35] EDP_EBUS,
+           iEBUS EBUS,
+           tEBUSdriver EBUSdriver,
            input [0:35] SHM_SH,
            input [0:8] SCD_ARMMupper,
            input [13:17] SCD_ARMMlower,
@@ -51,7 +51,7 @@ module edp(input eboxClk,
            input CON_fmWrite00_17,
            input CON_fmWrite18_35,
 
-           input diagReadFunc12X,
+           input CTL_diagReadFunc12x,
 
            input [0:35] VMA_VMAheldOrPC,
 
@@ -469,15 +469,15 @@ module edp(input eboxClk,
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
   logic [0:35] ebusR;
-  assign EBUS.drivers.EDP = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
-  assign EDP_EBUS[0:17] = (diagReadFunc12X || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
-  assign EDP_EBUS[18:35] = (diagReadFunc12X || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
+  assign EBUSdriver.driving = CTL_diagReadFunc12x || CTL_adToEBUS_L || CTL_adToEBUS_R;
+  assign EBUSdriver.data[0:17] = (CTL_diagReadFunc12x || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
+  assign EBUSdriver.data[18:35] = (CTL_diagReadFunc12x || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
 
   always_ff @(posedge eboxClk) begin
 
     if (eboxReset) begin
-      EBUS.drivers.EDP <= '0;
-    end else if (EBUS.drivers.EDP) begin
+      EBUSdriver.driving <= '0;
+    end else if (EBUSdriver.driving) begin
 
       unique case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
       3'b000: ebusR <= EDP_AR;

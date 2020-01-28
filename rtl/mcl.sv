@@ -16,6 +16,5 @@ module mcl(input eboxClk,
            input pcp,
            input iot,
            input user,
-           input public
-           /*AUTOARG*/);
+           input public);
 endmodule // mcl

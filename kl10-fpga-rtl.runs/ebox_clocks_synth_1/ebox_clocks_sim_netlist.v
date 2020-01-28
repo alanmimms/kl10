@@ -1,7 +1,7 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
-// Date        : Mon Jan 27 14:06:08 2020
+// Date        : Tue Jan 28 12:50:23 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode funcsim
 //               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/ebox_clocks_synth_1/ebox_clocks_sim_netlist.v
@@ -46,8 +46,13 @@ module ebox_clocks_ebox_clocks_clk_wiz
   wire clkfbout_ebox_clocks;
   wire eboxClk;
   wire eboxClk_ebox_clocks;
+  wire eboxClk_ebox_clocks_en_clk;
   wire fastMemClk;
   wire fastMemClk_ebox_clocks;
+  wire fastMemClk_ebox_clocks_en_clk;
+  wire locked_int;
+  (* RTL_KEEP = "true" *) (* async_reg = "true" *) wire [7:0]seq_reg1;
+  (* RTL_KEEP = "true" *) (* async_reg = "true" *) wire [7:0]seq_reg2;
   wire NLW_mmcm_adv_inst_CLKFBOUTB_UNCONNECTED;
   wire NLW_mmcm_adv_inst_CLKFBSTOPPED_UNCONNECTED;
   wire NLW_mmcm_adv_inst_CLKINSTOPPED_UNCONNECTED;
@@ -61,7 +66,6 @@ module ebox_clocks_ebox_clocks_clk_wiz
   wire NLW_mmcm_adv_inst_CLKOUT5_UNCONNECTED;
   wire NLW_mmcm_adv_inst_CLKOUT6_UNCONNECTED;
   wire NLW_mmcm_adv_inst_DRDY_UNCONNECTED;
-  wire NLW_mmcm_adv_inst_LOCKED_UNCONNECTED;
   wire NLW_mmcm_adv_inst_PSDONE_UNCONNECTED;
   wire [15:0]NLW_mmcm_adv_inst_DO_UNCONNECTED;
 
@@ -79,13 +83,49 @@ module ebox_clocks_ebox_clocks_clk_wiz
        (.I(clk_in1),
         .O(clk_in1_ebox_clocks));
   (* BOX_TYPE = "PRIMITIVE" *) 
-  BUFG clkout1_buf
-       (.I(eboxClk_ebox_clocks),
-        .O(eboxClk));
+  (* XILINX_LEGACY_PRIM = "BUFGCE" *) 
+  (* XILINX_TRANSFORM_PINMAP = "CE:CE0 I:I0" *) 
+  BUFGCTRL #(
+    .INIT_OUT(0),
+    .PRESELECT_I0("TRUE"),
+    .PRESELECT_I1("FALSE"),
+    .SIM_DEVICE("7SERIES")) 
+    clkout1_buf
+       (.CE0(seq_reg1[7]),
+        .CE1(1'b0),
+        .I0(eboxClk_ebox_clocks),
+        .I1(1'b1),
+        .IGNORE0(1'b0),
+        .IGNORE1(1'b1),
+        .O(eboxClk),
+        .S0(1'b1),
+        .S1(1'b0));
   (* BOX_TYPE = "PRIMITIVE" *) 
-  BUFG clkout2_buf
+  BUFH clkout1_buf_en
+       (.I(eboxClk_ebox_clocks),
+        .O(eboxClk_ebox_clocks_en_clk));
+  (* BOX_TYPE = "PRIMITIVE" *) 
+  (* XILINX_LEGACY_PRIM = "BUFGCE" *) 
+  (* XILINX_TRANSFORM_PINMAP = "CE:CE0 I:I0" *) 
+  BUFGCTRL #(
+    .INIT_OUT(0),
+    .PRESELECT_I0("TRUE"),
+    .PRESELECT_I1("FALSE"),
+    .SIM_DEVICE("7SERIES")) 
+    clkout2_buf
+       (.CE0(seq_reg2[7]),
+        .CE1(1'b0),
+        .I0(fastMemClk_ebox_clocks),
+        .I1(1'b1),
+        .IGNORE0(1'b0),
+        .IGNORE1(1'b1),
+        .O(fastMemClk),
+        .S0(1'b1),
+        .S1(1'b0));
+  (* BOX_TYPE = "PRIMITIVE" *) 
+  BUFH clkout2_buf_en
        (.I(fastMemClk_ebox_clocks),
-        .O(fastMemClk));
+        .O(fastMemClk_ebox_clocks_en_clk));
   (* BOX_TYPE = "PRIMITIVE" *) 
   MMCME2_ADV #(
     .BANDWIDTH("OPTIMIZED"),
@@ -163,13 +203,173 @@ module ebox_clocks_ebox_clocks_clk_wiz
         .DO(NLW_mmcm_adv_inst_DO_UNCONNECTED[15:0]),
         .DRDY(NLW_mmcm_adv_inst_DRDY_UNCONNECTED),
         .DWE(1'b0),
-        .LOCKED(NLW_mmcm_adv_inst_LOCKED_UNCONNECTED),
+        .LOCKED(locked_int),
         .PSCLK(1'b0),
         .PSDONE(NLW_mmcm_adv_inst_PSDONE_UNCONNECTED),
         .PSEN(1'b0),
         .PSINCDEC(1'b0),
         .PWRDWN(1'b0),
         .RST(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[0] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(locked_int),
+        .Q(seq_reg1[0]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[1] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[0]),
+        .Q(seq_reg1[1]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[2] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[1]),
+        .Q(seq_reg1[2]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[3] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[2]),
+        .Q(seq_reg1[3]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[4] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[3]),
+        .Q(seq_reg1[4]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[5] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[4]),
+        .Q(seq_reg1[5]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[6] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[5]),
+        .Q(seq_reg1[6]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg1_reg[7] 
+       (.C(eboxClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg1[6]),
+        .Q(seq_reg1[7]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[0] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(locked_int),
+        .Q(seq_reg2[0]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[1] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[0]),
+        .Q(seq_reg2[1]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[2] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[1]),
+        .Q(seq_reg2[2]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[3] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[2]),
+        .Q(seq_reg2[3]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[4] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[3]),
+        .Q(seq_reg2[4]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[5] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[4]),
+        .Q(seq_reg2[5]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[6] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[5]),
+        .Q(seq_reg2[6]),
+        .R(1'b0));
+  (* ASYNC_REG *) 
+  (* KEEP = "yes" *) 
+  FDRE #(
+    .INIT(1'b0)) 
+    \seq_reg2_reg[7] 
+       (.C(fastMemClk_ebox_clocks_en_clk),
+        .CE(1'b1),
+        .D(seq_reg2[6]),
+        .Q(seq_reg2[7]),
+        .R(1'b0));
 endmodule
 `ifndef GLBL
 `define GLBL
