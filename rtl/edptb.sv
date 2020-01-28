@@ -27,7 +27,6 @@ module edptb;
   // End of automatics
   /*AUTOREG*/
 
-  tCRAM CRAM;
   tCRADR CRADR;
 
   logic eboxReset;
@@ -74,7 +73,9 @@ module edptb;
 
 `include "cram-aliases.svh"
 
-  edp edp0(.CRAM_AD(CRAM.AD), .*);
+  iCRAM CRAM();
+
+  edp edp0(.*);
 //  crm crm0(.*);
 
   always #20 eboxClk = ~eboxClk;
@@ -133,7 +134,7 @@ module edptb;
 
     SHM_SH = 0;
 
-    CRAM = '{default: 0};
+//    CRAM = '{default: 0};
 
     CRAM.FMADR = fmadrAC0;
     APR_FMblk = 0;              // Select a good block number
@@ -154,8 +155,8 @@ module edptb;
 
     // Load AR with 123456789
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=5A5AE7C3F, BR/AR >>");
-    cacheDataRead = 36'h5a5ae7c3f;
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=555555555, BR/AR >>");
+    cacheDataRead = 36'h555555555;
     CRAM.AD = adA;
     CRAM.ADA = adaAR;
     CRAM.ADB = adbBR;          // Not used yet
@@ -171,8 +172,8 @@ module edptb;
 
     // Try AD/A first
     @(negedge eboxClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=5A5AE7C3F, BR/AR >>");
-    cacheDataRead = 36'h5a5ae7c3f;
+    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=555555555, BR/AR >>");
+    cacheDataRead = 36'h555555555;
     CRAM.AD = adA;
     CRAM.ADA = adaAR;
     CRAM.ADB = adbBR;          // Not used yet

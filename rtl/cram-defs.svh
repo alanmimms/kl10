@@ -594,4 +594,31 @@ typedef struct packed {
   tMAGIC MAGIC;
 } tCRAM;
 
+interface iCRAM;
+  tJ J;
+  tAD AD;
+  tADA ADA;
+  tADB ADB;
+  tAR AR;
+  tARX ARX;
+  tBR BR;
+  tBRX BRX;
+  tMQ MQ;
+  tFMADR FMADR;
+  tSCAD SCAD;
+  tSCADA SCADA;
+  tSCADB SCADB;
+  tSC SC;
+  tFE FE;
+  tSH SH;
+  tVMA VMA;
+  tTIME TIME;
+  tMEM MEM;
+  tCOND COND;
+  logic CALL;
+  tDISP DISP;
+  logic MARK;
+  tMAGIC MAGIC;
+endinterface
+
 `endif

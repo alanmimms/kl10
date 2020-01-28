@@ -12,8 +12,7 @@ module edp(input eboxClk,
            input CTL_ADXcarry36,
            input CTL_SPEC_AD_LONG,
 
-           input tCRAM CRAM,
-           input [0:5] CRAM_AD,
+           iCRAM CRAM,
 
            input [0:2] CTL_ARL_SEL,
            input [0:2] CTL_ARR_SEL,
@@ -469,11 +468,10 @@ module edp(input eboxClk,
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
+  logic [0:35] ebusR;
   assign EBUS.drivers.EDP = diagReadFunc12X || CTL_adToEBUS_L || CTL_adToEBUS_R;
   assign EDP_EBUS[0:17] = (diagReadFunc12X || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
   assign EDP_EBUS[18:35] = (diagReadFunc12X || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
-
-  logic [0:35] ebusR;
 
   always_ff @(posedge eboxClk) begin
 
