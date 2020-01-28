@@ -7,9 +7,9 @@
 # 
 
 if [ -z "$PATH" ]; then
-  PATH=/x/Xilinx/Vitis/2019.2/bin:/x/Xilinx/Vivado/2019.2/ids_lite/ISE/bin/lin64:/x/Xilinx/Vivado/2019.2/bin
+  PATH=/opt/Xilinx/Vivado/2019.2/ids_lite/ISE/bin/lin64:/opt/Xilinx/Vivado/2019.2/bin
 else
-  PATH=/x/Xilinx/Vitis/2019.2/bin:/x/Xilinx/Vivado/2019.2/ids_lite/ISE/bin/lin64:/x/Xilinx/Vivado/2019.2/bin:$PATH
+  PATH=/opt/Xilinx/Vivado/2019.2/ids_lite/ISE/bin/lin64:/opt/Xilinx/Vivado/2019.2/bin:$PATH
 fi
 export PATH
 

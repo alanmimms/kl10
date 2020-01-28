@@ -5,24 +5,24 @@
    <db_ref_list>
       <db_ref path="edptb_behav.wdb" id="1">
          <top_modules>
-            <top_module name="\$unit_crm_sv " />
+            <top_module name="\$unit_edp_sv " />
             <top_module name="edptb" />
             <top_module name="glbl" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="97159fs"></ZoomStartTime>
-      <ZoomEndTime time="136203fs"></ZoomEndTime>
-      <Cursor1Time time="103666fs"></Cursor1Time>
+      <ZoomStartTime time="97311fs"></ZoomStartTime>
+      <ZoomEndTime time="143583fs"></ZoomEndTime>
+      <Cursor1Time time="105022fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="157"></NameColumnWidth>
-      <ValueColumnWidth column_width="101"></ValueColumnWidth>
+      <ValueColumnWidth column_width="97"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="75" />
+   <WVObjectSize size="165" />
    <wave_markers>
-      <marker label="" time="103666" />
+      <marker label="" time="105022" />
    </wave_markers>
    <wvobject type="logic" fp_name="/edptb/eboxClk">
       <obj_property name="ElementShortName">eboxClk</obj_property>
@@ -324,5 +324,366 @@
    <wvobject type="array" fp_name="/edptb/SCD_ARMMlower">
       <obj_property name="ElementShortName">SCD_ARMMlower[13:17]</obj_property>
       <obj_property name="ObjectShortName">SCD_ARMMlower[13:17]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/eboxClk">
+      <obj_property name="ElementShortName">eboxClk</obj_property>
+      <obj_property name="ObjectShortName">eboxClk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/fastMemClk">
+      <obj_property name="ElementShortName">fastMemClk</obj_property>
+      <obj_property name="ObjectShortName">fastMemClk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/eboxReset">
+      <obj_property name="ElementShortName">eboxReset</obj_property>
+      <obj_property name="ObjectShortName">eboxReset</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_ADcarry36">
+      <obj_property name="ElementShortName">CTL_ADcarry36</obj_property>
+      <obj_property name="ObjectShortName">CTL_ADcarry36</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_ADXcarry36">
+      <obj_property name="ElementShortName">CTL_ADXcarry36</obj_property>
+      <obj_property name="ObjectShortName">CTL_ADXcarry36</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_SPEC_AD_LONG">
+      <obj_property name="ElementShortName">CTL_SPEC_AD_LONG</obj_property>
+      <obj_property name="ObjectShortName">CTL_SPEC_AD_LONG</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CRAM">
+      <obj_property name="ElementShortName">CRAM</obj_property>
+      <obj_property name="ObjectShortName">CRAM</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CTL_ARL_SEL">
+      <obj_property name="ElementShortName">CTL_ARL_SEL[0:2]</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARL_SEL[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CTL_ARR_SEL">
+      <obj_property name="ElementShortName">CTL_ARR_SEL[0:2]</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARR_SEL[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_AR00to08load">
+      <obj_property name="ElementShortName">CTL_AR00to08load</obj_property>
+      <obj_property name="ObjectShortName">CTL_AR00to08load</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_AR09to17load">
+      <obj_property name="ElementShortName">CTL_AR09to17load</obj_property>
+      <obj_property name="ObjectShortName">CTL_AR09to17load</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_ARRload">
+      <obj_property name="ElementShortName">CTL_ARRload</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARRload</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_AR00to11clr">
+      <obj_property name="ElementShortName">CTL_AR00to11clr</obj_property>
+      <obj_property name="ObjectShortName">CTL_AR00to11clr</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_AR12to17clr">
+      <obj_property name="ElementShortName">CTL_AR12to17clr</obj_property>
+      <obj_property name="ObjectShortName">CTL_AR12to17clr</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_ARRclr">
+      <obj_property name="ElementShortName">CTL_ARRclr</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARRclr</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CTL_ARXL_SEL">
+      <obj_property name="ElementShortName">CTL_ARXL_SEL[0:2]</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARXL_SEL[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CTL_ARXR_SEL">
+      <obj_property name="ElementShortName">CTL_ARXR_SEL[0:2]</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARXR_SEL[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_ARX_LOAD">
+      <obj_property name="ElementShortName">CTL_ARX_LOAD</obj_property>
+      <obj_property name="ObjectShortName">CTL_ARX_LOAD</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CTL_MQ_SEL">
+      <obj_property name="ElementShortName">CTL_MQ_SEL[0:1]</obj_property>
+      <obj_property name="ObjectShortName">CTL_MQ_SEL[0:1]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/CTL_MQM_SEL">
+      <obj_property name="ElementShortName">CTL_MQM_SEL[0:1]</obj_property>
+      <obj_property name="ObjectShortName">CTL_MQM_SEL[0:1]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_MQM_EN">
+      <obj_property name="ElementShortName">CTL_MQM_EN</obj_property>
+      <obj_property name="ObjectShortName">CTL_MQM_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_inhibitCarry18">
+      <obj_property name="ElementShortName">CTL_inhibitCarry18</obj_property>
+      <obj_property name="ObjectShortName">CTL_inhibitCarry18</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_SPEC_genCarry18">
+      <obj_property name="ElementShortName">CTL_SPEC_genCarry18</obj_property>
+      <obj_property name="ObjectShortName">CTL_SPEC_genCarry18</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/cacheDataRead">
+      <obj_property name="ElementShortName">cacheDataRead[0:35]</obj_property>
+      <obj_property name="ObjectShortName">cacheDataRead[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/cacheDataWrite">
+      <obj_property name="ElementShortName">cacheDataWrite[0:35]</obj_property>
+      <obj_property name="ObjectShortName">cacheDataWrite[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EBUS">
+      <obj_property name="ElementShortName">EBUS</obj_property>
+      <obj_property name="ObjectShortName">EBUS</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_EBUS">
+      <obj_property name="ElementShortName">EDP_EBUS[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_EBUS[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/SHM_SH">
+      <obj_property name="ElementShortName">SHM_SH[0:35]</obj_property>
+      <obj_property name="ObjectShortName">SHM_SH[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/SCD_ARMMupper">
+      <obj_property name="ElementShortName">SCD_ARMMupper[0:8]</obj_property>
+      <obj_property name="ObjectShortName">SCD_ARMMupper[0:8]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/SCD_ARMMlower">
+      <obj_property name="ElementShortName">SCD_ARMMlower[13:17]</obj_property>
+      <obj_property name="ObjectShortName">SCD_ARMMlower[13:17]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_adToEBUS_L">
+      <obj_property name="ElementShortName">CTL_adToEBUS_L</obj_property>
+      <obj_property name="ObjectShortName">CTL_adToEBUS_L</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CTL_adToEBUS_R">
+      <obj_property name="ElementShortName">CTL_adToEBUS_R</obj_property>
+      <obj_property name="ObjectShortName">CTL_adToEBUS_R</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/APR_FMblk">
+      <obj_property name="ElementShortName">APR_FMblk[0:2]</obj_property>
+      <obj_property name="ObjectShortName">APR_FMblk[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/APR_FMadr">
+      <obj_property name="ElementShortName">APR_FMadr[0:3]</obj_property>
+      <obj_property name="ObjectShortName">APR_FMadr[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CON_fmWrite00_17">
+      <obj_property name="ElementShortName">CON_fmWrite00_17</obj_property>
+      <obj_property name="ObjectShortName">CON_fmWrite00_17</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/CON_fmWrite18_35">
+      <obj_property name="ElementShortName">CON_fmWrite18_35</obj_property>
+      <obj_property name="ObjectShortName">CON_fmWrite18_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/diagReadFunc12X">
+      <obj_property name="ElementShortName">diagReadFunc12X</obj_property>
+      <obj_property name="ObjectShortName">diagReadFunc12X</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/VMA_VMAheldOrPC">
+      <obj_property name="ElementShortName">VMA_VMAheldOrPC[0:35]</obj_property>
+      <obj_property name="ObjectShortName">VMA_VMAheldOrPC[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_AD">
+      <obj_property name="ElementShortName">EDP_AD[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_AD[-2:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_ADX">
+      <obj_property name="ElementShortName">EDP_ADX[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_ADX[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_BR">
+      <obj_property name="ElementShortName">EDP_BR[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_BR[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_BRX">
+      <obj_property name="ElementShortName">EDP_BRX[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_BRX[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_MQ">
+      <obj_property name="ElementShortName">EDP_MQ[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_MQ[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_AR">
+      <obj_property name="ElementShortName">EDP_AR[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_AR[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_ARX">
+      <obj_property name="ElementShortName">EDP_ARX[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_ARX[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/FM">
+      <obj_property name="ElementShortName">FM[0:35]</obj_property>
+      <obj_property name="ObjectShortName">FM[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/fmParity">
+      <obj_property name="ElementShortName">fmParity</obj_property>
+      <obj_property name="ObjectShortName">fmParity</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_AD_EX">
+      <obj_property name="ElementShortName">EDP_AD_EX[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_AD_EX[-2:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_ADcarry">
+      <obj_property name="ElementShortName">EDP_ADcarry[-2:36]</obj_property>
+      <obj_property name="ObjectShortName">EDP_ADcarry[-2:36]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_ADXcarry">
+      <obj_property name="ElementShortName">EDP_ADXcarry[0:36]</obj_property>
+      <obj_property name="ObjectShortName">EDP_ADXcarry[0:36]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/EDP_ADoverflow">
+      <obj_property name="ElementShortName">EDP_ADoverflow[0:35]</obj_property>
+      <obj_property name="ObjectShortName">EDP_ADoverflow[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/EDP_genCarry36">
+      <obj_property name="ElementShortName">EDP_genCarry36</obj_property>
+      <obj_property name="ObjectShortName">EDP_genCarry36</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/tUSRfunc">
+      <obj_property name="ElementShortName">tUSRfunc[0:1]</obj_property>
+      <obj_property name="ObjectShortName">tUSRfunc[0:1]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ARL">
+      <obj_property name="ElementShortName">ARL[0:17]</obj_property>
+      <obj_property name="ObjectShortName">ARL[0:17]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ARXL">
+      <obj_property name="ElementShortName">ARXL[0:17]</obj_property>
+      <obj_property name="ObjectShortName">ARXL[0:17]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ARXR">
+      <obj_property name="ElementShortName">ARXR[0:17]</obj_property>
+      <obj_property name="ObjectShortName">ARXR[0:17]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/MQM">
+      <obj_property name="ElementShortName">MQM[0:35]</obj_property>
+      <obj_property name="ObjectShortName">MQM[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADA">
+      <obj_property name="ElementShortName">ADA[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADA[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADB">
+      <obj_property name="ElementShortName">ADB[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">ADB[-2:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADXA">
+      <obj_property name="ElementShortName">ADXA[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADXA[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADXB">
+      <obj_property name="ElementShortName">ADXB[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADXB[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/AD_CG">
+      <obj_property name="ElementShortName">AD_CG[0:35]</obj_property>
+      <obj_property name="ObjectShortName">AD_CG[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/AD_CP">
+      <obj_property name="ElementShortName">AD_CP[0:35]</obj_property>
+      <obj_property name="ObjectShortName">AD_CP[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADX_CG">
+      <obj_property name="ElementShortName">ADX_CG[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADX_CG[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADX_CP">
+      <obj_property name="ElementShortName">ADX_CP[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADX_CP[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CG06_11">
+      <obj_property name="ElementShortName">AD_CG06_11</obj_property>
+      <obj_property name="ObjectShortName">AD_CG06_11</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CG12_35">
+      <obj_property name="ElementShortName">AD_CG12_35</obj_property>
+      <obj_property name="ObjectShortName">AD_CG12_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CP06_11">
+      <obj_property name="ElementShortName">AD_CP06_11</obj_property>
+      <obj_property name="ObjectShortName">AD_CP06_11</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CP12_35">
+      <obj_property name="ElementShortName">AD_CP12_35</obj_property>
+      <obj_property name="ObjectShortName">AD_CP12_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CG18_23">
+      <obj_property name="ElementShortName">AD_CG18_23</obj_property>
+      <obj_property name="ObjectShortName">AD_CG18_23</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CG24_35">
+      <obj_property name="ElementShortName">AD_CG24_35</obj_property>
+      <obj_property name="ObjectShortName">AD_CG24_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CP18_23">
+      <obj_property name="ElementShortName">AD_CP18_23</obj_property>
+      <obj_property name="ObjectShortName">AD_CP18_23</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/AD_CP24_35">
+      <obj_property name="ElementShortName">AD_CP24_35</obj_property>
+      <obj_property name="ObjectShortName">AD_CP24_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADX_CG00_11">
+      <obj_property name="ElementShortName">ADX_CG00_11</obj_property>
+      <obj_property name="ObjectShortName">ADX_CG00_11</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADX_CG12_23">
+      <obj_property name="ElementShortName">ADX_CG12_23</obj_property>
+      <obj_property name="ObjectShortName">ADX_CG12_23</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADX_CG24_35">
+      <obj_property name="ElementShortName">ADX_CG24_35</obj_property>
+      <obj_property name="ObjectShortName">ADX_CG24_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADX_CP00_11">
+      <obj_property name="ElementShortName">ADX_CP00_11</obj_property>
+      <obj_property name="ObjectShortName">ADX_CP00_11</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADX_CP12_23">
+      <obj_property name="ElementShortName">ADX_CP12_23</obj_property>
+      <obj_property name="ObjectShortName">ADX_CP12_23</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADX_CP24_35">
+      <obj_property name="ElementShortName">ADX_CP24_35</obj_property>
+      <obj_property name="ObjectShortName">ADX_CP24_35</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADA_EN">
+      <obj_property name="ElementShortName">ADA_EN</obj_property>
+      <obj_property name="ObjectShortName">ADA_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/edptb/edp0/ADbool">
+      <obj_property name="ElementShortName">ADbool</obj_property>
+      <obj_property name="ObjectShortName">ADbool</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/SPEC">
+      <obj_property name="ElementShortName">SPEC[0:5]</obj_property>
+      <obj_property name="ObjectShortName">SPEC[0:5]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/DIAG_FUNC">
+      <obj_property name="ElementShortName">DIAG_FUNC[0:8]</obj_property>
+      <obj_property name="ObjectShortName">DIAG_FUNC[0:8]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/SKIP">
+      <obj_property name="ElementShortName">SKIP[0:5]</obj_property>
+      <obj_property name="ObjectShortName">SKIP[0:5]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ADEXxortmp">
+      <obj_property name="ElementShortName">ADEXxortmp[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADEXxortmp[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/S">
+      <obj_property name="ElementShortName">S[0:3]</obj_property>
+      <obj_property name="ObjectShortName">S[0:3]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/alu2_x1">
+      <obj_property name="ElementShortName">alu2_x1[0:35]</obj_property>
+      <obj_property name="ObjectShortName">alu2_x1[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/alu3_x1">
+      <obj_property name="ElementShortName">alu3_x1[0:35]</obj_property>
+      <obj_property name="ObjectShortName">alu3_x1[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/fmAddress">
+      <obj_property name="ElementShortName">fmAddress[0:6]</obj_property>
+      <obj_property name="ObjectShortName">fmAddress[0:6]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/edptb/edp0/ebusR">
+      <obj_property name="ElementShortName">ebusR[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ebusR[0:35]</obj_property>
    </wvobject>
 </wave_config>

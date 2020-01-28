@@ -560,42 +560,38 @@ typedef enum logic [0:8] {
                           diagfuncRD_EBUS_REG = 9'b101_110_111
                           } tDIAG_FUNC;
 
-typedef union packed {
+typedef struct packed {
+  logic u0;
+  tJ J;
+  tAD AD;
+  tADA ADA;
+  logic u21;
+  tADB ADB;
+  tAR AR;
+  tARX ARX;
+  tBR BR;
+  tBRX BRX;
+  tMQ MQ;
+  tFMADR FMADR;
+  tSCAD SCAD;
+  tSCADA SCADA;
+  logic u42;
+  tSCADB SCADB;
+  logic u45;
+  tSC SC;
+  tFE FE;
+  logic u48;
+  tSH SH;
+  logic u51;
+  tVMA VMA;
+  tTIME TIME;
+  tMEM MEM;
+  tCOND COND;
+  logic CALL;
+  tDISP DISP;
+  logic [72:73] u73;
+  logic MARK;
+  tMAGIC MAGIC;
+} tCRAM;
 
-  struct packed {
-    logic u0;
-    tJ J;
-    tAD AD;
-    tADA ADA;
-    logic u21;
-    tADB ADB;
-    tAR AR;
-    tARX ARX;
-    tBR BR;
-    tBRX BRX;
-    tMQ MQ;
-    tFMADR FMADR;
-    tSCAD SCAD;
-    tSCADA SCADA;
-    logic u42;
-    tSCADB SCADB;
-    logic u45;
-    tSC SC;
-    tFE FE;
-    logic u48;
-    tSH SH;
-    logic u51;
-    tVMA VMA;
-    tTIME TIME;
-    tMEM MEM;
-    tCOND COND;
-    logic CALL;
-    tDISP DISP;
-    logic [72:73] u73;
-    logic MARK;
-    tMAGIC MAGIC;
-  } f;
-
-  tCRAM_ALL all;
-} tuCRAM;
 `endif

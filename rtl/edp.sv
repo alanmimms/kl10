@@ -12,7 +12,8 @@ module edp(input eboxClk,
            input CTL_ADXcarry36,
            input CTL_SPEC_AD_LONG,
 
-           input tuCRAM CRAM,
+           input tCRAM CRAM,
+           input [0:5] CRAM_AD,
 
            input [0:2] CTL_ARL_SEL,
            input [0:2] CTL_ARR_SEL,
@@ -97,14 +98,14 @@ module edp(input eboxClk,
 
 `include "cram-aliases.svh"
   
-  // XXX probably not completely right
-  assign EDP_ADcarry[36] = CTL_ADcarry36;
-
   // Miscellaneous reset (XXX)
-  always_ff @(posedge eboxClk iff eboxReset) begin
-    cacheDataWrite <= 0;
+  always_ff @(posedge eboxClk) begin
+    if (eboxReset) cacheDataWrite <= 0;
   end
   
+  // XXX wrong?
+  assign EDP_ADcarry[36] = CTL_ADcarry36;
+
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
   always_comb begin
@@ -143,7 +144,7 @@ module edp(input eboxClk,
       if (CTL_ARRclr) begin
         EDP_AR[18:35] <= 0;
       end else if (CTL_ARRload) begin
-        unique case (CRAM.f.AR)
+        unique case (CRAM.AR)
         3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
         3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
         3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
@@ -230,7 +231,7 @@ module edp(input eboxClk,
 
   // Why is this necessary?
   logic [0:3] S;
-  assign S = CRAM.f.AD[2:5];
+  always_comb S = CRAM.AD[2:5];
 
   // AD
   genvar n;
@@ -374,7 +375,7 @@ module edp(input eboxClk,
         // signals. I am resolving this by forcing this logic only for
         // N=0.
         if (n === 0) begin
-          unique case(CRAM.f.ADB)
+          unique case(CRAM.ADB)
           2'b00: ADB[n-2:n-1] = {2{FM[n+0]}};
           2'b01: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
           2'b10: ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
@@ -384,7 +385,7 @@ module edp(input eboxClk,
         end
 
         // The regular part of ADB mux: E23, E26, and E19.
-        unique case(CRAM.f.ADB)
+        unique case(CRAM.ADB)
         2'b00: ADB[n:n+5] = FM[n+0:n+5];
         2'b01: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
         2'b10: ADB[n:n+5] = EDP_BR[n+0:n+5];
@@ -398,8 +399,8 @@ module edp(input eboxClk,
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
-        unique case(CRAM.f.ADB)
-        2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM.f.MAGIC[n+0:n+5] : 6'b0;
+        unique case(CRAM.ADB)
+        2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM.MAGIC[n+0:n+5] : 6'b0;
         2'b01: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
         2'b10: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
         2'b11: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
@@ -420,7 +421,7 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADAmux
       always_comb
         if (~ADA_EN)
-          unique case(CRAM.f.ADA)
+          unique case(CRAM.ADA)
           2'b00: ADA[n+0:n+5] = EDP_AR[n+0:n+5];
           2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
           2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
@@ -453,7 +454,7 @@ module edp(input eboxClk,
 
     if (eboxReset)
       EDP_BRX <= 0;
-    else if (CRAM.f.BRX === brxARX)
+    else if (CRAM.BRX === brxARX)
       EDP_BRX <= EDP_ARX;
 
 
@@ -462,7 +463,7 @@ module edp(input eboxClk,
 
     if (eboxReset)
       EDP_BR <= 0;
-    else if (CRAM.f.BR === brAR)
+    else if (CRAM.BR === brAR)
       EDP_BR <= EDP_AR;
 
 

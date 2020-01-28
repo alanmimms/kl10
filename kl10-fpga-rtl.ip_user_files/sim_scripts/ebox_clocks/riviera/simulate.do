@@ -1,7 +1,7 @@
 onbreak {quit -force}
 onerror {quit -force}
 
-asim -t 1ps +access +r +m+ebox_clocks -L xpm -L unisims_ver -L unimacro_ver -L secureip -O5 xil_defaultlib.ebox_clocks xil_defaultlib.glbl
+asim -t 1ps +access +r +m+ebox_clocks -L xpm -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip -O5 xil_defaultlib.ebox_clocks xil_defaultlib.glbl
 
 do {wave.do}
 

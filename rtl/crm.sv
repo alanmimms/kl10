@@ -9,7 +9,7 @@
 // to act as all five slots.
 module crm(input eboxClk,
            input tCRADR CRADR,
-           output tuCRAM CRAM);
+           output tCRAM CRAM);
 
   cram_mem cram0(.clka(eboxClk),
                  .addra(CRADR),
