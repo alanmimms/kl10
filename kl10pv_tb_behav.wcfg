@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="33333fs"></ZoomStartTime>
-      <ZoomEndTime time="233334fs"></ZoomEndTime>
-      <Cursor1Time time="200000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="500000fs"></ZoomEndTime>
+      <Cursor1Time time="202830fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="157"></NameColumnWidth>
-      <ValueColumnWidth column_width="81"></ValueColumnWidth>
+      <ValueColumnWidth column_width="77"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="9" />
+   <WVObjectSize size="8" />
    <wvobject type="logic" fp_name="/kl10pv_tb/eboxClk">
       <obj_property name="ElementShortName">eboxClk</obj_property>
       <obj_property name="ObjectShortName">eboxClk</obj_property>
@@ -36,6 +36,7 @@
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/crm0/cram/din">
       <obj_property name="ElementShortName">din[0:83]</obj_property>
@@ -44,17 +45,15 @@
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/crm0/cram/dout">
       <obj_property name="ElementShortName">dout[0:83]</obj_property>
       <obj_property name="ObjectShortName">dout[0:83]</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/crm0/cram/addr">
-      <obj_property name="ElementShortName">addr[0:11]</obj_property>
-      <obj_property name="ObjectShortName">addr[0:11]</obj_property>
+      <obj_property name="ElementShortName">addr[0:10]</obj_property>
+      <obj_property name="ObjectShortName">addr[0:10]</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/crm0/cram/wea">
       <obj_property name="ElementShortName">wea[0:0]</obj_property>
       <obj_property name="ObjectShortName">wea[0:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/crm0/cram/lanes">
-      <obj_property name="ElementShortName">lanes[0:0][0:83]</obj_property>
-      <obj_property name="ObjectShortName">lanes[0:0][0:83]</obj_property>
    </wvobject>
 </wave_config>

@@ -6,7 +6,7 @@ module sim_mem
   (input clk,
    input [0:WIDTH-1] din,
    output [0:WIDTH-1] dout,
-   input [0:$clog2(SIZE-1)] addr,
+   input [0:$clog2(SIZE)-1] addr,
    input [0:NBYTES-1] wea);
 
   localparam BYTE_WIDTH = WIDTH / NBYTES;
