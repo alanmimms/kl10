@@ -26,6 +26,10 @@ module ir(input eboxClk,
           iEBUS EBUS,
           tEBUSdriver EBUSdriver,
 
+`ifdef KL10PV_TB
+          input [0:14] dram[0:511],
+`endif
+
           output logic [8:10] norm,
           output logic [0:12] IR,
           output logic [9:12] IRAC,
@@ -41,6 +45,7 @@ module ir(input eboxClk,
 
   logic [8:10] DRAM_J_X, DRAM_J_Y;
 
+`ifndef KL10PV_TB
   dram_mem dram(.clka(eboxClk),
                 .addra(DRADR),
                 .douta(DRAMdata),
@@ -48,7 +53,7 @@ module ir(input eboxClk,
                 .wea(1'b0),
                 .ena(1'b1)
                 /*AUTOINST*/);
-
+`endif
 
   // p.210 shows older KL10 DRAM addressing.
 

@@ -77,7 +77,8 @@ module edptb;
   edp edp0(.*, EBUSdriver(EDP_EBUS));
 //  crm crm0(.*);
 
-  always #20 eboxClk = ~eboxClk;
+  // 50MHz
+  always #10 eboxClk = ~eboxClk;
 
   // fastMemClk is same frequency as eboxClk, but is delayed from
   // eboxClk posedge and has shorter positive duty cycle.

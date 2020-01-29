@@ -8,6 +8,10 @@ module edp(input eboxClk,
            input fastMemClk,
            input eboxReset,
 
+`ifdef KL10PV_TB
+          input [0:31] fm[127:0],
+`endif
+
            input CTL_ADcarry36,
            input CTL_ADXcarry36,
            input CTL_SPEC_AD_LONG,
@@ -437,13 +441,15 @@ module edp(input eboxClk,
 
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
-  fm_mem fm_mem0(.addra(fmAddress),
-                 .clka(fastMemClk),
-                 .dina(EDP_AR),
-                 .douta(FM),
-                 .wea({CON_fmWrite00_17, CON_fmWrite00_17,
-                       CON_fmWrite18_35, CON_fmWrite18_35})
-                 );
+`ifndef KL10PV_TB
+  fm_mem fm(.addra(fmAddress),
+            .clka(fastMemClk),
+            .dina(EDP_AR),
+            .douta(FM),
+            .wea({CON_fmWrite00_17, CON_fmWrite00_17,
+                  CON_fmWrite18_35, CON_fmWrite18_35})
+            );
+`endif
 
   assign fmParity = ^FM;
 

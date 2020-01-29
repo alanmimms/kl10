@@ -1,7 +1,18 @@
 `timescale 1ns/1ns
 `include "ebus-defs.svh"
 
-module top(input masterClk);
+module top(
+input masterClk
+`ifdef KL10PV_TB
+           ,
+           input eboxClk,
+           input fastMemClk,
+           input eboxReset,
+           input [0:35] fm[0:127],
+           input [0:83] cram[0:2047],
+           input [0:14] dram[0:511]
+`endif
+);
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
   wire                  eboxCCA;                // From ebox0 of ebox.v
@@ -50,7 +61,7 @@ module top(input masterClk);
 
   logic anyEboxError;
 
-  logic eboxReset = 0;
+  logic eboxReset;
   logic [13:35] EBOX_VMA;
   logic req;
   logic PSE;
@@ -95,7 +106,13 @@ module top(input masterClk);
   tEBUSdriver SHM_EBUS;
   tEBUSdriver VMA_EBUS;
 
+// Drive all of our clocks from the testbench if running that way.
+`ifdef KL10PV_TB
+  clk clk0(.masterClk);
+`else
   clk clk0(.*);
+`endif
+
   ebox ebox0(.*);
   mbox mbox0(.*);
 
