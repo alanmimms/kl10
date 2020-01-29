@@ -49,8 +49,8 @@ module ir(input eboxClk,
   dram
   (.clk(eboxClk),
    .din('0),                    // XXX
-   .dout(CRAMdata),
-   .addr(CRADR),
+   .dout(DRAMdata),
+   .addr(DRADR),
    .wea('0));                   // XXX
 `else
   dram_mem dram(.clka(eboxClk),

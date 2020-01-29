@@ -1,8 +1,7 @@
 `timescale 1ns/1ns
 `include "ebus-defs.svh"
 
-module top(
-input masterClk
+module top(input masterClk
 `ifdef KL10PV_TB
            ,
            input eboxClk,
@@ -105,7 +104,7 @@ input masterClk
 
 // Drive all of our clocks from the testbench if running that way.
 `ifdef KL10PV_TB
-  clk clk0(.masterClk);
+  clk clk0(.masterClk, .eboxReset, .mbXfer);
 `else
   clk clk0(.*);
 `endif

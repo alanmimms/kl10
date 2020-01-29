@@ -5,7 +5,7 @@
 module ebox(input eboxClk,
             input fastMemClk,
 
-            output logic eboxReset,
+            input eboxReset,
 
             output logic [13:35] EBOX_VMA,
             output logic [10:12] cacheClearer,
@@ -101,7 +101,7 @@ module ebox(input eboxClk,
   logic [0:10] DRAM_J;
   logic DRAM_ODD_PARITY;
 
-  logic NICOND;
+  logic [0:10] NICOND;
   logic PCplus1inh;
 
   logic [0:3] SR;

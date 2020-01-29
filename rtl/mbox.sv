@@ -9,15 +9,26 @@ module mbox(input mboxClk,
             input req,
             input read,
             input PSE,
-            input write
-            /*AUTOARG*/);
+            input write);
+
+`ifdef KL10PV_TB
+  sim_mem
+    #(.SIZE(4096), .WIDTH(36), .NBYTES(1))
+  fake_mem
+  (.clk(mboxClk),
+   .din(cacheDataWrite),
+   .dout(cacheDataRead),
+   .addr(EBOX_VMA[24:35]),
+   .wea(write));
+`else
   fake_mem mem0(.clka(mboxClk),
                 .addra(EBOX_VMA[24:35]), // XXX remove slice when using real memory
                 .dina(cacheDataWrite),
                 .douta(cacheDataRead),
                 .ena(1'b1),
-                .wea(write)
-                /*AUTOINST*/);
+                .wea(write));
+`endif
+
 endmodule // mbox
 // Local Variables:
 // verilog-library-files:("../ip/fake_mem/fake_mem_stub.v")

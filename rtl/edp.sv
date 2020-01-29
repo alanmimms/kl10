@@ -108,6 +108,7 @@ module edp(input eboxClk,
   // ARL mux
   always_comb begin
     unique case (CTL_ARL_SEL)
+    default: ARL = 'x;
     3'b000: ARL = {SCD_ARMMupper, 5'b0, SCD_ARMMlower};
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
@@ -160,6 +161,7 @@ module edp(input eboxClk,
   always_comb begin
 
     unique case (CTL_ARXL_SEL)
+    default: ARXL = 'x;
     3'b000: ARXL = 0;
     3'b001: ARXL = cacheDataRead[0:17];
     3'b010: ARXL = EDP_AD[0:17];
@@ -171,6 +173,7 @@ module edp(input eboxClk,
     endcase
 
     unique case (CTL_ARXR_SEL)
+    default: ARXR = 'x;
     3'b000: ARXR = 0;
     3'b001: ARXR = cacheDataRead[18:35];
     3'b010: ARXR = EDP_AD[18:35];
@@ -216,6 +219,7 @@ module edp(input eboxClk,
       
       // MQ: 36-bit MC10141-ish universal shift register
       unique case (CTL_MQ_SEL)
+      default: EDP_MQ <= 'x;
       usrLOAD: EDP_MQ <= MQM;
       usrSHL:  EDP_MQ <= {MQM[1:35], EDP_ADcarry[-2]};
       usrSHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
@@ -374,20 +378,22 @@ module edp(input eboxClk,
         // N=0.
         if (n === 0) begin
           unique case(CRAM.ADB)
-          2'b00: ADB[n-2:n-1] = {2{FM[n+0]}};
-          2'b01: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
-          2'b10: ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
-          2'b11: ADB[n-2:n-1] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
-                                 n === 0 ? EDP_AR[n+1] : EDP_AR[n+2]};
+          default: ADB[n-2:n-1] = 'x;
+          adbFM:   ADB[n-2:n-1] = {2{FM[n+0]}};
+          adbBRx2: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
+          adbBR:   ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
+          adbARx4: ADB[n-2:n-1] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
+                                   n === 0 ? EDP_AR[n+1] : EDP_AR[n+2]};
           endcase
         end
 
         // The regular part of ADB mux: E23, E26, and E19.
         unique case(CRAM.ADB)
-        2'b00: ADB[n:n+5] = FM[n+0:n+5];
-        2'b01: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
-        2'b10: ADB[n:n+5] = EDP_BR[n+0:n+5];
-        2'b11: ADB[n:n+5] = {EDP_AR[n+2:n+5], n < 30 ? EDP_AR[n+6:n+7] : EDP_ARX[0:1]};
+        default: ADB[n:n+5] = 'x;
+        adbFM:   ADB[n:n+5] = FM[n+0:n+5];
+        adbBRx2: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
+        adbBR:   ADB[n:n+5] = EDP_BR[n+0:n+5];
+        adbARx4: ADB[n:n+5] = {EDP_AR[n+2:n+5], n < 30 ? EDP_AR[n+6:n+7] : EDP_ARX[0:1]};
         endcase
       end
     end
@@ -398,10 +404,11 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
         unique case(CRAM.ADB)
-        2'b00: ADXB[n+0:n+5] = n < 6 ? CRAM.MAGIC[n+0:n+5] : 6'b0;
-        2'b01: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
-        2'b10: ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
-        2'b11: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
+        default: ADXB[n+0:n+5] = 'x;
+        adbFM:   ADXB[n+0:n+5] = n < 6 ? CRAM.MAGIC[n+0:n+5] : 6'b0;
+        adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
+        adbBR:   ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
+        adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
         endcase
     end
   endgenerate
@@ -420,10 +427,11 @@ module edp(input eboxClk,
       always_comb
         if (~ADA_EN)
           unique case(CRAM.ADA)
-          2'b00: ADA[n+0:n+5] = EDP_AR[n+0:n+5];
-          2'b01: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
-          2'b10: ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
-          2'b11: ADA[n+0:n+5] = VMA_VMAheldOrPC[n+0:n+5];
+          default: ADA[n+0:n+5] = 'x;
+          adaAR:  ADA[n+0:n+5] = EDP_AR[n+0:n+5];
+          adaARX: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
+          adaMQ:  ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
+          adaPC:  ADA[n+0:n+5] = VMA_VMAheldOrPC[n+0:n+5];
           endcase
         else
           ADA[n+0:n+5] = '0;
@@ -492,6 +500,7 @@ module edp(input eboxClk,
     end else if (EBUSdriver.driving) begin
 
       unique case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
+      default: ebusR <= 'x;
       3'b000: ebusR <= EDP_AR;
       3'b001: ebusR <= EDP_BR;
       3'b010: ebusR <= EDP_MQ;

@@ -27,7 +27,7 @@ module cra(input logic eboxClk,
            input logic [0:35] SHM_SH,
            input logic [0:35] EDP_MQ,
            input logic [0:35] EDP_BR,
-           input logic [0:35] EDP_AD,
+           input logic [-2:35] EDP_AD,
            input logic [0:35] EDP_ADX,
            input logic [0:35] EDP_AR,
            input logic [0:35] EDP_ARX,
@@ -151,12 +151,10 @@ module cra(input logic eboxClk,
 
 
   // CRADR
-  always @(posedge eboxClk) begin
+  always @(eboxReset) if (eboxReset) CRADR <= 0;
 
-    if (eboxReset)
-      CRADR <= 0;
-    else
-      CRADR <= CRAM.J | {11{force1777}} | dispMux;
+  always @(posedge eboxClk) begin
+    if (~eboxReset) CRADR <= CRAM.J | {11{force1777}} | dispMux;
   end
   
 

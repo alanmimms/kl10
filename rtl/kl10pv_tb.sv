@@ -19,8 +19,14 @@ module kl10pv_tb;
   end
 
   // Initialize our memories
-  initial begin
-    for (int a = 0; a < 128; ++a) kl10pv0.ebox0.edp0.fm.mem[a] = '0;
+  initial begin                 // FM is always zero at start
+    for (int a = 0; a < $size(kl10pv0.ebox0.edp0.fm.mem); ++a)
+      kl10pv0.ebox0.edp0.fm.mem[a] = '0;
+  end
+
+  initial begin                 // For now, MBOX memory is zero too
+    for (int a = 0; a < $size(kl10pv0.mbox0.fake_mem.mem); ++a)
+      kl10pv0.mbox0.fake_mem.mem[a] = '0;
   end
 
   initial $readmemh("images/DRAM.mem", kl10pv0.ebox0.ir0.dram.mem);
