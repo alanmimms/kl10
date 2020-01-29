@@ -4,12 +4,6 @@ module kl10pv_tb;
   logic fastMemClk;
   logic eboxReset;
 
-  sim_mem fm #(SIZE=128, WIDTH=36, NBYTES=1)();
-
-  logic [0:35] fm[0:127];
-  logic [0:14] dram[0:511];
-  logic [0:83] cram[0:2047];
-
   top kl10pv0(.*);
 
   // 50MHz EBOX clock
@@ -26,11 +20,11 @@ module kl10pv_tb;
 
   // Initialize our memories
   initial begin
-    for (int a = 0; a < 128; ++a) fm[a] = '0;
+    for (int a = 0; a < 128; ++a) kl10pv0.ebox0.edp0.fm.mem[a] = '0;
   end
 
-  initial $readmemh("images/DRAM.coe", dram);
-  initial $readmemh("images/CRAM.coe", cram);
+  initial $readmemh("images/DRAM.coe", kl10pv0.ebox0.ir0.dram.mem);
+  initial $readmemh("images/CRAM.coe", kl10pv0.ebox0.crm0.cram.mem);
 
   // Is this needed? clk.sv does not really need to provide our clocks
   // for testbench.

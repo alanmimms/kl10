@@ -7,10 +7,7 @@ input masterClk
            ,
            input eboxClk,
            input fastMemClk,
-           input eboxReset,
-           input [0:35] fm[0:127],
-           input [0:83] cram[0:2047],
-           input [0:14] dram[0:511]
+           input eboxReset
 `endif
 );
   /*AUTOWIRE*/

@@ -17,18 +17,14 @@ module ir(input eboxClk,
           input [-2:36] EDP_ADcarry,
           input [0:36] EDP_ADXcarry,
 
-          output ADeq0,
-          output IOlegal,
-          output ACeq0,
-          output JRST0,
-          output testSatisfied,
+          output logic ADeq0,
+          output logic IOlegal,
+          output logic ACeq0,
+          output logic JRST0,
+          output logic testSatisfied,
 
           iEBUS EBUS,
           tEBUSdriver EBUSdriver,
-
-`ifdef KL10PV_TB
-          input [0:14] dram[0:511],
-`endif
 
           output logic [8:10] norm,
           output logic [0:12] IR,
@@ -36,7 +32,9 @@ module ir(input eboxClk,
           output logic [0:2] DRAM_A,
           output logic [0:2] DRAM_B,
           output logic [0:10] DRAM_J,
-          output DRAM_ODD_PARITY);
+          output logic DRAM_ODD_PARITY);
+
+  localparam DRAM_WIDTH=15;
 
 `include "cram-aliases.svh"
 
@@ -45,14 +43,22 @@ module ir(input eboxClk,
 
   logic [8:10] DRAM_J_X, DRAM_J_Y;
 
-`ifndef KL10PV_TB
+`ifdef KL10PV_TB
+  sim_mem
+    #(.SIZE(512), .WIDTH(DRAM_WIDTH), .NBYTES(1))
+  dram
+  (.clk(eboxClk),
+   .din('0),                    // XXX
+   .dout(CRAMdata),
+   .addr(CRADR),
+   .wea('0));                   // XXX
+`else
   dram_mem dram(.clka(eboxClk),
                 .addra(DRADR),
                 .douta(DRAMdata),
                 .dina('0),
-                .wea(1'b0),
-                .ena(1'b1)
-                /*AUTOINST*/);
+                .wea('0),
+                .ena('1));
 `endif
 
   // p.210 shows older KL10 DRAM addressing.
