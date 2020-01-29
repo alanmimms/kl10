@@ -441,7 +441,15 @@ module edp(input eboxClk,
 
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
-`ifndef KL10PV_TB
+`ifdef KL10PV_TB
+  sim_mem fm
+    #(SIZE=128, WIDTH=36, NBYTES=2)
+  (.clk(fastMemClk),
+   .din(EDP_AR),
+   .dout(FM),
+   .addr(fmAddress),
+   .wea({CON_fmWrite00_17, CON_fmWrite18_35}));
+`else
   fm_mem fm(.addra(fmAddress),
             .clka(fastMemClk),
             .dina(EDP_AR),

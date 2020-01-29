@@ -44,19 +44,4 @@ module kl10pv_tb;
   end
   
 endmodule
-
-
-module sim_mem 
-  #(parameter SIZE = 0,
-    parameter WIDTH = 0,
-    parameter NBYTES = 0)
-  (input clk,
-   input [0:WIDTH-1] din,
-   output [0:WIDTH-1] dout,
-   input [0:$clog2(SIZE-1)] addr,
-   input [0:NBYTES-1] wea,
-   output [0:WIDTH-1] backingMemory[0:SIZE-1]
-   );
-
-endmodule
                
