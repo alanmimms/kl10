@@ -9,45 +9,41 @@ module top(input masterClk
            input eboxReset
 `endif
 );
-  /*AUTOWIRE*/
-  // Beginning of automatic wires (for undeclared instantiated-module outputs)
-  wire                  eboxCCA;                // From ebox0 of ebox.v
-  wire                  eboxCache;              // From ebox0 of ebox.v
-  wire                  eboxClk;                // From clk0 of clk.v
-  wire                  eboxERA;                // From ebox0 of ebox.v
-  wire                  eboxEnRefillRAMWr;      // From ebox0 of ebox.v
-  wire                  eboxLoadReg;            // From ebox0 of ebox.v
-  wire                  eboxLookEn;             // From ebox0 of ebox.v
-  wire                  eboxMap;                // From ebox0 of ebox.v
-  wire                  eboxMayBePaged;         // From ebox0 of ebox.v
-  wire                  eboxPSE;                // From ebox0 of ebox.v
-  wire                  eboxRead;               // From ebox0 of ebox.v
-  wire                  eboxReadReg;            // From ebox0 of ebox.v
-  wire                  eboxReq;                // From ebox0 of ebox.v
-  wire                  eboxSBUSDiag;           // From ebox0 of ebox.v
-  wire                  eboxUBR;                // From ebox0 of ebox.v
-  wire                  eboxUser;               // From ebox0 of ebox.v
-  wire                  eboxWrite;              // From ebox0 of ebox.v
-  wire                  ept;                    // From ebox0 of ebox.v
-  wire                  fastMemClk;             // From clk0 of clk.v
-  wire                  ki10PagingMode;         // From ebox0 of ebox.v
-  wire                  mbXfer;                 // From clk0 of clk.v
-  wire                  mboxCtl03;              // From ebox0 of ebox.v
-  wire                  mboxCtl06;              // From ebox0 of ebox.v
-  wire                  pageAdrCond;            // From ebox0 of ebox.v
-  wire                  pageIllEntry;           // From ebox0 of ebox.v
-  wire                  pageTestPriv;           // From ebox0 of ebox.v
-  wire [0:10]           pfDisp;                 // From mbox0 of mbox.v
-  wire                  ptDirWrite;             // From ebox0 of ebox.v
-  wire                  ptWr;                   // From ebox0 of ebox.v
-  wire                  upt;                    // From ebox0 of ebox.v
-  wire                  userRef;                // From ebox0 of ebox.v
-  wire                  wrPtSel0;               // From ebox0 of ebox.v
-  wire                  wrPtSel1;               // From ebox0 of ebox.v
-  // End of automatics
+  logic eboxCCA;
+  logic eboxCache;
+  logic eboxERA;
+  logic eboxEnRefillRAMWr;
+  logic eboxLoadReg;
+  logic eboxLookEn;
+  logic eboxMap;
+  logic eboxMayBePaged;
+  logic eboxPSE;
+  logic eboxRead;
+  logic eboxReadReg;
+  logic eboxReq;
+  logic eboxSBUSDiag;
+  logic eboxUBR;
+  logic eboxUser;
+  logic eboxWrite;
+  logic ept;
+  logic ki10PagingMode;
+  logic mbXfer;
+  logic mboxCtl03;
+  logic mboxCtl06;
+  logic pageAdrCond;
+  logic pageIllEntry;
+  logic pageTestPriv;
+  logic [0:10] pfDisp;
+  logic ptDirWrite;
+  logic ptWr;
+  logic upt;
+  logic userRef;
+  logic wrPtSel0;
+  logic wrPtSel1;
 
   logic mboxClk;
   logic eboxSync;
+  logic MR_RESET;
   logic vmaACRef;
   logic [27:35] mboxGateVMA;
   logic [0:35] cacheDataRead;
@@ -64,6 +60,12 @@ module top(input masterClk
   logic read;
   logic write;
 
+  logic MCL_SHORT_STACK;
+  logic MCL_18_BIT_EA;
+  logic MCL_23_BIT_EA;
+  logic MCL_LOAD_AR;
+  logic MCL_LOAD_ARX;
+  logic MCL_MEM_ARL_IND;
 
   // TEMPORARY
   logic cshEBOXT0 = 0;

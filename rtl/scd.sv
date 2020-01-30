@@ -4,7 +4,7 @@
 // M8524 SCD
 module scd(input eboxClk,
            input [0:35] EDP_AR,
-           input DIAG_READ_FUNC_13X,
+           input DIAG_READ_FUNC_13x,
 
            iCRAM CRAM,
            output [0:8] SCD_ARMMupper,

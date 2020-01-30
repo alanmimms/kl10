@@ -5,6 +5,9 @@ module clk(input logic masterClk,
            output logic mbXfer,
            output logic eboxClk,
            output logic fastMemClk,
+           output logic CLK_SBR_CALL,
+           output logic CLK_RESP_MBOX,
+           output logic CLK_RESP_SIM,
            output logic MR_RESET
            );
 

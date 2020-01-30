@@ -12,17 +12,17 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="83334fs"></ZoomStartTime>
-      <ZoomEndTime time="583334fs"></ZoomEndTime>
-      <Cursor1Time time="500000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="606520fs"></ZoomEndTime>
+      <Cursor1Time time="204889fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="157"></NameColumnWidth>
-      <ValueColumnWidth column_width="77"></ValueColumnWidth>
+      <ValueColumnWidth column_width="73"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="26" />
    <wave_markers>
-      <marker label="" time="196226" />
+      <marker label="" time="204889" />
    </wave_markers>
    <wvobject type="logic" fp_name="/kl10pv_tb/eboxClk">
       <obj_property name="ElementShortName">eboxClk</obj_property>
@@ -110,10 +110,6 @@
       <obj_property name="ElementShortName">VMA[0:1]</obj_property>
       <obj_property name="ObjectShortName">VMA[0:1]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/TIME">
-      <obj_property name="ElementShortName">TIME[0:1]</obj_property>
-      <obj_property name="ObjectShortName">TIME[0:1]</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/MEM">
       <obj_property name="ElementShortName">MEM[0:3]</obj_property>
       <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
@@ -129,10 +125,6 @@
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/DISP">
       <obj_property name="ElementShortName">DISP[0:4]</obj_property>
       <obj_property name="ObjectShortName">DISP[0:4]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/MARK">
-      <obj_property name="ElementShortName">MARK</obj_property>
-      <obj_property name="ObjectShortName">MARK</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/MAGIC">
       <obj_property name="ElementShortName">MAGIC[0:8]</obj_property>

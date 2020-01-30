@@ -18,6 +18,12 @@ module ebox(input eboxClk,
             output logic eboxSync,
             output logic mboxClk,
 
+            input MCL_SHORT_STACK,
+            input MCL_18_BIT_EA,
+            input MCL_23_BIT_EA,
+            input MCL_LOAD_AR,
+            input MCL_LOAD_ARX,
+            input MCL_MEM_ARL_IND,
             input pfHold,
             input pfEBOXHandle,
             input pfPublic,
@@ -81,15 +87,24 @@ module ebox(input eboxClk,
 
   logic [0:2] APR_FMblk;
   logic [0:3] APR_FMadr;
+  logic APR_CLK;
+  logic APR_CONO_OR_DATAO;
+  logic APR_CONI_OR_DATAI;
+  logic APR_EBUS_RETURN;
 
   logic [0:35] SHM_SH;
+  logic SHM_AR_PAR_ODD;
 
   logic loadIR;
   logic loadDRAM;
-  logic longEnable;
-  logic CTL_ADcarry36;
-  logic CTL_ADXcarry36;
+  logic [0:8] CTL_REG_CTL;
+  logic CTL_AD_LONG;
+  logic CTL_AD_CRY_36;
+  logic CTL_ADX_CRY_36;
+  logic CTL_INH_CRY_18;
+  logic CTL_GEN_CRY_18;
 
+  logic CON_LONG_ENABLE;
   logic CON_fmWrite00_17;
   logic CON_fmWrite18_35;
 
@@ -102,18 +117,21 @@ module ebox(input eboxClk,
   logic DRAM_ODD_PARITY;
 
   logic [0:10] NICOND;
-  logic PCplus1inh;
 
   logic [0:3] SR;
 
-  logic CTL_SPEC_AD_LONG;
   logic CTL_AR00to08_LOAD;
   logic CTL_AR09to17_LOAD;
   logic CTL_ARR_LOAD;
 
+  logic CTL_AR_CLR;
   logic CTL_AR00to11_CLR;
   logic CTL_AR12to17_CLR;
   logic CTL_ARR_CLR;
+  logic CTL_ARX_CLR;
+  logic CTL_ARL_IND;
+  logic [0:1] CTL_ARL_IND_SEL;
+  logic CTL_MQ_CLR;
 
   logic [0:2] CTL_ARL_SEL;
   logic [0:2] CTL_ARR_SEL;
@@ -124,36 +142,90 @@ module ebox(input eboxClk,
   logic [0:1] CTL_MQ_SEL;
   logic [0:1] CTL_MQM_SEL;
   logic CTL_MQM_EN;
-  logic CTL_inhibitCarry18;
-  logic CTL_SPEC_genCarry18;
 
   logic CTL_adToEBUS_L;
   logic CTL_adToEBUS_R;
 
-  logic CTL_DISP_NICOND;
+  logic CTL_SPEC_GEN_CRY18;
+  logic CTL_SPEC_AD_LONG;
   logic CTL_SPEC_SCM_ALT;
   logic CTL_SPEC_CLR_FPD;
   logic CTL_SPEC_FLAG_CTL;
   logic CTL_SPEC_SP_MEM_CYCLE;
   logic CTL_SPEC_SAVE_FLAGS;
+  logic CTL_SPEC_ADX_CRY_36;
+  logic CTL_SPEC_CALL;
+  logic CTL_SPEC_SBR_CALL;
+  logic CTL_SPEC_XCRY_AR0;
 
-  logic CTL_diagLoadFunc06x;
-  logic CTL_diagReadFunc13x;
-  logic CTL_diagReadFunc14X;
-  logic CTL_diagReadFunc12x;
+  logic CTL_COND_REG_CTL;
+  logic CTL_COND_AR_EXP;
+  logic CTL_COND_ARR_LOAD;
+  logic CTL_COND_ARLR_LOAD;
+  logic CTL_COND_ARLL_LOAD;
+  logic CTL_COND_AR_CLR;
+  logic CTL_COND_ARX_CLR;
+
+  logic CTL_DIAG_CTL_FUNC_00x;
+  logic CTL_DIAG_LD_FUNC_04x;
+  logic CTL_DIAG_LOAD_FUNC_06x;
+  logic CTL_DIAG_LOAD_FUNC_07x;
+  logic CTL_DIAG_LOAD_FUNC_072;
+  logic CTL_DIAG_LD_FUNC_073;
+  logic CTL_DIAG_LD_FUNC_074;
+  logic CTL_DIAG_SYNC_FUNC_075;
+  logic CTL_DIAG_LD_FUNC_076;
+  logic CTL_DIAG_CLK_EDP;
+  logic CTL_DIAG_READ_FUNC_11x;
+  logic CTL_DIAG_READ_FUNC_12x;
+  logic CTL_DIAG_READ_FUNC_13x;
+  logic CTL_DIAG_READ_FUNC_14x;
+
   logic CTL_diaFunc051;
-  logic CTL_diaFunc052;
+  logic CTL_diaFunc052;  
 
-  logic inhibitCarry18;
-  logic SPEC_genCarry18;
-  logic genCarry36;
+  logic CTL_DISP_NICOND;
+  logic CTL_DISP_RET;
+
+  logic CTL_PI_CYCLE_SAVE_FLAGS;
+  logic CTL_LOAD_PC;
+
+  logic CTL_DIAG_STROBE;
+  logic CTL_DIAG_READ;
+  logic CTL_DIAG_AR_LOAD;
+  logic CTL_DIAG_LD_EBUS_REG;
+  logic CTL_EBUS_XFER;
+
+  logic CTL_AD_TO_EBUS_L;
+  logic CTL_AD_TO_EBUS_R;
+  logic CTL_EBUS_T_TO_E_EN;
+  logic CTL_EBUS_E_TO_T_EN;
+
+  logic CTL_EBUS_PARITY_OUT;
+
+  logic DIAG_CHANNEL_CLK_STOP;
+  logic CTL_DIAG_FORCE_EXTEND;
+  logic [0:6] CTL_DIAG_DIAG;
+  logic [4:6] DIAG;
+
+  logic CON_PI_CYCLE;
+  logic CON_PCplus1_INH;
+  logic CON_FM_XFER;
+  logic CON_COND_EN00_07;
+  logic CON_COND_DIAG_FUNC;
+
+  logic MR_RESET;
+  logic CLK_SBR_CALL;
+  logic CLK_RESP_MBOX;
+  logic CLK_RESP_SIM;
+
+  logic P15_GATE_TTL_TO_ECL;
 
   logic ADeq0;
   logic IOlegal;
   logic ACeq0;
   logic JRST0;
   logic testSatisfied;
-
 
   logic [0:8] SCD_ARMMupper;
   logic [13:17] SCD_ARMMlower;
@@ -183,7 +255,6 @@ module ebox(input eboxClk,
 
   logic pcSection0;
   logic localACAddress;
-  logic longEnable;
   logic indexed;
   logic FEsign;
   logic SCsign;

@@ -7,9 +7,8 @@
 module edp(input eboxClk,
            input fastMemClk,
            input eboxReset,
-           input CTL_ADcarry36,
-           input CTL_ADXcarry36,
-           input CTL_SPEC_AD_LONG,
+           input CTL_AD_CRY_36,
+           input CTL_ADX_CRY_36,
 
            iCRAM CRAM,
 
@@ -30,8 +29,9 @@ module edp(input eboxClk,
            input [0:1] CTL_MQ_SEL,
            input [0:1] CTL_MQM_SEL,
            input CTL_MQM_EN,
-           input CTL_inhibitCarry18,
-           input CTL_SPEC_genCarry18,
+           input CTL_INH_CRY_18,
+           input CTL_SPEC_AD_LONG,
+           input CTL_SPEC_GEN_CRY18,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
@@ -50,7 +50,7 @@ module edp(input eboxClk,
            input CON_fmWrite00_17,
            input CON_fmWrite18_35,
 
-           input CTL_diagReadFunc12x,
+           input CTL_DIAG_READ_FUNC_12x,
 
            input [0:35] VMA_VMAheldOrPC,
 
@@ -102,7 +102,7 @@ module edp(input eboxClk,
   end
   
   // XXX wrong?
-  assign EDP_ADcarry[36] = CTL_ADcarry36;
+  assign EDP_ADcarry[36] = CTL_AD_CRY_36;
 
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
@@ -285,7 +285,7 @@ module edp(input eboxClk,
                    .S(S),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
-                   .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADXcarry36),
+                   .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADX_CRY_36),
                    .F({alu3_x1[n], EDP_ADX[n+3:n+5]}),
                    .CG(ADX_CG[n+3]),
                    .CP(ADX_CP[n+3]),
@@ -295,7 +295,7 @@ module edp(input eboxClk,
 
   // AD carry look ahead
   // Moved here from IR4
-  assign EDP_genCarry36 = CTL_ADXcarry36 | CTL_SPEC_AD_LONG;
+  assign EDP_genCarry36 = CTL_ADX_CRY_36 | CTL_SPEC_AD_LONG;
   
   // IR4 E11
   mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
@@ -321,8 +321,8 @@ module edp(input eboxClk,
                     .C2OUT(EDP_ADcarry[18]));
 
   // IR4 E6
-  mc10179 AD_LCG_E6(.G({~CTL_inhibitCarry18, ~CTL_inhibitCarry18, AD_CG[18], AD_CG[20]}),
-                    .P({CTL_SPEC_genCarry18, 1'b0, AD_CP[18], AD_CP[20]}),
+  mc10179 AD_LCG_E6(.G({~CTL_INH_CRY_18, ~CTL_INH_CRY_18, AD_CG[18], AD_CG[20]}),
+                    .P({CTL_SPEC_GEN_CRY18, 1'b0, AD_CP[18], AD_CP[20]}),
                     .CIN(1'b0),
                     .GG(AD_CG18_23),
                     .PG(AD_CP18_23));
@@ -341,7 +341,7 @@ module edp(input eboxClk,
   // IR4 E22
   mc10179 ADX_LCG_E22(.G({   EDP_genCarry36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
                       .P({~CTL_SPEC_AD_LONG, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
-                      .CIN(CTL_ADXcarry36),
+                      .CIN(CTL_ADX_CRY_36),
                       .C8OUT(EDP_ADcarry[36]));
   // IR4 E21
   mc10179 ADX_LCG_E21(.G({ADX_CG[0], ADX_CG[3], ADX_CG[6], ADX_CG[9]}),
@@ -358,7 +358,7 @@ module edp(input eboxClk,
   // IR4 E16
   mc10179 ADX_LCG_E16(.G({ADX_CG[24], ADX_CG[27], ADX_CG[30], ADX_CG[33]}),
                       .P({ADX_CP[24], ADX_CP[27], ADX_CP[30], ADX_CP[33]}),
-                      .CIN(CTL_ADXcarry36),
+                      .CIN(CTL_ADX_CRY_36),
                       .GG(ADX_CG24_35),
                       .PG(ADX_CP24_35),
                       .C8OUT(EDP_ADXcarry[24]),
@@ -489,9 +489,9 @@ module edp(input eboxClk,
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
   logic [0:35] ebusR;
-  assign EBUSdriver.driving = CTL_diagReadFunc12x || CTL_adToEBUS_L || CTL_adToEBUS_R;
-  assign EBUSdriver.data[0:17] = (CTL_diagReadFunc12x || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
-  assign EBUSdriver.data[18:35] = (CTL_diagReadFunc12x || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
+  assign EBUSdriver.driving = CTL_DIAG_READ_FUNC_12x || CTL_adToEBUS_L || CTL_adToEBUS_R;
+  assign EBUSdriver.data[0:17] = (CTL_DIAG_READ_FUNC_12x || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
+  assign EBUSdriver.data[18:35] = (CTL_DIAG_READ_FUNC_12x || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
 
   always_ff @(posedge eboxClk) begin
 

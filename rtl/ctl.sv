@@ -94,6 +94,7 @@ module ctl(input eboxClk,
 
            output logic CTL_DIAG_CTL_FUNC_00x,
            output logic CTL_DIAG_LD_FUNC_04x,
+           output logic CTL_DIAG_LOAD_FUNC_06x,
            output logic CTL_DIAG_LOAD_FUNC_07x,
            output logic CTL_DIAG_LOAD_FUNC_072,
            output logic CTL_DIAG_LD_FUNC_073,
@@ -103,6 +104,8 @@ module ctl(input eboxClk,
            output logic CTL_DIAG_CLK_EDP,
            output logic CTL_DIAG_READ_FUNC_11x,
            output logic CTL_DIAG_READ_FUNC_12x,
+           output logic CTL_DIAG_READ_FUNC_13x,
+           output logic CTL_DIAG_READ_FUNC_14x,
            
            output logic CTL_PI_CYCLE_SAVE_FLAGS,
            output logic CTL_LOAD_PC,
@@ -142,6 +145,7 @@ module ctl(input eboxClk,
   logic CTL_SPEC_ARL_IND;
   logic CTL_SPEC_AD_LONG;
   logic CTL_SPEC_MTR_CTL;
+  logic SPEC_MTR_CTL;
 
   logic CTL_COND_ARL_IND;
 
@@ -157,13 +161,9 @@ module ctl(input eboxClk,
 
   logic DIAG_CONTROL_FUNC_01x;
   logic DIAG_LOAD_FUNC_05x;
-  logic DIAG_LOAD_FUNC_06x;
   logic DIAG_LOAD_FUNC_070;
   logic DIAG_LOAD_FUNC_071;
   logic DIAG_READ_FUNC_10x;
-  logic DIAG_READ_FUNC_12x;
-  logic DIAG_READ_FUNC_13x;
-  logic DIAG_READ_FUNC_14x;
   logic DIAG_READ_FUNC_15x;
   logic DIAG_READ_FUNC_16x;
   logic DIAG_READ_FUNC_17x;
@@ -194,53 +194,50 @@ module ctl(input eboxClk,
   assign CTL_SPEC_SAVE_FLAGS = SPEC === specSAVE_FLAGS;
   assign CTL_SPEC_SP_MEM_CYCLE = SPEC === specSP_MEM_CYCLE;
   assign CTL_SPEC_AD_LONG = SPEC === specAD_LONG;
-  assign CTL_SPEC_MTR_CTL = SPEC === specMTR_CTL;
-
-  // Diagnostic functions
-  assign CTL_DIAG_STROBE = EBUS.diagStrobe;
+  assign SPEC_MTR_CTL = SPEC === specMTR_CTL;
 
   // EBUS
   always_comb begin
     EBUSdriver.driving = CTL_DIAG_READ;
 
     unique case ({CTL_DIAG_READ, CTL_DS[4:6]})
-    default: EBUSdriver.data[24:38] = 0;
-    4'b1000: EBUSdriver.data[24:38] = {CTL_SPEC_SCM_ALT,
+    default: EBUSdriver.data[24:28] = 0;
+    4'b1000: EBUSdriver.data[24:28] = {CTL_SPEC_SCM_ALT,
                                        CTL_SPEC_SAVE_FLAGS,
                                        CTL_ARL_SEL[1],
                                        CTL_ARR_LOAD,
                                        CTL_AR00to08_LOAD};
-    4'b1001: EBUSdriver.data[24:38] = {CTL_SPEC_CLR_FPD,
+    4'b1001: EBUSdriver.data[24:28] = {CTL_SPEC_CLR_FPD,
                                        CTL_SPEC_MTR_CTL,
                                        CTL_ARL_SEL[0],
                                        CTL_ARR_LOAD,
                                        CTL_AR09to17_LOAD};
-    4'b1010: EBUSdriver.data[24:38] = {CTL_SPEC_GEN_CRY_18,
+    4'b1010: EBUSdriver.data[24:28] = {CTL_SPEC_GEN_CRY_18,
                                        CTL_COND_AR_EXP,
                                        CTL_ARR_SEL[1],
                                        CTL_MQM_SEL[1],
                                        CTL_ARX_LOAD};
-    4'b1011: EBUSdriver.data[24:38] = {CTL_SPEC_STACK_UPDATE,
+    4'b1011: EBUSdriver.data[24:28] = {CTL_SPEC_STACK_UPDATE,
                                        CTL_DISP_RET,
                                        CTL_ARR_SEL[0],
                                        CTL_MQM_SEL[0],
                                        CTL_ARL_SEL[2]};
-    4'b1100: EBUSdriver.data[24:38] = {CTL_SPEC_FLAG_CTL,
+    4'b1100: EBUSdriver.data[24:28] = {CTL_SPEC_FLAG_CTL,
                                        CTL_LOAD_PC,
                                        CTL_ARXL_SEL[1],
                                        CTL_MQ_SEL[1],
                                        CTL_AR00to11_CLR};
-    4'b1101: EBUSdriver.data[24:38] = {CTL_SPEC_SP_MEM_CYCLE,
+    4'b1101: EBUSdriver.data[24:28] = {CTL_SPEC_SP_MEM_CYCLE,
                                        CTL_SPEC_ADX_CRY_36,
                                        CTL_ARXL_SEL[0],
                                        CTL_MQ_SEL[0],
                                        CTL_AR12to17_CLR};
-    4'b1110: EBUSdriver.data[24:38] = {CTL_AD_LONG,
+    4'b1110: EBUSdriver.data[24:28] = {CTL_AD_LONG,
                                        CTL_ADX_CRY_36,
                                        CTL_ARXR_SEL[1],
                                        CTL_MQM_EN,
                                        CTL_ARR_CLR};
-    4'b1111: EBUSdriver.data[24:38] = {CTL_INH_CRY_18,
+    4'b1111: EBUSdriver.data[24:28] = {CTL_INH_CRY_18,
                                        DIAG_MEM_RESET,
                                        CTL_ARXR_SEL[0],
                                        CTL_DIAG_LD_EBUS_REG,
@@ -284,9 +281,7 @@ module ctl(input eboxClk,
                   CTL_SPEC_MQ_SHIFT;
 
     CTL_DISP_RET = ~(~CLK_SBR_CALL | ~CTL_DISP_RETURN);
-
-    // Race?
-    CTL_SPEC_MTR_CTL = CTL_SPEC_MTR_CTL & APR_CLK;
+    CTL_SPEC_MTR_CTL = SPEC_MTR_CTL & APR_CLK;
   end
 
   // CTL2 p.365
@@ -350,7 +345,7 @@ module ctl(input eboxClk,
 
     respMBOXorSIM = CLK_RESP_MBOX | CLK_RESP_SIM;
     diagLoadARorInd = CTL_ARL_IND | CTL_DIAG_AR_LOAD;
-    diagLoadARorARM = CRAM.ARM[2] | CTL_DIAG_AR_LOAD;
+    diagLoadARorARM = CRAM.AR[2] | CTL_DIAG_AR_LOAD;
     CTL_ARL_SEL[0] = (MCL_LOAD_AR | diagLoadARorInd) & (diagLoadARorInd | respMBOXorSIM);
     CTL_ARR_SEL[0] = (MCL_LOAD_AR | diagLoadARorARM) & (diagLoadARorARM | respMBOXorSIM);
     CTL_ARXL_SEL[0] = (MCL_LOAD_ARX | CRAM.ARX[2]) & (CRAM.ARX[2] | respMBOXorSIM);
@@ -375,7 +370,7 @@ module ctl(input eboxClk,
     DIAG_CONTROL_FUNC_01x  = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b010;
     CTL_DIAG_LD_FUNC_04x   = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b100;
     DIAG_LOAD_FUNC_05x     = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b101;
-    DIAG_LOAD_FUNC_06x     = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b110;
+    CTL_DIAG_LOAD_FUNC_06x = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b110;
     CTL_DIAG_LOAD_FUNC_07x = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b111;
 
     DIAG_LOAD_FUNC_070     = CTL_DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b000;
@@ -391,16 +386,15 @@ module ctl(input eboxClk,
     DIAG_READ_FUNC_10x     = en1xx && CTL_DS[1:3] === 3'b000;
     CTL_DIAG_READ_FUNC_11x = en1xx && CTL_DS[1:3] === 3'b001;
     CTL_DIAG_READ_FUNC_12x = en1xx && CTL_DS[1:3] === 3'b010;
-    DIAG_READ_FUNC_13x     = en1xx && CTL_DS[1:3] === 3'b011;
-    DIAG_READ_FUNC_14x     = en1xx && CTL_DS[1:3] === 3'b100;
+    CTL_DIAG_READ_FUNC_13x = en1xx && CTL_DS[1:3] === 3'b011;
+    CTL_DIAG_READ_FUNC_14x = en1xx && CTL_DS[1:3] === 3'b100;
     DIAG_READ_FUNC_15x     = en1xx && CTL_DS[1:3] === 3'b101;
     DIAG_READ_FUNC_16x     = en1xx && CTL_DS[1:3] === 3'b110;
     DIAG_READ_FUNC_17x     = en1xx && CTL_DS[1:3] === 3'b111;
 
     CTL_DIAG_READ = DIAG_READ_FUNC_10x;
 
-    DIAG_READ_FUNC_12x = CTL_DIAG_READ_FUNC_12x;
-    CTL_DIAG_STROBE = EBUS.dsStrobe;
+    CTL_DIAG_STROBE = EBUS.diagStrobe;
 
     CTL_CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
     CTL_READ_STROBE = CTL_CONSOLE_CONTROL ? CTL_DIAG_STROBE : CON_COND_DIAG_FUNC & APR_CLK;
@@ -412,7 +406,7 @@ module ctl(input eboxClk,
                        (APR_CONO_OR_DATAO | (CON_COND_DIAG_FUNC | CRAM.MAGIC[2] | APR_CLK));
     CTL_AD_TO_EBUS_R = CTL_AD_TO_EBUS_L;
 
-    CTL_DIAG_AR_LOAD = CTL_DS[0] & &EBUS.DS[1:3] & &DIAG[4:6];
+    CTL_DIAG_AR_LOAD = CTL_DS[0] & &EBUS.ds[1:3] & &DIAG[4:6];
 
     CTL_EBUS_T_TO_E_EN = (P15_GATE_TTL_TO_ECL | APR_CONI_OR_DATAI) & CTL_CONSOLE_CONTROL |
                          (EBUS.ds[0] & CTL_CONSOLE_CONTROL);

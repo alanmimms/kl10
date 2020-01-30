@@ -46,14 +46,14 @@ module edptb;
   logic [0:1] CTL_MQ_SEL;
   logic [0:1] CTL_MQM_SEL;
   logic CTL_MQM_EN;
-  logic CTL_inhibitCarry18;
-  logic CTL_SPEC_genCarry18;
+  logic CTL_INH_CRY_18;
+  logic CTL_SPEC_GEN_CRY18;
 
   logic CTL_adToEBUS_L;
   logic CTL_adToEBUS_R;
 
-  logic CTL_ADcarry36;
-  logic CTL_ADXcarry36;
+  logic CTL_AD_CRY_36;
+  logic CTL_ADX_CRY_36;
   logic CTL_SPEC_AD_LONG;
 
   logic [0:2] APR_FMblk;
@@ -101,8 +101,8 @@ module edptb;
     CRADR = 0;
     cacheDataRead = 0;
 
-    CTL_ADcarry36 = 0;
-    CTL_ADXcarry36 = 0;
+    CTL_AD_CRY_36 = 0;
+    CTL_ADX_CRY_36 = 0;
     CTL_SPEC_AD_LONG = 0;
 
     CTL_ARL_SEL = 0;

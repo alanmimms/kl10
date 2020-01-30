@@ -9,11 +9,10 @@ module ir(input eboxClk,
           input mbXfer,
           input loadIR,
           input loadDRAM,
-          input CTL_diagLoadFunc06x,
-          input CTL_diagReadFunc13x,
-          input inhibitCarry18,
-          input SPEC_genCarry18,
-          input genCarry36,
+          input CTL_DIAG_LOAD_FUNC_06x,
+          input CTL_DIAG_READ_FUNC_13x,
+          input CTL_INH_CRY_18,
+          input CTL_SPEC_GEN_CRY18,
           input [-2:36] EDP_ADcarry,
           input [0:36] EDP_ADXcarry,
 
@@ -80,17 +79,18 @@ module ir(input eboxClk,
   logic enIO_JRST;
   logic enAC;
 
-  logic instr7XX, instr744;
+  logic instr7XX;
+  logic instr3thru6;
   logic enableAC;
   logic magic7eq8;
   logic AgtB;
 
   // This mess is p.128 E55,E70,E71,E75,E76
   assign instr7XX = IR[0] & IR[1] & IR[2] & enIO_JRST;
-  assign instr774 = &IR[3:6];
+  assign instr3thru6 = &IR[3:6];
 
   logic [3:8] ioDRADR;
-  assign ioDRADR[3:5] = instr7XX ? (IR[7:9] | {3{instr774}}) : IR[3:5];
+  assign ioDRADR[3:5] = instr7XX ? (IR[7:9] | {3{instr3thru6}}) : IR[3:5];
   assign ioDRADR[6:8] = instr7XX ? IR[6:8] : IR[10:12];
 
   always @(loadDRAM) if (loadDRAM) begin
@@ -147,7 +147,7 @@ module ir(input eboxClk,
 
   always @(*) begin
 
-    if (CTL_diagLoadFunc06x) begin
+    if (CTL_DIAG_LOAD_FUNC_06x) begin
       dramLoadXYeven <= 3'b000;
       dramLoadXYodd <= 3'b001;
       dramLoadJcommon <= 3'b010;
@@ -183,7 +183,7 @@ module ir(input eboxClk,
   assign DRAM_ODD_PARITY = ^{DRAM_A, DRAM_B, DRAM_PAR, DRAM_J[1:4], DRAM_PAR_J[7:10]};
 
   // Diagnostics to drive EBUS
-  assign EBUSdriver.driving = CTL_diagReadFunc13x;
+  assign EBUSdriver.driving = CTL_DIAG_READ_FUNC_13x;
 
   always @(*) begin
 
@@ -196,8 +196,8 @@ module ir(input eboxClk,
       3'b011: EBUSdriver.data[0:5] = {DRAM_A, DRAM_B};
       3'b100: EBUSdriver.data[0:5] = {testSatisfied, JRST0, DRAM_J[1:4]};
       3'b101: EBUSdriver.data[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
-      3'b110: EBUSdriver.data[0:5] = {ADeq0, IOlegal, inhibitCarry18,
-                                      SPEC_genCarry18, genCarry36, EDP_ADcarry[-2]};
+      3'b110: EBUSdriver.data[0:5] = {ADeq0, IOlegal, CTL_INH_CRY_18,
+                                      CTL_SPEC_GEN_CRY18, CTL_SPEC_GEN_CRY18, EDP_ADcarry[-2]};
       3'b111: EBUSdriver.data[0:5] = {EDP_ADcarry[12], EDP_ADcarry[18], EDP_ADcarry[24],
                                       EDP_ADcarry[36], EDP_ADXcarry[12], EDP_ADXcarry[24]};
       endcase
