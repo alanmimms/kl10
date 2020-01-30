@@ -12,9 +12,9 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="500000fs"></ZoomEndTime>
-      <Cursor1Time time="196226fs"></Cursor1Time>
+      <ZoomStartTime time="83334fs"></ZoomStartTime>
+      <ZoomEndTime time="583334fs"></ZoomEndTime>
+      <Cursor1Time time="500000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="157"></NameColumnWidth>
@@ -44,6 +44,7 @@
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/J">
       <obj_property name="ElementShortName">J[0:10]</obj_property>
       <obj_property name="ObjectShortName">J[0:10]</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/AD">
       <obj_property name="ElementShortName">AD[0:5]</obj_property>
@@ -136,5 +137,6 @@
    <wvobject type="array" fp_name="/kl10pv_tb/kl10pv0/ebox0/CRAM/MAGIC">
       <obj_property name="ElementShortName">MAGIC[0:8]</obj_property>
       <obj_property name="ObjectShortName">MAGIC[0:8]</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
 </wave_config>

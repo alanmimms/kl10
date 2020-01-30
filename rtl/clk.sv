@@ -4,7 +4,8 @@ module clk(input logic masterClk,
            input logic eboxReset,
            output logic mbXfer,
            output logic eboxClk,
-           output logic fastMemClk
+           output logic fastMemClk,
+           output logic MR_RESET
            );
 
 `ifndef KL10PV_TB
@@ -12,6 +13,7 @@ module clk(input logic masterClk,
 `endif
 
   assign mbXfer = 0;            // TEMPORARY XXX
+  assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)
 endmodule // clk
 // Local Variables:
 // verilog-library-files:("../ip/ebox_clocks/ebox_clocks_stub.v")

@@ -107,13 +107,13 @@ module ebox(input eboxClk,
   logic [0:3] SR;
 
   logic CTL_SPEC_AD_LONG;
-  logic CTL_AR00to08load;
-  logic CTL_AR09to17load;
-  logic CTL_ARRload;
+  logic CTL_AR00to08_LOAD;
+  logic CTL_AR09to17_LOAD;
+  logic CTL_ARR_LOAD;
 
-  logic CTL_AR00to11clr;
-  logic CTL_AR12to17clr;
-  logic CTL_ARRclr;
+  logic CTL_AR00to11_CLR;
+  logic CTL_AR12to17_CLR;
+  logic CTL_ARR_CLR;
 
   logic [0:2] CTL_ARL_SEL;
   logic [0:2] CTL_ARR_SEL;

@@ -15,13 +15,13 @@ module edp(input eboxClk,
 
            input [0:2] CTL_ARL_SEL,
            input [0:2] CTL_ARR_SEL,
-           input CTL_AR00to08load,
-           input CTL_AR09to17load,
-           input CTL_ARRload,
+           input CTL_AR00to08_LOAD,
+           input CTL_AR09to17_LOAD,
+           input CTL_ARR_LOAD,
 
-           input CTL_AR00to11clr,
-           input CTL_AR12to17clr,
-           input CTL_ARRclr,
+           input CTL_AR00to11_CLR,
+           input CTL_AR12to17_CLR,
+           input CTL_ARR_CLR,
 
            input [0:2] CTL_ARXL_SEL,
            input [0:2] CTL_ARXR_SEL,
@@ -128,21 +128,21 @@ module edp(input eboxClk,
       EDP_AR <= '0;
     end else begin
 
-      if (CTL_AR00to11clr) begin
+      if (CTL_AR00to11_CLR) begin
         EDP_AR[0:11] <= 0;
-      end else if (CTL_AR00to08load) begin
+      end else if (CTL_AR00to08_LOAD) begin
         EDP_AR[0:8] <= ARL[0:8];
       end
 
-      if (CTL_AR12to17clr) begin
+      if (CTL_AR12to17_CLR) begin
         EDP_AR[12:17] <= 0;
-      end else if (CTL_AR09to17load) begin
+      end else if (CTL_AR09to17_LOAD) begin
         EDP_AR[9:17] <= ARL[9:17];
       end
 
-      if (CTL_ARRclr) begin
+      if (CTL_ARR_CLR) begin
         EDP_AR[18:35] <= 0;
-      end else if (CTL_ARRload) begin
+      end else if (CTL_ARR_LOAD) begin
         unique case (CRAM.AR)
         3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
         3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];

@@ -29,13 +29,13 @@ module edptb;
   tCRADR CRADR;
 
   logic eboxReset;
-  logic CTL_AR00to08load;
-  logic CTL_AR09to17load;
-  logic CTL_ARRload;
+  logic CTL_AR00to08_LOAD;
+  logic CTL_AR09to17_LOAD;
+  logic CTL_ARR_LOAD;
 
-  logic CTL_AR00to11clr;
-  logic CTL_AR12to17clr;
-  logic CTL_ARRclr;
+  logic CTL_AR00to11_CLR;
+  logic CTL_AR12to17_CLR;
+  logic CTL_ARR_CLR;
 
   logic [0:2] CTL_ARL_SEL;
   logic [0:2] CTL_ARR_SEL;
@@ -108,12 +108,12 @@ module edptb;
     CTL_ARL_SEL = 0;
     CTL_ARR_SEL = 0;
 
-    CTL_AR00to08load = 0;
-    CTL_AR09to17load = 0;
-    CTL_ARRload = 0;
+    CTL_AR00to08_LOAD = 0;
+    CTL_AR09to17_LOAD = 0;
+    CTL_ARR_LOAD = 0;
 
-    CTL_AR00to11clr = 0;
-    CTL_AR12to17clr = 0;
+    CTL_AR00to11_CLR = 0;
+    CTL_AR12to17_CLR = 0;
     CTL_ARRclr = 0;
 
     CTL_ARXL_SEL = 0;
@@ -163,9 +163,9 @@ module edptb;
     CRAM.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
-    CTL_AR00to08load = 1;  // Load ARL pieces
-    CTL_AR09to17load = 1;
-    CTL_ARRload = 1;       // Load ARR
+    CTL_AR00to08_LOAD = 1;  // Load ARL pieces
+    CTL_AR09to17_LOAD = 1;
+    CTL_ARR_LOAD = 1;       // Load ARR
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
 
@@ -180,9 +180,9 @@ module edptb;
     CRAM.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
-    CTL_AR00to08load = 1;  // Load ARL pieces
-    CTL_AR09to17load = 1;
-    CTL_ARRload = 1;       // Load ARR
+    CTL_AR00to08_LOAD = 1;  // Load ARL pieces
+    CTL_AR09to17_LOAD = 1;
+    CTL_ARR_LOAD = 1;       // Load ARR
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
 
@@ -197,9 +197,9 @@ module edptb;
     CRAM.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
-    CTL_AR00to08load = 1;  // Load ARL pieces
-    CTL_AR09to17load = 1;
-    CTL_ARRload = 1;       // Load ARR
+    CTL_AR00to08_LOAD = 1;  // Load ARL pieces
+    CTL_AR09to17_LOAD = 1;
+    CTL_ARR_LOAD = 1;       // Load ARR
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
 
@@ -213,9 +213,9 @@ module edptb;
     CRAM.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
-    CTL_AR00to08load = 1;  // Load ARL pieces
-    CTL_AR09to17load = 1;
-    CTL_ARRload = 1;       // Load ARR
+    CTL_AR00to08_LOAD = 1;  // Load ARL pieces
+    CTL_AR09to17_LOAD = 1;
+    CTL_ARR_LOAD = 1;       // Load ARR
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
 
@@ -229,9 +229,9 @@ module edptb;
     CRAM.AR = arCACHE;
     CTL_ARL_SEL = 4'b0001; // CACHE
     CTL_ARR_SEL = 4'b0001; // CACHE
-    CTL_AR00to08load = 1;  // Load ARL pieces
-    CTL_AR09to17load = 1;
-    CTL_ARRload = 1;       // Load ARR
+    CTL_AR00to08_LOAD = 1;  // Load ARL pieces
+    CTL_AR09to17_LOAD = 1;
+    CTL_ARR_LOAD = 1;       // Load ARR
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
 
