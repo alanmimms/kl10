@@ -38,8 +38,8 @@ module edp(input eboxClk,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
            input [0:35] SHM_SH,
-           input [0:8] SCD_ARMMupper,
-           input [13:17] SCD_ARMMlower,
+           input [0:8] SCD_ARMM_UPPER,
+           input [13:17] SCD_ARMM_LOWER,
 
            input CTL_adToEBUS_L,
            input CTL_adToEBUS_R,
@@ -47,8 +47,8 @@ module edp(input eboxClk,
            input [0:2] APR_FMblk,
            input [0:3] APR_FMadr,
 
-           input CON_fmWrite00_17,
-           input CON_fmWrite18_35,
+           input CON_FM_WRITE00_17,
+           input CON_FM_WRITE18_35,
 
            input CTL_DIAG_READ_FUNC_12x,
 
@@ -109,7 +109,7 @@ module edp(input eboxClk,
   always_comb begin
     unique case (CTL_ARL_SEL)
     default: ARL = 'x;
-    3'b000: ARL = {SCD_ARMMupper, 5'b0, SCD_ARMMlower};
+    3'b000: ARL = {SCD_ARMM_UPPER, 5'b0, SCD_ARMM_LOWER};
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP_AD[0:17];
     3'b011: ARL = EBUS.data[0:17];
@@ -144,7 +144,7 @@ module edp(input eboxClk,
         EDP_AR[18:35] <= 0;
       end else if (CTL_ARR_LOAD) begin
         unique case (CRAM.AR)
-        3'b000: EDP_AR[18:35] <= {SCD_ARMMupper, 5'b0, SCD_ARMMlower}; // XXX?
+        3'b000: EDP_AR[18:35] <= {SCD_ARMM_UPPER, 5'b0, SCD_ARMM_LOWER}; // XXX?
         3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
         3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
         3'b011: EDP_AR[18:35] <= EBUS.data[18:35];
@@ -452,7 +452,7 @@ module edp(input eboxClk,
    .din(EDP_AR),
    .dout(FM),
    .addr(fmAddress),
-   .wea({CON_fmWrite00_17, CON_fmWrite18_35}));
+   .wea({CON_FM_WRITE00_17, CON_FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
@@ -460,8 +460,8 @@ module edp(input eboxClk,
             .clka(fastMemClk),
             .dina(EDP_AR),
             .douta(FM),
-            .wea({CON_fmWrite00_17, CON_fmWrite00_17,
-                  CON_fmWrite18_35, CON_fmWrite18_35})
+            .wea({CON_FM_WRITE00_17, CON_FM_WRITE00_17,
+                  CON_FM_WRITE18_35, CON_FM_WRITE18_35})
             );
 `endif
 

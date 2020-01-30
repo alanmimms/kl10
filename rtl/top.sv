@@ -20,14 +20,12 @@ module top(input masterClk
   logic eboxPSE;
   logic eboxRead;
   logic eboxReadReg;
-  logic eboxReq;
+  logic EBOX_REQ;
   logic eboxSBUSDiag;
   logic eboxUBR;
   logic eboxUser;
   logic eboxWrite;
   logic ept;
-  logic ki10PagingMode;
-  logic mbXfer;
   logic mboxCtl03;
   logic mboxCtl06;
   logic pageAdrCond;
@@ -42,10 +40,10 @@ module top(input masterClk
   logic wrPtSel1;
 
   logic mboxClk;
-  logic eboxSync;
+  logic CLK_EBOX_SYNC;
   logic MR_RESET;
   logic vmaACRef;
-  logic [27:35] mboxGateVMA;
+  logic [27:35] MBOX_GATE_VMA;
   logic [0:35] cacheDataRead;
   logic [0:35] cacheDataWrite;
   logic [10:12] cacheClearer;
@@ -60,12 +58,21 @@ module top(input masterClk
   logic read;
   logic write;
 
+  logic MCL_VMA_SECTION_0;
+  logic MCL_MBOX_CYC_REQ;
+  logic MCL_VMA_FETCH;
+  logic MCL_LOAD_AR;
+  logic MCL_LOAD_ARX;
+  logic MCL_LOAD_VMA;
+  logic MCL_STORE_AR;
+  logic MCL_SKIP_SATISFIED;
   logic MCL_SHORT_STACK;
   logic MCL_18_BIT_EA;
   logic MCL_23_BIT_EA;
-  logic MCL_LOAD_AR;
-  logic MCL_LOAD_ARX;
   logic MCL_MEM_ARL_IND;
+
+  logic CSH_PAR_BIT_A;
+  logic CSH_PAR_BIT_B;
 
   // TEMPORARY
   logic cshEBOXT0 = 0;
@@ -100,13 +107,14 @@ module top(input masterClk
   tEBUSdriver CTL_EBUS;
   tEBUSdriver EDP_EBUS;
   tEBUSdriver IR_EBUS;
+  tEBUSdriver PI_EBUS;
   tEBUSdriver SCD_EBUS;
   tEBUSdriver SHM_EBUS;
   tEBUSdriver VMA_EBUS;
 
 // Drive all of our clocks from the testbench if running that way.
 `ifdef KL10PV_TB
-  clk clk0(.masterClk, .eboxReset, .mbXfer);
+  clk clk0(.masterClk, .eboxReset);
 `else
   clk clk0(.*);
 `endif
@@ -121,6 +129,7 @@ module top(input masterClk
     else if (CTL_EBUS.driving)  EBUS.data = CTL_EBUS.data;
     else if (EDP_EBUS.driving)  EBUS.data = EDP_EBUS.data;
     else if (IR_EBUS.driving)   EBUS.data = IR_EBUS.data;
+    else if (PI_EBUS.driving)   EBUS.data = PI_EBUS.data;
     else if (SCD_EBUS.driving)  EBUS.data = SCD_EBUS.data;
     else if (SHM_EBUS.driving)  EBUS.data = SHM_EBUS.data;
     else if (VMA_EBUS.driving)  EBUS.data = VMA_EBUS.data;

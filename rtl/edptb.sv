@@ -58,15 +58,15 @@ module edptb;
 
   logic [0:2] APR_FMblk;
   logic [0:3] APR_FMadr;
-  logic CON_fmWrite00_17;
-  logic CON_fmWrite18_35;
+  logic CON_FM_WRITE00_17;
+  logic CON_FM_WRITE18_35;
   logic diagReadFunc12X;
   logic [0:35] VMA_VMAheldOrPC;
 
   logic [0:35] cacheDataRead;
   logic [0:35] SHM_SH;
-  logic [0:8] SCD_ARMMupper;
-  logic [13:17] SCD_ARMMlower;
+  logic [0:8] SCD_ARMM_UPPER;
+  logic [13:17] SCD_ARMM_LOWER;
 
   iEBUS EBUS();
   tEBUSdriver EDP_EBUS;
@@ -140,11 +140,11 @@ module edptb;
     APR_FMblk = 0;              // Select a good block number
     APR_FMadr = 7;              // And a good FM AC #
 
-    CON_fmWrite00_17 = 0;       // No writing to FM
-    CON_fmWrite18_35 = 0;
+    CON_FM_WRITE00_17 = 0;       // No writing to FM
+    CON_FM_WRITE18_35 = 0;
 
-    SCD_ARMMupper = 0;
-    SCD_ARMMlower = 0;
+    SCD_ARMM_UPPER = 0;
+    SCD_ARMM_LOWER = 0;
 
     diagReadFunc12X = 0;
     VMA_VMAheldOrPC = 0;        // Reset PC for now

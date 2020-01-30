@@ -7,31 +7,47 @@ module ebox(input eboxClk,
 
             input eboxReset,
 
-            output logic [13:35] EBOX_VMA,
-            output logic [10:12] cacheClearer,
-
-            output logic eboxReq,
+            input CSH_PAR_BIT_A,
+            input CSH_PAR_BIT_B,
             input cshEBOXT0,
-            input  cshEBOXRetry,
+            input cshEBOXRetry,
             input mboxRespIn,
-
-            output logic eboxSync,
-            output logic mboxClk,
 
             input MCL_SHORT_STACK,
             input MCL_18_BIT_EA,
             input MCL_23_BIT_EA,
+            input MCL_MEM_ARL_IND,
+            input MCL_VMA_SECTION_0,
+            input MCL_MBOX_CYC_REQ,
+            input MCL_VMA_FETCH,
             input MCL_LOAD_AR,
             input MCL_LOAD_ARX,
-            input MCL_MEM_ARL_IND,
+            input MCL_LOAD_VMA,
+            input MCL_STORE_AR,
+            input MCL_SKIP_SATISFIED,
+
             input pfHold,
             input pfEBOXHandle,
             input pfPublic,
 
-            output logic vmaACRef,
+            input [0:10] pfDisp,
+            input cshAdrParErr,
+            input mbParErr,
+            input sbusErr,
+            input nxmErr,
+            input mboxCDirParErr,
 
-            input [27:35] mboxGateVMA,
+            input [27:35] MBOX_GATE_VMA,
             input [0:35] cacheDataRead,
+
+            tEBUSdriver APR_EBUS,
+            tEBUSdriver CON_EBUS,
+            tEBUSdriver CRA_EBUS,
+            tEBUSdriver CTL_EBUS,
+            tEBUSdriver EDP_EBUS,
+            tEBUSdriver IR_EBUS,
+            tEBUSdriver PI_EBUS,
+
             output [0:35] cacheDataWrite,
 
             output logic pageTestPriv,
@@ -41,7 +57,6 @@ module ebox(input eboxClk,
             output logic eboxMayBePaged,
             output logic eboxCache,
             output logic eboxLookEn,
-            output logic ki10PagingMode,
             output logic pageAdrCond,
 
             output logic eboxMap,
@@ -69,21 +84,18 @@ module ebox(input eboxClk,
             output logic wrPtSel0,
             output logic wrPtSel1,
 
-            input [0:10] pfDisp,
-            input cshAdrParErr,
-            input mbParErr,
-            input sbusErr,
-            input nxmErr,
-            input mboxCDirParErr,
             output logic anyEboxError,
+
+            output logic [13:35] EBOX_VMA,
+            output logic [10:12] cacheClearer,
+            output logic EBOX_REQ,
+            output logic CLK_EBOX_SYNC,
+            output logic mboxClk,
 
             iEBUS EBUS);
 
-  tEBUSdriver APR_EBUS;
-  tEBUSdriver CRA_EBUS;
-  tEBUSdriver CTL_EBUS;
-  tEBUSdriver EDP_EBUS;
-  tEBUSdriver IR_EBUS;
+  logic EBUS_PARITY_E;
+  logic EBUS_PARITY_ACTIVE_E;
 
   logic [0:2] APR_FMblk;
   logic [0:3] APR_FMadr;
@@ -91,6 +103,7 @@ module ebox(input eboxClk,
   logic APR_CONO_OR_DATAO;
   logic APR_CONI_OR_DATAI;
   logic APR_EBUS_RETURN;
+  logic APR_FM_BIT_36;
 
   logic [0:35] SHM_SH;
   logic SHM_AR_PAR_ODD;
@@ -103,10 +116,6 @@ module ebox(input eboxClk,
   logic CTL_ADX_CRY_36;
   logic CTL_INH_CRY_18;
   logic CTL_GEN_CRY_18;
-
-  logic CON_LONG_ENABLE;
-  logic CON_fmWrite00_17;
-  logic CON_fmWrite18_35;
 
   logic [8:10] norm;
   logic [0:12] IR;
@@ -208,28 +217,140 @@ module ebox(input eboxClk,
   logic [0:6] CTL_DIAG_DIAG;
   logic [4:6] DIAG;
 
+  logic CON_SKIP_EN40_47;
+  logic CON_SKIP_EN50_57;
+  logic CON_SKIP_EN60_67;
+  logic CON_SKIP_EN70_77;
+
+  logic CON_START;
+  logic CON_RUN;
+  logic CON_EBOX_HALTED;
+
+  logic CON_KL10_PAGING_MODE;
+  logic CON_KI10_PAGING_MODE;
+
+  logic CON_COND_EN00_07;
+  logic CON_COND_EN10_17;
+  logic CON_COND_EN20_27;
+  logic CON_COND_EN30_37;
+  logic CON_COND_EN40_47;
+  logic CON_COND_EN50_57;
+  logic CON_COND_EN60_67;
+  logic CON_COND_EN70_77;
+  logic CON_COND_PCF_MAGIC;
+  logic CON_COND_FE_SHRT;
+  logic CON_COND_AD_FLAGS;
+  logic CON_COND_SEL_VMA;
+  logic CON_COND_DIAG_FUNC;
+  logic CON_COND_EBUS_CTL;
+  logic CON_COND_MBOX_CTL;
+  logic CON_COND_024;
+  logic CON_COND_026;
+  logic CON_COND_027;
+  logic CON_COND_VMA_MAGIC;
+  logic CON_COND_LOAD_VMA_HELD;
+  logic CON_COND_INSTR_ABORT;
+  logic CON_COND_ADR_10;
+  logic CON_COND_LOAD_IR;
+  logic CON_COND_EBUS_STATE;
+
+  logic CON_LONG_EN;
   logic CON_PI_CYCLE;
   logic CON_PCplus1_INH;
   logic CON_FM_XFER;
-  logic CON_COND_EN00_07;
-  logic CON_COND_DIAG_FUNC;
+  logic CON_MB_XFER;
+  logic CON_CACHE_LOOK_EN;
+  logic CON_LOAD_ACCESS_COND;
+  logic CON_LOAD_DRAM;
+  logic CON_LOAD_IR;
 
+  logic CON_FM_WRITE00_17;
+  logic CON_FM_WRITE18_35;
+  logic CON_FM_WRITE_PAR;
+
+  logic CON_IO_LEGAL;
+  logic CON_EBUS_GRANT;
+
+  logic CON_CONO_PI;
+  logic CON_CONO_PAG;
+  logic CON_CONO_APR;
+  logic CON_DATAO_APR;
+  logic CON_CONO_200000;
+
+  logic CON_SEL_EN;
+  logic CON_SEL_DIS;
+  logic CON_SEL_CLR;
+  logic CON_SEL_SET;
+
+  logic CON_UCODE_STATE1;
+  logic CON_UCODE_STATE3;
+  logic CON_UCODE_STATE5;
+  logic CON_UCODE_STATE7;
+
+  logic CON_PI_DISABLE;
+  logic CON_CLR_PRIVATE_INSTR;
+  logic CON_TRAP_EN;
+  logic CON_NICOND_TRAP_EN;
+  logic [7:9] CON_NICOND;
+  logic [0:3] CON_SR;
+  logic CON_LOAD_SPEC_INSTR;
+  logic [0:1] CON_VMA_SEL;
+
+  logic CON_WR_EVEN_PAR_ADR;
+  logic CON_DELAY_REQ;
+  logic CON_AR_36;
+  logic CON_ARX_36;
+  logic CON_CACHE_LOAD_EN;
+  logic CON_EBUS_REL;
+
+  logic MTR_INTERRUPT_REQ;
+  
   logic MR_RESET;
   logic CLK_SBR_CALL;
   logic CLK_RESP_MBOX;
   logic CLK_RESP_SIM;
+  logic CLK_PAGE_ERROR;
+
+  logic PI_READY;
+  logic PI_EBUS_CP_GRANT;
+  logic PI_EXT_TRAN_REC;
 
   logic P15_GATE_TTL_TO_ECL;
 
-  logic ADeq0;
-  logic IOlegal;
-  logic ACeq0;
-  logic JRST0;
-  logic testSatisfied;
+  logic IR_ADeq0;
+  logic IR_IO_LEGAL;
+  logic IR_ACeq0;
+  logic IR_JRST0;
+  logic IR_TEST_SATISFIED;
 
-  logic [0:8] SCD_ARMMupper;
-  logic [13:17] SCD_ARMMlower;
-
+  logic [0:8] SCD_ARMM_UPPER;
+  logic [13:17] SCD_ARMM_LOWER;
+  logic [0:9] SCD_FE;
+  logic [0:9] SCD_SC;
+  logic [0:35] SCD_SCADA;
+  logic [0:35] SCD_SCADB;
+  logic SCD_SC_GE_36;
+  logic SCD_SCADeq0;
+  logic SCD_SCAD_SIGN;
+  logic SCD_SC_SIGN;
+  logic SCD_FE_SIGN;
+  logic SCD_OV;
+  logic SCD_CRY0;
+  logic SCD_CRY1;
+  logic SCD_FOV;
+  logic SCD_FXU;
+  logic SCD_FPD;
+  logic SCD_PCP;
+  logic SCD_DIV_CHK;
+  logic SCD_TRAP_REQ1;
+  logic SCD_TRAP_REQ2;
+  logic SCD_TRAP_CYC1;
+  logic SCD_TRAP_CYC2;
+  logic SCD_USER;
+  logic SCD_USER_IOT;
+  logic SCD_PUBLIC;
+  logic SCD_PRIVATE;
+  logic SCD_ADR_BRK_PREVENT;
 
   logic [0:35] VMA_VMAheldOrPC;
 
@@ -266,8 +387,6 @@ module ebox(input eboxClk,
   logic [10:1] AREAD;
   logic dispParity;
 
-  logic mbXfer;
-
   tCRADR CRADR;
 
   iCRAM CRAM();
@@ -283,10 +402,11 @@ module ebox(input eboxClk,
   assign MULdone = 0;
 
   apr apr0(.*, .EBUSdriver(APR_EBUS));
-  con con0(.*);
+  con con0(.*, .EBUSdriver(CON_EBUS));
   cra cra0(.*, .EBUSdriver(CRA_EBUS));
   crm crm0(.*);
   ctl ctl0(.*, .EBUSdriver(CTL_EBUS));
   edp edp0(.*, .EBUSdriver(EDP_EBUS));
   ir  ir0 (.*, .EBUSdriver(IR_EBUS));
+  pic pic0(.*, .EBUSdriver(PI_EBUS));
 endmodule // ebox

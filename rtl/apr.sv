@@ -12,6 +12,7 @@ module apr(input [0:35] FM,
            output logic APR_CONO_OR_DATAO,
            output logic APR_CONI_OR_DATAI,
            output logic APR_EBUS_RETURN,
+           output logic APR_FM_BIT_36,
 
            iEBUS EBUS,
            tEBUSdriver EBUSdriver);

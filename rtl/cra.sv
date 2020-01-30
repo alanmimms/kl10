@@ -41,10 +41,10 @@ module cra(input eboxClk,
 
            input pcSection0,
            input localACAddress,
-           input CON_LONG_ENABLE,
+           input CON_LONG_EN,
            input indexed,
-           input ADeq0,
-           input ACeq0,
+           input IR_ADeq0,
+           input IR_ACeq0,
            input FEsign,
            input SCsign,
            input SCADsign,
@@ -85,7 +85,7 @@ module cra(input eboxClk,
   assign dispEn00_07 = CRAM.DISP[0:4] === 5'b00111;
   assign dispEn30_37 = CRAM.DISP[0:4] === 5'b11111;
 
-  assign shortIndirWord = ~CON_LONG_ENABLE | EDP_ARX[1];
+  assign shortIndirWord = ~CON_LONG_EN | EDP_ARX[1];
   assign callForce1777 = CRAM.CALL | force1777;
   assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
   assign retNotForce1777 = ret & ~force1777;
@@ -118,8 +118,8 @@ module cra(input eboxClk,
       3'b011: dispMux[7:10] = {1'b0, DRAM_B[0:2], EDP_ADX[0]};
       3'b100: dispMux[7:10] = {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
       3'b101: dispMux[7:10] = {1'b0, norm[8:10], EDP_AD[0]};
-      3'b110: dispMux[7:10] = {~CON_LONG_ENABLE | EDP_ARX[0], shortIndirWord,
-                               EDP_ARX[13], indexed, ~ADeq0};
+      3'b110: dispMux[7:10] = {~CON_LONG_EN | EDP_ARX[0], shortIndirWord,
+                               EDP_ARX[13], indexed, ~IR_ADeq0};
       3'b111: dispMux[7:10] = {eaType[7:10], localACAddress};
       endcase
     end else if (skipEn40_47) begin
@@ -130,7 +130,7 @@ module cra(input eboxClk,
       3'b011: dispMux[10] = EDP_ARX[0];
       3'b100: dispMux[10] = EDP_AR[18];
       3'b101: dispMux[10] = EDP_AR[0];
-      3'b110: dispMux[10] = ACeq0;
+      3'b110: dispMux[10] = IR_ACeq0;
       3'b111: dispMux[10] = SCsign;
       endcase
     end else if (skipEn50_57) begin
@@ -141,8 +141,8 @@ module cra(input eboxClk,
       3'b011: dispMux[10] = {1'b0, DRAM_B[0:2], EDP_ADX[0]};
       3'b100: dispMux[10] = {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
       3'b101: dispMux[10] = {1'b0, norm[8:10], EDP_AD[0]};
-      3'b110: dispMux[10] = {~CON_LONG_ENABLE | EDP_ARX[0], shortIndirWord,
-                             EDP_ARX[13], indexed, ~ADeq0};
+      3'b110: dispMux[10] = {~CON_LONG_EN | EDP_ARX[0], shortIndirWord,
+                             EDP_ARX[13], indexed, ~IR_ADeq0};
       3'b111: dispMux[10] = {eaType[7:10], localACAddress};
       endcase
     end else

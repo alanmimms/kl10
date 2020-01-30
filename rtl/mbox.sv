@@ -2,14 +2,15 @@
 module mbox(input mboxClk,
             input [13:35] EBOX_VMA,
             input vmaACRef,
-            input [27:35] mboxGateVMA,
             input [0:35] cacheDataWrite,
-            output logic [0:35] cacheDataRead,
-            output logic [0:10] pfDisp,
             input req,
             input read,
             input PSE,
-            input write);
+            input write,
+
+            output logic [27:35] MBOX_GATE_VMA,
+            output logic [0:35] cacheDataRead,
+            output logic [0:10] pfDisp);
 
 `ifdef KL10PV_TB
   sim_mem
