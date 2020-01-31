@@ -119,6 +119,7 @@ module top(input clk
   tEBUSdriver CTL_EBUS;
   tEBUSdriver EDP_EBUS;
   tEBUSdriver IR_EBUS;
+  tEBUSdriver MTR_EBUS;
   tEBUSdriver PI_EBUS;
   tEBUSdriver SCD_EBUS;
   tEBUSdriver SHM_EBUS;
@@ -134,6 +135,7 @@ module top(input clk
     else if (CTL_EBUS.driving)  EBUS.data = CTL_EBUS.data;
     else if (EDP_EBUS.driving)  EBUS.data = EDP_EBUS.data;
     else if (IR_EBUS.driving)   EBUS.data = IR_EBUS.data;
+    else if (MTR_EBUS.driving)  EBUS.data = MTR_EBUS.data;
     else if (PI_EBUS.driving)   EBUS.data = PI_EBUS.data;
     else if (SCD_EBUS.driving)  EBUS.data = SCD_EBUS.data;
     else if (SHM_EBUS.driving)  EBUS.data = SHM_EBUS.data;
