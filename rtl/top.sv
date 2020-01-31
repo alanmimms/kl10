@@ -124,13 +124,6 @@ module top(input clk
   tEBUSdriver SHM_EBUS;
   tEBUSdriver VMA_EBUS;
 
-// Drive all of our clocks from the testbench if running that way.
-`ifdef KL10PV_TB
-  clk clk0(.clk, .eboxReset);
-`else
-  clk clk0(.*);
-`endif
-
   ebox ebox0(.*);
   mbox mbox0(.*);
 

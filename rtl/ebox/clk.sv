@@ -16,6 +16,8 @@ module clk(input clk,
 
   assign eboxClk = clk;         // TEMPORARY XXX
   assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)
+
+  ebox_clocks ebox_clocks0();
 endmodule // clk
 // Local Variables:
 // verilog-library-files:("../ip/ebox_clocks/ebox_clocks_stub.v")

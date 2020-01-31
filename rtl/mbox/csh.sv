@@ -1,4 +1,3 @@
 `timescale 1ns/1ns
-module csh(input eboxClk
-          );
+module csh();
 endmodule // csh

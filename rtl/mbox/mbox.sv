@@ -30,6 +30,20 @@ module mbox(input mboxClk,
                 .wea(write));
 `endif
 
+  ccl ccl0(.*);
+  ccw ccw0(.*);
+  cha cha0(.*);
+  chc chc0(.*);
+  chd chd0(.*);
+  chd chd0(.*);
+  chx chx0(.*);
+  crc crc0(.*);
+  csh csh0(.*);
+  mbc mbc0(.*);
+  mbz mbz0(.*);
+  pag pag0(.*);
+  pma pma0(.*);
+
 endmodule // mbox
 // Local Variables:
 // verilog-library-files:("../ip/fake_mem/fake_mem_stub.v")

@@ -1,5 +1,4 @@
 `timescale 1ns/1ns
 // M8531 MBC
-module mbc(input eboxClk
-          );
+module mbc();
 endmodule // mbc

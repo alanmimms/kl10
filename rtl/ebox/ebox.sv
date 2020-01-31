@@ -402,11 +402,17 @@ module ebox(input eboxClk,
   assign MULdone = 0;
 
   apr apr0(.*, .EBUSdriver(APR_EBUS));
+  clk clk0(.*);
   con con0(.*, .EBUSdriver(CON_EBUS));
   cra cra0(.*, .EBUSdriver(CRA_EBUS));
   crm crm0(.*);
   ctl ctl0(.*, .EBUSdriver(CTL_EBUS));
   edp edp0(.*, .EBUSdriver(EDP_EBUS));
   ir  ir0 (.*, .EBUSdriver(IR_EBUS));
+  mcl mcl0(.*);
+  mtr mtr0(.*);
   pic pic0(.*, .EBUSdriver(PI_EBUS));
+  scd scd0(.*);
+  shm shm0(.*);
+  vma vma0(.*);
 endmodule // ebox
