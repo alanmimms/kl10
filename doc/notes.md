@@ -5,6 +5,26 @@
 * Define methods for EBUS access in iEBUS
 
 
+# System Organization
+* EBOX implementation in FPGA running KL10pv final microcode
+  * EBUS
+    * RH20 FPGA module to ARM Linux emulated storage (channel controls)
+    * DTE2 FPGA module to ARM Linux emulated front end (diagnostics, FE I/O)
+  * CBUS (control/data) attachment to
+    * RH20
+  * E/M bus
+    * FPGA implemented cache
+    * FPGA implemented pager and PMA
+    * FPGA DMA interface to ARM Linux provided RAM
+
+# EBUS
+  * The front end can read/write DS00-06 any time.
+    * See EK-DTE20-UD-003 p. 18.
+  * DIAG_STROBE indicates DS00-06 lines are stable.
+  * DFUNC ("remove status") assertion
+    * KL relenquishes control of EBUS DS lines
+    * Puts EBUS translator for DS lines under DB00/DB01 control.
+
 # Notes About This Implementation
 
 ## Coding Conventions
@@ -21,7 +41,6 @@
   * Where "xxx" is module's use case (e.g., "cram" or "fm")
   * Where "type" is module's use type (e.g., "mem")
 
-
 ## Differences from KL10PV
 * Multiple drivers on a single bus are not the FPGA Way.
   * EBUS is multiplexed
@@ -33,6 +52,10 @@
 
 
 # Documentation Pointers
+
+* DTE20 is where the 10/11 interface lives
+  * Documented in EK-DTE20-UD-003_Oct76.pdf.
+  * Also from SAIL in ETHDES.txt.
 
 * EBOX/MBUS interface is shown in
   * EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf starting on p.48
