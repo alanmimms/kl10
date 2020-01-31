@@ -9,4 +9,6 @@ module pic(input eboxClk,
            output logic PI_EBUS_CP_GRANT,
            output logic PI_EXT_TRAN_REC,
            output logic PI_READY);
+
+  assign EBUSdriver.driving = 0;       // XXX temporary
 endmodule // pic

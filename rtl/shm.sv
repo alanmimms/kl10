@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-`include "cram-defs.h"
+`include "cram-defs.svh"
 
 // M8540 SHM
 module shm(input eboxClk,

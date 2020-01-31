@@ -151,10 +151,12 @@ module cra(input eboxClk,
 
 
   // CRADR
-  always @(eboxReset) if (eboxReset) CRADR <= 0;
-
   always @(posedge eboxClk) begin
-    if (~eboxReset) CRADR <= CRAM.J | {11{force1777}} | dispMux;
+
+    if (eboxReset)
+      CRADR <= 0;
+    else
+      CRADR <= CRAM.J | {11{force1777}} | dispMux;
   end
   
 

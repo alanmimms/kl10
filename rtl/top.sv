@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 `include "ebus-defs.svh"
 
-module top(input masterClk
+module top(input clk
 `ifdef KL10PV_TB
            ,
            input eboxClk,
@@ -9,6 +9,12 @@ module top(input masterClk
            input eboxReset
 `endif
 );
+
+`ifndef KL10PV_TB
+  logic eboxClk;
+  logic fastMemClk;
+`endif
+    
   logic eboxCCA;
   logic eboxCache;
   logic eboxERA;
@@ -40,8 +46,13 @@ module top(input masterClk
   logic wrPtSel1;
 
   logic mboxClk;
-  logic CLK_EBOX_SYNC;
   logic MR_RESET;
+  logic CLK_EBOX_SYNC;
+  logic CLK_SBR_CALL;
+  logic CLK_RESP_MBOX;
+  logic CLK_RESP_SIM;
+  logic CLK_PAGE_ERROR;
+
   logic vmaACRef;
   logic [27:35] MBOX_GATE_VMA;
   logic [0:35] cacheDataRead;
@@ -57,6 +68,8 @@ module top(input masterClk
   logic PSE;
   logic read;
   logic write;
+
+  logic CON_MB_XFER;
 
   logic MCL_VMA_SECTION_0;
   logic MCL_MBOX_CYC_REQ;
@@ -89,7 +102,6 @@ module top(input masterClk
   logic nxmErr = 0;
   logic mboxCDirParErr = 0;
 
-
   // While it might appear with an EBOX-centric viewpoint that EBUS is
   // entirely contained within the EBOX and should therefore be muxed
   // in ebox.v, note that control of RH20 and DTE20 devices relies on
@@ -114,7 +126,7 @@ module top(input masterClk
 
 // Drive all of our clocks from the testbench if running that way.
 `ifdef KL10PV_TB
-  clk clk0(.masterClk, .eboxReset);
+  clk clk0(.clk, .eboxReset);
 `else
   clk clk0(.*);
 `endif

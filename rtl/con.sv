@@ -13,6 +13,8 @@ module con(input eboxClk,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
 
+           iCRAM CRAM,
+
            input IR_IO_LEGAL,
 
            input MTR_INTERRUPT_REQ,

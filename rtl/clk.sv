@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 // M8526 CLK
-module clk(input masterClk,
+module clk(input clk,
            input eboxReset,
            input CON_MB_XFER,
 
@@ -14,10 +14,7 @@ module clk(input masterClk,
            output logic CLK_RESP_SIM,
            output logic CLK_PAGE_ERROR);
 
-`ifndef KL10PV_TB
-  ebox_clocks clk0(.clk_in1(masterClk), .*);
-`endif
-
+  assign eboxClk = clk;         // TEMPORARY XXX
   assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)
 endmodule // clk
 // Local Variables:

@@ -17,4 +17,5 @@ module apr(input [0:35] FM,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver);
 
+  assign EBUSdriver.driving = 0;       // XXX temporary
 endmodule // apr

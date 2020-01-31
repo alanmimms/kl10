@@ -35,6 +35,8 @@ module ctl(input eboxClk,
 
            input P15_GATE_TTL_TO_ECL,
 
+           iCRAM CRAM,
+
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
 

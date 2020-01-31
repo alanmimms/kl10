@@ -253,8 +253,8 @@ module edp(input eboxClk,
                    // Note EDP_AD_EX is a dumping ground when n>0
                    .F({EDP_AD_EX[n-2:n-1], EDP_AD[n:n+1]}),
                    .CG(AD_CG[n+0]),
-                   .CP(AD_CP[n+0]),
-                   .COUT(EDP_ADcarry[n-2]));
+                   .CP(AD_CP[n+0])/*,
+                   .COUT(EDP_ADcarry[n-2])*/); // XXX multi-drives EDP_ADcarry[-2] w/E11 below
       mc10181 alu1(.M(ADbool),
                    .S(S),
                    .A(ADA[n+2:n+5]),
@@ -267,8 +267,6 @@ module edp(input eboxClk,
     end
   endgenerate
   
-  logic [0:35] alu2_x1 = '0, alu3_x1 = '0;
-  
   // ADX
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
@@ -278,7 +276,7 @@ module edp(input eboxClk,
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                    .CIN(EDP_ADXcarry[n+3]),
-                   .F({alu2_x1[n], EDP_ADX[n:n+2]}),
+                   .F({1'bx, EDP_ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
       mc10181 alu3(.M(ADbool),
@@ -286,7 +284,7 @@ module edp(input eboxClk,
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                    .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADX_CRY_36),
-                   .F({alu3_x1[n], EDP_ADX[n+3:n+5]}),
+                   .F({1'bx, EDP_ADX[n+3:n+5]}),
                    .CG(ADX_CG[n+3]),
                    .CP(ADX_CP[n+3]),
                    .COUT(EDP_ADXcarry[n+3]));
