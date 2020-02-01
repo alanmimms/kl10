@@ -16,12 +16,6 @@ module ir(input eboxClk,
           input [-2:36] EDP_ADcarry,
           input [0:36] EDP_ADXcarry,
 
-          output logic IR_ADeq0,
-          output logic IR_IO_LEGAL,
-          output logic IR_ACeq0,
-          output logic IR_JRST0,
-          output logic IR_TEST_SATISFIED,
-
           iEBUS EBUS,
           tEBUSdriver EBUSdriver,
 
@@ -31,7 +25,9 @@ module ir(input eboxClk,
           output logic [0:2] DRAM_A,
           output logic [0:2] DRAM_B,
           output logic [0:10] DRAM_J,
-          output logic DRAM_ODD_PARITY);
+          output logic DRAM_ODD_PARITY,
+
+          iIR IR);
 
   localparam DRAM_WIDTH=15;
   localparam DRAM_SIZE=512;

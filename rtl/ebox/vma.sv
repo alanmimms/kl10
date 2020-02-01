@@ -2,7 +2,9 @@
 // M8542 VMA
 module vma(input logic eboxClk,
            input logic eboxReset,
-           output logic [0:35] VMA_VMAheldOrPC,
-           output logic localACAddress);
+           output logic localACAddress,
+
+           iVMA VMA
+);
 
 endmodule // vma

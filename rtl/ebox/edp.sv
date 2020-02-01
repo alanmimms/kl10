@@ -54,22 +54,10 @@ module edp(input eboxClk,
 
            input [0:35] VMA_VMAheldOrPC,
 
-           output logic [-2:35] EDP_AD,
-           output logic [0:35] EDP_ADX,
-           output logic [0:35] EDP_BR,
-           output logic [0:35] EDP_BRX,
-           output logic [0:35] EDP_MQ,
-           output logic [0:35] EDP_AR,
-           output logic [0:35] EDP_ARX,
            output logic [0:35] FM,
            output fmParity,
 
-           output logic [-2:35] EDP_AD_EX,
-           output logic [-2:36] EDP_ADcarry,
-           output logic [0:36] EDP_ADXcarry,
-           output logic [0:35] EDP_ADoverflow,
-           output logic EDP_genCarry36
-           );
+           iEDP EDP);
 
   // Universal shift register function selector values
   enum logic [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;

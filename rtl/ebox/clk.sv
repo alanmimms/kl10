@@ -8,11 +8,7 @@ module clk(input clk,
            output logic fastMemClk,
            output logic MR_RESET,
 
-           output logic CLK_EBOX_SYNC,
-           output logic CLK_SBR_CALL,
-           output logic CLK_RESP_MBOX,
-           output logic CLK_RESP_SIM,
-           output logic CLK_PAGE_ERROR);
+           iCLK CLK);
 
   assign eboxClk = clk;         // TEMPORARY XXX
   assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)

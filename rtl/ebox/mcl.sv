@@ -19,18 +19,5 @@ module mcl(input eboxClk,
            output logic ptPublic,
            output logic force1777,
 
-           output logic MCL_VMA_SECTION_0,
-           output logic MCL_MBOX_CYC_REQ,
-           output logic MCL_VMA_FETCH,
-           output logic MCL_LOAD_AR,
-           output logic MCL_LOAD_ARX,
-           output logic MCL_LOAD_VMA,
-           output logic MCL_STORE_AR,
-           output logic MCL_SKIP_SATISFIED,
-
-           output logic MCL_SHORT_STACK,
-           output logic MCL_18_BIT_EA,
-           output logic MCL_23_BIT_EA,
-           output logic MCL_MEM_ARL_IND
-);
+           iMCL MCL);
 endmodule // mcl

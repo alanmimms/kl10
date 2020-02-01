@@ -40,96 +40,10 @@ module ctl(input eboxClk,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
 
-           output logic CTL_AR00to08_LOAD,
-           output logic CTL_AR09to17_LOAD,
-           output logic CTL_ARR_LOAD,
-
-           output logic [0:2] CTL_ARL_SEL,
-           output logic [0:2] CTL_ARR_SEL,
-           output logic [0:2] CTL_ARXL_SEL,
-           output logic [0:2] CTL_ARXR_SEL,
-           output logic CTL_ARX_LOAD,
-           output logic [0:8] CTL_REG_CTL,
-
-           output logic [0:1] CTL_MQ_SEL,
-           output logic [0:1] CTL_MQM_SEL,
-           output logic CTL_MQM_EN,
-
-           output logic CTL_adToEBUS_L,
-           output logic CTL_adToEBUS_R,
-
-           output logic CTL_DISP_NICOND,
-           output logic CTL_DISP_RET,
-
-           output logic CTL_SPEC_SCM_ALT,
-           output logic CTL_SPEC_CLR_FPD,
-           output logic CTL_SPEC_FLAG_CTL,
-           output logic CTL_SPEC_SP_MEM_CYCLE,
-           output logic CTL_SPEC_SAVE_FLAGS,
-           output logic CTL_SPEC_ADX_CRY_36,
-           output logic CTL_SPEC_GEN_CRY18,
-           output logic CTL_SPEC_CALL,
-           output logic CTL_SPEC_SBR_CALL,
-           output logic CTL_SPEC_XCRY_AR0,
-
-           output logic CTL_AD_LONG,
-           output logic CTL_ADX_CRY_36,
-           output logic CTL_INH_CRY_18,
-           output logic CTL_GEN_CRY_18,
-
-           output logic CTL_COND_REG_CTL,
-           output logic CTL_COND_AR_EXP,
-           output logic CTL_COND_ARR_LOAD,
-           output logic CTL_COND_ARLR_LOAD,
-           output logic CTL_COND_ARLL_LOAD,
-           output logic CTL_COND_AR_CLR,
-           output logic CTL_COND_ARX_CLR,
-
-           output logic CTL_ARL_IND,
-           output logic [0:1] CTL_ARL_IND_SEL,
-           output logic CTL_MQ_CLR,
-           output logic CTL_AR_CLR,
-           output logic CTL_AR00to11_CLR,
-           output logic CTL_AR12to17_CLR,
-           output logic CTL_ARR_CLR,
-           output logic CTL_ARX_CLR,
-
-           output logic CTL_DIAG_CTL_FUNC_00x,
-           output logic CTL_DIAG_LD_FUNC_04x,
-           output logic CTL_DIAG_LOAD_FUNC_06x,
-           output logic CTL_DIAG_LOAD_FUNC_07x,
-           output logic CTL_DIAG_LOAD_FUNC_072,
-           output logic CTL_DIAG_LD_FUNC_073,
-           output logic CTL_DIAG_LD_FUNC_074,
-           output logic CTL_DIAG_SYNC_FUNC_075,
-           output logic CTL_DIAG_LD_FUNC_076,
-           output logic CTL_DIAG_CLK_EDP,
-           output logic CTL_DIAG_READ_FUNC_11x,
-           output logic CTL_DIAG_READ_FUNC_12x,
-           output logic CTL_DIAG_READ_FUNC_13x,
-           output logic CTL_DIAG_READ_FUNC_14x,
-           
-           output logic CTL_PI_CYCLE_SAVE_FLAGS,
-           output logic CTL_LOAD_PC,
-
-           output logic CTL_DIAG_STROBE,
-           output logic CTL_DIAG_READ,
-           output logic CTL_DIAG_AR_LOAD,
-           output logic CTL_DIAG_LD_EBUS_REG,
-           output logic CTL_EBUS_XFER,
-
-           output logic CTL_AD_TO_EBUS_L,
-           output logic CTL_AD_TO_EBUS_R,
-           output logic CTL_EBUS_T_TO_E_EN,
-           output logic CTL_EBUS_E_TO_T_EN,
-
-           output logic CTL_EBUS_PARITY_OUT,
-
            output logic DIAG_CHANNEL_CLK_STOP,
-           output logic CTL_DIAG_FORCE_EXTEND,
-           output logic [0:6] CTL_DIAG_DIAG,
            output logic [4:6] DIAG
-);
+
+           iCTL CTL);
 
 
   logic CTL_DISP_AREAD;

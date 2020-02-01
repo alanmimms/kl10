@@ -9,11 +9,11 @@ module shm(input eboxClk,
 
            tCRAM CRAM,
 
-           output logic [0:35] SHM_SH,
-           output logic [3:0] SHM_XR,
-           output logic SHM_AR_PAR_ODD,
            output indexed,
            output ARextended,
-           output ARparityOdd);
+           output ARparityOdd,
+
+           iSHM SHM
+);
 
 endmodule // shm
