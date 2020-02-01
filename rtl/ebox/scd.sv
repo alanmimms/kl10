@@ -3,10 +3,10 @@
 `include "ebus-defs.svh"
 // M8524 SCD
 module scd(input eboxClk,
-           input [0:35] EDP.AR,
-           input CTL.DIAG_READ_FUNC_13x,
-
+           iSCD SCD,
            iCRAM CRAM,
-           iSCD SCD);
+           iEDP EDP,
+           iCTL CTL
+);
 
 endmodule // scd

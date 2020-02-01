@@ -3,17 +3,14 @@
 
 // M8540 SHM
 module shm(input eboxClk,
-           input [0:35] EDP.AR,
-           input [0:35] EDP.ARX,
-           input CON.LONG_EN,
-
+           iSHM SHM,
            tCRAM CRAM,
+           iCON CON,
+           iEDP EDP,
 
            output indexed,
            output ARextended,
-           output ARparityOdd,
-
-           iSHM SHM
+           output ARparityOdd
 );
 
 endmodule // shm

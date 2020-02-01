@@ -4,6 +4,7 @@
 interface iIR;
   logic ADeq0;
   logic IO_LEGAL;
+  logic ADeq0;
   logic ACeq0;
   logic JRST0;
   logic TEST_SATISFIED;

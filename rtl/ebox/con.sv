@@ -3,19 +3,18 @@
 `include "ebus-defs.svh"
 // M8525 CON
 module con(input eboxClk,
-           input CTL.DIAG_READ_FUNC_13x,
-           input CTL.DISP_NICOND,
-           input CTL.SPEC_FLAG_CTL,
-           input CTL.SPEC_SAVE_FLAGS,
-           input CTL.EBUS_XFER,
+           iCON CON,
+
+           iCRAM CRAM,
+           iCTL CTL,
+           iIR IR,
+           iPI PI,
+           iSCD SCD,
+           iAPR APR,
 
            input [4:6] DIAG,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
-
-           iCRAM CRAM,
-
-           input IR.IO_LEGAL,
 
            input MTR_INTERRUPT_REQ,
 
@@ -23,14 +22,6 @@ module con(input eboxClk,
            input CLK_PAGE_ERROR,
            input CLK_EBOX_SYNC,
            input CLK_SBR_CALL,
-
-           input PI.READY,
-           input PI.EBUS_CP_GRANT,
-           input PI.EXT_TRAN_REC,
-
-           input SCD.USER,
-           input SCD.USER_IOT,
-           input SCD.PUBLIC,
 
            input MCL_VMA_SECTION_0,
            input MCL_MBOX_CYC_REQ,
@@ -43,14 +34,10 @@ module con(input eboxClk,
 
            input CSH_PAR_BIT_A,
            input CSH_PAR_BIT_B,
-           input APR_FM_BIT_36,
            input EBUS_PARITY_E,
-           input EBUS_PARITY_ACTIVE_E,
-
-           iCON CON);
+           input EBUS_PARITY_ACTIVE_E);
 
   logic CON_CLK;
-  logic CON.RESET;
   logic CON_DIAG_READ;
   logic CON_WR_EVEN_PAR_DATA;
   logic CON_WR_EVEN_PAR_DIR;
@@ -445,7 +432,7 @@ module con(input eboxClk,
 
   always_ff @(posedge CON_CLK) begin
     CON_CSH_BIT_36 <= CSH_PAR_BIT_A | CSH_PAR_BIT_B;
-    CON_FM_BIT_36 <= APR_FM_BIT_36;
+    CON_FM_BIT_36 <= APR.FM_BIT_36;
     CON_EBUS_BIT_36 <= EBUS_PARITY_E;
     CON_MBOX_DATA <= CON.FM_XFER;
     CON_FM_DATA <= CON.MB_XFER;

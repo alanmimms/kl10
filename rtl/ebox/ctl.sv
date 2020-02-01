@@ -6,21 +6,17 @@
 module ctl(input eboxClk,
            input MR_RESET,
 
-           input [0:35] EDP.AR,
-           input [0:35] EDP.ARX,
+           iCTL CTL,
 
-           input CON.PI_CYCLE,
-           input CON.PCplus1_INH,
-           input CON.FM_XFER,
-           input CON.COND_EN00_07,
-           input CON.COND_DIAG_FUNC,
+           iAPR APR,
+           iCON CON,
+           iCRAM CRAM,
+           iEDP EDP,
+           iPI PI,
+           iSHM SHM,
 
-           input APR_CLK,
-           input APR_CONO_OR_DATAO,
-           input APR_CONI_OR_DATAI,
-           input APR_EBUS_RETURN,
-
-           input SHM.AR_PAR_ODD,
+           iEBUS EBUS,
+           tEBUSdriver EBUSdriver,
 
            input CLK_SBR_CALL,
            input CLK_RESP_MBOX,
@@ -33,17 +29,9 @@ module ctl(input eboxClk,
            input MCL_LOAD_ARX,
            input MCL_MEM_ARL_IND,
 
-           input P15_GATE_TTL_TO_ECL,
-
-           iCRAM CRAM,
-
-           iEBUS EBUS,
-           tEBUSdriver EBUSdriver,
-
            output logic DIAG_CHANNEL_CLK_STOP,
            output logic [4:6] DIAG
-
-           iCTL CTL);
+);
 
 
   logic CTL_DISP_AREAD;
@@ -56,7 +44,6 @@ module ctl(input eboxClk,
   logic CTL_SPEC_INH_CRY_18;
   logic CTL_SPEC_MQ_SHIFT;
   logic CTL_SPEC_LOAD_PC;
-  logic CTL.SPEC_GEN_CRY_18;
   logic CTL_SPEC_STACK_UPDATE;
   logic CTL_SPEC_ARL_IND;
   logic CTL_SPEC_AD_LONG;
@@ -64,6 +51,8 @@ module ctl(input eboxClk,
   logic SPEC_MTR_CTL;
 
   logic CTL_COND_ARL_IND;
+  logic CTL_COND_AR_EXP;
+  logic CTL_COND_REG_CTL;
 
   logic CTL_CONSOLE_CONTROL;
 
@@ -178,7 +167,7 @@ module ctl(input eboxClk,
     // This mess is CTL1 E12, E3, E16 p.364. My confidence in this
     // is not high.
     // Race?
-    loadPC1 = ~((APR_CLK & loadPC1) |                   // E12
+    loadPC1 = ~((APR.CLK & loadPC1) |                   // E12
                 ((CTL_SPEC_LOAD_PC | CTL.DISP_NICOND) & // E16
                  CLK_SBR_CALL));                        // E12
     CTL.LOAD_PC = CON.PI_CYCLE & loadPC1;
@@ -197,7 +186,7 @@ module ctl(input eboxClk,
                   CTL_SPEC_MQ_SHIFT;
 
     CTL.DISP_RET = ~(~CLK_SBR_CALL | ~CTL_DISP_RETURN);
-    CTL_SPEC_MTR_CTL = SPEC_MTR_CTL & APR_CLK;
+    CTL_SPEC_MTR_CTL = SPEC_MTR_CTL & APR.CLK;
   end
 
   // CTL2 p.365
@@ -248,7 +237,7 @@ module ctl(input eboxClk,
 
     CTL.ARL_IND = MCL_MEM_ARL_IND | CTL_SPEC_ARL_IND | CTL_COND_ARL_IND;
 
-    CTL.EBUS_XFER = CRAM.AR[0] & APR_CONO_OR_DATAO & ~(CRAM.AR[1] & CRAM.AR[2]);
+    CTL.EBUS_XFER = CRAM.AR[0] & APR.CONO_OR_DATAO & ~(CRAM.AR[1] & CRAM.AR[2]);
     CTL_36_BIT_EA = CTL_DISP_AREAD & CTL.AR00to11_CLR;
 
     CTL.COND_ARLL_LOAD = CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b001);
@@ -313,20 +302,20 @@ module ctl(input eboxClk,
     CTL.DIAG_STROBE = EBUS.diagStrobe;
 
     CTL_CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
-    CTL_READ_STROBE = CTL_CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR_CLK;
+    CTL_READ_STROBE = CTL_CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR.CLK;
     CTL_DS = CTL_CONSOLE_CONTROL ? EBUS.ds[0:6] : CRAM.MAGIC[2:8];
 
     DIAG[4:6] = CTL_DS[4:6];
 
     CTL.AD_TO_EBUS_L = CTL_CONSOLE_CONTROL &
-                       (APR_CONO_OR_DATAO | (CON.COND_DIAG_FUNC | CRAM.MAGIC[2] | APR_CLK));
+                       (APR.CONO_OR_DATAO | (CON.COND_DIAG_FUNC | CRAM.MAGIC[2] | APR.CLK));
     CTL.AD_TO_EBUS_R = CTL.AD_TO_EBUS_L;
 
     CTL.DIAG_AR_LOAD = CTL_DS[0] & &EBUS.ds[1:3] & &DIAG[4:6];
 
-    CTL.EBUS_T_TO_E_EN = (P15_GATE_TTL_TO_ECL | APR_CONI_OR_DATAI) & CTL_CONSOLE_CONTROL |
+    CTL.EBUS_T_TO_E_EN = (PI.GATE_TTL_TO_ECL | APR.CONI_OR_DATAI) & CTL_CONSOLE_CONTROL |
                          (EBUS.ds[0] & CTL_CONSOLE_CONTROL);
-    CTL.EBUS_E_TO_T_EN = APR_EBUS_RETURN & CTL.EBUS_T_TO_E_EN |
+    CTL.EBUS_E_TO_T_EN = APR.EBUS_RETURN & CTL.EBUS_T_TO_E_EN |
                          CTL_CONSOLE_CONTROL & CTL.EBUS_T_TO_E_EN;
     CTL.EBUS_PARITY_OUT = SHM.AR_PAR_ODD | CTL.AD_TO_EBUS_L;
   end

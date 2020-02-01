@@ -19,32 +19,24 @@ module cra(input eboxClk,
            input [0:2] DRAM_A,
            input [0:2] DRAM_B,
            input [0:10] DRAM_J,
+           
            iCRAM CRAM,
+           iCTL CTL,
+           iCON CON,
+           iEDP EDP,
+           iIR IR,
+           iSHM SHM,
 
            input [8:10] norm,
            input [0:10] NICOND,
            input [0:3] SR,
-           input [0:35] SHM.SH,
-           input [0:35] EDP.MQ,
-           input [0:35] EDP.BR,
-           input [-2:35] EDP.AD,
-           input [0:35] EDP.ADX,
-           input [0:35] EDP.AR,
-           input [0:35] EDP.ARX,
-           input [-2:36] EDP.AD_CRY,
            input [0:10] pfDisp,
            input skipEn40_47,
            input skipEn50_57,
-           input CTL.DIAG_READ_FUNC_14x,
-           input CTL_diaFunc051,
-           input CTL_diaFunc052,
 
            input pcSection0,
            input localACAddress,
-           input CON.LONG_EN,
            input indexed,
-           input IR.ADeq0,
-           input IR_ACeq0,
            input FEsign,
            input SCsign,
            input SCADsign,
@@ -130,7 +122,7 @@ module cra(input eboxClk,
       3'b011: dispMux[10] = EDP.ARX[0];
       3'b100: dispMux[10] = EDP.AR[18];
       3'b101: dispMux[10] = EDP.AR[0];
-      3'b110: dispMux[10] = IR_ACeq0;
+      3'b110: dispMux[10] = IR.ACeq0;
       3'b111: dispMux[10] = SCsign;
       endcase
     end else if (skipEn50_57) begin
@@ -236,9 +228,9 @@ module cra(input eboxClk,
 
   always_comb begin
 
-    if (CTL_diaFunc051)
+    if (CTL.diaFunc051)
       diagAdr[5:10] = EBUS.data[0:5];
-    else if (CTL_diaFunc052)
+    else if (CTL.diaFunc052)
       diagAdr[0:4] = EBUS.data[1:5];
 
     AREAD = DRAM_A === 3'b000 ? DRAM_J : 0;

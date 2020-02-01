@@ -3,18 +3,14 @@
 `include "ebus-defs.svh"
 // M8522 IR
 module ir(input eboxClk,
-          input [0:35] cacheDataRead,
-          input [-2:35] EDP.AD,
+
+          iIR IR,
           iCRAM CRAM,
-          input CON.MB_XFER,
-          input CON.LOAD_IR,
-          input CON.LOAD_DRAM,
-          input CTL.DIAG_LOAD_FUNC_06x,
-          input CTL.DIAG_READ_FUNC_13x,
-          input CTL.INH_CRY_18,
-          input CTL.SPEC_GEN_CRY_18,
-          input [-2:36] EDP.AD_CRY,
-          input [0:36] EDP.ADX_CRY,
+          iCON CON,
+          iCTL CTL,
+          iEDP EDP,
+
+          input [0:35] cacheDataRead,
 
           iEBUS EBUS,
           tEBUSdriver EBUSdriver,
@@ -25,9 +21,8 @@ module ir(input eboxClk,
           output logic [0:2] DRAM_A,
           output logic [0:2] DRAM_B,
           output logic [0:10] DRAM_J,
-          output logic DRAM_ODD_PARITY,
-
-          iIR IR);
+          output logic DRAM_ODD_PARITY
+);
 
   localparam DRAM_WIDTH=15;
   localparam DRAM_SIZE=512;

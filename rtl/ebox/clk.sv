@@ -2,13 +2,15 @@
 // M8526 CLK
 module clk(input clk,
            input eboxReset,
-           input CON.MB_XFER,
+           input MB_XFER,
+
+           iCLK CLK,
+           iCON CON,
 
            output logic eboxClk,
            output logic fastMemClk,
-           output logic MR_RESET,
-
-           iCLK CLK);
+           output logic MR_RESET
+);
 
   assign eboxClk = clk;         // TEMPORARY XXX
   assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)

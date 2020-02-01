@@ -69,8 +69,6 @@ module top(input clk
   logic read;
   logic write;
 
-  logic CON.MB_XFER;
-
   logic MCL_VMA_SECTION_0;
   logic MCL_MBOX_CYC_REQ;
   logic MCL_VMA_FETCH;

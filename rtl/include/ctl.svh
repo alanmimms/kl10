@@ -74,6 +74,8 @@ interface iCTL;
   logic EBUS_E_TO_T_EN;
   logic EBUS_PARITY_OUT;
   logic DIAG_FORCE_EXTEND;
+  logic diaFunc051;
+  logic diaFunc052;
   logic [0:6] DIAG_DIAG;
 endinterface
 

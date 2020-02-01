@@ -7,64 +7,27 @@
 module edp(input eboxClk,
            input fastMemClk,
            input eboxReset,
-           input CTL_AD_CRY_36,
-           input CTL.ADX_CRY_36,
 
+           iEDP EDP,
+           iAPR APR,
            iCRAM CRAM,
-
-           input [0:2] CTL.ARL_SEL,
-           input [0:2] CTL.ARR_SEL,
-           input CTL.AR00to08_LOAD,
-           input CTL.AR09to17_LOAD,
-           input CTL.ARR_LOAD,
-
-           input CTL.AR00to11_CLR,
-           input CTL.AR12to17_CLR,
-           input CTL.ARR_CLR,
-
-           input [0:2] CTL.ARXL_SEL,
-           input [0:2] CTL.ARXR_SEL,
-           input CTL.ARX_LOAD,
-
-           input [0:1] CTL.MQ_SEL,
-           input [0:1] CTL.MQM_SEL,
-           input CTL.MQM_EN,
-           input CTL.INH_CRY_18,
-           input CTL_SPEC_AD_LONG,
-           input CTL.SPEC_GEN_CRY_18,
+           iCON CON,
+           iCTL CTL,
+           iSCD SCD,
+           iSHM SHM,
+           iVMA VMA,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
-           input [0:35] SHM.SH,
-           input [0:8] SCD.ARMM_UPPER,
-           input [13:17] SCD.ARMM_LOWER,
-
-           input CTL.AD_TO_EBUS_L,
-           input CTL.AD_TO_EBUS_R,
-
-           input [0:2] APR.FMblk,
-           input [0:3] APR.FMadr,
-
-           input CON.FM_WRITE00_17,
-           input CON.FM_WRITE18_35,
-
-           input CTL.DIAG_READ_FUNC_12x,
-
-           input [0:35] VMA.VMA_HELD_OR_PC,
 
            output logic [0:35] FM,
-           output fmParity,
-
-           iEDP EDP);
+           output fmParity);
 
   // Universal shift register function selector values
   enum logic [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
   
-  /*AUTOWIRE*/
-  /*AUTOREG*/
-
   logic [0:17] ARL;
   logic [0:17] ARXL, ARXR;
   
