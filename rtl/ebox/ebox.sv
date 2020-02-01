@@ -87,7 +87,7 @@ module ebox(input eboxClk,
             output logic anyEboxError,
 
             output logic [13:35] EBOX_VMA,
-            output logic [10:12] cacheClearer,
+            output logic [10:12] CACHE_CLEARER,
             output logic EBOX_REQ,
             output logic CLK_EBOX_SYNC,
             output logic mboxClk,
@@ -97,25 +97,25 @@ module ebox(input eboxClk,
   logic EBUS_PARITY_E;
   logic EBUS_PARITY_ACTIVE_E;
 
-  logic [0:2] APR_FMblk;
-  logic [0:3] APR_FMadr;
+  logic [0:2] APR.FMblk;
+  logic [0:3] APR.FMadr;
   logic APR_CLK;
   logic APR_CONO_OR_DATAO;
   logic APR_CONI_OR_DATAI;
   logic APR_EBUS_RETURN;
   logic APR_FM_BIT_36;
 
-  logic [0:35] SHM_SH;
-  logic SHM_AR_PAR_ODD;
+  logic [0:35] SHM.SH;
+  logic SHM.AR_PAR_ODD;
 
-  logic loadIR;
-  logic loadDRAM;
-  logic [0:8] CTL_REG_CTL;
-  logic CTL_AD_LONG;
+  logic CON.LOAD_IR;
+  logic CON.LOAD_DRAM;
+  logic [0:8] CTL.REG_CTL;
+  logic CTL.AD_LONG;
   logic CTL_AD_CRY_36;
-  logic CTL_ADX_CRY_36;
-  logic CTL_INH_CRY_18;
-  logic CTL_GEN_CRY_18;
+  logic CTL.ADX_CRY_36;
+  logic CTL.INH_CRY_18;
+  logic CTL.GEN_CRY_18;
 
   logic [8:10] norm;
   logic [0:12] IR;
@@ -129,179 +129,179 @@ module ebox(input eboxClk,
 
   logic [0:3] SR;
 
-  logic CTL_AR00to08_LOAD;
-  logic CTL_AR09to17_LOAD;
-  logic CTL_ARR_LOAD;
+  logic CTL.AR00to08_LOAD;
+  logic CTL.AR09to17_LOAD;
+  logic CTL.ARR_LOAD;
 
   logic CTL_AR_CLR;
-  logic CTL_AR00to11_CLR;
-  logic CTL_AR12to17_CLR;
-  logic CTL_ARR_CLR;
-  logic CTL_ARX_CLR;
-  logic CTL_ARL_IND;
-  logic [0:1] CTL_ARL_IND_SEL;
-  logic CTL_MQ_CLR;
+  logic CTL.AR00to11_CLR;
+  logic CTL.AR12to17_CLR;
+  logic CTL.ARR_CLR;
+  logic CTL.ARX_CLR;
+  logic CTL.ARL_IND;
+  logic [0:1] CTL.ARL_IND_SEL;
+  logic CTL.MQ_CLR;
 
-  logic [0:2] CTL_ARL_SEL;
-  logic [0:2] CTL_ARR_SEL;
-  logic [0:2] CTL_ARXL_SEL;
-  logic [0:2] CTL_ARXR_SEL;
-  logic CTL_ARX_LOAD;
+  logic [0:2] CTL.ARL_SEL;
+  logic [0:2] CTL.ARR_SEL;
+  logic [0:2] CTL.ARXL_SEL;
+  logic [0:2] CTL.ARXR_SEL;
+  logic CTL.ARX_LOAD;
 
-  logic [0:1] CTL_MQ_SEL;
-  logic [0:1] CTL_MQM_SEL;
-  logic CTL_MQM_EN;
+  logic [0:1] CTL.MQ_SEL;
+  logic [0:1] CTL.MQM_SEL;
+  logic CTL.MQM_EN;
 
-  logic CTL_adToEBUS_L;
-  logic CTL_adToEBUS_R;
+  logic CTL.AD_TO_EBUS_L;
+  logic CTL.AD_TO_EBUS_R;
 
-  logic CTL_SPEC_GEN_CRY18;
+  logic CTL.SPEC_GEN_CRY_18;
   logic CTL_SPEC_AD_LONG;
-  logic CTL_SPEC_SCM_ALT;
-  logic CTL_SPEC_CLR_FPD;
-  logic CTL_SPEC_FLAG_CTL;
-  logic CTL_SPEC_SP_MEM_CYCLE;
-  logic CTL_SPEC_SAVE_FLAGS;
-  logic CTL_SPEC_ADX_CRY_36;
-  logic CTL_SPEC_CALL;
-  logic CTL_SPEC_SBR_CALL;
-  logic CTL_SPEC_XCRY_AR0;
+  logic CTL.SPEC_SCM_ALT;
+  logic CTL.SPEC_CLR_FPD;
+  logic CTL.SPEC_FLAG_CTL;
+  logic CTL.SPEC_SP_MEM_CYCLE;
+  logic CTL.SPEC_SAVE_FLAGS;
+  logic CTL.SPEC_ADX_CRY_36;
+  logic CTL.SPEC_CALL;
+  logic CTL.SPEC_SBR_CALL;
+  logic CTL.SPEC_XCRY_AR0;
 
   logic CTL_COND_REG_CTL;
   logic CTL_COND_AR_EXP;
-  logic CTL_COND_ARR_LOAD;
-  logic CTL_COND_ARLR_LOAD;
-  logic CTL_COND_ARLL_LOAD;
-  logic CTL_COND_AR_CLR;
-  logic CTL_COND_ARX_CLR;
+  logic CTL.COND_ARR_LOAD;
+  logic CTL.COND_ARLR_LOAD;
+  logic CTL.COND_ARLL_LOAD;
+  logic CTL.COND_AR_CLR;
+  logic CTL.COND_ARX_CLR;
 
-  logic CTL_DIAG_CTL_FUNC_00x;
-  logic CTL_DIAG_LD_FUNC_04x;
-  logic CTL_DIAG_LOAD_FUNC_06x;
-  logic CTL_DIAG_LOAD_FUNC_07x;
-  logic CTL_DIAG_LOAD_FUNC_072;
-  logic CTL_DIAG_LD_FUNC_073;
-  logic CTL_DIAG_LD_FUNC_074;
-  logic CTL_DIAG_SYNC_FUNC_075;
-  logic CTL_DIAG_LD_FUNC_076;
-  logic CTL_DIAG_CLK_EDP;
-  logic CTL_DIAG_READ_FUNC_11x;
-  logic CTL_DIAG_READ_FUNC_12x;
-  logic CTL_DIAG_READ_FUNC_13x;
-  logic CTL_DIAG_READ_FUNC_14x;
+  logic CTL.DIAG_CTL_FUNC_00x;
+  logic CTL.DIAG_LD_FUNC_04x;
+  logic CTL.DIAG_LOAD_FUNC_06x;
+  logic CTL.DIAG_LOAD_FUNC_07x;
+  logic CTL.DIAG_LOAD_FUNC_072;
+  logic CTL.DIAG_LD_FUNC_073;
+  logic CTL.DIAG_LD_FUNC_074;
+  logic CTL.DIAG_SYNC_FUNC_075;
+  logic CTL.DIAG_LD_FUNC_076;
+  logic CTL.DIAG_CLK_EDP;
+  logic CTL.DIAG_READ_FUNC_11x;
+  logic CTL.DIAG_READ_FUNC_12x;
+  logic CTL.DIAG_READ_FUNC_13x;
+  logic CTL.DIAG_READ_FUNC_14x;
 
   logic CTL_diaFunc051;
   logic CTL_diaFunc052;  
 
-  logic CTL_DISP_NICOND;
-  logic CTL_DISP_RET;
+  logic CTL.DISP_NICOND;
+  logic CTL.DISP_RET;
 
-  logic CTL_PI_CYCLE_SAVE_FLAGS;
-  logic CTL_LOAD_PC;
+  logic CTL.PI_CYCLE_SAVE_FLAGS;
+  logic CTL.LOAD_PC;
 
-  logic CTL_DIAG_STROBE;
-  logic CTL_DIAG_READ;
-  logic CTL_DIAG_AR_LOAD;
-  logic CTL_DIAG_LD_EBUS_REG;
-  logic CTL_EBUS_XFER;
+  logic CTL.DIAG_STROBE;
+  logic CTL.DIAG_READ;
+  logic CTL.DIAG_AR_LOAD;
+  logic CTL.DIAG_LD_EBUS_REG;
+  logic CTL.EBUS_XFER;
 
-  logic CTL_AD_TO_EBUS_L;
-  logic CTL_AD_TO_EBUS_R;
-  logic CTL_EBUS_T_TO_E_EN;
-  logic CTL_EBUS_E_TO_T_EN;
+  logic CTL.AD_TO_EBUS_L;
+  logic CTL.AD_TO_EBUS_R;
+  logic CTL.EBUS_T_TO_E_EN;
+  logic CTL.EBUS_E_TO_T_EN;
 
-  logic CTL_EBUS_PARITY_OUT;
+  logic CTL.EBUS_PARITY_OUT;
 
   logic DIAG_CHANNEL_CLK_STOP;
-  logic CTL_DIAG_FORCE_EXTEND;
-  logic [0:6] CTL_DIAG_DIAG;
+  logic CTL.DIAG_FORCE_EXTEND;
+  logic [0:6] CTL.DIAG_DIAG;
   logic [4:6] DIAG;
 
-  logic CON_SKIP_EN40_47;
-  logic CON_SKIP_EN50_57;
-  logic CON_SKIP_EN60_67;
-  logic CON_SKIP_EN70_77;
+  logic CON.SKIP_EN40_47;
+  logic CON.SKIP_EN50_57;
+  logic CON.SKIP_EN60_67;
+  logic CON.SKIP_EN70_77;
 
-  logic CON_START;
-  logic CON_RUN;
-  logic CON_EBOX_HALTED;
+  logic CON.START;
+  logic CON.RUN;
+  logic CON.EBOX_HALTED;
 
-  logic CON_KL10_PAGING_MODE;
-  logic CON_KI10_PAGING_MODE;
+  logic CON.KL10_PAGING_MODE;
+  logic CON.KI10_PAGING_MODE;
 
-  logic CON_COND_EN00_07;
-  logic CON_COND_EN10_17;
-  logic CON_COND_EN20_27;
-  logic CON_COND_EN30_37;
-  logic CON_COND_EN40_47;
-  logic CON_COND_EN50_57;
-  logic CON_COND_EN60_67;
-  logic CON_COND_EN70_77;
-  logic CON_COND_PCF_MAGIC;
-  logic CON_COND_FE_SHRT;
+  logic CON.COND_EN00_07;
+  logic CON.COND_EN10_17;
+  logic CON.COND_EN20_27;
+  logic CON.COND_EN30_37;
+  logic CON.COND_EN40_47;
+  logic CON.COND_EN50_57;
+  logic CON.COND_EN60_67;
+  logic CON.COND_EN70_77;
+  logic CON.COND_PCF_MAGIC;
+  logic CON.COND_FE_SHRT;
   logic CON_COND_AD_FLAGS;
-  logic CON_COND_SEL_VMA;
-  logic CON_COND_DIAG_FUNC;
-  logic CON_COND_EBUS_CTL;
-  logic CON_COND_MBOX_CTL;
-  logic CON_COND_024;
-  logic CON_COND_026;
-  logic CON_COND_027;
-  logic CON_COND_VMA_MAGIC;
+  logic CON.COND_SEL_VMA;
+  logic CON.COND_DIAG_FUNC;
+  logic CON.COND_EBUS_CTL;
+  logic CON.COND_MBOX_CTL;
+  logic CON.COND_024;
+  logic CON.COND_026;
+  logic CON.COND_027;
+  logic CON.COND_VMA_MAGIC;
   logic CON_COND_LOAD_VMA_HELD;
-  logic CON_COND_INSTR_ABORT;
-  logic CON_COND_ADR_10;
-  logic CON_COND_LOAD_IR;
-  logic CON_COND_EBUS_STATE;
+  logic CON.COND_INSTR_ABORT;
+  logic CON.COND_ADR_10;
+  logic CON.COND_LOAD_IR;
+  logic CON.COND_EBUS_STATE;
 
-  logic CON_LONG_EN;
-  logic CON_PI_CYCLE;
-  logic CON_PCplus1_INH;
-  logic CON_FM_XFER;
-  logic CON_MB_XFER;
-  logic CON_CACHE_LOOK_EN;
-  logic CON_LOAD_ACCESS_COND;
-  logic CON_LOAD_DRAM;
-  logic CON_LOAD_IR;
+  logic CON.LONG_EN;
+  logic CON.PI_CYCLE;
+  logic CON.PCplus1_INH;
+  logic CON.FM_XFER;
+  logic CON.MB_XFER;
+  logic CON.CACHE_LOOK_EN;
+  logic CON.LOAD_ACCESS_COND;
+  logic CON.LOAD_DRAM;
+  logic CON.LOAD_IR;
 
-  logic CON_FM_WRITE00_17;
-  logic CON_FM_WRITE18_35;
-  logic CON_FM_WRITE_PAR;
+  logic CON.FM_WRITE00_17;
+  logic CON.FM_WRITE18_35;
+  logic CON.FM_WRITE_PAR;
 
-  logic CON_IO_LEGAL;
-  logic CON_EBUS_GRANT;
+  logic CON.IO_LEGAL;
+  logic CON.EBUS_GRANT;
 
-  logic CON_CONO_PI;
-  logic CON_CONO_PAG;
-  logic CON_CONO_APR;
-  logic CON_DATAO_APR;
-  logic CON_CONO_200000;
+  logic CON.CONO_PI;
+  logic CON.CONO_PAG;
+  logic CON.CONO_APR;
+  logic CON.DATAO_APR;
+  logic CON.CONO_200000;
 
-  logic CON_SEL_EN;
-  logic CON_SEL_DIS;
-  logic CON_SEL_CLR;
-  logic CON_SEL_SET;
+  logic CON.SEL_EN;
+  logic CON.SEL_DIS;
+  logic CON.SEL_CLR;
+  logic CON.SEL_SET;
 
-  logic CON_UCODE_STATE1;
-  logic CON_UCODE_STATE3;
-  logic CON_UCODE_STATE5;
-  logic CON_UCODE_STATE7;
+  logic CON.UCODE_STATE1;
+  logic CON.UCODE_STATE3;
+  logic CON.UCODE_STATE5;
+  logic CON.UCODE_STATE7;
 
-  logic CON_PI_DISABLE;
-  logic CON_CLR_PRIVATE_INSTR;
-  logic CON_TRAP_EN;
-  logic CON_NICOND_TRAP_EN;
-  logic [7:9] CON_NICOND;
-  logic [0:3] CON_SR;
-  logic CON_LOAD_SPEC_INSTR;
-  logic [0:1] CON_VMA_SEL;
+  logic CON.PI_DISABLE;
+  logic CON.CLR_PRIVATE_INSTR;
+  logic CON.TRAP_EN;
+  logic CON.NICOND_TRAP_EN;
+  logic [7:9] CON.NICOND;
+  logic [0:3] CON.SR;
+  logic CON.LOAD_SPEC_INSTR;
+  logic [0:1] CON.VMA_SEL;
 
-  logic CON_WR_EVEN_PAR_ADR;
-  logic CON_DELAY_REQ;
-  logic CON_AR_36;
-  logic CON_ARX_36;
-  logic CON_CACHE_LOAD_EN;
-  logic CON_EBUS_REL;
+  logic CON.WR_EVEN_PAR_ADR;
+  logic CON.DELAY_REQ;
+  logic CON.AR_36;
+  logic CON.ARX_36;
+  logic CON.CACHE_LOAD_EN;
+  logic CON.EBUS_REL;
 
   logic MTR_INTERRUPT_REQ;
   
@@ -311,64 +311,64 @@ module ebox(input eboxClk,
   logic CLK_RESP_SIM;
   logic CLK_PAGE_ERROR;
 
-  logic PI_READY;
-  logic PI_EBUS_CP_GRANT;
-  logic PI_EXT_TRAN_REC;
+  logic PI.READY;
+  logic PI.EBUS_CP_GRANT;
+  logic PI.EXT_TRAN_REC;
 
   logic P15_GATE_TTL_TO_ECL;
 
-  logic IR_ADeq0;
-  logic IR_IO_LEGAL;
+  logic IR.ADeq0;
+  logic IR.IO_LEGAL;
   logic IR_ACeq0;
-  logic IR_JRST0;
-  logic IR_TEST_SATISFIED;
+  logic IR.JRST0;
+  logic IR.TEST_SATISFIED;
 
-  logic [0:8] SCD_ARMM_UPPER;
-  logic [13:17] SCD_ARMM_LOWER;
-  logic [0:9] SCD_FE;
-  logic [0:9] SCD_SC;
-  logic [0:35] SCD_SCADA;
-  logic [0:35] SCD_SCADB;
-  logic SCD_SC_GE_36;
-  logic SCD_SCADeq0;
-  logic SCD_SCAD_SIGN;
-  logic SCD_SC_SIGN;
-  logic SCD_FE_SIGN;
-  logic SCD_OV;
-  logic SCD_CRY0;
-  logic SCD_CRY1;
-  logic SCD_FOV;
-  logic SCD_FXU;
-  logic SCD_FPD;
-  logic SCD_PCP;
-  logic SCD_DIV_CHK;
-  logic SCD_TRAP_REQ1;
-  logic SCD_TRAP_REQ2;
-  logic SCD_TRAP_CYC1;
-  logic SCD_TRAP_CYC2;
-  logic SCD_USER;
-  logic SCD_USER_IOT;
-  logic SCD_PUBLIC;
-  logic SCD_PRIVATE;
-  logic SCD_ADR_BRK_PREVENT;
+  logic [0:8] SCD.ARMM_UPPER;
+  logic [13:17] SCD.ARMM_LOWER;
+  logic [0:9] SCD.FE;
+  logic [0:9] SCD.SC;
+  logic [0:35] SCD.SCADA;
+  logic [0:35] SCD.SCADB;
+  logic SCD.SC_GE_36;
+  logic SCD.SCADeq0;
+  logic SCD.SCAD_SIGN;
+  logic SCD.SC_SIGN;
+  logic SCD.FE_SIGN;
+  logic SCD.OV;
+  logic SCD.CRY0;
+  logic SCD.CRY1;
+  logic SCD.FOV;
+  logic SCD.FXU;
+  logic SCD.FPD;
+  logic SCD.PCP;
+  logic SCD.DIV_CHK;
+  logic SCD.TRAP_REQ1;
+  logic SCD.TRAP_REQ2;
+  logic SCD.TRAP_CYC1;
+  logic SCD.TRAP_CYC2;
+  logic SCD.USER;
+  logic SCD.USER_IOT;
+  logic SCD.PUBLIC;
+  logic SCD.PRIVATE;
+  logic SCD.ADR_BRK_PREVENT;
 
-  logic [0:35] VMA_VMAheldOrPC;
+  logic [0:35] VMA.VMA_HELD_OR_PC;
 
-  logic [-2:35] EDP_AD;
-  logic [0:35] EDP_ADX;
-  logic [0:35] EDP_BR;
-  logic [0:35] EDP_BRX;
-  logic [0:35] EDP_MQ;
-  logic [0:35] EDP_AR;
-  logic [0:35] EDP_ARX;
+  logic [-2:35] EDP.AD;
+  logic [0:35] EDP.ADX;
+  logic [0:35] EDP.BR;
+  logic [0:35] EDP.BRX;
+  logic [0:35] EDP.MQ;
+  logic [0:35] EDP.AR;
+  logic [0:35] EDP.ARX;
   logic [0:35] FM;
   logic fmParity;
 
-  logic [-2:35] EDP_AD_EX;
-  logic [-2:36] EDP_ADcarry;
-  logic [0:36] EDP_ADXcarry;
-  logic [0:35] EDP_ADoverflow;
-  logic EDP_genCarry36;
+  logic [-2:35] EDP.AD_EX;
+  logic [-2:36] EDP.AD_CRY;
+  logic [0:36] EDP.ADX_CRY;
+  logic [0:35] EDP.AD_OV;
+  logic EDP_GEN_CRY_36;
 
 
   logic skipEn40_47;
@@ -411,7 +411,7 @@ module ebox(input eboxClk,
   ir  ir0 (.*, .EBUSdriver(IR_EBUS));
   mcl mcl0(.*);
   mtr mtr0(.*);
-  pic pic0(.*, .EBUSdriver(PI_EBUS));
+  pi  pi0(.*, .EBUSdriver(PI_EBUS));
   scd scd0(.*);
   shm shm0(.*);
   vma vma0(.*);

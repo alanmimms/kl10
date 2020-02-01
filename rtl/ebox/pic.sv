@@ -1,8 +1,8 @@
 `timescale 1ns/1ns
 `include "ebus-defs.svh"
-`include "pic.svh"
-// M8532 PIC
-module pic(input eboxClk,
+`include "pi.svh"
+// M8532 PI
+module pi(input eboxClk,
 
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
@@ -10,4 +10,4 @@ module pic(input eboxClk,
            iPI PI);
 
   assign EBUSdriver.driving = 0;       // XXX temporary
-endmodule // pic
+endmodule

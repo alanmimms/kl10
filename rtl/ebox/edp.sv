@@ -8,51 +8,51 @@ module edp(input eboxClk,
            input fastMemClk,
            input eboxReset,
            input CTL_AD_CRY_36,
-           input CTL_ADX_CRY_36,
+           input CTL.ADX_CRY_36,
 
            iCRAM CRAM,
 
-           input [0:2] CTL_ARL_SEL,
-           input [0:2] CTL_ARR_SEL,
-           input CTL_AR00to08_LOAD,
-           input CTL_AR09to17_LOAD,
-           input CTL_ARR_LOAD,
+           input [0:2] CTL.ARL_SEL,
+           input [0:2] CTL.ARR_SEL,
+           input CTL.AR00to08_LOAD,
+           input CTL.AR09to17_LOAD,
+           input CTL.ARR_LOAD,
 
-           input CTL_AR00to11_CLR,
-           input CTL_AR12to17_CLR,
-           input CTL_ARR_CLR,
+           input CTL.AR00to11_CLR,
+           input CTL.AR12to17_CLR,
+           input CTL.ARR_CLR,
 
-           input [0:2] CTL_ARXL_SEL,
-           input [0:2] CTL_ARXR_SEL,
-           input CTL_ARX_LOAD,
+           input [0:2] CTL.ARXL_SEL,
+           input [0:2] CTL.ARXR_SEL,
+           input CTL.ARX_LOAD,
 
-           input [0:1] CTL_MQ_SEL,
-           input [0:1] CTL_MQM_SEL,
-           input CTL_MQM_EN,
-           input CTL_INH_CRY_18,
+           input [0:1] CTL.MQ_SEL,
+           input [0:1] CTL.MQM_SEL,
+           input CTL.MQM_EN,
+           input CTL.INH_CRY_18,
            input CTL_SPEC_AD_LONG,
-           input CTL_SPEC_GEN_CRY18,
+           input CTL.SPEC_GEN_CRY_18,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
-           input [0:35] SHM_SH,
-           input [0:8] SCD_ARMM_UPPER,
-           input [13:17] SCD_ARMM_LOWER,
+           input [0:35] SHM.SH,
+           input [0:8] SCD.ARMM_UPPER,
+           input [13:17] SCD.ARMM_LOWER,
 
-           input CTL_adToEBUS_L,
-           input CTL_adToEBUS_R,
+           input CTL.AD_TO_EBUS_L,
+           input CTL.AD_TO_EBUS_R,
 
-           input [0:2] APR_FMblk,
-           input [0:3] APR_FMadr,
+           input [0:2] APR.FMblk,
+           input [0:3] APR.FMadr,
 
-           input CON_FM_WRITE00_17,
-           input CON_FM_WRITE18_35,
+           input CON.FM_WRITE00_17,
+           input CON.FM_WRITE18_35,
 
-           input CTL_DIAG_READ_FUNC_12x,
+           input CTL.DIAG_READ_FUNC_12x,
 
-           input [0:35] VMA_VMAheldOrPC,
+           input [0:35] VMA.VMA_HELD_OR_PC,
 
            output logic [0:35] FM,
            output fmParity,
@@ -90,56 +90,56 @@ module edp(input eboxClk,
   end
   
   // XXX wrong?
-  assign EDP_ADcarry[36] = CTL_AD_CRY_36;
+  assign EDP.AD_CRY[36] = CTL_AD_CRY_36;
 
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
   always_comb begin
-    unique case (CTL_ARL_SEL)
+    unique case (CTL.ARL_SEL)
     default: ARL = 'x;
-    3'b000: ARL = {SCD_ARMM_UPPER, 5'b0, SCD_ARMM_LOWER};
+    3'b000: ARL = {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER};
     3'b001: ARL = cacheDataRead[0:17];
-    3'b010: ARL = EDP_AD[0:17];
+    3'b010: ARL = EDP.AD[0:17];
     3'b011: ARL = EBUS.data[0:17];
-    3'b100: ARL = SHM_SH[0:17];
-    3'b101: ARL = EDP_AD[1:18];
-    3'b110: ARL = EDP_ADX[0:17];
-    3'b111: ARL = {EDP_AD_EX[-2:-1], EDP_AD[0:14]};
+    3'b100: ARL = SHM.SH[0:17];
+    3'b101: ARL = EDP.AD[1:18];
+    3'b110: ARL = EDP.ADX[0:17];
+    3'b111: ARL = {EDP.AD_EX[-2:-1], EDP.AD[0:14]};
     endcase
   end
   
-  // EDP_AR
+  // EDP.AR
   always_ff @(posedge eboxClk) begin
 
     // RESET
     if (eboxReset) begin
-      EDP_AR <= '0;
+      EDP.AR <= '0;
     end else begin
 
-      if (CTL_AR00to11_CLR) begin
-        EDP_AR[0:11] <= 0;
-      end else if (CTL_AR00to08_LOAD) begin
-        EDP_AR[0:8] <= ARL[0:8];
+      if (CTL.AR00to11_CLR) begin
+        EDP.AR[0:11] <= 0;
+      end else if (CTL.AR00to08_LOAD) begin
+        EDP.AR[0:8] <= ARL[0:8];
       end
 
-      if (CTL_AR12to17_CLR) begin
-        EDP_AR[12:17] <= 0;
-      end else if (CTL_AR09to17_LOAD) begin
-        EDP_AR[9:17] <= ARL[9:17];
+      if (CTL.AR12to17_CLR) begin
+        EDP.AR[12:17] <= 0;
+      end else if (CTL.AR09to17_LOAD) begin
+        EDP.AR[9:17] <= ARL[9:17];
       end
 
-      if (CTL_ARR_CLR) begin
-        EDP_AR[18:35] <= 0;
-      end else if (CTL_ARR_LOAD) begin
+      if (CTL.ARR_CLR) begin
+        EDP.AR[18:35] <= 0;
+      end else if (CTL.ARR_LOAD) begin
         unique case (CRAM.AR)
-        3'b000: EDP_AR[18:35] <= {SCD_ARMM_UPPER, 5'b0, SCD_ARMM_LOWER}; // XXX?
-        3'b001: EDP_AR[18:35] <= cacheDataRead[18:35];
-        3'b010: EDP_AR[18:35] <= EDP_AD[18:35];
-        3'b011: EDP_AR[18:35] <= EBUS.data[18:35];
-        3'b100: EDP_AR[18:35] <= SHM_SH[18:35];
-        3'b101: EDP_AR[18:35] <= {EDP_AD[19:35], EDP_ADX[0]};
-        3'b110: EDP_AR[18:35] <= EDP_ADX[18:35];
-        3'b111: EDP_AR[18:35] <= EDP_AD[16:33];
+        3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
+        3'b001: EDP.AR[18:35] <= cacheDataRead[18:35];
+        3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
+        3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
+        3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
+        3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
+        3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
+        3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
         endcase
       end
     end
@@ -148,28 +148,28 @@ module edp(input eboxClk,
   // ARX muxes p16.
   always_comb begin
 
-    unique case (CTL_ARXL_SEL)
+    unique case (CTL.ARXL_SEL)
     default: ARXL = 'x;
     3'b000: ARXL = 0;
     3'b001: ARXL = cacheDataRead[0:17];
-    3'b010: ARXL = EDP_AD[0:17];
-    3'b011: ARXL = EDP_MQ[0:17];
-    3'b100: ARXL = SHM_SH[0:17];
-    3'b101: ARXL = EDP_ADX[1:18];
-    3'b110: ARXL = EDP_ADX[0:17];
-    3'b111: ARXL = {EDP_AD[34:35], EDP_ADX[0:15]};
+    3'b010: ARXL = EDP.AD[0:17];
+    3'b011: ARXL = EDP.MQ[0:17];
+    3'b100: ARXL = SHM.SH[0:17];
+    3'b101: ARXL = EDP.ADX[1:18];
+    3'b110: ARXL = EDP.ADX[0:17];
+    3'b111: ARXL = {EDP.AD[34:35], EDP.ADX[0:15]};
     endcase
 
-    unique case (CTL_ARXR_SEL)
+    unique case (CTL.ARXR_SEL)
     default: ARXR = 'x;
     3'b000: ARXR = 0;
     3'b001: ARXR = cacheDataRead[18:35];
-    3'b010: ARXR = EDP_AD[18:35];
-    3'b011: ARXR = EDP_MQ[18:35];
-    3'b100: ARXR = SHM_SH[18:35];
-    3'b101: ARXR = {EDP_ADX[19:35], EDP_MQ[0]};
-    3'b110: ARXR = EDP_ADX[18:35];
-    3'b111: ARXR = EDP_ADX[16:33];
+    3'b010: ARXR = EDP.AD[18:35];
+    3'b011: ARXR = EDP.MQ[18:35];
+    3'b100: ARXR = SHM.SH[18:35];
+    3'b101: ARXR = {EDP.ADX[19:35], EDP.MQ[0]};
+    3'b110: ARXR = EDP.ADX[18:35];
+    3'b111: ARXR = EDP.ADX[16:33];
     endcase
   end
 
@@ -178,20 +178,20 @@ module edp(input eboxClk,
 
     // RESET
     if (eboxReset) begin
-      EDP_ARX <= '0;
-    end else if (CTL_ARX_LOAD)
-      EDP_ARX <= {ARXL, ARXR};
+      EDP.ARX <= '0;
+    end else if (CTL.ARX_LOAD)
+      EDP.ARX <= {ARXL, ARXR};
   end
 
   // MQM mux p16.
   always_comb begin
 
-    if (CTL_MQM_EN) begin
+    if (CTL.MQM_EN) begin
 
-      unique case (CTL_MQM_SEL)
-      usrLOAD: MQM = {EDP_ADX[34:35], EDP_MQ[0:33]};
-      usrSHL:  MQM = SHM_SH;
-      usrSHR:  MQM = EDP_AD[0:35];
+      unique case (CTL.MQM_SEL)
+      usrLOAD: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
+      usrSHL:  MQM = SHM.SH;
+      usrSHR:  MQM = EDP.AD[0:35];
       usrHOLD: MQM = '1;
       endcase
     end else
@@ -202,16 +202,16 @@ module edp(input eboxClk,
   always_ff @(posedge eboxClk) begin
 
     if (eboxReset) begin
-      EDP_MQ <= 0;
+      EDP.MQ <= 0;
     end else begin
       
       // MQ: 36-bit MC10141-ish universal shift register
-      unique case (CTL_MQ_SEL)
-      default: EDP_MQ <= 'x;
-      usrLOAD: EDP_MQ <= MQM;
-      usrSHL:  EDP_MQ <= {MQM[1:35], EDP_ADcarry[-2]};
-      usrSHR:  EDP_MQ <= {MQM[1], MQM[1:35]};
-      usrHOLD: EDP_MQ <= EDP_MQ;
+      unique case (CTL.MQ_SEL)
+      default: EDP.MQ <= 'x;
+      usrLOAD: EDP.MQ <= MQM;
+      usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
+      usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
+      usrHOLD: EDP.MQ <= EDP.MQ;
       endcase
     end
   end
@@ -229,29 +229,29 @@ module edp(input eboxClk,
     for (n = 0; n < 36; n = n + 6) begin : ADaluE1E2
 
       // Misc carry logic, top p.17
-      assign ADEXxortmp[n] = EDP_AD[n+0] ^ EDP_AD_EX[n-1];
-      assign EDP_ADcarry[n+1] = EDP_ADcarry[n-2] ^ ADEXxortmp[n];
-      assign EDP_ADoverflow[n] = EDP_AD_EX[n-2]  ^ ADEXxortmp[n];
+      assign ADEXxortmp[n] = EDP.AD[n+0] ^ EDP.AD_EX[n-1];
+      assign EDP.AD_CRY[n+1] = EDP.AD_CRY[n-2] ^ ADEXxortmp[n];
+      assign EDP.AD_OV[n] = EDP.AD_EX[n-2]  ^ ADEXxortmp[n];
 
       mc10181 alu0(.M(ADbool),
                    .S(S),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
-                   .CIN(EDP_ADcarry[n+2]),
-                   // Note EDP_AD_EX is a dumping ground when n>0
-                   .F({EDP_AD_EX[n-2:n-1], EDP_AD[n:n+1]}),
+                   .CIN(EDP.AD_CRY[n+2]),
+                   // Note EDP.AD_EX is a dumping ground when n>0
+                   .F({EDP.AD_EX[n-2:n-1], EDP.AD[n:n+1]}),
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0])/*,
-                   .COUT(EDP_ADcarry[n-2])*/); // XXX multi-drives EDP_ADcarry[-2] w/E11 below
+                   .COUT(EDP.AD_CRY[n-2])*/); // XXX multi-drives EDP.AD_CRY[-2] w/E11 below
       mc10181 alu1(.M(ADbool),
                    .S(S),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
-                   .CIN(EDP_ADcarry[n+6]),
-                   .F(EDP_AD[n+2:n+5]),
+                   .CIN(EDP.AD_CRY[n+6]),
+                   .F(EDP.AD[n+2:n+5]),
                    .CG(AD_CG[n+2]),
                    .CP(AD_CP[n+2]),
-                   .COUT(EDP_ADcarry[n+2]));
+                   .COUT(EDP.AD_CRY[n+2]));
     end
   endgenerate
   
@@ -263,32 +263,32 @@ module edp(input eboxClk,
                    .S(S),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
-                   .CIN(EDP_ADXcarry[n+3]),
-                   .F({1'bx, EDP_ADX[n:n+2]}),
+                   .CIN(EDP.ADX_CRY[n+3]),
+                   .F({1'bx, EDP.ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
       mc10181 alu3(.M(ADbool),
                    .S(S),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
-                   .CIN(n < 30 ? EDP_ADXcarry[n+6] : CTL_ADX_CRY_36),
-                   .F({1'bx, EDP_ADX[n+3:n+5]}),
+                   .CIN(n < 30 ? EDP.ADX_CRY[n+6] : CTL.ADX_CRY_36),
+                   .F({1'bx, EDP.ADX[n+3:n+5]}),
                    .CG(ADX_CG[n+3]),
                    .CP(ADX_CP[n+3]),
-                   .COUT(EDP_ADXcarry[n+3]));
+                   .COUT(EDP.ADX_CRY[n+3]));
     end
   endgenerate
 
   // AD carry look ahead
   // Moved here from IR4
-  assign EDP_genCarry36 = CTL_ADX_CRY_36 | CTL_SPEC_AD_LONG;
+  assign EDP_GEN_CRY_36 = CTL.ADX_CRY_36 | CTL_SPEC_AD_LONG;
   
   // IR4 E11
   mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
                      .P({AD_CP[0], AD_CP[2], AD_CP06_11, AD_CP12_35}),
-                     .CIN(EDP_ADcarry[36]),
-                     .C8OUT(EDP_ADcarry[-2]),
-                     .C2OUT(EDP_ADcarry[6]));
+                     .CIN(EDP.AD_CRY[36]),
+                     .C8OUT(EDP.AD_CRY[-2]),
+                     .C2OUT(EDP.AD_CRY[6]));
 
   // IR4 E7
   mc10179 AD_LCG_E7(.G({AD_CG[6], AD_CG[6], AD_CG[8], AD_CG[8]}),
@@ -300,15 +300,15 @@ module edp(input eboxClk,
   // IR4 E2
   mc10179 AD_LCG_E2(.G({AD_CG[12], AD_CG[14], AD_CG18_23, AD_CG24_35}),
                     .P({AD_CP[12], AD_CP[14], AD_CP18_23, AD_CP24_35}),
-                    .CIN(EDP_ADcarry[36]),
+                    .CIN(EDP.AD_CRY[36]),
                     .GG(AD_CG12_35),
                     .PG(AD_CP12_35),
-                    .C8OUT(EDP_ADcarry[12]),
-                    .C2OUT(EDP_ADcarry[18]));
+                    .C8OUT(EDP.AD_CRY[12]),
+                    .C2OUT(EDP.AD_CRY[18]));
 
   // IR4 E6
-  mc10179 AD_LCG_E6(.G({~CTL_INH_CRY_18, ~CTL_INH_CRY_18, AD_CG[18], AD_CG[20]}),
-                    .P({CTL_SPEC_GEN_CRY18, 1'b0, AD_CP[18], AD_CP[20]}),
+  mc10179 AD_LCG_E6(.G({~CTL.INH_CRY_18, ~CTL.INH_CRY_18, AD_CG[18], AD_CG[20]}),
+                    .P({CTL.SPEC_GEN_CRY_18, 1'b0, AD_CP[18], AD_CP[20]}),
                     .CIN(1'b0),
                     .GG(AD_CG18_23),
                     .PG(AD_CP18_23));
@@ -316,39 +316,39 @@ module edp(input eboxClk,
   // IR4 E1
   mc10179 AD_LCG_E1(.G({AD_CG[24], AD_CG[26], AD_CG[30], AD_CG[32]}),
                     .P({AD_CP[24], AD_CP[26], AD_CP[30], AD_CP[32]}),
-                    .CIN(EDP_ADcarry[36]),
+                    .CIN(EDP.AD_CRY[36]),
                     .GG(AD_CG24_35),
                     .PG(AD_CP24_35),
-                    .C8OUT(EDP_ADcarry[24]),
-                    .C2OUT(EDP_ADcarry[30]));
+                    .C8OUT(EDP.AD_CRY[24]),
+                    .C2OUT(EDP.AD_CRY[30]));
 
   // ADX carry look ahead
   // Moved here from IR4
   // IR4 E22
-  mc10179 ADX_LCG_E22(.G({   EDP_genCarry36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
+  mc10179 ADX_LCG_E22(.G({   EDP_GEN_CRY_36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
                       .P({~CTL_SPEC_AD_LONG, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
-                      .CIN(CTL_ADX_CRY_36),
-                      .C8OUT(EDP_ADcarry[36]));
+                      .CIN(CTL.ADX_CRY_36),
+                      .C8OUT(EDP.AD_CRY[36]));
   // IR4 E21
   mc10179 ADX_LCG_E21(.G({ADX_CG[0], ADX_CG[3], ADX_CG[6], ADX_CG[9]}),
                       .P({ADX_CP[0], ADX_CP[3], ADX_CP[6], ADX_CP[9]}),
-                      .CIN(EDP_ADXcarry[12]),
+                      .CIN(EDP.ADX_CRY[12]),
                       .GG(ADX_CG00_11),
                       .PG(ADX_CP00_11));
   // IR4 E26
   mc10179 ADX_LCG_E26(.G({ADX_CG[12], ADX_CG[15], ADX_CG[18], ADX_CG[21]}),
                       .P({ADX_CP[12], ADX_CP[15], ADX_CP[18], ADX_CP[21]}),
-                      .CIN(EDP_ADXcarry[24]),
-                      .C8OUT(EDP_ADXcarry[12]),
-                      .C2OUT(EDP_ADXcarry[18]));
+                      .CIN(EDP.ADX_CRY[24]),
+                      .C8OUT(EDP.ADX_CRY[12]),
+                      .C2OUT(EDP.ADX_CRY[18]));
   // IR4 E16
   mc10179 ADX_LCG_E16(.G({ADX_CG[24], ADX_CG[27], ADX_CG[30], ADX_CG[33]}),
                       .P({ADX_CP[24], ADX_CP[27], ADX_CP[30], ADX_CP[33]}),
-                      .CIN(CTL_ADX_CRY_36),
+                      .CIN(CTL.ADX_CRY_36),
                       .GG(ADX_CG24_35),
                       .PG(ADX_CP24_35),
-                      .C8OUT(EDP_ADXcarry[24]),
-                      .C2OUT(EDP_ADXcarry[30]));
+                      .C8OUT(EDP.ADX_CRY[24]),
+                      .C2OUT(EDP.ADX_CRY[30]));
 
   // ADB mux
   generate
@@ -366,10 +366,10 @@ module edp(input eboxClk,
           unique case(CRAM.ADB)
           default: ADB[n-2:n-1] = 'x;
           adbFM:   ADB[n-2:n-1] = {2{FM[n+0]}};
-          adbBRx2: ADB[n-2:n-1] = {2{n === 0 ? EDP_BR[n+0] : EDP_BR[n+1]}};
-          adbBR:   ADB[n-2:n-1] = {2{EDP_BR[n+0]}};
-          adbARx4: ADB[n-2:n-1] = {n === 0 ? EDP_AR[n+0] : EDP_AR[n+2],
-                                   n === 0 ? EDP_AR[n+1] : EDP_AR[n+2]};
+          adbBRx2: ADB[n-2:n-1] = {2{n === 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
+          adbBR:   ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
+          adbARx4: ADB[n-2:n-1] = {n === 0 ? EDP.AR[n+0] : EDP.AR[n+2],
+                                   n === 0 ? EDP.AR[n+1] : EDP.AR[n+2]};
           endcase
         end
 
@@ -377,9 +377,9 @@ module edp(input eboxClk,
         unique case(CRAM.ADB)
         default: ADB[n:n+5] = 'x;
         adbFM:   ADB[n:n+5] = FM[n+0:n+5];
-        adbBRx2: ADB[n:n+5] = {EDP_BR[n+1:n+5], n < 30 ? EDP_BR[n+6] : EDP_BRX[0]};
-        adbBR:   ADB[n:n+5] = EDP_BR[n+0:n+5];
-        adbARx4: ADB[n:n+5] = {EDP_AR[n+2:n+5], n < 30 ? EDP_AR[n+6:n+7] : EDP_ARX[0:1]};
+        adbBRx2: ADB[n:n+5] = {EDP.BR[n+1:n+5], n < 30 ? EDP.BR[n+6] : EDP.BRX[0]};
+        adbBR:   ADB[n:n+5] = EDP.BR[n+0:n+5];
+        adbARx4: ADB[n:n+5] = {EDP.AR[n+2:n+5], n < 30 ? EDP.AR[n+6:n+7] : EDP.ARX[0:1]};
         endcase
       end
     end
@@ -392,9 +392,9 @@ module edp(input eboxClk,
         unique case(CRAM.ADB)
         default: ADXB[n+0:n+5] = 'x;
         adbFM:   ADXB[n+0:n+5] = n < 6 ? CRAM.MAGIC[n+0:n+5] : 6'b0;
-        adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP_BRX[n+1:n+6] : {EDP_BRX[n+1:n+5], 1'b0};
-        adbBR:   ADXB[n+0:n+5] = EDP_BRX[n+0:n+5];
-        adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP_ARX[n+2:n+7] : {EDP_ARX[n+2:n+5], 2'b00};
+        adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0};
+        adbBR:   ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
+        adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP.ARX[n+2:n+7] : {EDP.ARX[n+2:n+5], 2'b00};
         endcase
     end
   endgenerate
@@ -402,7 +402,7 @@ module edp(input eboxClk,
   // ADXA mux
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXAmux
-      always_comb ADXA[n+0:n+5] = ADA_EN ? 6'b0 : EDP_ARX[n+0:n+5];
+      always_comb ADXA[n+0:n+5] = ADA_EN ? 6'b0 : EDP.ARX[n+0:n+5];
     end
   endgenerate
 
@@ -414,10 +414,10 @@ module edp(input eboxClk,
         if (~ADA_EN)
           unique case(CRAM.ADA)
           default: ADA[n+0:n+5] = 'x;
-          adaAR:  ADA[n+0:n+5] = EDP_AR[n+0:n+5];
-          adaARX: ADA[n+0:n+5] = EDP_ARX[n+0:n+5];
-          adaMQ:  ADA[n+0:n+5] = EDP_MQ[n+0:n+5];
-          adaPC:  ADA[n+0:n+5] = VMA_VMAheldOrPC[n+0:n+5];
+          adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
+          adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
+          adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
+          adaPC:  ADA[n+0:n+5] = VMA.VMA_HELD_OR_PC[n+0:n+5];
           endcase
         else
           ADA[n+0:n+5] = '0;
@@ -426,7 +426,7 @@ module edp(input eboxClk,
 
 
   // FM. No static at all!
-  logic [0:6] fmAddress = {APR_FMblk, APR_FMadr};
+  logic [0:6] fmAddress = {APR.FMblk, APR.FMadr};
 
 `ifdef KL10PV_TB
   // Simulated fake memory can have "bytes" of 18 bits for simple
@@ -435,19 +435,19 @@ module edp(input eboxClk,
     #(.SIZE(128), .WIDTH(36), .NBYTES(2))
   fm
   (.clk(fastMemClk),
-   .din(EDP_AR),
+   .din(EDP.AR),
    .dout(FM),
    .addr(fmAddress),
-   .wea({CON_FM_WRITE00_17, CON_FM_WRITE18_35}));
+   .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
   fm_mem fm(.addra(fmAddress),
             .clka(fastMemClk),
-            .dina(EDP_AR),
+            .dina(EDP.AR),
             .douta(FM),
-            .wea({CON_FM_WRITE00_17, CON_FM_WRITE00_17,
-                  CON_FM_WRITE18_35, CON_FM_WRITE18_35})
+            .wea({CON.FM_WRITE00_17, CON.FM_WRITE00_17,
+                  CON.FM_WRITE18_35, CON.FM_WRITE18_35})
             );
 `endif
 
@@ -458,26 +458,26 @@ module edp(input eboxClk,
   always_ff @(posedge eboxClk)
 
     if (eboxReset)
-      EDP_BRX <= 0;
+      EDP.BRX <= 0;
     else if (CRAM.BRX === brxARX)
-      EDP_BRX <= EDP_ARX;
+      EDP.BRX <= EDP.ARX;
 
 
   // BR
   always_ff @(posedge eboxClk)
 
     if (eboxReset)
-      EDP_BR <= 0;
+      EDP.BR <= 0;
     else if (CRAM.BR === brAR)
-      EDP_BR <= EDP_AR;
+      EDP.BR <= EDP.AR;
 
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
   logic [0:35] ebusR;
-  assign EBUSdriver.driving = CTL_DIAG_READ_FUNC_12x || CTL_adToEBUS_L || CTL_adToEBUS_R;
-  assign EBUSdriver.data[0:17] = (CTL_DIAG_READ_FUNC_12x || CTL_adToEBUS_L) ? ebusR[0:17] : '0;
-  assign EBUSdriver.data[18:35] = (CTL_DIAG_READ_FUNC_12x || CTL_adToEBUS_R) ? ebusR[18:35] : '0;
+  assign EBUSdriver.driving = CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_L || CTL.AD_TO_EBUS_R;
+  assign EBUSdriver.data[0:17] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_L) ? ebusR[0:17] : '0;
+  assign EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ? ebusR[18:35] : '0;
 
   always_ff @(posedge eboxClk) begin
 
@@ -485,16 +485,16 @@ module edp(input eboxClk,
       EBUSdriver.driving <= '0;
     end else if (EBUSdriver.driving) begin
 
-      unique case ((CTL_adToEBUS_L | CTL_adToEBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
+      unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
       default: ebusR <= 'x;
-      3'b000: ebusR <= EDP_AR;
-      3'b001: ebusR <= EDP_BR;
-      3'b010: ebusR <= EDP_MQ;
+      3'b000: ebusR <= EDP.AR;
+      3'b001: ebusR <= EDP.BR;
+      3'b010: ebusR <= EDP.MQ;
       3'b011: ebusR <= FM;
-      3'b100: ebusR <= EDP_BRX;
-      3'b101: ebusR <= EDP_ARX;
-      3'b110: ebusR <= EDP_ADX[0:35];
-      3'b111: ebusR <= EDP_AD[0:35];
+      3'b100: ebusR <= EDP.BRX;
+      3'b101: ebusR <= EDP.ARX;
+      3'b110: ebusR <= EDP.ADX[0:35];
+      3'b111: ebusR <= EDP.AD[0:35];
       endcase
     end else
       ebusR <= 'z;

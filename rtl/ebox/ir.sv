@@ -4,17 +4,17 @@
 // M8522 IR
 module ir(input eboxClk,
           input [0:35] cacheDataRead,
-          input [-2:35] EDP_AD,
+          input [-2:35] EDP.AD,
           iCRAM CRAM,
-          input CON_MB_XFER,
-          input CON_LOAD_IR,
-          input CON_LOAD_DRAM,
-          input CTL_DIAG_LOAD_FUNC_06x,
-          input CTL_DIAG_READ_FUNC_13x,
-          input CTL_INH_CRY_18,
-          input CTL_SPEC_GEN_CRY18,
-          input [-2:36] EDP_ADcarry,
-          input [0:36] EDP_ADXcarry,
+          input CON.MB_XFER,
+          input CON.LOAD_IR,
+          input CON.LOAD_DRAM,
+          input CTL.DIAG_LOAD_FUNC_06x,
+          input CTL.DIAG_READ_FUNC_13x,
+          input CTL.INH_CRY_18,
+          input CTL.SPEC_GEN_CRY_18,
+          input [-2:36] EDP.AD_CRY,
+          input [0:36] EDP.ADX_CRY,
 
           iEBUS EBUS,
           tEBUSdriver EBUSdriver,
@@ -63,12 +63,12 @@ module ir(input eboxClk,
   // JRST is 0o254,F
   logic JRST;
   assign JRST = IR[0:8] === 13'b010_101_100;
-  assign IR_JRST0 = IR[0:12] === 13'b010_101_100_0000;
+  assign IR.JRST0 = IR[0:12] === 13'b010_101_100_0000;
 
   // XXX In addition to the below, this has two mystery OR term
   // signals on each input to the AND that are unlabeled except for
   // backplane references ES2 and ER2. See E66 p.128.
-  assign IR_IO_LEGAL = &IR[3:6];
+  assign IR.IO_LEGAL = &IR[3:6];
   assign IR_ACeq0 = IR[9:12] === 4'b0;
 
   logic enIO_JRST;
@@ -88,7 +88,7 @@ module ir(input eboxClk,
   assign ioDRADR[3:5] = instr7XX ? (IR[7:9] | {3{instr3thru6}}) : IR[3:5];
   assign ioDRADR[6:8] = instr7XX ? IR[6:8] : IR[10:12];
 
-  always @(posedge CON_LOAD_DRAM) begin
+  always @(posedge CON.LOAD_DRAM) begin
     DRADR <= {IR[0:2], instr7XX ? IR[3:8] : ioDRADR};
   end
 
@@ -102,7 +102,7 @@ module ir(input eboxClk,
   initial DRAM_PAR = 0;
 
   // Latch-mux
-  always @(posedge CON_LOAD_DRAM) begin
+  always @(posedge CON.LOAD_DRAM) begin
 
     if (DRADR[8]) begin
       DRAM_A <= DRADR[8] ? DRAM_A_X : DRAM_A_Y;
@@ -115,18 +115,18 @@ module ir(input eboxClk,
   end
 
   // Latch-mux
-  always_ff @(posedge CON_LOAD_IR) begin
-    IR <= CON_MB_XFER ? EDP_AD[0:12] : cacheDataRead[0:12];
+  always_ff @(posedge CON.LOAD_IR) begin
+    IR <= CON.MB_XFER ? EDP.AD[0:12] : cacheDataRead[0:12];
     IRAC <= enableAC ? IR[9:12] : 4'b0;
   end
 
   assign magic7eq8 = CRAM.MAGIC[7] ^ CRAM.MAGIC[8];
-  assign AgtB = EDP_AD[0] ^ EDP_ADcarry[-2];
-  assign IR_ADeq0 = ~|EDP_AD;
-  assign IR_TEST_SATISFIED = |{DRAM_B[1] & IR_ADeq0,                  // EQ
+  assign AgtB = EDP.AD[0] ^ EDP.AD_CRY[-2];
+  assign IR.ADeq0 = ~|EDP.AD;
+  assign IR.TEST_SATISFIED = |{DRAM_B[1] & IR.ADeq0,                  // EQ
                                DRAM_B[2] & AgtB & CRAM.MAGIC[7],      // GT
-                               DRAM_B[2] & EDP_AD[0] & CRAM.MAGIC[8], // LT
-                               ~magic7eq8 & EDP_ADcarry[-2]           // X
+                               DRAM_B[2] & EDP.AD[0] & CRAM.MAGIC[8], // LT
+                               ~magic7eq8 & EDP.AD_CRY[-2]           // X
                                } ^ DRAM_B[0];
 
   // p.130 E57 and friends
@@ -142,7 +142,7 @@ module ir(input eboxClk,
 
   always @(*) begin
 
-    if (CTL_DIAG_LOAD_FUNC_06x) begin
+    if (CTL.DIAG_LOAD_FUNC_06x) begin
       dramLoadXYeven <= 3'b000;
       dramLoadXYodd <= 3'b001;
       dramLoadJcommon <= 3'b010;
@@ -167,18 +167,18 @@ module ir(input eboxClk,
   end
 
   // p.130 E67 priority encoder
-  always @(*) norm = EDP_AD[0] ? 3'b001 :
-                     |EDP_AD[0:5] || EDP_AD[6] ? 3'b010 :
-                     EDP_AD[7] ? 3'b011 :
-                     EDP_AD[8] ? 3'b100 :
-                     EDP_AD[9] ? 3'b101 :
-                     EDP_AD[10] ? 3'b110 :
-                     |EDP_AD[6:35];
+  always @(*) norm = EDP.AD[0] ? 3'b001 :
+                     |EDP.AD[0:5] || EDP.AD[6] ? 3'b010 :
+                     EDP.AD[7] ? 3'b011 :
+                     EDP.AD[8] ? 3'b100 :
+                     EDP.AD[9] ? 3'b101 :
+                     EDP.AD[10] ? 3'b110 :
+                     |EDP.AD[6:35];
 
   assign DRAM_ODD_PARITY = ^{DRAM_A, DRAM_B, DRAM_PAR, DRAM_J[1:4], DRAM_PAR_J[7:10]};
 
   // Diagnostics to drive EBUS
-  assign EBUSdriver.driving = CTL_DIAG_READ_FUNC_13x;
+  assign EBUSdriver.driving = CTL.DIAG_READ_FUNC_13x;
 
   always @(*) begin
 
@@ -189,12 +189,12 @@ module ir(input eboxClk,
       3'b001: EBUSdriver.data[0:5] = DRADR[3:8];
       3'b010: EBUSdriver.data[0:5] = {enIO_JRST, enAC, IRAC};
       3'b011: EBUSdriver.data[0:5] = {DRAM_A, DRAM_B};
-      3'b100: EBUSdriver.data[0:5] = {IR_TEST_SATISFIED, IR_JRST0, DRAM_J[1:4]};
+      3'b100: EBUSdriver.data[0:5] = {IR.TEST_SATISFIED, IR.JRST0, DRAM_J[1:4]};
       3'b101: EBUSdriver.data[0:5] = {DRAM_PAR, DRAM_ODD_PARITY, DRAM_J[7:10]};
-      3'b110: EBUSdriver.data[0:5] = {IR_ADeq0, IR_IO_LEGAL, CTL_INH_CRY_18,
-                                      CTL_SPEC_GEN_CRY18, CTL_SPEC_GEN_CRY18, EDP_ADcarry[-2]};
-      3'b111: EBUSdriver.data[0:5] = {EDP_ADcarry[12], EDP_ADcarry[18], EDP_ADcarry[24],
-                                      EDP_ADcarry[36], EDP_ADXcarry[12], EDP_ADXcarry[24]};
+      3'b110: EBUSdriver.data[0:5] = {IR.ADeq0, IR.IO_LEGAL, CTL.INH_CRY_18,
+                                      CTL.SPEC_GEN_CRY_18, CTL.SPEC_GEN_CRY_18, EDP.AD_CRY[-2]};
+      3'b111: EBUSdriver.data[0:5] = {EDP.AD_CRY[12], EDP.AD_CRY[18], EDP.AD_CRY[24],
+                                      EDP.AD_CRY[36], EDP.ADX_CRY[12], EDP.ADX_CRY[24]};
       endcase
     end else
       EBUSdriver.data = 'z;

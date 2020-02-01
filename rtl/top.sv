@@ -57,7 +57,7 @@ module top(input clk
   logic [27:35] MBOX_GATE_VMA;
   logic [0:35] cacheDataRead;
   logic [0:35] cacheDataWrite;
-  logic [10:12] cacheClearer;
+  logic [10:12] CACHE_CLEARER;
   logic [13:35] eboxVMA;
 
   logic anyEboxError;
@@ -69,7 +69,7 @@ module top(input clk
   logic read;
   logic write;
 
-  logic CON_MB_XFER;
+  logic CON.MB_XFER;
 
   logic MCL_VMA_SECTION_0;
   logic MCL_MBOX_CYC_REQ;

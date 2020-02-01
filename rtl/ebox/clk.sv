@@ -2,7 +2,7 @@
 // M8526 CLK
 module clk(input clk,
            input eboxReset,
-           input CON_MB_XFER,
+           input CON.MB_XFER,
 
            output logic eboxClk,
            output logic fastMemClk,

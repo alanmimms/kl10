@@ -24,26 +24,26 @@ module cra(input eboxClk,
            input [8:10] norm,
            input [0:10] NICOND,
            input [0:3] SR,
-           input [0:35] SHM_SH,
-           input [0:35] EDP_MQ,
-           input [0:35] EDP_BR,
-           input [-2:35] EDP_AD,
-           input [0:35] EDP_ADX,
-           input [0:35] EDP_AR,
-           input [0:35] EDP_ARX,
-           input [-2:36] EDP_ADcarry,
+           input [0:35] SHM.SH,
+           input [0:35] EDP.MQ,
+           input [0:35] EDP.BR,
+           input [-2:35] EDP.AD,
+           input [0:35] EDP.ADX,
+           input [0:35] EDP.AR,
+           input [0:35] EDP.ARX,
+           input [-2:36] EDP.AD_CRY,
            input [0:10] pfDisp,
            input skipEn40_47,
            input skipEn50_57,
-           input CTL_DIAG_READ_FUNC_14x,
+           input CTL.DIAG_READ_FUNC_14x,
            input CTL_diaFunc051,
            input CTL_diaFunc052,
 
            input pcSection0,
            input localACAddress,
-           input CON_LONG_EN,
+           input CON.LONG_EN,
            input indexed,
-           input IR_ADeq0,
+           input IR.ADeq0,
            input IR_ACeq0,
            input FEsign,
            input SCsign,
@@ -66,7 +66,7 @@ module cra(input eboxClk,
 
   logic dispEn00_03, dispEn00_07, dispEn30_37;
   logic shortIndirWord;
-  logic callForce1777;
+  logic CALL_FORCE_1777;
   logic retNotForce1777;
   logic ret;
 
@@ -85,8 +85,8 @@ module cra(input eboxClk,
   assign dispEn00_07 = CRAM.DISP[0:4] === 5'b00111;
   assign dispEn30_37 = CRAM.DISP[0:4] === 5'b11111;
 
-  assign shortIndirWord = ~CON_LONG_EN | EDP_ARX[1];
-  assign callForce1777 = CRAM.CALL | force1777;
+  assign shortIndirWord = ~CON.LONG_EN | EDP.ARX[1];
+  assign CALL_FORCE_1777 = CRAM.CALL | force1777;
   assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
   assign retNotForce1777 = ret & ~force1777;
 
@@ -108,41 +108,41 @@ module cra(input eboxClk,
       3'b100: dispMux[7:10] = pfDisp[7:10];
       3'b101: dispMux[7:10] = SR[0:3];
       3'b110: dispMux[7:10] = NICOND[7:10];
-      3'b111: dispMux[7:10] = SHM_SH[0:3];
+      3'b111: dispMux[7:10] = SHM.SH[0:3];
       endcase
     end else if (dispEn30_37) begin
       case (CRAM.DISP[2:4])
-      3'b000: dispMux[7:10] = {1'b0, FEsign, EDP_MQ[34:35], pcSection0};
-      3'b001: dispMux[7:10] = {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
-      3'b010: dispMux[7:10] = {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
-      3'b011: dispMux[7:10] = {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[7:10] = {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
-      3'b101: dispMux[7:10] = {1'b0, norm[8:10], EDP_AD[0]};
-      3'b110: dispMux[7:10] = {~CON_LONG_EN | EDP_ARX[0], shortIndirWord,
-                               EDP_ARX[13], indexed, ~IR_ADeq0};
+      3'b000: dispMux[7:10] = {1'b0, FEsign, EDP.MQ[34:35], pcSection0};
+      3'b001: dispMux[7:10] = {1'b0, FEsign, EDP.BR[0], EDP.AD_CRY[-2], SCADsign};
+      3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCADeq0};
+      3'b011: dispMux[7:10] = {1'b0, DRAM_B[0:2], EDP.ADX[0]};
+      3'b100: dispMux[7:10] = {1'b0, FPD, EDP.AR[12], SCADsign, EDP.AD_CRY[-2]};
+      3'b101: dispMux[7:10] = {1'b0, norm[8:10], EDP.AD[0]};
+      3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
+                               EDP.ARX[13], indexed, ~IR.ADeq0};
       3'b111: dispMux[7:10] = {eaType[7:10], localACAddress};
       endcase
     end else if (skipEn40_47) begin
       case (CRAM.COND[3:5])
       3'b000: dispMux[10] = 0;
       3'b001: dispMux[10] = ARparityOdd;
-      3'b010: dispMux[10] = EDP_BR[0];
-      3'b011: dispMux[10] = EDP_ARX[0];
-      3'b100: dispMux[10] = EDP_AR[18];
-      3'b101: dispMux[10] = EDP_AR[0];
+      3'b010: dispMux[10] = EDP.BR[0];
+      3'b011: dispMux[10] = EDP.ARX[0];
+      3'b100: dispMux[10] = EDP.AR[18];
+      3'b101: dispMux[10] = EDP.AR[0];
       3'b110: dispMux[10] = IR_ACeq0;
       3'b111: dispMux[10] = SCsign;
       endcase
     end else if (skipEn50_57) begin
       case (CRAM.COND[3:5])
       3'b000: dispMux[10] = pcSection0;
-      3'b001: dispMux[10] = {1'b0, FEsign, EDP_BR[0], EDP_ADcarry[-2], SCADsign};
-      3'b010: dispMux[10] = {EDP_ARX[0], EDP_AR[0], EDP_BR[0], EDP_AD[0], SCADeq0};
-      3'b011: dispMux[10] = {1'b0, DRAM_B[0:2], EDP_ADX[0]};
-      3'b100: dispMux[10] = {1'b0, FPD, EDP_AR[12], SCADsign, EDP_ADcarry[-2]};
-      3'b101: dispMux[10] = {1'b0, norm[8:10], EDP_AD[0]};
-      3'b110: dispMux[10] = {~CON_LONG_EN | EDP_ARX[0], shortIndirWord,
-                             EDP_ARX[13], indexed, ~IR_ADeq0};
+      3'b001: dispMux[10] = {1'b0, FEsign, EDP.BR[0], EDP.AD_CRY[-2], SCADsign};
+      3'b010: dispMux[10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCADeq0};
+      3'b011: dispMux[10] = {1'b0, DRAM_B[0:2], EDP.ADX[0]};
+      3'b100: dispMux[10] = {1'b0, FPD, EDP.AR[12], SCADsign, EDP.AD_CRY[-2]};
+      3'b101: dispMux[10] = {1'b0, norm[8:10], EDP.AD[0]};
+      3'b110: dispMux[10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
+                             EDP.ARX[13], indexed, ~IR.ADeq0};
       3'b111: dispMux[10] = {eaType[7:10], localACAddress};
       endcase
     end else
@@ -208,10 +208,10 @@ module cra(input eboxClk,
 
   always @(posedge eboxClk) begin
 
-    if (callForce1777 && retNotForce1777) begin // LOAD
+    if (CALL_FORCE_1777 && retNotForce1777) begin // LOAD
       stackAdrAD <= 4'b1111;
       stackAdrEH <= 4'b0000;
-    end else if (callForce1777) begin           // 0in+0
+    end else if (CALL_FORCE_1777) begin           // 0in+0
       stackAdrAD <= {stackAdrY, {3{retNotForce1777}}};
              stackAdrEH <= {stackAdrD, 3'b000};
            end else if (retNotForce1777) begin         // 3in+3
@@ -222,7 +222,7 @@ module cra(input eboxClk,
              stackAdrEH <= stackAdrEH;
            end
 
-    if (~callForce1777 && ~retNotForce1777) begin
+    if (~CALL_FORCE_1777 && ~retNotForce1777) begin
       sbrRet <= stack[stackAdr];
     end
   end
@@ -245,7 +245,7 @@ module cra(input eboxClk,
   end
 
   // Diagnostics driving EBUS
-  assign EBUSdriver.driving = CTL_DIAG_READ_FUNC_14x;
+  assign EBUSdriver.driving = CTL.DIAG_READ_FUNC_14x;
 
   always_comb begin
 

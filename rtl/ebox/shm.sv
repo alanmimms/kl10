@@ -3,9 +3,9 @@
 
 // M8540 SHM
 module shm(input eboxClk,
-           input [0:35] EDP_AR,
-           input [0:35] EDP_ARX,
-           input CON_LONG_EN,
+           input [0:35] EDP.AR,
+           input [0:35] EDP.ARX,
+           input CON.LONG_EN,
 
            tCRAM CRAM,
 
