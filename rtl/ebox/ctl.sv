@@ -9,6 +9,7 @@ module ctl(input eboxClk,
            iCTL CTL,
 
            iAPR APR,
+           iCLK CLK,
            iCON CON,
            iCRAM CRAM,
            iEDP EDP,
@@ -17,10 +18,6 @@ module ctl(input eboxClk,
 
            iEBUS EBUS,
            tEBUSdriver EBUSdriver,
-
-           input CLK_SBR_CALL,
-           input CLK_RESP_MBOX,
-           input CLK_RESP_SIM,
 
            input MCL_SHORT_STACK,
            input MCL_18_BIT_EA,
@@ -169,7 +166,7 @@ module ctl(input eboxClk,
     // Race?
     loadPC1 = ~((APR.CLK & loadPC1) |                   // E12
                 ((CTL_SPEC_LOAD_PC | CTL.DISP_NICOND) & // E16
-                 CLK_SBR_CALL));                        // E12
+                 CLK.SBR_CALL));                        // E12
     CTL.LOAD_PC = CON.PI_CYCLE & loadPC1;
 
     CTL.GEN_CRY_18 = (CTL.SPEC_GEN_CRY_18 | CTL_SPEC_STACK_UPDATE) &
@@ -185,7 +182,7 @@ module ctl(input eboxClk,
                   CTL_SPEC_AD_LONG |
                   CTL_SPEC_MQ_SHIFT;
 
-    CTL.DISP_RET = ~(~CLK_SBR_CALL | ~CTL_DISP_RETURN);
+    CTL.DISP_RET = ~(~CLK.SBR_CALL | ~CTL_DISP_RETURN);
     CTL_SPEC_MTR_CTL = SPEC_MTR_CTL & APR.CLK;
   end
 
@@ -220,7 +217,7 @@ module ctl(input eboxClk,
     CTL.AR12to17_CLR = CTL_RESET | MCL_18_BIT_EA | d2 | shortEA;
     CTL.AR00to11_CLR = CTL.AR12to17_CLR | MCL_23_BIT_EA;
 
-    CTL.SPEC_CALL = ~(CLK_SBR_CALL | (CTL.ARL_IND ? CRAM.MAGIC[0] : CTL.SPEC_SBR_CALL));
+    CTL.SPEC_CALL = ~(CLK.SBR_CALL | (CTL.ARL_IND ? CRAM.MAGIC[0] : CTL.SPEC_SBR_CALL));
     CTL.ARL_SEL[2] = CTL.ARL_IND ? CRAM.MAGIC[6] : CRAM.AR[2];
     CTL.ARL_SEL[1] = CTL.ARL_IND ? CRAM.MAGIC[7] : CRAM.AR[1];
     CTL.ARL_IND_SEL[0] = CTL.ARL_IND ? CRAM.MAGIC[8] : CRAM.AR[0];
@@ -248,7 +245,7 @@ module ctl(input eboxClk,
     CTL_COND_ARL_IND =   CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b110);
     CTL_COND_REG_CTL =   CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b111);
 
-    respMBOXorSIM = CLK_RESP_MBOX | CLK_RESP_SIM;
+    respMBOXorSIM = CLK.RESP_MBOX | CLK.RESP_SIM;
     diagLoadARorInd = CTL.ARL_IND | CTL.DIAG_AR_LOAD;
     diagLoadARorARM = CRAM.AR[2] | CTL.DIAG_AR_LOAD;
     CTL.ARL_SEL[0] = (MCL_LOAD_AR | diagLoadARorInd) & (diagLoadARorInd | respMBOXorSIM);

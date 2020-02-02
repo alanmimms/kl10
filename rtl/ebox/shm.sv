@@ -4,7 +4,7 @@
 // M8540 SHM
 module shm(input eboxClk,
            iSHM SHM,
-           tCRAM CRAM,
+           iCRAM CRAM,
            iCON CON,
            iEDP EDP,
 

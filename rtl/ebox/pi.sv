@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
 `include "ebus-defs.svh"
-`include "pi.svh"
 // M8532 PI
 module pi(input eboxClk,
 

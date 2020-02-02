@@ -5,6 +5,8 @@ module mcl(input eboxClk,
            input cshEBOXRetry,
            input pfEBOXHandle,
 
+           iMCL MCL,
+
            input pcp,
            input iot,
            input user,
@@ -17,7 +19,6 @@ module mcl(input eboxClk,
            output logic mboxXfer,
            output logic pfHold,
            output logic ptPublic,
-           output logic force1777,
-
-           iMCL MCL);
+           output logic force1777
+);
 endmodule // mcl

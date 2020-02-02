@@ -91,7 +91,6 @@ module ebox(input eboxClk,
             output logic [13:35] EBOX_VMA,
             output logic [10:12] CACHE_CLEARER,
             output logic EBOX_REQ,
-            output logic CLK_EBOX_SYNC,
             output logic mboxClk,
 
             iEBUS EBUS);

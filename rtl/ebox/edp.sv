@@ -244,7 +244,7 @@ module edp(input eboxClk,
 
   // AD carry look ahead
   // Moved here from IR4
-  assign EDP_GEN_CRY_36 = CTL.ADX_CRY_36 | CTL_SPEC_AD_LONG;
+  assign EDP.GEN_CRY_36 = CTL.ADX_CRY_36 | CTL_SPEC_AD_LONG;
   
   // IR4 E11
   mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
@@ -288,7 +288,7 @@ module edp(input eboxClk,
   // ADX carry look ahead
   // Moved here from IR4
   // IR4 E22
-  mc10179 ADX_LCG_E22(.G({   EDP_GEN_CRY_36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
+  mc10179 ADX_LCG_E22(.G({   EDP.GEN_CRY_36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
                       .P({~CTL_SPEC_AD_LONG, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
                       .CIN(CTL.ADX_CRY_36),
                       .C8OUT(EDP.AD_CRY[36]));

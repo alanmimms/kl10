@@ -6,6 +6,7 @@ module con(input eboxClk,
            iCON CON,
 
            iCRAM CRAM,
+           iCLK CLK,
            iCTL CTL,
            iIR IR,
            iPI PI,
@@ -19,9 +20,6 @@ module con(input eboxClk,
            input MTR_INTERRUPT_REQ,
 
            input MR_RESET,
-           input CLK_PAGE_ERROR,
-           input CLK_EBOX_SYNC,
-           input CLK_SBR_CALL,
 
            input MCL_VMA_SECTION_0,
            input MCL_MBOX_CYC_REQ,
@@ -224,7 +222,7 @@ module con(input eboxClk,
 
     CON.LOAD_IR = CON_FETCH_CYCLE | CON.COND_LOAD_IR | CON_DIAG_IR_STROBE;
     CON.COND_INSTR_ABORT = CON_COND_SPEC_INSTR & CRAM.MAGIC[6];
-    CON.CLR_PRIVATE_INSTR = CLK_PAGE_ERROR | CON.COND_INSTR_ABORT;
+    CON.CLR_PRIVATE_INSTR = CLK.PAGE_ERROR | CON.COND_INSTR_ABORT;
     CON.LOAD_ACCESS_COND = CON.COND_LOAD_IR | CON_COND_SR_MAGIC;
 
     CON_INSTR_GO = legalReg & ~CON_INSTR_GO & ~CON.RESET;
@@ -380,8 +378,8 @@ module con(input eboxClk,
                       dataoAPR}));
 
   always_comb begin
-    CON.CONO_APR = CLK_EBOX_SYNC & (CON.RESET | conoAPR);
-    CON.CONO_PI = CLK_EBOX_SYNC & (CON.RESET | conoPI);
+    CON.CONO_APR = CLK.EBOX_SYNC & (CON.RESET | conoAPR);
+    CON.CONO_PI = CLK.EBOX_SYNC & (CON.RESET | conoPI);
     CON.CONO_PAG = CON.RESET | conoPAG;
     CON.DATAO_APR = CON.RESET | dataoAPR;
   end
@@ -392,7 +390,7 @@ module con(input eboxClk,
     CON.SEL_CLR = EBUS.data[22] & CON.CONO_APR;
     CON.SEL_SET = EBUS.data[23] & CON.CONO_APR;
 
-    CON.EBUS_REL = ~(CON.COND_EBUS_CTL & CRAM.MAGIC[2] & CLK_EBOX_SYNC);
+    CON.EBUS_REL = ~(CON.COND_EBUS_CTL & CRAM.MAGIC[2] & CLK.EBOX_SYNC);
   end
 
   always_ff @(posedge CON_CLK iff CON_COND_SR_MAGIC) begin
@@ -441,13 +439,13 @@ module con(input eboxClk,
   always_comb begin
     CON_LOAD_AR_EN = MCL_LOAD_ARX | MCL_LOAD_AR;
     // WIRE-OR of negated signals! XXX (there are more I need to go fix)
-    CON_AR_FROM_MEM = ~(~CON_LOAD_AR_EN | ~CON_XFER | ~CLK_PAGE_ERROR);
+    CON_AR_FROM_MEM = ~(~CON_LOAD_AR_EN | ~CON_XFER | ~CLK.PAGE_ERROR);
   end
   
 
   always_ff @(posedge CON_CLK) begin
     CON_AR_FROM_EBUS <= CTL.EBUS_XFER & EBUS_PARITY_ACTIVE_E;
-    CON_ARX_LOADED <= CON_XFER & ~CON.FM_XFER & ~CLK_PAGE_ERROR & MCL_LOAD_ARX;
+    CON_ARX_LOADED <= CON_XFER & ~CON.FM_XFER & ~CLK.PAGE_ERROR & MCL_LOAD_ARX;
     CON_AR_LOADED <= CON_AR_FROM_MEM | CON_AR_FROM_EBUS;
   end
 
@@ -464,15 +462,15 @@ module con(input eboxClk,
     CON_XFER = CON.FM_XFER | CON.MB_XFER;
 
     specFlagMagic2 = (CTL.SPEC_FLAG_CTL & CRAM.MAGIC[2]);
-    CON_CLR_PI_CYCLE = (CTL.SPEC_SAVE_FLAGS & CON.PI_CYCLE & CLK_EBOX_SYNC) |
+    CON_CLR_PI_CYCLE = (CTL.SPEC_SAVE_FLAGS & CON.PI_CYCLE & CLK.EBOX_SYNC) |
                        specFlagMagic2;
-    CON_PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK_EBOX_SYNC;
+    CON_PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
 
     waitingACStore = MCL_STORE_AR & CON_MBOX_WAIT & VMA_AC_REF;
     cond345_1s = CRAM.COND[3:5] === 3'b111;
     CON.FM_WRITE00_17 = (cond345_1s & CON.COND_EN10_17) | waitingACStore;
     CON.FM_WRITE18_35 = CON.FM_WRITE00_17;
-    CON.FM_WRITE_PAR = ~CLK_SBR_CALL & ~CON_CLK;
+    CON.FM_WRITE_PAR = ~CLK.SBR_CALL & ~CON_CLK;
 
     CON_MBOX_WAIT = CRAM.MEM[2] & CON_MEM_CYCLE;
     CON.FM_XFER = CRAM.MEM[2] & CON_MEM_CYCLE & VMA_AC_REF;
@@ -483,6 +481,6 @@ module con(input eboxClk,
     CON.PI_CYCLE <= (CON_COND_SPEC_INSTR & CRAM.MAGIC[0]) |
                     (~MCL_SKIP_SATISFIED & ~CON_CLR_PI_CYCLE & ~CON.RESET & CON.PI_CYCLE);
     CON_MEM_CYCLE <= MCL_MBOX_CYC_REQ |
-                     (CON_MEM_CYCLE & ~CON_XFER & ~CLK_PAGE_ERROR & ~CON.RESET);
+                     (CON_MEM_CYCLE & ~CON_XFER & ~CLK.PAGE_ERROR & ~CON.RESET);
   end
 endmodule // con
