@@ -4,7 +4,9 @@
 * Use associative array to build list of iEBUSdriver modules for top.v synthesis?
 * Define methods for EBUS access in iEBUS
 * Go through the rev 'F' CON and make sure that is what I implemented.
-
+* `DIAG_READ` is assigned to `DIAG_READ_FUNC_01x` in EDP and in CLK.
+  * Elsewhere too?
+  * This should just be done in one place.
 
 # System Organization
 * EBOX implementation in FPGA running KL10pv final microcode
@@ -21,7 +23,7 @@
 # EBUS
   * The front end can read/write DS00-06 any time.
     * See EK-DTE20-UD-003 p. 18.
-  * DIAG_STROBE indicates DS00-06 lines are stable.
+  * `DIAG_STROBE` indicates DS00-06 lines are stable.
   * DFUNC ("remove status") assertion
     * KL relenquishes control of EBUS DS lines
     * Puts EBUS translator for DS lines under DB00/DB01 control.
@@ -31,14 +33,14 @@
 ## Coding Conventions
 * Use Verilog Auto Mode where possible.
 * Use ALL UPPERCASE for CRAM field names.
-* In ebox.v or top.v CRAM_XXX should be name for CRAM field XXX.
+* In ebox.v or top.v `CRAM_XXX` should be name for CRAM field XXX.
 * Use ALL UPPERCASE for EDP, SHM, and other global register names.
-  * In ebox.v and top.v EDP_XXX should be name for EDP register XXX.
-  * Inside module code, EDP_XXX should be EDP_XXX.
+  * In ebox.v and top.v `EDP_XXX` should be name for EDP register XXX.
+  * Inside module code, `EDP_XXX` should be `EDP_XXX`.
 * Use all lowercase for module names and their filenames must match.
 * Use all lowercase and append "0" (increment as needed) to module
   name for instance names.
-* Each module for an IP instance is called xxx_type
+* Each module for an IP instance is called `xxx_type`
   * Where "xxx" is module's use case (e.g., "cram" or "fm")
   * Where "type" is module's use type (e.g., "mem")
 
@@ -47,7 +49,7 @@
   * EBUS is multiplexed
     * This is used to drive the top.v mux to the EBUS register.
     * Each module that inputs from EBUS via its EBUS input.
-    * Each module drives its XXX_EBUS via its XXX_EBUS output.
+    * Each module drives its `XXX_EBUS` via its `XXX_EBUS` output.
     * Each module driving EBUS generates an output XXXdrivingEBUS.
   * EBOX/MBOX cacheData split into cacheDataRead/cacheDataWrite
 
@@ -55,30 +57,30 @@
 # Documentation Pointers
 
 * DTE20 is where the 10/11 interface lives
-  * Documented in EK-DTE20-UD-003_Oct76.pdf.
+  * Documented in `EK-DTE20-UD-003_Oct76.pdf`.
   * Also from SAIL in ETHDES.txt.
 
 * EBOX/MBUS interface is shown in
-  * EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf starting on p.48
+  * `EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf` starting on p.48
 
-* EBUS in EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf starting on p.81
+* EBUS in `EK-OKL10-TM_KL10_TechRef_Aug84_text.pdf` starting on p.81
 
-* RP07 registers EK-OKL10-MG-004_KL10_Maintenance_Guide_Update_Jun86_text.pdf p.98
+* RP07 registers `EK-OKL10-MG-004_KL10_Maintenance_Guide_Update_Jun86_text.pdf` p.98
 
 * Diagnostic commands p. 71
-  EK-OKL10-MG-003_KL10_Maintenance_Guide_Volume_1_Rev_3_Apr85_text.pdf
+  `EK-OKL10-MG-003_KL10_Maintenance_Guide_Volume_1_Rev_3_Apr85_text.pdf`
   * KL10PV diagnostic read commands numerically p.98, alphabetically p.108
 
 * KL CPU module utilitization charts p.383
-  EK-OKL10-MG-003_KL10_Maintenance_Guide_Volume_1_Rev_3_Apr85_text.pdf
+  `EK-OKL10-MG-003_KL10_Maintenance_Guide_Volume_1_Rev_3_Apr85_text.pdf`
 
-* Module B compatibility and versions p.306 LCG_GoodStuffNewsletters-OCR.pdf
+* Module B compatibility and versions p.306 `LCG_GoodStuffNewsletters-OCR.pdf`
 
-* KLAD20 for KL10-PV is tape BB_F287M-D1.
+* KLAD20 for KL10-PV is tape BB-F287M-D1.
   * Superseded July'81 by BB-E543Q-DD@1600, AP-E542Q-DD@800.
     
 
-* CONVRT.EXE is documented p.353 LCG_GoodStuffNewsletters-OCR.pdf
+* CONVRT.EXE is documented p.353 `LCG_GoodStuffNewsletters-OCR.pdf`
 
 * TOPS20 V7 documents at http://bitsavers.trailing-edge.com/pdf/dec/pdp10/TOPS20/V7/
 
