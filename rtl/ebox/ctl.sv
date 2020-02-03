@@ -3,10 +3,7 @@
 `include "ebus-defs.svh"
 
 // M8543 CTL
-module ctl(input eboxClk,
-           input MR_RESET,
-
-           iCTL CTL,
+module ctl(iCTL CTL,
 
            iAPR APR,
            iCLK CLK,
@@ -173,7 +170,7 @@ module ctl(input eboxClk,
 
     CTL_DISP_EN = CRAM.DISP[0:1];
 
-    CTL_RESET = MR_RESET;
+    CTL_RESET = CLK.MR_RESET;
 
     CTL.AD_LONG = CTL_DISP_MUL |
                   CTL_DISP_DIV |

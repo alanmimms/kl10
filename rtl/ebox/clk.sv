@@ -1,9 +1,6 @@
 `timescale 1ns/1ns
 // M8526 CLK
 module clk(input clk,
-           input eboxReset,
-           input MB_XFER,
-
            input CROBAR,
            input EXTERNAL_CLK,
            input clk30,
@@ -14,15 +11,8 @@ module clk(input clk,
            iCTL CTL,
            iEDP EDP,
            iIR IR,
-           iSHM SHM,
-
-           output logic eboxClk,
-           output logic fastMemClk,
-           output logic MR_RESET
-           );
-
-  assign eboxClk = clk;         // TEMPORARY XXX
-  assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)
+           iSHM SHM
+);
 
   logic DESKEW_CLK = 0;
   logic SYNCHRONIZE_CLK = 0;

@@ -1,20 +1,7 @@
 `timescale 1ns/1ns
 `include "ebus-defs.svh"
 
-module top(input clk
-`ifdef KL10PV_TB
-           ,
-           input eboxClk,
-           input fastMemClk,
-           input eboxReset
-`endif
-);
-
-`ifndef KL10PV_TB
-  logic eboxClk;
-  logic fastMemClk;
-`endif
-    
+module top(input clk);
   logic eboxCCA;
   logic eboxCache;
   logic eboxERA;
@@ -46,12 +33,6 @@ module top(input clk
   logic wrPtSel1;
 
   logic mboxClk;
-  logic MR_RESET;
-  logic CLK_EBOX_SYNC;
-  logic CLK_SBR_CALL;
-  logic CLK_RESP_MBOX;
-  logic CLK_RESP_SIM;
-  logic CLK_PAGE_ERROR;
 
   logic vmaACRef;
   logic [27:35] MBOX_GATE_VMA;
@@ -62,7 +43,6 @@ module top(input clk
 
   logic anyEboxError;
 
-  logic eboxReset;
   logic [13:35] EBOX_VMA;
   logic req;
   logic PSE;
@@ -122,6 +102,15 @@ module top(input clk
   tEBUSdriver SCD_EBUS;
   tEBUSdriver SHM_EBUS;
   tEBUSdriver VMA_EBUS;
+
+  iAPR APR();
+  iCON CON();
+  iCTL CTL();
+  iEDP EDP();
+  iMCL MCL();
+  iSCD SCD();
+  iSHM SHM();
+  iVMA VMA();
 
   ebox ebox0(.*);
   mbox mbox0(.*);

@@ -4,11 +4,7 @@
 `include "cram-defs.svh"
 `include "ebus-defs.svh"
 
-module edp(input eboxClk,
-           input fastMemClk,
-           input eboxReset,
-
-           iEDP EDP,
+module edp(iEDP EDP,
            iAPR APR,
            iCRAM CRAM,
            iCON CON,
@@ -48,12 +44,12 @@ module edp(input eboxClk,
 `include "cram-aliases.svh"
   
   // Miscellaneous reset (XXX)
-  always_ff @(posedge eboxClk) begin
-    if (eboxReset) cacheDataWrite <= 0;
+  always_ff @(posedge CLK.EBOX_CLK) begin
+    if (CLK.EBOX_RESET) cacheDataWrite <= 0;
   end
   
   // XXX wrong?
-  assign EDP.AD_CRY[36] = CTL_AD_CRY_36;
+  assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
 
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
@@ -72,10 +68,10 @@ module edp(input eboxClk,
   end
   
   // EDP.AR
-  always_ff @(posedge eboxClk) begin
+  always_ff @(posedge CLK.EBOX_CLK) begin
 
     // RESET
-    if (eboxReset) begin
+    if (CLK.EBOX_RESET) begin
       EDP.AR <= '0;
     end else begin
 
@@ -137,10 +133,10 @@ module edp(input eboxClk,
   end
 
   // ARX
-  always_ff @(posedge eboxClk) begin
+  always_ff @(posedge CLK.EBOX_CLK) begin
 
     // RESET
-    if (eboxReset) begin
+    if (CLK.EBOX_RESET) begin
       EDP.ARX <= '0;
     end else if (CTL.ARX_LOAD)
       EDP.ARX <= {ARXL, ARXR};
@@ -162,9 +158,9 @@ module edp(input eboxClk,
   end
 
   // MQ mux and register
-  always_ff @(posedge eboxClk) begin
+  always_ff @(posedge CLK.EBOX_CLK) begin
 
-    if (eboxReset) begin
+    if (CLK.EBOX_RESET) begin
       EDP.MQ <= 0;
     end else begin
       
@@ -397,7 +393,7 @@ module edp(input eboxClk,
   sim_mem
     #(.SIZE(128), .WIDTH(36), .NBYTES(2))
   fm
-  (.clk(fastMemClk),
+  (.clk(EDP.FM_WRITE),
    .din(EDP.AR),
    .dout(FM),
    .addr(fmAddress),
@@ -406,7 +402,7 @@ module edp(input eboxClk,
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
   fm_mem fm(.addra(fmAddress),
-            .clka(fastMemClk),
+            .clka(EDP.FM_WRITE),
             .dina(EDP.AR),
             .douta(FM),
             .wea({CON.FM_WRITE00_17, CON.FM_WRITE00_17,
@@ -418,18 +414,18 @@ module edp(input eboxClk,
 
 
   // BRX
-  always_ff @(posedge eboxClk)
+  always_ff @(posedge CLK.EBOX_CLK)
 
-    if (eboxReset)
+    if (CLK.EBOX_RESET)
       EDP.BRX <= 0;
     else if (CRAM.BRX === brxARX)
       EDP.BRX <= EDP.ARX;
 
 
   // BR
-  always_ff @(posedge eboxClk)
+  always_ff @(posedge CLK.EBOX_CLK)
 
-    if (eboxReset)
+    if (CLK.EBOX_RESET)
       EDP.BR <= 0;
     else if (CRAM.BR === brAR)
       EDP.BR <= EDP.AR;
@@ -442,9 +438,9 @@ module edp(input eboxClk,
   assign EBUSdriver.data[0:17] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_L) ? ebusR[0:17] : '0;
   assign EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ? ebusR[18:35] : '0;
 
-  always_ff @(posedge eboxClk) begin
+  always_ff @(posedge CLK.EBOX_CLK) begin
 
-    if (eboxReset) begin
+    if (CLK.EBOX_RESET) begin
       EBUSdriver.driving <= '0;
     end else if (EBUSdriver.driving) begin
 

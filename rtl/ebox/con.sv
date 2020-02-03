@@ -2,8 +2,7 @@
 `include "cram-defs.svh"
 `include "ebus-defs.svh"
 // M8525 CON
-module con(input eboxClk,
-           iCON CON,
+module con(iCON CON,
 
            iCRAM CRAM,
            iCLK CLK,
@@ -18,8 +17,6 @@ module con(input eboxClk,
            tEBUSdriver EBUSdriver,
 
            input MTR_INTERRUPT_REQ,
-
-           input MR_RESET,
 
            input MCL_VMA_SECTION_0,
            input MCL_MBOX_CYC_REQ,
@@ -68,8 +65,8 @@ module con(input eboxClk,
   logic CON_MBOX_WAIT;
   logic CON_AR_LOADED;
 
-  assign CON_CLK = eboxClk;
-  assign CON.RESET = MR_RESET;
+  assign CON_CLK = CLK.EBOX_CLK;
+  assign CON.RESET = CLK.MR_RESET;
 
   // COND decoder CON1 p.158
   decoder cond_decoder(.en(~CON.RESET),

@@ -2,6 +2,7 @@
 `define _CLK_INTERFACE_ 1
 
 interface iCLK;
+  logic MR_RESET;
   logic CLK_EBOX_SYNC;
   logic CLK_EBUS_RESET;
   logic CLK_PAGE_ERROR;

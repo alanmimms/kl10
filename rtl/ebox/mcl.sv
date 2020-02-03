@@ -1,7 +1,6 @@
 `timescale 1ns/1ns
 // M8544 MCL
-module mcl(input eboxClk,
-           input cshEBOXT0,
+module mcl(input cshEBOXT0,
            input cshEBOXRetry,
            input pfEBOXHandle,
 

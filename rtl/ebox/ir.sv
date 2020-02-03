@@ -2,9 +2,7 @@
 `include "cram-defs.svh"
 `include "ebus-defs.svh"
 // M8522 IR
-module ir(input eboxClk,
-
-          iIR IR,
+module ir(iIR IR,
           iCRAM CRAM,
           iCON CON,
           iCTL CTL,
@@ -37,7 +35,7 @@ module ir(input eboxClk,
    .addr(DRADR),
    .wea('0));                   // XXX
 `else
-  dram_mem dram(.clka(eboxClk),
+  dram_mem dram(.clka(CLK.EBOX_CLK),
                 .addra(DRADR),
                 .douta(DRAMdata),
                 .dina('0),

@@ -3,8 +3,7 @@
 `include "ebus-defs.svh"
 
 module edptb;
-  logic eboxClk;
-  logic fastMemClk;
+  logic masterClk;
   
   /*AUTOWIRE*/
   // Beginning of automatic wires (for undeclared instantiated-module outputs)
@@ -28,7 +27,6 @@ module edptb;
 
   tCRADR CRADR;
 
-  logic eboxReset;
   logic CTL.AR00to08_LOAD;
   logic CTL.AR09to17_LOAD;
   logic CTL.ARR_LOAD;
@@ -52,8 +50,6 @@ module edptb;
   logic CTL.AD_TO_EBUS_L;
   logic CTL.AD_TO_EBUS_R;
 
-  logic CTL_AD_CRY_36;
-  logic CTL.ADX_CRY_36;
   logic CTL_SPEC_AD_LONG;
 
   logic [0:2] APR.FMblk;
@@ -78,30 +74,20 @@ module edptb;
 //  crm crm0(.*);
 
   // 50MHz
-  always #10 eboxClk = ~eboxClk;
-
-  // fastMemClk is same frequency as eboxClk, but is delayed from
-  // eboxClk posedge and has shorter positive duty cycle.
-  always @(posedge eboxClk) begin
-    #2 fastMemClk = 1;
-    #4 fastMemClk = 0;
-  end
-  
+  always #10 masterClk = ~masterClk;
 
   initial begin
-    $monitor($time, " eboxReset=%b AD=%09x AR=%09x BR=%09x CRAM.AD=%06b",
-             eboxReset, EDP.AD, EDP.AR, EDP.BR, CRAM.AD);
+    $monitor($time, " CLK.EBOX_RESET=%b AD=%09x AR=%09x BR=%09x CRAM.AD=%06b",
+             CLK.EBOX_RESET, EDP.AD, EDP.AR, EDP.BR, CRAM.AD);
 
     $display("Start EDP test bench; reset EBOX>");
 
-    eboxClk = 0;
-    fastMemClk = 0;
-    eboxReset = 1;
+    masterClk = 0;
 
     CRADR = 0;
     cacheDataRead = 0;
 
-    CTL_AD_CRY_36 = 0;
+    CTL.AD_CRY_36 = 0;
     CTL.ADX_CRY_36 = 0;
     CTL_SPEC_AD_LONG = 0;
 
@@ -151,10 +137,10 @@ module edptb;
 
 
     #75 $display($time, "<<<<<<<<<<<<<<<<<< Release EBOX reset >>");
-    eboxReset = 0;
+    CLK.EBOX_RESET = 0;
 
     // Load AR with 123456789
-    @(negedge eboxClk)
+    @(negedge masterClk)
     $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=555555555, BR/AR >>");
     cacheDataRead = 36'h555555555;
     CRAM.AD = adA;
@@ -171,7 +157,7 @@ module edptb;
 
 
     // Try AD/A first
-    @(negedge eboxClk)
+    @(negedge masterClk)
     $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=555555555, BR/AR >>");
     cacheDataRead = 36'h555555555;
     CRAM.AD = adA;
@@ -188,7 +174,7 @@ module edptb;
 
 
     // Try AD/B
-    @(negedge eboxClk)
+    @(negedge masterClk)
     $display($time, "<<<<<<<<<<<<<<<<<< AD/B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.AD = adA;
@@ -204,7 +190,7 @@ module edptb;
     CRAM.ARX = arxARX;
 
     // Try AD/0S
-    @(negedge eboxClk)
+    @(negedge masterClk)
     $display($time, "<<<<<<<<<<<<<<<<<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.AD = adZEROS;          // AD/0S
@@ -220,7 +206,7 @@ module edptb;
     CRAM.ARX = arxARX;
 
     // Now add 987654321 and 123456789
-    @(negedge eboxClk)
+    @(negedge masterClk)
     $display($time, "<<<<<<<<<<<<<<<<<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.AD = adAplusB;         // AD/A+B
@@ -235,11 +221,11 @@ module edptb;
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
 
-    @(negedge eboxClk);
+    @(negedge masterClk);
 
-    @(negedge eboxClk);
+    @(negedge masterClk);
 
-    @(negedge eboxClk);
+    @(negedge masterClk);
 
     $display($time, "DONE");
 //    $stop;

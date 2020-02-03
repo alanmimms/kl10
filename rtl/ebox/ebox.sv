@@ -2,12 +2,7 @@
 `include "cram-defs.svh"
 `include "ebus-defs.svh"
 
-module ebox(input eboxClk,
-            input fastMemClk,
-
-            input eboxReset,
-
-            iAPR APR,
+module ebox(iAPR APR,
 
             input CSH_PAR_BIT_A,
             input CSH_PAR_BIT_B,

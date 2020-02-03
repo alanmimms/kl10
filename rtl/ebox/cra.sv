@@ -10,19 +10,16 @@
 //
 // In a real KL10PV, M8541 contains the last six bits of CRAM storage.
 // This has been moved to crm.v in a single unified storage module.
-module cra(input eboxClk,
-           input fastMemClk,
-           input eboxReset,
-           input force1777,
-           input MULdone,
+module cra(input MULdone,
 
            input [0:2] DRAM_A,
            input [0:2] DRAM_B,
            input [0:10] DRAM_J,
            
            iCRAM CRAM,
-           iCTL CTL,
+           iCLK CLK,
            iCON CON,
+           iCTL CTL,
            iEDP EDP,
            iIR IR,
            iSHM SHM,
@@ -78,9 +75,9 @@ module cra(input eboxClk,
   assign dispEn30_37 = CRAM.DISP[0:4] === 5'b11111;
 
   assign shortIndirWord = ~CON.LONG_EN | EDP.ARX[1];
-  assign CALL_FORCE_1777 = CRAM.CALL | force1777;
+  assign CALL_FORCE_1777 = CRAM.CALL | CLK.FORCE_1777;
   assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
-  assign retNotForce1777 = ret & ~force1777;
+  assign retNotForce1777 = ret & ~CLK.FORCE_1777;
 
   always_comb begin
 
@@ -143,12 +140,12 @@ module cra(input eboxClk,
 
 
   // CRADR
-  always @(posedge eboxClk) begin
+  always @(posedge CLK.EBOX_CLK) begin
 
-    if (eboxReset)
+    if (CLK.EBOX_RESET)
       CRADR <= 0;
     else
-      CRADR <= CRAM.J | {11{force1777}} | dispMux;
+      CRADR <= CRAM.J | {11{CLK.FORCE_1777}} | dispMux;
   end
   
 
@@ -195,10 +192,10 @@ module cra(input eboxClk,
   logic stackAdrZ = stackAdrF ^ stackAdrE;
 
   logic stackAdr = {stackAdrAD, stackAdrEH};
-  logic stackWrite = fastMemClk & ~retNotForce1777;
+  logic stackWrite = CLK.EBOX_CLK & ~retNotForce1777;
   logic selCall = stackWrite | ~retNotForce1777;
 
-  always @(posedge eboxClk) begin
+  always @(posedge CLK.EBOX_CLK) begin
 
     if (CALL_FORCE_1777 && retNotForce1777) begin // LOAD
       stackAdrAD <= 4'b1111;

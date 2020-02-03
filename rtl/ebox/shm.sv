@@ -2,8 +2,7 @@
 `include "cram-defs.svh"
 
 // M8540 SHM
-module shm(input eboxClk,
-           iSHM SHM,
+module shm(iSHM SHM,
            iCRAM CRAM,
            iCON CON,
            iEDP EDP,
