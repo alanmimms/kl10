@@ -4,18 +4,490 @@ module clk(input clk,
            input eboxReset,
            input MB_XFER,
 
+           input CROBAR,
+           input EXTERNAL_CLK,
+           input clk30,
+           input clk31,
+
            iCLK CLK,
            iCON CON,
+           iCTL CTL,
+           iEDP EDP,
+           iIR IR,
+           iSHM SHM,
 
            output logic eboxClk,
            output logic fastMemClk,
            output logic MR_RESET
-);
+           );
 
   assign eboxClk = clk;         // TEMPORARY XXX
   assign MR_RESET = eboxReset;  // TEMPORARY XXX (need to code CLK module)
 
+  logic DESKEW_CLK = 0;
+  logic SYNCHRONIZE_CLK = 0;
+
   ebox_clocks ebox_clocks0();
+
+  // CLK1 p.168
+  always_comb begin
+
+    case ({CROBAR, CLK.SOURCE_SEL})
+    default:CLK.MAIN_SOURCE = clk30;
+    3'b0X1: CLK.MAIN_SOURCE = clk31;
+    3'b010: CLK.MAIN_SOURCE = EXTERNAL_CLK;
+    endcase
+
+    CLK.ERROR_STOP = CLK.FS_ERROR & ~CLK.CLK_ON & CLK.ERR_STOP_EN |
+                     CLK.EBOX_CLK_ERROR & CLK.EBOX_SOURCE & ~CLK.CLK_ON & CLK.ERR_STOP_EN;
+  end
+
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
+    CLK.GATED <= CLK.GATED_EN;
+    CLK.CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) &
+                  (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
+  end
+
+  assign CLK.MBOX = CLK.CLK_ON;
+  assign CLK.ODD = CLK.CLK_ON;
+
+  logic [0:3] rateSelectorSR;
+  assign CLK.RATE_SELECTED = rateSelectorSR[0] | rateSelectorSR[2];
+  always_ff @(CLK.MAIN_SOURCE) begin
+
+    if (CLK.RATE_SELECTED) begin
+      rateSelectorSR <= {CLK.RATE_SEL[1], CLK.RATE_SEL[1], CLK.RATE_SEL[0], 1'b0};
+    end else begin
+      rateSelectorSR <= {rateSelectorSR[1:3], 1'b0};
+    end
+  end
+
+  logic ebusClkIn;
+  always @(posedge CLK.GATED) begin
+
+    if (CLK.FUNC_CLR_RESET) begin
+      CLK.SBUS_CLK <= 0;
+      ebusClkIn <= 0;
+    end else begin
+      CLK.SBUS_CLK <= ebusClkIn;
+      ebusClkIn <= CLK.SBUS_CLK;
+    end
+  end
+
+  always @(posedge CLK.EBUS_CLK_SOURCE) begin
+
+    if (CLK.FUNC_CLR_RESET) begin
+      CLK.EBUS_CLK <= 0;
+    end else begin
+      CLK.EBUS_CLK <= ebusClkIn;
+    end
+  end
+
+  logic [0:3] gatedSR;
+  always @(posedge CLK.MAIN_SOURCE) begin
+
+    case ({CLK.FUNC_GATE, ~(CLK.FUNC_GATE | CLK.RATE_SELECTED)})
+    default: gatedSR <= gatedSR;
+    2'b01: gatedSR <= {gatedSR[1:3], CROBAR};
+    2'b10: gatedSR <= {1'b0, gatedSR[0:2]};
+    3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,
+                       CLK.FUNC_EBOX_SS,
+                       ~(CLK.FUNC_EBOX_SS & ~CLK.SYNC),
+                       CLK.FUNC_EBOX_SS};
+    endcase
+  end
+
+  assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
+                        ~CLK.BURST_CNTeq0 & CLK.BURST & CLK.RATE_SELECTED |
+                        CLK.RATE_SELECTED & gatedSR[0] |
+                        CLK.FUNC_COND_SS & CLK.EBOX_CLK;
+
+  // CLK2 p.169
+  logic [0:3] e64SR;
+  logic [0:3] e60FF;
+  assign CLK.MHZ16_FREE = e64SR[3];
+  assign CLK.FUNC_GATE = |e60FF[0:2];
+  assign CLK.TENELEVEN_CLK = e60FF[3];
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
+
+    if (CLK.MHZ16_FREE) begin
+      e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
+    end else begin
+      e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
+    end
+
+    e60FF <= {~e64SR[0], e64SR[1:3]};
+  end
+
+  assign MR_RESET = CLK.RESET;
+  assign CLK.SYNC_HOLD = MR_RESET | CLK.SYNC;
+  always @(negedge CLK.FUNC_SET_RESET) begin
+
+    if (CLK.CROBAR) begin
+      CLK.RESET <= 0;
+    end else begin
+      CLK.RESET <= 1;
+    end
+  end
+
+  always_ff @(posedge CLK.MBOX_CLK) begin
+    CLK.PT_DIR_WR <= CLK.EBOX_CLK & APR.PT_DIR_WR;
+    CLK.PT_WR <= CLK.EBOX_CLK & APR.PT_WR;
+  end
+
+  logic [3:0] e52Counter;
+  logic e52Carry;
+  assign CLK.EBUS_RESET = e52Counter[3];
+  always @(posedge CLK.MHZ16_FREE) begin
+    
+    if (e52Carry | CLK.CROBAR | CON.CONO_200000) begin
+
+      if (&e52Counter) begin
+        e52Carry <= 1;
+        e52Counter <= 0;
+      end else begin
+        e52Counter <= e52Counter + 1;
+      end
+    end else begin
+      e52Counter <= 0;
+      e52Carry <= 0;
+    end
+  end
+
+  logic [0:2] e37SR;
+  assign {CLK.GO, CLK.BURST, CLK.FUNC_EBOX_SS} = e37SR;
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
+
+    if (CLK.FUNC_GATE | CLK.CROBAR) begin
+      e37SR <= {CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS};
+    end else begin
+      e37SR <= e37SR;
+    end
+  end
+
+  always_comb begin
+
+    if (CLK.FUNC_GATE && CTL.DIAG_CTL_FUNC_00x) begin
+      if (CLK.DIAG[4:6] === 3'b001) CLK.FUNC_START = 1;
+      if (CLK.DIAG[4:6] === 3'b010) CLK.FUNC_SINGLE_STEP = 1;
+      if (CLK.DIAG[4:6] === 3'b011) CLK.FUNC_EBOX_SS = 1;
+      if (CLK.DIAG[4:6] === 3'b100) CLK.FUNC_COND_SS = 1;
+      if (CLK.DIAG[4:6] === 3'b101) CLK.FUNC_BURST = 1;
+      if (CLK.DIAG[4:6] === 3'b110) CLK.FUNC_CLR_RESET = 1;
+      if (CLK.DIAG[4:6] === 3'b111) CLK.FUNC_SET_RESET = 1;
+    end else begin
+      CLK.FUNC_START = 0;
+      CLK.FUNC_SINGLE_STEP = 0;
+      CLK.FUNC_EBOX_SS = 0;
+      CLK.FUNC_COND_SS = 0;
+      CLK.FUNC_BURST = 0;
+      CLK.FUNC_CLR_RESET = 0;
+      CLK.FUNC_SET_RESET = 0;
+    end
+    
+    if (CLK.FUNC_GATE && CTL.DIAG_LD_FUNC_04x) begin
+      if (CLK.DIAG[4:6] === 3'b010) CLK.FUNC_042 = 1;
+      if (CLK.DIAG[4:6] === 3'b011) CLK.FUNC_043 = 1;
+      if (CLK.DIAG[4:6] === 3'b100) CLK.FUNC_044 = CLK.CROBAR;
+      if (CLK.DIAG[4:6] === 3'b101) CLK.FUNC_045 = CLK.CROBAR;
+      if (CLK.DIAG[4:6] === 3'b110) CLK.FUNC_046 = CLK.CROBAR;
+      if (CLK.DIAG[4:6] === 3'b111) CLK.FUNC_047 = CLK.CROBAR;
+    end else begin
+      CLK.FUNC_042 = 0;
+      CLK.FUNC_043 = 0;
+      CLK.FUNC_044 = 0;
+      CLK.FUNC_045 = 0;
+      CLK.FUNC_046 = 0;
+      CLK.FUNC_047 = 0;
+    end
+  end
+
+  // CLK3 p.170
+  logic [0:5] e58FF;
+  assign {CLK.DRAM_PAR_ERR, CLK.CRAM_PAR_ERR, CLK.FM_PAR_ERR,
+          CLK.EBOX_SOURCE, CLK.FS_ERROR, CLK.EBOX_CLK_ERROR} = e58FF;
+
+  logic e45FF4, e45FF13, e45FF14;
+  assign CLK.ERROR_HOLD_A = ~IR.DRAM_ODD_PARITY & ~CON.LOAD_DRAM & CLK.DRAM_PAR_CHECK;
+  assign CLK.ERROR_HOLD_B = (CLK.FS_EN_A | CLK.FS_EN_B | CLK.FS_EN_C | CLK.FS_EN_D) &
+                            CLK.FS_EN_E & CLK.FS_EN_F & CLK.FS_EN_G & CLK.FS_CHECK;
+  assign CLK.ERROR = e45FF4 | e45FF13;
+  assign CLK.FS_ERROR = ~e45FF14;
+  always_ff @(posedge CLK.ODD) begin
+    e58FF <= {CLK.ERROR_HOLD,
+              ~CRAM.PAR & CLK.CRAM_PAR_CHECK,
+              ~APR.FM_ODD_PARITY & CLK.FM_PAR_CHECK,
+              CLK.EBOX_SRC_EN,
+              ~CLK.ERROR_HOLD,
+              1'b0};               // XXX this is obscured in schematics p.170
+
+    e45FF4 <= CLK.ERROR_HOLD_B;
+    e45FF13 <= CLK.ERROR_HOLD_A;
+    e45FF14 <= CLK.ERROR_HOLD_B;
+  end
+
+  logic [3:0] e25Counter, e25Carry;
+  always_ff @(posedge CLK.MBOX_CLK) begin
+
+    if (CLK.EBOX_CLK_EN) begin
+
+      if (&e25Counter) begin
+        e25Carry <= 1;
+        e25Counter <= 0;
+      end else begin
+        e25Counter <= e25Counter + 1;
+      end
+    end else if (CLK.CROBAR) begin      // XXX GUESSING...
+      e25Carry <= 0;
+      e25Counter <= 0;
+    end else begin
+      e25Counter <= 0;
+      e25Carry <= 0;
+    end
+  end
+
+  logic e31B;
+  always_comb begin
+
+    if (CLK.SYNC_HOLD) begin
+
+      case ({|e25Counter[3:2], e25Counter[1], e25Counter[0]})
+      default: e31B = 0;
+      3'b000: e31B = ~(~CRAM.TIME[0] & ~CRAM.TIME[1]);
+      3'b001: e31B = ~CRAM.TIME[0];
+      3'b010: e31B = ~CRAM.TIME[1];
+      3'b011: e31B = ~CON.DELAY_REQ;
+      3'b100: e31B = e25Carry;
+      3'b101: e31B = e25Carry;
+      3'b110: e31B = e25Carry;
+      3'b111: e31B = e25Carry;
+      endcase
+    end else begin
+      e31B = 0;
+    end
+
+    CLK.SYNC_EN = CLK.EBOX_SS & ~CLK.EBOX_CLK_EN | e31B & ~CLK.EBOX_CLK_EN;
+  end
+
+  always_ff @(posedge CLK.MBOX_CLK) begin
+    CLK.EBOX_SYNC <= CLK.SYNC_EN;
+    CLK.SYNC <= CLK.SYNC_EN;
+    // XXX There is a sixth output signal that is obscured on p.170. WHAT IS IT?
+    // Its D5 input appears to be CLK.SYNC_EN, but what is Q5 tied to?
+  end
+
+
+  logic [0:3] e12SR;
+  logic e17out;
+  assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.RESET;
+  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
+
+  assign CLK.CRM = e12SR[0];
+  assign CLK.CRA = e12SR[0];
+
+  assign CLK.EDP = CTL.DIAG_CLK_EDP | e12SR[1];
+
+  assign CLK.APR = e12SR[2];
+  assign CLK.CON = e12SR[2];
+  assign CLK.VMA = e12SR[2];
+  assign CLK.MCL = e12SR[2];
+  assign CLK.IR  = e12SR[2];
+  assign CLK.SCD = e12SR[2];
+
+  assign CLK_EBOX_SOURCE = e12SR[3];
+
+  always_ff @(posedge CLK.ODD) begin
+    
+    if (CLK.PAGE_FAIL && CLK.PF_DLYD) begin // HOLD
+      e12SR <= e12SR;
+    end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
+      e12SR <= {e12SR[1:3], 1'b0};
+    end else if (CLK.PF_DLYD) begin     // Shift down from 0in
+      e12SR <= {CLK.PF_DLYD, e12SR[0:2]};
+    end else begin                      // LOAD
+      e12SR <= {CLK.SYNC & e17out & CLK.ERROR_HOLD_A & CLK.ERROR_HOLD_B & CLK.EBOX_CRM_DIS,
+                CLK.SYNC & e17out & CLK.ERROR_HOLD_A & CLK.ERROR_HOLD_B & CLK.EBOX_EDP_DIS,
+                CLK.SYNC & e17out & CLK.ERROR_HOLD_A & CLK.ERROR_HOLD_B & CLK.EBOX_CTL_DIS,
+                CLK.EBOX_SRC_EN};
+    end
+  end
+
+  logic e32Q3, e32Q13;
+  assign CLK.MBOX_RESP = e32Q3 | e32Q13;
+  assign CLK.MB_XFER = e32Q3 | e32Q13;
+  assign CLK.RESP_SIM = CSH.MBOX_RESP_IN & CLK.SYNC_EN;
+  always_ff @(posedge CLK.MBOX_CLK) begin
+    CLK.EBOX_REQ <= CLK.EBOX_REQ & ~VMA.AC_REF |
+                    ~VMA.AC_REF & CSH.EBOX_RETRY_REQ |
+                    CLK.SYNC_EN & MCL.MBOX_CYC_REQ |
+                    CLK.SYNC & MCL.MBOX_CYC_REQ |
+                    (~CLK.PAGE_FAIL_EN &
+                     ~CSH.EBOX_T0_IN &
+                     ~CLK.MBOX_CYCLE_DIS &
+                     ~CLK.RESET &
+                     ~CLK.FORCE_1777);
+
+    e32Q3 <= CON.MBOX_WAIT & CLK.MBOX_RESP_SIM & ~CLK.EBOX_CLK_EN & ~VMA.AC_REF;
+    e32Q13 <= CSH.MBOX_RESP_IN;
+    CLK.EBOX_CLK <= CLK.EBOX_CLK_EN;
+  end
+
+  always_ff @(posedge CLK.ODD) begin
+
+    if (CLK.PAGE_FAIL) begin
+      CLK.PF_DISP[7] <= PAG.PF_EBOX_HANDLE;
+      CLK.PF_DISP[8] <= CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN;
+      CLK.PF_DISP[9] <= ~SHM.AR_PAR_ODD & CON.AR_LOADED;
+      CLK.PF_DISP[10] <= ~SHM.ARX_PAR_ODD & CON.ARX_LOADED;
+    end else begin
+      CLK.PF_DISP <= CLK.PF_DISP;
+    end
+  end
+
+  always @(posedge CLK.ODD) begin
+    CLK.PF_DLYD_A <= CLK.PAGE_FAIL;
+    CLK.PF_DLYD_B <= CLK.PF_DLYD_A;
+  end
+
+  assign CLK.PAGE_ERROR = CLK.PAGE_FAIL_EN | CLK.INSTR_1777;
+  assign CLK.F1777_EN = CLK.FORCE_1777 & CLK.SBR_CALL;
+  always @(posedge CLK.MBOX_CLK) begin
+    CLK.PAGE_FAIL_EN <= ~CLK.INSTR_1777 &
+                        (CSH.PAGE_FAIL_HOLD | (CLK.PAGE_FAIL_EN & ~CLK.RESET));
+    CLK.INSTR_1777 <= CLK.F1777_EN | (~CLK.EBOX_CLK_EN & CLK.INSTR_1777);
+    CLK.FORCE_1777 <= CLK.PF_DLYD_A;
+    CLK.SBR_CALL <= CLK.PF_DLYD_B;
+  end
+
+  logic e7out7;
+  logic e38out6;
+  assign e7out7 = CLK.EBOX_SOURCE | CLK.PF_DLYD_B | CLK.INSTR_1777;
+  assign e38out6 = ~APR.APR_PAR_CHK_EN | ~CLK.AR_ARX_PAR_CHECK | e7out7;
+  always_comb begin
+    CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |
+                    ~SHM.AR_PAR_ODD & CON.AR_LOADED & e38out6 |
+                    ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & e38out6 |
+                    CRAM.MEM[2] & CLK.PAGE_FAIL_EN & e7out7;
+    CLK.EBOX_CYC_ABORT = CLK.PAGE_FAIL | CLK.PF_DLYD_B;
+  end
+
+  // CLK5 p.172
+  logic [0:7] burstCounter;
+  always_comb begin
+
+    if (CLK.DIAG_READ) begin
+      EBUSdriver.driving = '1;
+
+      case (CLK.DIAG[4:6])
+      3'b000: EBUSdriver.data = {CLK.EBUS_CLK,
+                                 CLK.SBUS_CLK,
+                                 CLK.INSTR_1777,
+                                 CLK.BURST_CNT,
+                                 burstCounter[0:1]};
+      3'b001: EBUSdriver.data = burstCounter[2:7];
+      3'b010: EBUSdriver.data = {CLK.ERROR_STOP,
+                                 ~CLK.GO,
+                                 CLK.EBOX_REQ,
+                                 CLK.SYNC,
+                                 CLK.PAGE_FAIL_EN,
+                                 CLK.FORCE_1777};
+      3'b011: EBUSdriver.data = {CLK.DRAM_PAR_ERR,
+                                 ~CLK.BURST,
+                                 CLK.MB_XFER,
+                                 ~CLK.EBOX_CLK,
+                                 CLK.PAGE_ERROR,
+                                 CLK.F1777_EN};
+      3'b100: EBUSdriver.data = {CLK.CRAM_PAR_ERR,
+                                 ~CLK.EBOX_SS,
+                                 CLK.SOURCE_SEL[0],
+                                 CLK.EBOX_SOURCE,
+                                 ~CLK.FM_PAR_CHECK,
+                                 CLK.MBOX_CYCLE_DIS};
+      3'b101: EBUSdriver.data = {CLK.FM_PAR_ERR,
+                                 SHM.AR_PAR_ODD,
+                                 CLK.SOURCE_SEL[0],
+                                 CLK.EBOX_CRM_DIS,
+                                 ~CLK.CRAM_PAR_CHECK,
+                                 ~CLK.MBOX_RESP_SIM};
+      3'b110: EBUSdriver.data = {CLK.FS_ERROR,
+                                 SHM.ARX_PAR_ODD,
+                                 CLK.RATE_SEL[0],
+                                 CLK.EBOX_EDP_DIS,
+                                 ~CLK.DRAM_PAR_CHECK,
+                                 ~CLK.AR_ARX_PAR_CHECK};
+      3'b111: EBUSdriver.data = {~CLK.ERROR,
+                                 CLK.PAGE_FAIL,
+                                 CLK.RATE_SEL[1],
+                                 CLK.EBOX_CTL_DIS,
+                                 ~CLK.FS_CHECK,
+                                 ~CLK.ERR_STOP_EN};
+      endcase
+    end else begin
+      EBUSdriver.data[30:35] = '0;
+    end
+  end
+
+  logic [0:3] burstLSB;       // E21
+  logic [0:3] burstMSB;       // E15
+  logic burstLSBcarry;
+
+  assign burstCounter = {burstMSB, burstLSB};
+  assign CLK.BURST_CNTeq0 = burstCounter === 8'b0;
+
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
+
+    // LSB
+    if (CLK.FUNC_042) begin // LOAD 042
+      burstLSB[4:7] <= EBUS.data[32:35];
+      burstLSBcarry <= 0;
+    end else if (CLK.BURST || CLK.RATE_SELECTED || CLK.FUNC_042) begin
+      burstLSBcarry <= burstLSB === 4'b1111; // INCREMENT
+      if (~CLK.BURST_CNTeq0) burstLSB <= burstLSB + 4'b0001;
+    end else begin                   // HOLD
+      burstLSB <= burstLSB;
+      burstLSBcarry <= 0;
+    end
+
+    // MSB
+    if (CLK.BURST) begin             // INCREMENT
+      if (burstLSBcarry) burstMSB <= burstMSB + 4'b0001;
+    end else if (CLK.FUNC_043) begin // LOAD 043
+      burstMSB[0:3] <= EBUS.data[32:35];
+    end else begin                   // HOLD
+      burstMSB <= burstMSB;
+    end
+  end
+
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
+
+    if (CLK.FUNC_044) begin
+      CLK.SOURCE_SEL <= EBUS.data[32:33];
+      CLK.RATE_SEL <= EBUS.data[34:35];
+    end
+
+    if (CLK.FUNC_045) begin
+      CLK.EBUS_CRM_DIS <= EBUS.data[33];
+      CLK.EBUS_EDP_DIS <= EBUS.data[34];
+      CLK.EBUS_CTL_DIS <= EBUS.data[35];
+    end
+
+    if (CLK.FUNC_046) begin
+      CLK.FM_PAR_CHECK = EBUS.data[32];
+      CLK.CRAM_PAR_CHECK = EBUS.data[33];
+      CLK.DRAM_PAR_CHECK = EBUS.data[34];
+      CLK.FS_CHECK = EBUS.data[35];
+    end
+
+    if (CLK.FUNC_047) begin
+      CLK.MBOX_CYCLE_DIS = EBUS.data[32];
+      CLK.MBOX_RESP_SIM = EBUS.data[33];
+      CLK.AR_ARX_PAR_CHECK = EBUS.data[34];
+      CLK.ERR_STOP_EN = EBUS.data[35];
+    end
+  end
+
+  assign CLK.DIAG[4:6] = EBUS.ds[4:6];
+  assign CLK.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 endmodule // clk
 // Local Variables:
 // verilog-library-files:("../ip/ebox_clocks/ebox_clocks_stub.v")

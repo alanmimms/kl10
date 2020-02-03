@@ -65,7 +65,6 @@ module ctl(input eboxClk,
   logic DIAG_LOAD_FUNC_05x;
   logic DIAG_LOAD_FUNC_070;
   logic DIAG_LOAD_FUNC_071;
-  logic DIAG_READ_FUNC_10x;
   logic DIAG_READ_FUNC_15x;
   logic DIAG_READ_FUNC_16x;
   logic DIAG_READ_FUNC_17x;
@@ -285,7 +284,7 @@ module ctl(input eboxClk,
     CTL.DIAG_CLK_EDP       = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b111;
 
     en1xx = CTL_DS[0] & CTL_READ_STROBE;
-    DIAG_READ_FUNC_10x     = en1xx && CTL_DS[1:3] === 3'b000;
+    EDP.DIAG_READ_FUNC_10x = en1xx && CTL_DS[1:3] === 3'b000;
     CTL.DIAG_READ_FUNC_11x = en1xx && CTL_DS[1:3] === 3'b001;
     CTL.DIAG_READ_FUNC_12x = en1xx && CTL_DS[1:3] === 3'b010;
     CTL.DIAG_READ_FUNC_13x = en1xx && CTL_DS[1:3] === 3'b011;
@@ -294,7 +293,7 @@ module ctl(input eboxClk,
     DIAG_READ_FUNC_16x     = en1xx && CTL_DS[1:3] === 3'b110;
     DIAG_READ_FUNC_17x     = en1xx && CTL_DS[1:3] === 3'b111;
 
-    CTL.DIAG_READ = DIAG_READ_FUNC_10x;
+    CTL.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
     CTL.DIAG_STROBE = EBUS.diagStrobe;
 

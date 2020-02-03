@@ -78,10 +78,10 @@ module con(input eboxClk,
                            CON.COND_EN10_17,
                            CON.COND_EN20_27,
                            CON.COND_EN30_37,
-                           CON.COND_EN40_47,
-                           CON.COND_EN50_57,
-                           CON.COND_EN60_67,
-                           CON.COND_EN70_77}));
+                           CON.SKIP_EN40_47,
+                           CON.SKIP_EN50_57,
+                           CON.SKIP_EN60_67,
+                           CON.SKIP_EN70_77}));
 
   decoder cond10_decoder(.en(CON.COND_EN10_17),
                          .sel(CRAM.COND[3:5]),
@@ -93,6 +93,9 @@ module con(input eboxClk,
                              CON_COND_SPEC_INSTR,
                              CON_COND_SR_MAGIC,
                              CON.COND_SEL_VMA}));
+
+  // E3 is simply additional drivers for active-low versions of same
+  // signals as the above, so it is skipped here.
 
   decoder cond20_decoder(.en(CON.COND_EN20_27),
                          .sel(CRAM.COND[3:5]),

@@ -14,6 +14,7 @@ interface iEDP;
   logic [0:36] ADXcarry;
   logic [0:35] ADoverflow;
   logic GEN_CRY_36;
+  logic DIAG_READ_FUNC_10x;
 endinterface
 
 `endif

@@ -3,6 +3,7 @@
 * Convert ebus-defs.svh to package
 * Use associative array to build list of iEBUSdriver modules for top.v synthesis?
 * Define methods for EBUS access in iEBUS
+* Go through the rev 'F' CON and make sure that is what I implemented.
 
 
 # System Organization

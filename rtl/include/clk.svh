@@ -3,6 +3,7 @@
 
 interface iCLK;
   logic CLK_EBOX_SYNC;
+  logic CLK_EBUS_RESET;
   logic CLK_PAGE_ERROR;
   logic CLK_RESP_MBOX;
   logic CLK_RESP_SIM;

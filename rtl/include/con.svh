@@ -20,10 +20,10 @@ interface iCON;
   logic COND_EN10_17;
   logic COND_EN20_27;
   logic COND_EN30_37;
-  logic COND_EN40_47;
-  logic COND_EN50_57;
-  logic COND_EN60_67;
-  logic COND_EN70_77;
+  logic SKIP_EN40_47;
+  logic SKIP_EN50_57;
+  logic SKIP_EN60_67;
+  logic SKIP_EN70_77;
 
   logic COND_PCF_MAGIC;
   logic COND_FE_SHRT;
