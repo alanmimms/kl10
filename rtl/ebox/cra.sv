@@ -11,6 +11,7 @@
 // This has been moved to crm.v in a single unified storage module.
 module cra(iCLK CLK,
            iCON CON,
+           iCRA CRA,
            iCTL CTL,
            iEDP EDP,
            iIR IR,
@@ -18,11 +19,8 @@ module cra(iCLK CLK,
 
            iCRAM CRAM,
 
-           output tCRADR CRADR,
            iEBUS EBUS
 );
-
-  iCRA CRA();
 
   logic [0:11] dispMux;
   logic [0:10] diagAdr;
@@ -62,14 +60,14 @@ module cra(iCLK CLK,
       case (CRAM.DISP[3:4])
       2'b00: dispMux[0:6] = diagAdr[0:6];
       2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
-      2'b10: dispMux[0:6] = {2'b00, CRA.CRA.AREAD[1:4], 2'b00};
+      2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
       2'b11: dispMux[0:6] = sbrRet;
       endcase
     end else if (CON.DISP_EN_00_07) begin
       case (CRAM.DISP[2:4])
       3'b000: dispMux[7:10] = diagAdr[7:10];
       3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
-      3'b010: dispMux[7:10] = CRA.CRA.AREAD[7:10];
+      3'b010: dispMux[7:10] = CRA.AREAD[7:10];
       3'b011: dispMux[7:10] = sbrRet[7:10];
       3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
       3'b101: dispMux[7:10] = CON.SR[0:3];
@@ -116,13 +114,13 @@ module cra(iCLK CLK,
   end
 
 
-  // CRADR
+  // CRA.CRADR
   always @(posedge CLK.EBOX_CLK) begin
 
     if (CLK.EBOX_RESET)
-      CRADR <= 0;
+      CRA.CRADR <= 0;
     else
-      CRADR <= CRAM.J | {11{CLK.FORCE_1777}} | dispMux;
+      CRA.CRADR <= CRAM.J | {11{CLK.FORCE_1777}} | dispMux;
   end
   
 
@@ -193,7 +191,7 @@ module cra(iCLK CLK,
     end
   end
 
-  always @(posedge stackWrite) stack[stackAdr] <= CRADR;
+  always @(posedge stackWrite) stack[stackAdr] <= CRA.CRADR;
 
 
   ////////////////////////////////////////////////////////////////
@@ -207,7 +205,7 @@ module cra(iCLK CLK,
     else if (CTL.diaFunc052)
       diagAdr[0:4] = EBUS.data[1:5];
 
-    CRA.CRA.AREAD = IR.DRAM_A === 3'b000 ? IR.DRAM_J : 0;
+    CRA.AREAD = IR.DRAM_A === 3'b000 ? IR.DRAM_J : 0;
   end
 
   // Diagnostics driving EBUS
@@ -222,10 +220,10 @@ module cra(iCLK CLK,
       3'b001: CRA.EBUSdriver.data = {CRAM.CALL, CRAM.DISP[0:4], stackAdr};
       3'b010: CRA.EBUSdriver.data = sbrRet[5:10];
       3'b011: CRA.EBUSdriver.data = {dispEn30_37, sbrRet[0:4]};
-      3'b100: CRA.EBUSdriver.data = CRADR[5:10];
-      3'b101: CRA.EBUSdriver.data = {CRA.DISP_PARITY, CRADR[0:4]};
-      3'b110: CRA.EBUSdriver.data = CRADR[5:10];
-      3'b111: CRA.EBUSdriver.data = {1'b0, CRADR[0:4]};
+      3'b100: CRA.EBUSdriver.data = CRA.CRADR[5:10];
+      3'b101: CRA.EBUSdriver.data = {CRA.DISP_PARITY, CRA.CRADR[0:4]};
+      3'b110: CRA.EBUSdriver.data = CRA.CRADR[5:10];
+      3'b111: CRA.EBUSdriver.data = {1'b0, CRA.CRADR[0:4]};
       endcase
     end else
       CRA.EBUSdriver.data = 'z;

@@ -2,9 +2,9 @@
 `include "ebox.svh"
 
 // M8532 PI
-module pi(iEBUS EBUS
+module pi(iEBUS EBUS,
+          iPI PI
 );
 
-  iPI PI();
   assign PI.EBUSdriver.driving = '0; // XXX temporary
 endmodule

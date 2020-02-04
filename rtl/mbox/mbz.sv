@@ -2,7 +2,5 @@
 `include "mbox.svh"
 
 // M8537 MBZ
-module mbz();
-
-  iMBZ MBZ();
+module mbz(iMBZ MBZ);
 endmodule // mbz

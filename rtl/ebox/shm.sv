@@ -4,7 +4,8 @@
 // M8540 SHM
 module shm(iCRAM CRAM,
            iCON CON,
-           iEDP EDP);
+           iEDP EDP,
+           iSHM SHM
+);
 
-  iSHM SHM();
 endmodule // shm

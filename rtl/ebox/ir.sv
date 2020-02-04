@@ -53,7 +53,7 @@ module ir(iIR IR,
   // XXX In addition to the below, this has two mystery OR term
   // signals on each input to the AND that are unlabeled except for
   // backplane references ES2 and ER2. See E66 p.128.
-  assign IR.IO_LEGAL = &IR[3:6];
+  assign IR.IO_LEGAL = &IR.IR[3:6];
   assign IR.ACeq0 = IR.IR[9:12] === 4'b0;
 
   logic enIO_JRST;

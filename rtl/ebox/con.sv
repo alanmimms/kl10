@@ -5,6 +5,7 @@
 // M8525 CON
 module con(iCRAM CRAM,
            iCLK CLK,
+           iCON CON,
            iCTL CTL,
            iIR IR,
            iMCL MCL,
@@ -79,24 +80,22 @@ module con(iCRAM CRAM,
   logic CON_MAGIC_FUNC_011;
 
 
-  iCON CON();
-
   assign CON_CLK = CLK.EBOX_CLK;
   assign CON.RESET = CLK.MR_RESET;
 
   // COND decoder CON1 p.158
   decoder cond_decoder(.en(~CON.RESET),
                        .sel(CRAM.COND[0:2]),
-                       .q({CON.COND_EN00_07, 
-                           CON.COND_EN10_17,
-                           CON.COND_EN20_27,
-                           CON.COND_EN30_37,
-                           CON.SKIP_EN40_47,
-                           CON.SKIP_EN50_57,
-                           CON.SKIP_EN60_67,
-                           CON.SKIP_EN70_77}));
+                       .q({CON.COND_EN_00_07, 
+                           CON.COND_EN_10_17,
+                           CON.COND_EN_20_27,
+                           CON.COND_EN_30_37,
+                           CON.SKIP_EN_40_47,
+                           CON.SKIP_EN_50_57,
+                           CON.SKIP_EN_60_67,
+                           CON.SKIP_EN_70_77}));
 
-  decoder cond10_decoder(.en(CON.COND_EN10_17),
+  decoder cond10_decoder(.en(CON.COND_EN_10_17),
                          .sel(CRAM.COND[3:5]),
                          .q({CON.COND_FM_WRITE,
                              CON.COND_PCF_MAGIC,
@@ -110,7 +109,7 @@ module con(iCRAM CRAM,
   // E3 is simply additional drivers for active-low versions of same
   // signals as the above, so it is skipped here.
 
-  decoder cond20_decoder(.en(CON.COND_EN20_27),
+  decoder cond20_decoder(.en(CON.COND_EN_20_27),
                          .sel(CRAM.COND[3:5]),
                          .q({CON.COND_DIAG_FUNC,
                              CON.COND_EBOX_STATE,
@@ -122,7 +121,7 @@ module con(iCRAM CRAM,
                              CON.COND_027}));
 
   logic [0:4] condVMAmagic;
-  decoder cond30_decoder(.en(CON.COND_EN30_37),
+  decoder cond30_decoder(.en(CON.COND_EN_30_37),
                          .sel(CRAM.COND[3:5]),
                          .q({condVMAmagic,
                              CON.COND_VMA_DEC,
@@ -138,9 +137,9 @@ module con(iCRAM CRAM,
                 .q(EBUS.data[18]),
                 .d({CON.WR_EVEN_PAR_ADR,
                     CON.CACHE_LOOK_EN,
-                    ~CON.COND_EN00_07,
-                    ~CON.SKIP_EN40_47,
-                    ~CON.SKIP_EN50_57,
+                    ~CON.COND_EN_00_07,
+                    ~CON.SKIP_EN_40_47,
+                    ~CON.SKIP_EN_50_57,
                     CON.DELAY_REQ,
                     CON.AR_36,
                     CON.ARX_36}));
@@ -175,7 +174,7 @@ module con(iCRAM CRAM,
                     ~CON.LONG_EN,
                     ~CON.PCplus1_INH,
                     CON.NICOND_TRAP_EN,
-                    CON.NICOND[7:9]})); // XXX this is not defined yet
+                    CON.NICOND[7:9]}));
 
   logic ebus22mux_nothing;
   mux ebus22mux(.sel(CTL.DIAG[4:6]),
@@ -300,8 +299,8 @@ module con(iCRAM CRAM,
                        VMA_AC_REF,
                        ~CON_MTR_INT_REQ}));
   always_comb begin
-    CON.COND_ADR_10 = CON.SKIP_EN60_67 & skipEn6x |
-                      CON.SKIP_EN70_77 & skipEn7x & CON.RESET;
+    CON.COND_ADR_10 = CON.SKIP_EN_60_67 & skipEn6x |
+                      CON.SKIP_EN_70_77 & skipEn7x & CON.RESET;
   end
   
   logic [0:2] nicondPriority;
@@ -320,6 +319,8 @@ module con(iCRAM CRAM,
     CON.EBUS_GRANT <= PI.EBUS_CP_GRANT;
     CON_PI_XFER <= PI.EXT_TRAN_REC;
   end
+  // XXX This is a guess
+  assign CON.NICOND[10] = CON.NICOND_TRAP_EN;
 
   always_ff @(posedge CON_CLK) begin
     CON_NICOND_OR_LOAD_IR_DELAYED <= CTL.DISP_NICOND | CON.COND_LOAD_IR;
@@ -484,7 +485,7 @@ module con(iCRAM CRAM,
 
     waitingACStore = MCL.STORE_AR & CON_MBOX_WAIT & VMA_AC_REF;
     cond345_1s = CRAM.COND[3:5] === 3'b111;
-    CON.FM_WRITE00_17 = (cond345_1s & CON.COND_EN10_17) | waitingACStore;
+    CON.FM_WRITE00_17 = (cond345_1s & CON.COND_EN_10_17) | waitingACStore;
     CON.FM_WRITE18_35 = CON.FM_WRITE00_17;
     CON.FM_WRITE_PAR = ~CLK.SBR_CALL & ~CON_CLK;
 

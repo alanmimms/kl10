@@ -91,11 +91,14 @@ module top(input clk,
   iCON CON();
   iCRA CRA();
   iCRAM CRAM();
+  iCRM CRM();
+  iCSH CSH();
   iCTL CTL();
   iEDP EDP();
   iIR IR();
   iMCL MCL();
   iMTR MTR();
+  iPAG PAG();
   iPI PI();
   iSCD SCD();
   iSHM SHM();

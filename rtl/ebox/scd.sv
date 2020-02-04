@@ -3,9 +3,9 @@
 
 // M8524 SCD
 module scd(iCRAM CRAM,
+           iCTL CTL,
            iEDP EDP,
-           iCTL CTL
+           iSCD SCD
 );
 
-  iSCD SCD();
 endmodule // scd

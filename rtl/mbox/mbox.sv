@@ -9,7 +9,9 @@ module mbox(input mboxClk,
             input PSE,
             input write,
 
+            iCSH CSH,
             iMBZ MBZ,
+            iPAG PAG,
 
             output logic [27:35] MBOX_GATE_VMA,
             output logic [0:35] cacheDataRead,

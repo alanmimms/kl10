@@ -7,7 +7,9 @@
 //
 // In a real KL10PV there are five instances of M8548. This is coded
 // to act as all five slots.
-module crm(tCRADR CRADR);
+module crm(iCRA CRA,
+           iCRM CRM
+);
 
   iCRAM CRAM();
 
@@ -20,7 +22,7 @@ module crm(tCRADR CRADR);
   (.clk(CLK.EBOX_CLK),
    .din('0),                    // XXX
    .dout(CRAMdata),
-   .addr(CRADR),
+   .addr(CRA.CRADR),
    .wea('0));                   // XXX
 `else
   cram_mem cram(.clka(CLK.EBOX_CLK),

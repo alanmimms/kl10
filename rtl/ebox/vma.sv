@@ -2,6 +2,5 @@
 `include "ebox.svh"
 
 // M8542 VMA
-module vma();
-  iVMA VMA();
+module vma(iVMA VMA);
 endmodule // vma

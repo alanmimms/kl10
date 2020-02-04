@@ -667,6 +667,12 @@ interface iAPR;
   logic CONO_OR_DATAO;
   logic CONI_OR_DATAI;
   logic EBUS_RETURN;
+  logic PT_DIR_WR;
+  logic PT_WR;
+  logic FM_ODD_PARITY;
+  logic APR_PAR_CHK_EN;
+  logic SET_PAGE_FAIL;
+  logic FM_BIT_36;
   logic [0:2] FMblk;
   logic [0:3] FMadr;
   tEBUSdriver EBUSdriver;
@@ -675,9 +681,124 @@ endinterface
 
 interface iCLK;
   logic MR_RESET;
-  logic EBOX_CLK;
-  logic EBOX_SYNC;
+  logic MAIN_SOURCE;
   logic EBOX_SOURCE;
+  logic EBOX_RESET;
+  logic EBUS_CLK_SOURCE;
+  logic MHZ16_FREE;
+
+  logic CRM;
+  logic CRA;
+  logic EDP;
+  logic APR;
+  logic CON;
+  logic VMA;
+  logic MCL;
+  logic IR;
+  logic SCD;
+
+  logic [0:1] SOURCE_SEL;
+  logic [0:1] RATE_SEL;
+
+  logic RATE_SELECTED;
+
+  logic EBOX_CLK;
+  logic MBOX_CLK;
+  logic SBUS_CLK;
+  logic EBUS_CLK;
+
+  logic EBOX_SYNC;
+  logic MBOX_WAIT;
+
+  logic EBOX_REQ;
+  logic MB_XFER;
+  logic MBOX_RESP;
+  logic EBOX_CYC_ABORT;
+
+  logic BURST_CNTeq0;
+
+  logic ODD;
+  logic GATED_EN;
+  logic GATED;
+  logic ERR_STOP_EN;
+  logic ERROR_STOP;
+
+  logic F1777_EN;
+  logic FORCE_1777;
+  logic INSTR_1777;
+  logic PAGE_FAIL;
+  logic PF_DLYD;
+  logic PF_DLYD_A;
+  logic PF_DLYD_B;
+  
+  logic SYNC;
+  logic SYNC_EN;
+  logic EBOX_SRC_EN;
+  logic EBOX_CLK_EN;
+
+  logic EBOX_CLK_ERROR;
+
+  logic MBOX_CYCLE_DIS;
+  logic EBOX_CRM_DIS;
+  logic EBOX_EDP_DIS;
+  logic EBOX_CTL_DIS;
+
+  logic [7:10] PF_DISP;
+
+  logic DRAM_PAR_ERR;
+  logic CRAM_PAR_ERR;
+  logic FM_PAR_ERR;
+
+  logic CRAM_PAR_CHECK;
+  logic DRAM_PAR_CHECK;
+  logic FM_PAR_CHECK;
+
+  logic FM_ODD_PARITY;
+
+  logic ERROR;
+  logic ERROR_HOLD;
+  logic ERROR_HOLD_A;
+  logic ERROR_HOLD_B;
+
+  logic PAGE_FAIL_EN;
+
+  logic FS_ERROR;
+  logic FS_CHECK;
+  logic FS_EN_A;
+  logic FS_EN_B;
+  logic FS_EN_C;
+  logic FS_EN_D;
+  logic FS_EN_E;
+  logic FS_EN_F;
+  logic FS_EN_G;
+
+  logic SYNC_HOLD;
+  logic FUNC_GATE;
+  logic FUNC_START;
+  logic FUNC_BURST;
+  logic FUNC_SET_RESET;
+  logic FUNC_EBOX_SS;
+  logic FUNC_SINGLE_STEP;
+
+  logic FUNC_042;
+  logic FUNC_043;
+  logic FUNC_044;
+  logic FUNC_045;
+  logic FUNC_046;
+  logic FUNC_047;
+  
+  logic GO;
+  logic BURST;
+  logic EBOX_SS;
+  logic FUNC_COND_SS;
+  logic TENELEVEN_CLK;
+
+  logic PT_DIR_WR;
+  logic PT_WR;
+
+  logic CLK_ON;
+  logic SOURCE_DELAYED;
+  logic FUNC_CLR_RESET;
   logic EBUS_RESET;
   logic PAGE_ERROR;
   logic RESP_MBOX;
@@ -692,31 +813,43 @@ interface iCON;
   
   logic START;
   logic RUN;
+  logic RESET;
   logic EBOX_HALTED;
 
   logic KL10_PAGING_MODE;
   logic KI10_PAGING_MODE;
 
-  logic COND_EN00_07;
-  logic COND_EN10_17;
-  logic COND_EN20_27;
-  logic COND_EN30_37;
-  logic SKIP_EN40_47;
-  logic SKIP_EN50_57;
-  logic SKIP_EN60_67;
-  logic SKIP_EN70_77;
+  logic COND_EN_00_07;
+  logic COND_EN_10_17;
+  logic COND_EN_20_27;
+  logic COND_EN_30_37;
+  logic SKIP_EN_40_47;
+  logic SKIP_EN_50_57;
+  logic SKIP_EN_60_67;
+  logic SKIP_EN_70_77;
+
+  logic DISP_EN_00_03;
+  logic DISP_EN_00_07;
+  logic DISP_EN_30_37;
 
   logic COND_PCF_MAGIC;
   logic COND_FE_SHRT;
   logic COND_AD_FLAGS;
   logic COND_SEL_VMA;
+  logic COND_SPEC_INSTR;
   logic COND_DIAG_FUNC;
   logic COND_EBUS_CTL;
   logic COND_MBOX_CTL;
   logic COND_024;
   logic COND_026;
   logic COND_027;
+  logic COND_FM_WRITE;
+  logic COND_EBOX_STATE;
+  logic COND_SR_MAGIC;
   logic COND_VMA_MAGIC;
+  logic COND_VMA_INC;
+  logic COND_VMA_DEC;
+  logic COND_LONG_EN;
   logic COND_LOAD_VMA_HELD;
   logic COND_INSTR_ABORT;
   logic COND_ADR_10;
@@ -733,12 +866,17 @@ interface iCON;
   logic LOAD_DRAM;
   logic LOAD_IR;
 
+  logic AR_FROM_EBUS;
+  logic AR_LOADED;
+  logic ARX_LOADED;
+
   logic FM_WRITE00_17;
   logic FM_WRITE18_35;
   logic FM_WRITE_PAR;
 
   logic IO_LEGAL;
   logic EBUS_GRANT;
+  logic MBOX_WAIT;
 
   logic CONO_PI;
   logic CONO_PAG;
@@ -760,7 +898,7 @@ interface iCON;
   logic CLR_PRIVATE_INSTR;
   logic TRAP_EN;
   logic NICOND_TRAP_EN;
-  logic [7:9] NICOND;
+  logic [7:10] NICOND;
   logic [0:3] SR;
   logic LOAD_SPEC_INSTR;
   logic [0:1] VMA_SEL;
@@ -776,9 +914,15 @@ endinterface
 
 
 interface iCRA;
+  tCRADR CRADR;
   logic [1:10] AREAD;
   logic DISP_PARITY;
   tEBUSdriver EBUSdriver;
+endinterface
+
+
+interface iCRM;
+  logic PAR_16;
 endinterface
 
 
@@ -800,6 +944,7 @@ interface iCTL;
   logic DISP_NICOND;
   logic DISP_RET;
   logic SPEC_SCM_ALT;
+  logic SPEC_MTR_CTL;
   logic SPEC_CLR_FPD;
   logic SPEC_FLAG_CTL;
   logic SPEC_SP_MEM_CYCLE;
@@ -816,6 +961,7 @@ interface iCTL;
   logic SPEC_LOAD_PC;
   logic SPEC_STACK_UPDATE;
   logic AD_LONG;
+  logic AD_CRY_36;
   logic ADX_CRY_36;
   logic INH_CRY_18;
   logic GEN_CRY_18;
@@ -878,13 +1024,14 @@ interface iEDP;
   logic [0:35] AR;
   logic [0:35] ARX;
   logic [-2:35] AD_EX;
-  logic [-2:36] ADcarry;
-  logic [0:36] ADXcarry;
-  logic [0:35] ADoverflow;
+  logic [-2:36] AD_CRY;
+  logic [0:36] ADX_CRY;
+  logic [0:35] AD_OV;
   logic GEN_CRY_36;
   logic DIAG_READ_FUNC_10x;
   logic [0:35] FM;
   logic FM_PARITY;
+  logic FM_WRITE;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -978,6 +1125,7 @@ interface iSHM;
   logic [3:0] XR;
   logic AR_PAR_ODD;
   logic INDEXED;
+  logic ARX_PAR_ODD;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -985,6 +1133,7 @@ endinterface
 interface iVMA;
   logic [0:35] VMA_HELD_OR_PC;
   logic LOCAL_AC_ADDRESS;
+  logic AC_REF;
   tEBUSdriver EBUSdriver;
 endinterface
 

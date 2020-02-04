@@ -2,8 +2,8 @@
 logic ADA_EN;
 assign ADA_EN = CRAM.ADA[0];
 
-logic ADbool;
-assign ADbool = CRAM.AD[1];
+logic AD_BOOL;
+assign AD_BOOL = CRAM.AD[1];
 
 logic [0:5] SPEC;
 assign SPEC = CRAM.DISP;

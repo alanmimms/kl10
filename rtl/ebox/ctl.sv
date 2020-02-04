@@ -5,6 +5,7 @@
 module ctl(iAPR APR,
            iCLK CLK,
            iCON CON,
+           iCTL CTL,
            iCRAM CRAM,
            iEDP EDP,
            iMCL MCL,
@@ -13,8 +14,6 @@ module ctl(iAPR APR,
 
            iEBUS EBUS
 );
-
-  iCTL CTL();
 
   logic CTL_DISP_AREAD;
   logic CTL_DISP_RETURN;
@@ -46,6 +45,9 @@ module ctl(iAPR APR,
   logic DIAG_READ_FUNC_17x;
 
   logic SPEC_MTR_CTL;
+
+  logic [4:6] DIAG;
+  assign DIAG[4:6] = CTL_DS[4:6];
 
 
 `include "cram-aliases.svh"
@@ -217,13 +219,13 @@ module ctl(iAPR APR,
     CTL.EBUS_XFER = CRAM.AR[0] & APR.CONO_OR_DATAO & ~(CRAM.AR[1] & CRAM.AR[2]);
     CTL_36_BIT_EA = CTL_DISP_AREAD & CTL.AR00to11_CLR;
 
-    CTL.COND_ARLL_LOAD = CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b001);
-    CTL.COND_ARLR_LOAD = CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b010);
-    CTL.COND_ARR_LOAD =  CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b011);
-    CTL.COND_AR_CLR =    CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b100);
-    CTL.COND_ARX_CLR =   CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b101);
-    CTL_COND_ARL_IND =   CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b110);
-    CTL_COND_REG_CTL =   CON.COND_EN00_07 & (CRAM.COND[3:5] === 3'b111);
+    CTL.COND_ARLL_LOAD = CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b001);
+    CTL.COND_ARLR_LOAD = CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b010);
+    CTL.COND_ARR_LOAD =  CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b011);
+    CTL.COND_AR_CLR =    CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b100);
+    CTL.COND_ARX_CLR =   CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b101);
+    CTL_COND_ARL_IND =   CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b110);
+    CTL_COND_REG_CTL =   CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b111);
 
     respMBOXorSIM = CLK.RESP_MBOX | CLK.RESP_SIM;
     diagLoadARorInd = CTL.ARL_IND | CTL.DIAG_AR_LOAD;
@@ -281,8 +283,6 @@ module ctl(iAPR APR,
     CTL_CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
     CTL_READ_STROBE = CTL_CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR.CLK;
     CTL_DS = CTL_CONSOLE_CONTROL ? EBUS.ds[0:6] : CRAM.MAGIC[2:8];
-
-    CTL.DIAG[4:6] = CTL_DS[4:6];
 
     CTL.AD_TO_EBUS_L = CTL_CONSOLE_CONTROL &
                        (APR.CONO_OR_DATAO | (CON.COND_DIAG_FUNC | CRAM.MAGIC[2] | APR.CLK));

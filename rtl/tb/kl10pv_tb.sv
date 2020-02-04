@@ -22,8 +22,8 @@ module kl10pv_tb(input clk);
       top0.mbox0.fake_mem.mem[a] = '0;
   end
 
-  initial $readmemh("images/DRAM.mem", top0.ebox0.ir0.dram.mem);
-  initial $readmemh("images/CRAM.mem", top0.ebox0.crm0.cram.mem);
+  initial $readmemh("../../../../images/DRAM.mem", top0.ebox0.ir0.dram.mem);
+  initial $readmemh("../../../../images/CRAM.mem", top0.ebox0.crm0.cram.mem);
 
   initial begin                 // Smash RESET on for a few clocks
     $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);

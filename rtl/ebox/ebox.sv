@@ -13,11 +13,14 @@ module ebox(input clk,
             iCON CON,
             iCRA CRA,
             iCRAM CRAM,
+            iCRM CRM,
+            iCSH CSH,
             iCTL CTL,
             iEDP EDP,
             iIR IR,
             iMCL MCL,
             iMTR MTR,
+            iPAG PAG,
             iPI PI,
             iSCD SCD,
             iSHM SHM,
@@ -89,8 +92,6 @@ module ebox(input clk,
             output logic mboxClk,
 
             iEBUS EBUS);
-
-  tCRADR CRADR;
 
   apr apr0(.*);
   clk clk0(.*);

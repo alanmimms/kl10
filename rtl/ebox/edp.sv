@@ -7,6 +7,7 @@ module edp(iAPR APR,
            iCRAM CRAM,
            iCON CON,
            iCTL CTL,
+           iEDP EDP,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA,
@@ -14,8 +15,6 @@ module edp(iAPR APR,
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
            iEBUS EBUS);
-
-  iEDP EDP();
 
   // Universal shift register function selector values
   enum logic [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
@@ -217,7 +216,7 @@ module edp(iAPR APR,
       assign EDP.AD_CRY[n+1] = EDP.AD_CRY[n-2] ^ ADEXxortmp[n];
       assign EDP.AD_OV[n] = EDP.AD_EX[n-2]  ^ ADEXxortmp[n];
 
-      mc10181 alu0(.M(ADbool),
+      mc10181 alu0(.M(AD_BOOL),
                    .S(S),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
@@ -227,7 +226,7 @@ module edp(iAPR APR,
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0])/*,
                    .COUT(EDP.AD_CRY[n-2])*/); // XXX multi-drives EDP.AD_CRY[-2] w/E11 below
-      mc10181 alu1(.M(ADbool),
+      mc10181 alu1(.M(AD_BOOL),
                    .S(S),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
@@ -242,21 +241,22 @@ module edp(iAPR APR,
   // ADX
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
+      logic x1, x2;
 
-      mc10181 alu2(.M(ADbool),
+      mc10181 alu2(.M(AD_BOOL),
                    .S(S),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                    .CIN(EDP.ADX_CRY[n+3]),
-                   .F({1'bx, EDP.ADX[n:n+2]}),
+                   .F({x1, EDP.ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
-      mc10181 alu3(.M(ADbool),
+      mc10181 alu3(.M(AD_BOOL),
                    .S(S),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                    .CIN(n < 30 ? EDP.ADX_CRY[n+6] : CTL.ADX_CRY_36),
-                   .F({1'bx, EDP.ADX[n+3:n+5]}),
+                   .F({x2, EDP.ADX[n+3:n+5]}),
                    .CG(ADX_CG[n+3]),
                    .CP(ADX_CP[n+3]),
                    .COUT(EDP.ADX_CRY[n+3]));

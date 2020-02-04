@@ -2,8 +2,9 @@
 `include "ebox.svh"
 
 // M8544 MCL
-module mcl(iEBUS EBUS);
+module mcl(iEBUS EBUS,
+           iMCL MCL
+);
 
-  iMCL MCL();
   assign MCL.EBUSdriver.driving = '0; // XXX temporary
 endmodule // mcl
