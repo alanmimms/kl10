@@ -4,73 +4,18 @@
 
 module edptb;
   logic masterClk;
+  logic [0:35] cacheDataRead;
   
-  /*AUTOWIRE*/
-  // Beginning of automatic wires (for undeclared instantiated-module outputs)
-  logic [-2:35]         EDP.AD;                 // From edp0 of edp.v
-  logic [0:35]          EDP.ADX;                // From edp0 of edp.v
-  logic [0:36]          EDP.ADX_CRY;           // From edp0 of edp.v
-  logic [-2:35]         EDP.AD_EX;              // From edp0 of edp.v
-  logic [-2:36]         EDP.AD_CRY;            // From edp0 of edp.v
-  logic [0:35]          EDP.AD_OV;         // From edp0 of edp.v
-  logic [0:35]          EDP.AR;                 // From edp0 of edp.v
-  logic [0:35]          EDP.ARX;                // From edp0 of edp.v
-  logic [0:35]          EDP.BR;                 // From edp0 of edp.v
-  logic [0:35]          EDP.BRX;                // From edp0 of edp.v
-  logic [0:35]          EDP.MQ;                 // From edp0 of edp.v
-  logic                 EDP_GEN_CRY_36;         // From edp0 of edp.v
-  logic [0:35]          FM;                     // From edp0 of edp.v
-  logic [0:35]          cacheDataWrite;         // From edp0 of edp.v
-  wire                  fmParity;               // From edp0 of edp.v
-  // End of automatics
-  /*AUTOREG*/
-
   tCRADR CRADR;
 
-  logic CTL.AR00to08_LOAD;
-  logic CTL.AR09to17_LOAD;
-  logic CTL.ARR_LOAD;
-
-  logic CTL.AR00to11_CLR;
-  logic CTL.AR12to17_CLR;
-  logic CTL.ARR_CLR;
-
-  logic [0:2] CTL.ARL_SEL;
-  logic [0:2] CTL.ARR_SEL;
-  logic [0:2] CTL.ARXL_SEL;
-  logic [0:2] CTL.ARXR_SEL;
-  logic CTL.ARX_LOAD;
-
-  logic [0:1] CTL.MQ_SEL;
-  logic [0:1] CTL.MQM_SEL;
-  logic CTL.MQM_EN;
-  logic CTL.INH_CRY_18;
-  logic CTL.SPEC_GEN_CRY_18;
-
-  logic CTL.AD_TO_EBUS_L;
-  logic CTL.AD_TO_EBUS_R;
-
-  logic CTL_SPEC_AD_LONG;
-
-  logic [0:2] APR.FMblk;
-  logic [0:3] APR.FMadr;
-  logic CON.FM_WRITE00_17;
-  logic CON.FM_WRITE18_35;
-  logic diagReadFunc12X;
-  logic [0:35] VMA.VMA_HELD_OR_PC;
-
-  logic [0:35] cacheDataRead;
-  logic [0:35] SHM.SH;
-  logic [0:8] SCD.ARMM_UPPER;
-  logic [13:17] SCD.ARMM_LOWER;
+`include "cram-aliases.svh"
 
   iEBUS EBUS();
   tEBUSdriver EDP_EBUS;
 
-`include "cram-aliases.svh"
-
   iCRAM CRAM();
-  edp edp0(.*, EBUSdriver(EDP_EBUS));
+  iEDP EDP();
+  edp edp0(.*, .EBUSdriver(EDP_EBUS));
 //  crm crm0(.*);
 
   // 50MHz
@@ -89,7 +34,6 @@ module edptb;
 
     CTL.AD_CRY_36 = 0;
     CTL.ADX_CRY_36 = 0;
-    CTL_SPEC_AD_LONG = 0;
 
     CTL.ARL_SEL = 0;
     CTL.ARR_SEL = 0;
@@ -110,7 +54,7 @@ module edptb;
     CTL.MQM_SEL = 0;
     CTL.MQM_EN = 0;
 
-    CTL_INH_CRY_18 = 0;
+    CTL.INH_CRY_18 = 0;
     CTL.SPEC_GEN_CRY_18 = 0;
 
     CTL.AD_TO_EBUS_L = 0;
@@ -132,7 +76,6 @@ module edptb;
     SCD.ARMM_UPPER = 0;
     SCD.ARMM_LOWER = 0;
 
-    diagReadFunc12X = 0;
     VMA.VMA_HELD_OR_PC = 0;        // Reset PC for now
 
 
