@@ -1,18 +1,18 @@
 `timescale 1ns/1ns
-`include "cram-defs.svh"
-`include "ebus-defs.svh"
+`include "ebox.svh"
+
 // M8522 IR
 module ir(iIR IR,
           iCRAM CRAM,
+          iCLK CLK,
           iCON CON,
           iCTL CTL,
           iEDP EDP,
 
           input [0:35] cacheDataRead,
 
-          iEBUS EBUS,
-          tEBUSdriver EBUSdriver
-);
+          iEBUS EBUS
+          );
 
   localparam DRAM_WIDTH=15;
   localparam DRAM_SIZE=512;
@@ -29,11 +29,11 @@ module ir(iIR IR,
   sim_mem
     #(.SIZE(DRAM_SIZE), .WIDTH(DRAM_WIDTH), .NBYTES(1))
   dram
-  (.clk(eboxClk),
-   .din('0),                    // XXX
-   .dout(DRAMdata),
-   .addr(DRADR),
-   .wea('0));                   // XXX
+    (.clk(CLK.EBOX_CLK),
+     .din('0),                    // XXX
+     .dout(DRAMdata),
+     .addr(DRADR),
+     .wea('0));                   // XXX
 `else
   dram_mem dram(.clka(CLK.EBOX_CLK),
                 .addra(DRADR),
@@ -54,7 +54,7 @@ module ir(iIR IR,
   // signals on each input to the AND that are unlabeled except for
   // backplane references ES2 and ER2. See E66 p.128.
   assign IR.IO_LEGAL = &IR[3:6];
-  assign IR_ACeq0 = IR.IR[9:12] === 4'b0;
+  assign IR.ACeq0 = IR.IR[9:12] === 4'b0;
 
   logic enIO_JRST;
   logic enAC;
@@ -167,26 +167,26 @@ module ir(iIR IR,
                                 DRAM_PAR_J[7:10]};
 
   // Diagnostics to drive EBUS
-  assign EBUSdriver.driving = CTL.DIAG_READ_FUNC_13x;
+  assign IR.EBUSdriver.driving = CTL.DIAG_READ_FUNC_13x;
 
   always @(*) begin
 
-    if (EBUSdriver.driving) begin
+    if (IR.EBUSdriver.driving) begin
 
       case (DIAG_FUNC[4:6])
-      3'b000: EBUSdriver.data[0:5] = {IR.NORM, DRADR[0:2]};
-      3'b001: EBUSdriver.data[0:5] = DRADR[3:8];
-      3'b010: EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.IRAC};
-      3'b011: EBUSdriver.data[0:5] = {IR.DRAM_A, IR.DRAM_B};
-      3'b100: EBUSdriver.data[0:5] = {IR.TEST_SATISFIED, IR.JRST0, IR.DRAM_J[1:4]};
-      3'b101: EBUSdriver.data[0:5] = {DRAM_PAR, IR.DRAM_ODD_PARITY, IR.DRAM_J[7:10]};
-      3'b110: EBUSdriver.data[0:5] = {IR.ADeq0, IR.IO_LEGAL, CTL.INH_CRY_18,
-                                      CTL.SPEC_GEN_CRY_18, CTL.SPEC_GEN_CRY_18, EDP.AD_CRY[-2]};
-      3'b111: EBUSdriver.data[0:5] = {EDP.AD_CRY[12], EDP.AD_CRY[18], EDP.AD_CRY[24],
-                                      EDP.AD_CRY[36], EDP.ADX_CRY[12], EDP.ADX_CRY[24]};
+      3'b000: IR.EBUSdriver.data[0:5] = {IR.NORM, DRADR[0:2]};
+      3'b001: IR.EBUSdriver.data[0:5] = DRADR[3:8];
+      3'b010: IR.EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.IRAC};
+      3'b011: IR.EBUSdriver.data[0:5] = {IR.DRAM_A, IR.DRAM_B};
+      3'b100: IR.EBUSdriver.data[0:5] = {IR.TEST_SATISFIED, IR.JRST0, IR.DRAM_J[1:4]};
+      3'b101: IR.EBUSdriver.data[0:5] = {DRAM_PAR, IR.DRAM_ODD_PARITY, IR.DRAM_J[7:10]};
+      3'b110: IR.EBUSdriver.data[0:5] = {IR.ADeq0, IR.IO_LEGAL, CTL.INH_CRY_18,
+                                         CTL.SPEC_GEN_CRY_18, CTL.SPEC_GEN_CRY_18, EDP.AD_CRY[-2]};
+      3'b111: IR.EBUSdriver.data[0:5] = {EDP.AD_CRY[12], EDP.AD_CRY[18], EDP.AD_CRY[24],
+                                         EDP.AD_CRY[36], EDP.ADX_CRY[12], EDP.ADX_CRY[24]};
       endcase
     end else
-      EBUSdriver.data = 'z;
+      IR.EBUSdriver.data = 'z;
   end
 
   // Look-ahead carry functions have been moved from IR to EDP.

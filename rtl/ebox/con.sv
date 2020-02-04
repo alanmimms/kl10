@@ -1,36 +1,23 @@
 `timescale 1ns/1ns
-`include "cram-defs.svh"
-`include "ebus-defs.svh"
-// M8525 CON
-module con(iCON CON,
+`include "ebox.svh"
+`include "mbox.svh"
 
-           iCRAM CRAM,
+// M8525 CON
+module con(iCRAM CRAM,
            iCLK CLK,
            iCTL CTL,
            iIR IR,
+           iMCL MCL,
            iPI PI,
            iSCD SCD,
            iAPR APR,
+           iMTR MTR,
+           iMBZ MBZ,
 
-           input [4:6] DIAG,
            iEBUS EBUS,
-           tEBUSdriver EBUSdriver,
-
-           input MTR_INTERRUPT_REQ,
-
-           input MCL_VMA_SECTION_0,
-           input MCL_MBOX_CYC_REQ,
-           input MCL_VMA_FETCH,
-           input MCL_LOAD_AR,
-           input MCL_LOAD_ARX,
-           input MCL_LOAD_VMA,
-           input MCL_STORE_AR,
-           input MCL_SKIP_SATISFIED,
 
            input CSH_PAR_BIT_A,
-           input CSH_PAR_BIT_B,
-           input EBUS_PARITY_E,
-           input EBUS_PARITY_ACTIVE_E);
+           input CSH_PAR_BIT_B);
 
   logic CON_CLK;
   logic CON_DIAG_READ;
@@ -65,6 +52,35 @@ module con(iCON CON,
   logic CON_MBOX_WAIT;
   logic CON_AR_LOADED;
 
+  logic CON_COND_FM_WRITE;
+  logic CON_COND_AD_FLAGS;
+  logic CON_COND_SPEC_INSTR;
+  logic CON_COND_SR_MAGIC;
+  logic CON_COND_EBOX_STATE;
+  logic CON_COND_LONG_EN;
+  logic CON_COND_VMA_DEC;
+  logic CON_COND_VMA_INC;
+  logic CON_COND_LOAD_VMA_HELD;
+  logic DIAG_CONTROL_FUNC_01x;
+  logic CON_DIAG_CLR_RUN;
+  logic CON_DIAG_SET_RUN;
+  logic CON_DIAG_CONTINUE;
+  logic MB21_RD_PSE_WR;
+  logic VMA_AC_REF;
+  logic CON_VM_AC_REF;
+  logic CON_MAGIC_FUNC_02x;
+  logic CON_LOAD_AC_BLOCKS;
+  logic CON_LOAD_PREV_CONTEXT;
+  logic CON_MAGIC_FUNC_01x;
+  logic CON_MAGIC_FUNC_04x;
+  logic CON_MAGIC_FUNC_05x;
+  logic CTL_CONSOLE_CONTROL;
+  logic CON_MAGIC_FUNC_010;
+  logic CON_MAGIC_FUNC_011;
+
+
+  iCON CON();
+
   assign CON_CLK = CLK.EBOX_CLK;
   assign CON.RESET = CLK.MR_RESET;
 
@@ -82,13 +98,13 @@ module con(iCON CON,
 
   decoder cond10_decoder(.en(CON.COND_EN10_17),
                          .sel(CRAM.COND[3:5]),
-                         .q({CON_COND_FM_WRITE,
+                         .q({CON.COND_FM_WRITE,
                              CON.COND_PCF_MAGIC,
                              CON.COND_FE_SHRT,
-                             CON_COND_AD_FLAGS,
+                             CON.COND_AD_FLAGS,
                              CON.COND_LOAD_IR,
-                             CON_COND_SPEC_INSTR,
-                             CON_COND_SR_MAGIC,
+                             CON.COND_SPEC_INSTR,
+                             CON.COND_SR_MAGIC,
                              CON.COND_SEL_VMA}));
 
   // E3 is simply additional drivers for active-low versions of same
@@ -97,11 +113,11 @@ module con(iCON CON,
   decoder cond20_decoder(.en(CON.COND_EN20_27),
                          .sel(CRAM.COND[3:5]),
                          .q({CON.COND_DIAG_FUNC,
-                             CON_COND_EBOX_STATE,
+                             CON.COND_EBOX_STATE,
                              CON.COND_EBUS_CTL,
                              CON.COND_MBOX_CTL,
                              CON.COND_024,
-                             CON_COND_LONG_EN,
+                             CON.COND_LONG_EN,
                              CON.COND_026,
                              CON.COND_027}));
 
@@ -109,15 +125,15 @@ module con(iCON CON,
   decoder cond30_decoder(.en(CON.COND_EN30_37),
                          .sel(CRAM.COND[3:5]),
                          .q({condVMAmagic,
-                             CON_COND_VMA_DEC,
-                             CON_COND_VMA_INC,
-                             CON_COND_LOAD_VMA_HELD}));
+                             CON.COND_VMA_DEC,
+                             CON.COND_VMA_INC,
+                             CON.COND_LOAD_VMA_HELD}));
 
   assign CON.COND_VMA_MAGIC = |condVMAmagic;
 
   // EBUS
-  assign EBUSdriver.driving = CON_DIAG_READ;
-  mux ebus18mux(.sel(DIAG[4:6]),
+  assign CON.EBUSdriver.driving = CON_DIAG_READ;
+  mux ebus18mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[18]),
                 .d({CON.WR_EVEN_PAR_ADR,
@@ -129,19 +145,19 @@ module con(iCON CON,
                     CON.AR_36,
                     CON.ARX_36}));
 
-  mux ebus19mux(.sel(DIAG[4:6]),
+  mux ebus19mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[19]),
                 .d({CON_WR_EVEN_PAR_DATA,
                     CON.CACHE_LOAD_EN,
                     ~CON.COND_SEL_VMA,
                     CON.COND_VMA_MAGIC,
-                    CON_COND_LOAD_VMA_HELD,
+                    CON.COND_LOAD_VMA_HELD,
                     ~CON.LOAD_SPEC_INSTR,
                     ~CON.VMA_SEL}));
 
   logic ebus20mux_nothing;
-  mux ebus20mux(.sel(DIAG[4:6]),
+  mux ebus20mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[20]),
                 .d({CON_WR_EVEN_PAR_DIR,
@@ -151,7 +167,7 @@ module con(iCON CON,
                     CON.SR}));
 
   logic ebus21mux_nothing;
-  mux ebus21mux(.sel(DIAG[4:6]),
+  mux ebus21mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[21]),
                 .d({ebus21mux_nothing,
@@ -162,7 +178,7 @@ module con(iCON CON,
                     CON.NICOND[7:9]})); // XXX this is not defined yet
 
   logic ebus22mux_nothing;
-  mux ebus22mux(.sel(DIAG[4:6]),
+  mux ebus22mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[22]),
                 .d({ebus22mux_nothing,
@@ -175,7 +191,7 @@ module con(iCON CON,
                     CON.COND_ADR_10}));
 
   logic [0:1] ebus23mux_nothing;
-  mux ebus23mux(.sel(DIAG[4:6]),
+  mux ebus23mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[23]),
                 .d({ebus23mux_nothing,
@@ -187,7 +203,7 @@ module con(iCON CON,
                     CON.UCODE_STATE7}));
 
   logic [0:1] ebus24mux_nothing;
-  mux ebus24mux(.sel(DIAG[4:6]),
+  mux ebus24mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[24]),
                 .d({ebus24mux_nothing,
@@ -201,19 +217,19 @@ module con(iCON CON,
   // CON1 miscellaneous controls
   always_comb begin
     CON_DIAG_READ = CTL.DIAG_READ_FUNC_13x;
-    CON.LOAD_SPEC_INSTR = CTL.DISP_NICOND | CON_COND_SPEC_INSTR | CON.RESET;
-    CON.VMA_SEL[1] = CON_COND_VMA_DEC | MCL_LOAD_VMA;
-    CON.VMA_SEL[0] = CON_COND_VMA_INC | MCL_LOAD_VMA;
+    CON.LOAD_SPEC_INSTR = CTL.DISP_NICOND | CON.COND_SPEC_INSTR | CON.RESET;
+    CON.VMA_SEL[1] = CON.COND_VMA_DEC | MCL.LOAD_VMA;
+    CON.VMA_SEL[0] = CON.COND_VMA_INC | MCL.LOAD_VMA;
   end
 
   // CON2 p.159
   logic piReadyReg;
   logic legalReg;
   always_ff @(posedge CON_CLK) begin
-    CON_MTR_INT_REQ <= MTR_INTERRUPT_REQ;
+    CON_MTR_INT_REQ <= MTR.INTERRUPT_REQ;
     piReadyReg <= PI.READY;
-    CON.LONG_EN <= (~MCL_VMA_SECTION_0 & CON_COND_LONG_EN) |
-                   (~MCL_MBOX_CYC_REQ & CON.LONG_EN & ~CON.RESET);
+    CON.LONG_EN <= (~MCL.VMA_SECTION_0 & CON.COND_LONG_EN) |
+                   (~MCL.MBOX_CYC_REQ & CON.LONG_EN & ~CON.RESET);
     legalReg <= CRAM.MAGIC[3] & CON.IO_LEGAL & CTL.SPEC_FLAG_CTL;
   end
 
@@ -221,9 +237,9 @@ module con(iCON CON,
     CON_INT_REQ = (CON_MTR_INT_REQ | piReadyReg) & (~CON_INT_DISABLE | CON.RESET);
 
     CON.LOAD_IR = CON_FETCH_CYCLE | CON.COND_LOAD_IR | CON_DIAG_IR_STROBE;
-    CON.COND_INSTR_ABORT = CON_COND_SPEC_INSTR & CRAM.MAGIC[6];
+    CON.COND_INSTR_ABORT = CON.COND_SPEC_INSTR & CRAM.MAGIC[6];
     CON.CLR_PRIVATE_INSTR = CLK.PAGE_ERROR | CON.COND_INSTR_ABORT;
-    CON.LOAD_ACCESS_COND = CON.COND_LOAD_IR | CON_COND_SR_MAGIC;
+    CON.LOAD_ACCESS_COND = CON.COND_LOAD_IR | CON.COND_SR_MAGIC;
 
     CON_INSTR_GO = legalReg & ~CON_INSTR_GO & ~CON.RESET;
     CON.IO_LEGAL = IR.IO_LEGAL | CON_KERNEL_MODE | CON_KERNEL_CYCLE |
@@ -264,11 +280,11 @@ module con(iCON CON,
   mux skipEn6x_mux(.sel(CRAM.COND[3:5]),
                    .en('1),
                    .q(skipEn6x),
-                   .d({MCL_VMA_FETCH,
+                   .d({MCL.VMA_FETCH,
                        CON_KERNEL_MODE,
                        SCD.USER,
                        SCD.PUBLIC,
-                       MB21_RD_PSE_WR,
+                       MBZ.RD_PSE_WR,
                        CON.PI_CYCLE,
                        ~CON.EBUS_GRANT,
                        ~CON_PI_XFER}));
@@ -280,7 +296,7 @@ module con(iCON CON,
                        CON.RUN,
                        CON.IO_LEGAL,
                        CON_PXCT,
-                       MCL_VMA_SECTION_0,
+                       MCL.VMA_SECTION_0,
                        VMA_AC_REF,
                        ~CON_MTR_INT_REQ}));
   always_comb begin
@@ -393,7 +409,7 @@ module con(iCON CON,
     CON.EBUS_REL = ~(CON.COND_EBUS_CTL & CRAM.MAGIC[2] & CLK.EBOX_SYNC);
   end
 
-  always_ff @(posedge CON_CLK iff CON_COND_SR_MAGIC) begin
+  always_ff @(posedge CON_CLK iff CON.COND_SR_MAGIC) begin
     CON.SR <= {CRAM.MAGIC[5:6],
                (CRAM.MAGIC[3] | CRAM.MAGIC[7]) & (CRAM.MAGIC[2] | CRAM.MAGIC[7]),
                (CRAM.MAGIC[4] | CRAM.MAGIC[8]) & (CRAM.MAGIC[3] | CRAM.MAGIC[7])};
@@ -431,21 +447,21 @@ module con(iCON CON,
   always_ff @(posedge CON_CLK) begin
     CON_CSH_BIT_36 <= CSH_PAR_BIT_A | CSH_PAR_BIT_B;
     CON_FM_BIT_36 <= APR.FM_BIT_36;
-    CON_EBUS_BIT_36 <= EBUS_PARITY_E;
+    CON_EBUS_BIT_36 <= EBUS.parity;
     CON_MBOX_DATA <= CON.FM_XFER;
     CON_FM_DATA <= CON.MB_XFER;
   end
 
   always_comb begin
-    CON_LOAD_AR_EN = MCL_LOAD_ARX | MCL_LOAD_AR;
+    CON_LOAD_AR_EN = MCL.LOAD_ARX | MCL.LOAD_AR;
     // WIRE-OR of negated signals! XXX (there are more I need to go fix)
     CON_AR_FROM_MEM = ~(~CON_LOAD_AR_EN | ~CON_XFER | ~CLK.PAGE_ERROR);
   end
   
 
   always_ff @(posedge CON_CLK) begin
-    CON_AR_FROM_EBUS <= CTL.EBUS_XFER & EBUS_PARITY_ACTIVE_E;
-    CON_ARX_LOADED <= CON_XFER & ~CON.FM_XFER & ~CLK.PAGE_ERROR & MCL_LOAD_ARX;
+    CON_AR_FROM_EBUS <= CTL.EBUS_XFER & EBUS.parity;
+    CON_ARX_LOADED <= CON_XFER & ~CON.FM_XFER & ~CLK.PAGE_ERROR & MCL.LOAD_ARX;
     CON_AR_LOADED <= CON_AR_FROM_MEM | CON_AR_FROM_EBUS;
   end
 
@@ -466,7 +482,7 @@ module con(iCON CON,
                        specFlagMagic2;
     CON_PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
 
-    waitingACStore = MCL_STORE_AR & CON_MBOX_WAIT & VMA_AC_REF;
+    waitingACStore = MCL.STORE_AR & CON_MBOX_WAIT & VMA_AC_REF;
     cond345_1s = CRAM.COND[3:5] === 3'b111;
     CON.FM_WRITE00_17 = (cond345_1s & CON.COND_EN10_17) | waitingACStore;
     CON.FM_WRITE18_35 = CON.FM_WRITE00_17;
@@ -474,13 +490,13 @@ module con(iCON CON,
 
     CON_MBOX_WAIT = CRAM.MEM[2] & CON_MEM_CYCLE;
     CON.FM_XFER = CRAM.MEM[2] & CON_MEM_CYCLE & VMA_AC_REF;
-    CON_FETCH_CYCLE = MCL_VMA_FETCH & CON_MEM_CYCLE;
+    CON_FETCH_CYCLE = MCL.VMA_FETCH & CON_MEM_CYCLE;
   end
 
   always_ff @(posedge CON_CLK) begin
-    CON.PI_CYCLE <= (CON_COND_SPEC_INSTR & CRAM.MAGIC[0]) |
-                    (~MCL_SKIP_SATISFIED & ~CON_CLR_PI_CYCLE & ~CON.RESET & CON.PI_CYCLE);
-    CON_MEM_CYCLE <= MCL_MBOX_CYC_REQ |
+    CON.PI_CYCLE <= (CON.COND_SPEC_INSTR & CRAM.MAGIC[0]) |
+                    (~MCL.SKIP_SATISFIED & ~CON_CLR_PI_CYCLE & ~CON.RESET & CON.PI_CYCLE);
+    CON_MEM_CYCLE <= MCL.MBOX_CYC_REQ |
                      (CON_MEM_CYCLE & ~CON_XFER & ~CLK.PAGE_ERROR & ~CON.RESET);
   end
 endmodule // con

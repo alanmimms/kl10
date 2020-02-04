@@ -1,10 +1,10 @@
 `timescale 1ns/1ns
-`include "ebus-defs.svh"
+`include "ebox.svh"
+
 // M8532 PI
-module pi(iPI PI,
-          iEBUS EBUS,
-          tEBUSdriver EBUSdriver
+module pi(iEBUS EBUS
 );
 
-  assign EBUSdriver.driving = 0;       // XXX temporary
+  iPI PI();
+  assign PI.EBUSdriver.driving = '0; // XXX temporary
 endmodule

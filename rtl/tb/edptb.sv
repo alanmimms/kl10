@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
-`include "cram-defs.svh"
-`include "ebus-defs.svh"
+`include "ebox.svh"
 
 module edptb;
   logic masterClk;
@@ -11,11 +10,10 @@ module edptb;
 `include "cram-aliases.svh"
 
   iEBUS EBUS();
-  tEBUSdriver EDP_EBUS;
 
   iCRAM CRAM();
   iEDP EDP();
-  edp edp0(.*, .EBUSdriver(EDP_EBUS));
+  edp edp0(.*);
 //  crm crm0(.*);
 
   // 50MHz

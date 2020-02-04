@@ -1,15 +1,10 @@
 `timescale 1ns/1ns
-`include "cram-defs.svh"
+`include "ebox.svh"
 
 // M8540 SHM
-module shm(iSHM SHM,
-           iCRAM CRAM,
+module shm(iCRAM CRAM,
            iCON CON,
-           iEDP EDP,
+           iEDP EDP);
 
-           output indexed,
-           output ARextended,
-           output ARparityOdd
-);
-
+  iSHM SHM();
 endmodule // shm

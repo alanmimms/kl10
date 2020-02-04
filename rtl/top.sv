@@ -1,7 +1,10 @@
 `timescale 1ns/1ns
-`include "ebus-defs.svh"
+`include "ebox.svh"
 
-module top(input clk);
+module top(input clk,
+           input CROBAR
+);
+
   logic eboxCCA;
   logic eboxCache;
   logic eboxERA;
@@ -49,21 +52,14 @@ module top(input clk);
   logic read;
   logic write;
 
-  logic MCL_VMA_SECTION_0;
-  logic MCL_MBOX_CYC_REQ;
-  logic MCL_VMA_FETCH;
-  logic MCL_LOAD_AR;
-  logic MCL_LOAD_ARX;
-  logic MCL_LOAD_VMA;
-  logic MCL_STORE_AR;
-  logic MCL_SKIP_SATISFIED;
-  logic MCL_SHORT_STACK;
-  logic MCL_18_BIT_EA;
-  logic MCL_23_BIT_EA;
-  logic MCL_MEM_ARL_IND;
-
   logic CSH_PAR_BIT_A;
   logic CSH_PAR_BIT_B;
+
+  logic EXTERNAL_CLK;
+  assign EXTERNAL_CLK = clk;
+  logic clk30;
+  assign clk30 = clk;
+  logic clk31;                  // XXX
 
   // TEMPORARY
   logic cshEBOXT0 = 0;
@@ -86,47 +82,42 @@ module top(input clk);
   // EBUS as well. (See KL10_BlockDiagrams_May76.pdf p.3.) Therefore
   // top.v is where the EBUS mux belongs.
 
-  // This is the multiplexed EBUS, enabled by the tEBUSdriver
-  // interface coming from each module to determine who gets to
-  // provide EBUS its content.
+  // This is the multiplexed EBUS, enabled by the tEBUSdriver from
+  // each module to determine who gets to provide EBUS its content.
   iEBUS EBUS();
 
-  tEBUSdriver APR_EBUS;
-  tEBUSdriver CON_EBUS;
-  tEBUSdriver CRA_EBUS;
-  tEBUSdriver CTL_EBUS;
-  tEBUSdriver EDP_EBUS;
-  tEBUSdriver IR_EBUS;
-  tEBUSdriver MTR_EBUS;
-  tEBUSdriver PI_EBUS;
-  tEBUSdriver SCD_EBUS;
-  tEBUSdriver SHM_EBUS;
-  tEBUSdriver VMA_EBUS;
-
   iAPR APR();
+  iCLK CLK();
   iCON CON();
+  iCRA CRA();
+  iCRAM CRAM();
   iCTL CTL();
   iEDP EDP();
+  iIR IR();
   iMCL MCL();
+  iMTR MTR();
+  iPI PI();
   iSCD SCD();
   iSHM SHM();
   iVMA VMA();
+
+  iMBZ MBZ();
 
   ebox ebox0(.*);
   mbox mbox0(.*);
 
   always_comb begin
-    if (APR_EBUS.driving)       EBUS.data = APR_EBUS.data;
-    else if (CON_EBUS.driving)  EBUS.data = CON_EBUS.data;
-    else if (CRA_EBUS.driving)  EBUS.data = CRA_EBUS.data;
-    else if (CTL_EBUS.driving)  EBUS.data = CTL_EBUS.data;
-    else if (EDP_EBUS.driving)  EBUS.data = EDP_EBUS.data;
-    else if (IR_EBUS.driving)   EBUS.data = IR_EBUS.data;
-    else if (MTR_EBUS.driving)  EBUS.data = MTR_EBUS.data;
-    else if (PI_EBUS.driving)   EBUS.data = PI_EBUS.data;
-    else if (SCD_EBUS.driving)  EBUS.data = SCD_EBUS.data;
-    else if (SHM_EBUS.driving)  EBUS.data = SHM_EBUS.data;
-    else if (VMA_EBUS.driving)  EBUS.data = VMA_EBUS.data;
+    if (APR.EBUSdriver.driving)       EBUS.data = APR.EBUSdriver.data;
+    else if (CON.EBUSdriver.driving)  EBUS.data = CON.EBUSdriver.data;
+    else if (CRA.EBUSdriver.driving)  EBUS.data = CRA.EBUSdriver.data;
+    else if (CTL.EBUSdriver.driving)  EBUS.data = CTL.EBUSdriver.data;
+    else if (EDP.EBUSdriver.driving)  EBUS.data = EDP.EBUSdriver.data;
+    else if (IR.EBUSdriver.driving)   EBUS.data = IR.EBUSdriver.data;
+    else if (MTR.EBUSdriver.driving)  EBUS.data = MTR.EBUSdriver.data;
+    else if (PI.EBUSdriver.driving)   EBUS.data = PI.EBUSdriver.data;
+    else if (SCD.EBUSdriver.driving)  EBUS.data = SCD.EBUSdriver.data;
+    else if (SHM.EBUSdriver.driving)  EBUS.data = SHM.EBUSdriver.data;
+    else if (VMA.EBUSdriver.driving)  EBUS.data = VMA.EBUSdriver.data;
     else EBUS.data = '0;
   end
 endmodule

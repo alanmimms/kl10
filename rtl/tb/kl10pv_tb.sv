@@ -1,3 +1,6 @@
+`include "ebox.svh"
+`include "mbox.svh"
+
 module kl10pv_tb(input clk);
   logic CROBAR;
   logic masterClk;

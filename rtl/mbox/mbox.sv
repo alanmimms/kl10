@@ -1,4 +1,5 @@
 `timescale 1ns/1ns
+`include "mbox.svh"
 module mbox(input mboxClk,
             input [13:35] EBOX_VMA,
             input vmaACRef,
@@ -7,6 +8,8 @@ module mbox(input mboxClk,
             input read,
             input PSE,
             input write,
+
+            iMBZ MBZ,
 
             output logic [27:35] MBOX_GATE_VMA,
             output logic [0:35] cacheDataRead,

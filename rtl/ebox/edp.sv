@@ -1,11 +1,9 @@
 `timescale 1ns/1ns
 // XXX TODO: Refactor this into six instances of the same module wired
 // together in ebox.v?
-`include "cram-defs.svh"
-`include "ebus-defs.svh"
+`include "ebox.svh"
 
-module edp(iEDP EDP,
-           iAPR APR,
+module edp(iAPR APR,
            iCRAM CRAM,
            iCON CON,
            iCTL CTL,
@@ -15,11 +13,9 @@ module edp(iEDP EDP,
 
            input [0:35] cacheDataRead,
            output logic [0:35] cacheDataWrite,
-           iEBUS EBUS,
-           tEBUSdriver EBUSdriver,
+           iEBUS EBUS);
 
-           output logic [0:35] FM,
-           output fmParity);
+  iEDP EDP();
 
   // Universal shift register function selector values
   enum logic [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
@@ -50,6 +46,35 @@ module edp(iEDP EDP,
   
   // XXX wrong?
   assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
+
+  // FM. No static at all!
+  logic [0:6] fmAddress = {APR.FMblk, APR.FMadr};
+
+`ifdef KL10PV_TB
+  // Simulated fake memory can have "bytes" of 18 bits for simple
+  // LH/RH byte write enable.
+  sim_mem
+    #(.SIZE(128), .WIDTH(36), .NBYTES(2))
+  fm
+  (.clk(EDP.FM_WRITE),
+   .din(EDP.AR),
+   .dout(EDP.FM),
+   .addr(fmAddress),
+   .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
+`else
+  // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
+  // halfword writes by writing two "bytes" at a time.
+  fm_mem fm(.addra(fmAddress),
+            .clka(EDP.FM_WRITE),
+            .dina(EDP.AR),
+            .douta(EDP.FM),
+            .wea({CON.FM_WRITE00_17, CON.FM_WRITE00_17,
+                  CON.FM_WRITE18_35, CON.FM_WRITE18_35})
+            );
+`endif
+
+  assign EDP.FM_PARITY = ^EDP.FM;
+
 
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
@@ -240,7 +265,7 @@ module edp(iEDP EDP,
 
   // AD carry look ahead
   // Moved here from IR4
-  assign EDP.GEN_CRY_36 = CTL.ADX_CRY_36 | CTL_SPEC_AD_LONG;
+  assign EDP.GEN_CRY_36 = CTL.ADX_CRY_36 | CTL.SPEC_AD_LONG;
   
   // IR4 E11
   mc10179 AD_LCG_E11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
@@ -285,7 +310,7 @@ module edp(iEDP EDP,
   // Moved here from IR4
   // IR4 E22
   mc10179 ADX_LCG_E22(.G({   EDP.GEN_CRY_36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
-                      .P({~CTL_SPEC_AD_LONG, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
+                      .P({~CTL.SPEC_AD_LONG, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
                       .CIN(CTL.ADX_CRY_36),
                       .C8OUT(EDP.AD_CRY[36]));
   // IR4 E21
@@ -324,7 +349,7 @@ module edp(iEDP EDP,
         if (n === 0) begin
           unique case(CRAM.ADB)
           default: ADB[n-2:n-1] = 'x;
-          adbFM:   ADB[n-2:n-1] = {2{FM[n+0]}};
+          adbFM:   ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
           adbBRx2: ADB[n-2:n-1] = {2{n === 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
           adbBR:   ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
           adbARx4: ADB[n-2:n-1] = {n === 0 ? EDP.AR[n+0] : EDP.AR[n+2],
@@ -335,7 +360,7 @@ module edp(iEDP EDP,
         // The regular part of ADB mux: E23, E26, and E19.
         unique case(CRAM.ADB)
         default: ADB[n:n+5] = 'x;
-        adbFM:   ADB[n:n+5] = FM[n+0:n+5];
+        adbFM:   ADB[n:n+5] = EDP.FM[n+0:n+5];
         adbBRx2: ADB[n:n+5] = {EDP.BR[n+1:n+5], n < 30 ? EDP.BR[n+6] : EDP.BRX[0]};
         adbBR:   ADB[n:n+5] = EDP.BR[n+0:n+5];
         adbARx4: ADB[n:n+5] = {EDP.AR[n+2:n+5], n < 30 ? EDP.AR[n+6:n+7] : EDP.ARX[0:1]};
@@ -384,35 +409,6 @@ module edp(iEDP EDP,
   endgenerate
 
 
-  // FM. No static at all!
-  logic [0:6] fmAddress = {APR.FMblk, APR.FMadr};
-
-`ifdef KL10PV_TB
-  // Simulated fake memory can have "bytes" of 18 bits for simple
-  // LH/RH byte write enable.
-  sim_mem
-    #(.SIZE(128), .WIDTH(36), .NBYTES(2))
-  fm
-  (.clk(EDP.FM_WRITE),
-   .din(EDP.AR),
-   .dout(FM),
-   .addr(fmAddress),
-   .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
-`else
-  // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
-  // halfword writes by writing two "bytes" at a time.
-  fm_mem fm(.addra(fmAddress),
-            .clka(EDP.FM_WRITE),
-            .dina(EDP.AR),
-            .douta(FM),
-            .wea({CON.FM_WRITE00_17, CON.FM_WRITE00_17,
-                  CON.FM_WRITE18_35, CON.FM_WRITE18_35})
-            );
-`endif
-
-  assign fmParity = ^FM;
-
-
   // BRX
   always_ff @(posedge CLK.EBOX_CLK)
 
@@ -434,22 +430,26 @@ module edp(iEDP EDP,
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
   logic [0:35] ebusR;
-  assign EBUSdriver.driving = CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_L || CTL.AD_TO_EBUS_R;
-  assign EBUSdriver.data[0:17] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_L) ? ebusR[0:17] : '0;
-  assign EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ? ebusR[18:35] : '0;
+  assign EDP.EBUSdriver.driving = CTL.DIAG_READ_FUNC_12x ||
+                                  CTL.AD_TO_EBUS_L ||
+                                  CTL.AD_TO_EBUS_R;
+  assign EDP.EBUSdriver.data[0:17] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_L) ?
+                                     ebusR[0:17] : '0;
+  assign EDP.EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ?
+                                      ebusR[18:35] : '0;
 
   always_ff @(posedge CLK.EBOX_CLK) begin
 
     if (CLK.EBOX_RESET) begin
-      EBUSdriver.driving <= '0;
-    end else if (EBUSdriver.driving) begin
+      EDP.EBUSdriver.driving <= '0;
+    end else if (EDP.EBUSdriver.driving) begin
 
       unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
       default: ebusR <= 'x;
       3'b000: ebusR <= EDP.AR;
       3'b001: ebusR <= EDP.BR;
       3'b010: ebusR <= EDP.MQ;
-      3'b011: ebusR <= FM;
+      3'b011: ebusR <= EDP.FM;
       3'b100: ebusR <= EDP.BRX;
       3'b101: ebusR <= EDP.ARX;
       3'b110: ebusR <= EDP.ADX[0:35];

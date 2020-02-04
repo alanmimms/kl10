@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
-`include "cram-defs.svh"
-`include "ebus-defs.svh"
+`include "ebox.svh"
 
 // M8541 CRA
 //
@@ -10,42 +9,20 @@
 //
 // In a real KL10PV, M8541 contains the last six bits of CRAM storage.
 // This has been moved to crm.v in a single unified storage module.
-module cra(input MULdone,
-
-           input [0:2] DRAM_A,
-           input [0:2] DRAM_B,
-           input [0:10] DRAM_J,
-           
-           iCRAM CRAM,
-           iCLK CLK,
+module cra(iCLK CLK,
            iCON CON,
            iCTL CTL,
            iEDP EDP,
            iIR IR,
            iSHM SHM,
 
-           input [8:10] norm,
-           input [0:10] NICOND,
-           input [0:3] SR,
-           input [0:10] pfDisp,
-           input skipEn40_47,
-           input skipEn50_57,
-
-           input pcSection0,
-           input localACAddress,
-           input indexed,
-           input FEsign,
-           input SCsign,
-           input SCADsign,
-           input SCADeq0,
-           input FPD,
-           input ARparityOdd,
+           iCRAM CRAM,
 
            output tCRADR CRADR,
-           output logic [1:10] AREAD,
-           output logic dispParity,
-           iEBUS EBUS,
-           tEBUSdriver EBUSdriver);
+           iEBUS EBUS
+);
+
+  iCRA CRA();
 
   logic [0:11] dispMux;
   logic [0:10] diagAdr;
@@ -81,58 +58,58 @@ module cra(input MULdone,
 
   always_comb begin
 
-    if (dispEn00_03) begin
+    if (CON.DISP_EN_00_03) begin
       case (CRAM.DISP[3:4])
       2'b00: dispMux[0:6] = diagAdr[0:6];
-      2'b01: dispMux[0:6] = {2'b00, DRAM_J[1:4], 2'b00};
-      2'b10: dispMux[0:6] = {2'b00, AREAD[1:4], 2'b00};
+      2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
+      2'b10: dispMux[0:6] = {2'b00, CRA.CRA.AREAD[1:4], 2'b00};
       2'b11: dispMux[0:6] = sbrRet;
       endcase
-    end else if (dispEn00_07) begin
+    end else if (CON.DISP_EN_00_07) begin
       case (CRAM.DISP[2:4])
       3'b000: dispMux[7:10] = diagAdr[7:10];
-      3'b001: dispMux[7:10] = DRAM_J[7:10];
-      3'b010: dispMux[7:10] = AREAD[7:10];
+      3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
+      3'b010: dispMux[7:10] = CRA.CRA.AREAD[7:10];
       3'b011: dispMux[7:10] = sbrRet[7:10];
-      3'b100: dispMux[7:10] = pfDisp[7:10];
-      3'b101: dispMux[7:10] = SR[0:3];
-      3'b110: dispMux[7:10] = NICOND[7:10];
+      3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
+      3'b101: dispMux[7:10] = CON.SR[0:3];
+      3'b110: dispMux[7:10] = CON.NICOND[7:10];
       3'b111: dispMux[7:10] = SHM.SH[0:3];
       endcase
-    end else if (dispEn30_37) begin
+    end else if (CON.DISP_EN_30_37) begin
       case (CRAM.DISP[2:4])
-      3'b000: dispMux[7:10] = {1'b0, FEsign, EDP.MQ[34:35], pcSection0};
-      3'b001: dispMux[7:10] = {1'b0, FEsign, EDP.BR[0], EDP.AD_CRY[-2], SCADsign};
-      3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCADeq0};
-      3'b011: dispMux[7:10] = {1'b0, DRAM_B[0:2], EDP.ADX[0]};
-      3'b100: dispMux[7:10] = {1'b0, FPD, EDP.AR[12], SCADsign, EDP.AD_CRY[-2]};
-      3'b101: dispMux[7:10] = {1'b0, norm[8:10], EDP.AD[0]};
+      3'b000: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.MQ[34:35], MCL.PC_SECTION_0};
+      3'b001: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2], SCD.SCAD_SIGN};
+      3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCD.SCADeq0};
+      3'b011: dispMux[7:10] = {1'b0, IR.DRAM_B[0:2], EDP.ADX[0]};
+      3'b100: dispMux[7:10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN, EDP.AD_CRY[-2]};
+      3'b101: dispMux[7:10] = {1'b0, IR.NORM[8:10], EDP.AD[0]};
       3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
-                               EDP.ARX[13], indexed, ~IR.ADeq0};
-      3'b111: dispMux[7:10] = {eaType[7:10], localACAddress};
+                               EDP.ARX[13], SHM.INDEXED, ~IR.ADeq0};
+      3'b111: dispMux[7:10] = {eaType[7:10], VMA.LOCAL_AC_ADDRESS};
       endcase
-    end else if (skipEn40_47) begin
+    end else if (CON.SKIP_EN_40_47) begin
       case (CRAM.COND[3:5])
       3'b000: dispMux[10] = 0;
-      3'b001: dispMux[10] = ARparityOdd;
+      3'b001: dispMux[10] = SHM.AR_PAR_ODD;
       3'b010: dispMux[10] = EDP.BR[0];
       3'b011: dispMux[10] = EDP.ARX[0];
       3'b100: dispMux[10] = EDP.AR[18];
       3'b101: dispMux[10] = EDP.AR[0];
       3'b110: dispMux[10] = IR.ACeq0;
-      3'b111: dispMux[10] = SCsign;
+      3'b111: dispMux[10] = SCD.SC_SIGN;
       endcase
-    end else if (skipEn50_57) begin
+    end else if (CON.SKIP_EN_50_57) begin
       case (CRAM.COND[3:5])
-      3'b000: dispMux[10] = pcSection0;
-      3'b001: dispMux[10] = {1'b0, FEsign, EDP.BR[0], EDP.AD_CRY[-2], SCADsign};
-      3'b010: dispMux[10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCADeq0};
-      3'b011: dispMux[10] = {1'b0, DRAM_B[0:2], EDP.ADX[0]};
-      3'b100: dispMux[10] = {1'b0, FPD, EDP.AR[12], SCADsign, EDP.AD_CRY[-2]};
-      3'b101: dispMux[10] = {1'b0, norm[8:10], EDP.AD[0]};
+      3'b000: dispMux[10] = MCL.PC_SECTION_0;
+      3'b001: dispMux[10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2], SCD.SCAD_SIGN};
+      3'b010: dispMux[10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCD.SCADeq0};
+      3'b011: dispMux[10] = {1'b0, IR.DRAM_B[0:2], EDP.ADX[0]};
+      3'b100: dispMux[10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN, EDP.AD_CRY[-2]};
+      3'b101: dispMux[10] = {1'b0, IR.NORM[8:10], EDP.AD[0]};
       3'b110: dispMux[10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
-                             EDP.ARX[13], indexed, ~IR.ADeq0};
-      3'b111: dispMux[10] = {eaType[7:10], localACAddress};
+                             EDP.ARX[13], SHM.INDEXED, ~IR.ADeq0};
+      3'b111: dispMux[10] = {eaType[7:10], VMA.LOCAL_AC_ADDRESS};
       endcase
     end else
       dispMux = 0;
@@ -221,7 +198,7 @@ module cra(input MULdone,
 
   ////////////////////////////////////////////////////////////////
   // Diagnostics stuff
-  assign dispParity = ^{CRAM.CALL, CRAM.DISP};
+  assign CRA.DISP_PARITY = ^{CRAM.CALL, CRAM.DISP};
 
   always_comb begin
 
@@ -230,27 +207,27 @@ module cra(input MULdone,
     else if (CTL.diaFunc052)
       diagAdr[0:4] = EBUS.data[1:5];
 
-    AREAD = DRAM_A === 3'b000 ? DRAM_J : 0;
+    CRA.CRA.AREAD = IR.DRAM_A === 3'b000 ? IR.DRAM_J : 0;
   end
 
   // Diagnostics driving EBUS
-  assign EBUSdriver.driving = CTL.DIAG_READ_FUNC_14x;
+  assign CRA.EBUSdriver.driving = CTL.DIAG_READ_FUNC_14x;
 
   always_comb begin
 
-    if (EBUSdriver.driving) begin
+    if (CRA.EBUSdriver.driving) begin
 
       case (DIAG_FUNC[4:6])
-      3'b000: EBUSdriver.data = {dispEn00_07, dispEn00_03, stackAdr};
-      3'b001: EBUSdriver.data = {CRAM.CALL, CRAM.DISP[0:4], stackAdr};
-      3'b010: EBUSdriver.data = sbrRet[5:10];
-      3'b011: EBUSdriver.data = {dispEn30_37, sbrRet[0:4]};
-      3'b100: EBUSdriver.data = CRADR[5:10];
-      3'b101: EBUSdriver.data = {dispParity, CRADR[0:4]};
-      3'b110: EBUSdriver.data = CRADR[5:10];
-      3'b111: EBUSdriver.data = {1'b0, CRADR[0:4]};
+      3'b000: CRA.EBUSdriver.data = {dispEn00_07, dispEn00_03, stackAdr};
+      3'b001: CRA.EBUSdriver.data = {CRAM.CALL, CRAM.DISP[0:4], stackAdr};
+      3'b010: CRA.EBUSdriver.data = sbrRet[5:10];
+      3'b011: CRA.EBUSdriver.data = {dispEn30_37, sbrRet[0:4]};
+      3'b100: CRA.EBUSdriver.data = CRADR[5:10];
+      3'b101: CRA.EBUSdriver.data = {CRA.DISP_PARITY, CRADR[0:4]};
+      3'b110: CRA.EBUSdriver.data = CRADR[5:10];
+      3'b111: CRA.EBUSdriver.data = {1'b0, CRADR[0:4]};
       endcase
     end else
-      EBUSdriver.data = 'z;
+      CRA.EBUSdriver.data = 'z;
   end
 endmodule
