@@ -115,7 +115,7 @@ module cra(iCLK CLK,
 
 
   // CRA.CRADR
-  always @(posedge CLK.EBOX_CLK) begin
+  always @(posedge CLK.CRA) begin
 
     if (CLK.EBOX_RESET)
       CRA.CRADR <= 0;
@@ -167,10 +167,10 @@ module cra(iCLK CLK,
   logic stackAdrZ = stackAdrF ^ stackAdrE;
 
   logic stackAdr = {stackAdrAD, stackAdrEH};
-  logic stackWrite = CLK.EBOX_CLK & ~retNotForce1777;
+  logic stackWrite = CLK.CRA & ~retNotForce1777;
   logic selCall = stackWrite | ~retNotForce1777;
 
-  always @(posedge CLK.EBOX_CLK) begin
+  always @(posedge CLK.CRA) begin
 
     if (CALL_FORCE_1777 && retNotForce1777) begin // LOAD
       stackAdrAD <= 4'b1111;

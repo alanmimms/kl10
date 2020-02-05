@@ -20,21 +20,30 @@ module clk(input clk,
            iEBUS EBUS
            );
 
-  logic DESKEW_CLK = 0;
-  logic SYNCHRONIZE_CLK = 0;
+  logic DESKEW_CLK = '0;
+  logic SYNCHRONIZE_CLK = '0;
   logic DIAG_READ;
   logic MBOX_RESP_SIM;
   logic AR_ARX_PAR_CHECK;
 
-  logic [4:6] DIAG;
-
   logic [0:7] burstCounter;
   logic burstCounterEQ0;
+
+  logic RESET;
+  assign RESET = CLK.MR_RESET;
+  assign CLK.EBOX_RESET = CLK.MR_RESET;
 
   ebox_clocks ebox_clocks0(.clk_in1(clk));
 
   // XXX this is for sim but probably won't work in hardware.
-  assign fastMemClk = CLK.EBOX_CLK;
+  logic fastMemClk;
+  assign fastMemClk = CLK.EDP;
+
+  logic [4:6] DIAG;
+  assign DIAG[4:6] = EBUS.ds[4:6];
+
+  logic CLK_DIAG_READ;
+  assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
   // CLK1 p.168
   always_comb begin
@@ -49,10 +58,16 @@ module clk(input clk,
                      CLK.EBOX_CLK_ERROR & CLK.EBOX_SOURCE & ~CLK.CLK_ON & CLK.ERR_STOP_EN;
   end
 
+  // XXX ignoring the delay lines
+  logic latchedGatedEn;
+  assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
+  assign CLK.EBUS_CLK_SOURCE = CLK.GATED;
+  assign CLK.SOURCE_DELAYED = CLK.EBUS_CLK_SOURCE;
+  assign CLK.CLK_ON = (~CLK.ERROR_STOP | DESKEW_CLK) &
+                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
+
   always_ff @(posedge CLK.MAIN_SOURCE) begin
-    CLK.GATED <= CLK.GATED_EN;
-    CLK.CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) &
-                  (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
+    latchedGatedEn <= CLK.GATED_EN;
   end
 
   assign CLK.MBOX_CLK = CLK.CLK_ON;
@@ -60,12 +75,17 @@ module clk(input clk,
 
   logic [0:3] rateSelectorSR;
   assign CLK.RATE_SELECTED = rateSelectorSR[0] | rateSelectorSR[2];
-  always_ff @(CLK.MAIN_SOURCE) begin
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.RATE_SELECTED) begin
-      rateSelectorSR <= {CLK.RATE_SEL[1], CLK.RATE_SEL[1], CLK.RATE_SEL[0], 1'b0};
-    end else begin
-      rateSelectorSR <= {rateSelectorSR[1:3], 1'b0};
+    if (CLK.MR_RESET)
+      rateSelectorSR <= '0;
+    else begin
+
+      if (CLK.RATE_SELECTED) begin
+        rateSelectorSR <= {CLK.RATE_SEL[1], CLK.RATE_SEL[1], CLK.RATE_SEL[0], 1'b0};
+      end else begin
+        rateSelectorSR <= {rateSelectorSR[1:3], 1'b0};
+      end
     end
   end
 
@@ -93,15 +113,20 @@ module clk(input clk,
   logic [0:3] gatedSR;
   always @(posedge CLK.MAIN_SOURCE) begin
 
-    case ({CLK.FUNC_GATE, ~(CLK.FUNC_GATE | CLK.RATE_SELECTED)})
-    default: gatedSR <= gatedSR;
-    2'b01: gatedSR <= {gatedSR[1:3], CROBAR};
-    2'b10: gatedSR <= {1'b0, gatedSR[0:2]};
-    3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,
-                       CLK.FUNC_EBOX_SS,
-                       ~(CLK.FUNC_EBOX_SS & ~CLK.SYNC),
-                       CLK.FUNC_EBOX_SS};
-    endcase
+    if (CLK.MR_RESET)
+      gatedSR <= '0;
+    else begin
+
+      case ({CLK.FUNC_GATE, ~(CLK.FUNC_GATE | CLK.RATE_SELECTED)})
+      default: gatedSR <= gatedSR;
+      2'b01: gatedSR <= {gatedSR[1:3], CROBAR};
+      2'b10: gatedSR <= {1'b0, gatedSR[0:2]};
+      3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,
+                         CLK.FUNC_EBOX_SS,
+                         ~(CLK.FUNC_EBOX_SS & ~CLK.SYNC),
+                         CLK.FUNC_EBOX_SS};
+      endcase
+    end
   end
 
   assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
@@ -115,23 +140,32 @@ module clk(input clk,
   assign CLK.MHZ16_FREE = e64SR[3];
   assign CLK.FUNC_GATE = |e60FF[0:2];
   assign CLK.TENELEVEN_CLK = e60FF[3];
+
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MHZ16_FREE) begin
-      e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
+    if (CLK.MR_RESET) begin
+      e64SR <= 0;
+      e60FF <= 0;
     end else begin
-      e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
-    end
 
-    e60FF <= {~e64SR[0], e64SR[1:3]};
+      if (CLK.MHZ16_FREE) begin
+        e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
+      end else begin
+        e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
+      end
+
+      e60FF <= {~e64SR[0], e64SR[1:3]};
+    end
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
-  always @(negedge CLK.FUNC_SET_RESET) begin
+  always @(posedge CLK.FUNC_CLR_RESET, posedge CROBAR, negedge CLK.FUNC_SET_RESET) begin
 
-    if (CROBAR) begin
+    if (CLK.FUNC_CLR_RESET) begin
       CLK.MR_RESET <= 0;
-    end else begin
+    end else if (CROBAR) begin
+      CLK.MR_RESET <= 1;
+    end else if (~CLK.FUNC_SET_RESET) begin
       CLK.MR_RESET <= 1;
     end
   end
@@ -161,50 +195,55 @@ module clk(input clk,
   end
 
   logic [0:2] e37SR;
-  assign {CLK.GO, CLK.BURST, CLK.FUNC_EBOX_SS} = e37SR;
+  assign {CLK.GO, CLK.BURST, CLK.EBOX_SS} = e37SR;
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.FUNC_GATE | CROBAR) begin
-      e37SR <= {CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS};
-    end else begin
-      e37SR <= e37SR;
+    if (CLK.MR_RESET)
+      e37SR <= '0;
+    else begin
+
+      if (CLK.FUNC_GATE | CROBAR) begin
+        e37SR <= {CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS};
+      end else begin
+        e37SR <= e37SR;
+      end
     end
   end
 
   always_comb begin
 
     if (CLK.FUNC_GATE && CTL.DIAG_CTL_FUNC_00x) begin
-      if (DIAG[4:6] === 3'b001) CLK.FUNC_START = 1;
-      if (DIAG[4:6] === 3'b010) CLK.FUNC_SINGLE_STEP = 1;
-      if (DIAG[4:6] === 3'b011) CLK.FUNC_EBOX_SS = 1;
-      if (DIAG[4:6] === 3'b100) CLK.FUNC_COND_SS = 1;
-      if (DIAG[4:6] === 3'b101) CLK.FUNC_BURST = 1;
-      if (DIAG[4:6] === 3'b110) CLK.FUNC_CLR_RESET = 1;
-      if (DIAG[4:6] === 3'b111) CLK.FUNC_SET_RESET = 1;
+      if (DIAG[4:6] === 3'b001) CLK.FUNC_START = '1;
+      if (DIAG[4:6] === 3'b010) CLK.FUNC_SINGLE_STEP = '1;
+      if (DIAG[4:6] === 3'b011) CLK.FUNC_EBOX_SS = '1;
+      if (DIAG[4:6] === 3'b100) CLK.FUNC_COND_SS = '1;
+      if (DIAG[4:6] === 3'b101) CLK.FUNC_BURST = '1;
+      if (DIAG[4:6] === 3'b110) CLK.FUNC_CLR_RESET = '1;
+      if (DIAG[4:6] === 3'b111) CLK.FUNC_SET_RESET = '1;
     end else begin
-      CLK.FUNC_START = 0;
-      CLK.FUNC_SINGLE_STEP = 0;
-      CLK.FUNC_EBOX_SS = 0;
-      CLK.FUNC_COND_SS = 0;
-      CLK.FUNC_BURST = 0;
-      CLK.FUNC_CLR_RESET = 0;
-      CLK.FUNC_SET_RESET = 0;
+      CLK.FUNC_START = '0;
+      CLK.FUNC_SINGLE_STEP = '0;
+      CLK.FUNC_EBOX_SS = '0;
+      CLK.FUNC_COND_SS = '0;
+      CLK.FUNC_BURST = '0;
+      CLK.FUNC_CLR_RESET = '0;
+      CLK.FUNC_SET_RESET = '0;
     end
     
     if (CLK.FUNC_GATE && CTL.DIAG_LD_FUNC_04x) begin
-      if (DIAG[4:6] === 3'b010) CLK.FUNC_042 = 1;
-      if (DIAG[4:6] === 3'b011) CLK.FUNC_043 = 1;
+      if (DIAG[4:6] === 3'b010) CLK.FUNC_042 = '1;
+      if (DIAG[4:6] === 3'b011) CLK.FUNC_043 = '1;
       if (DIAG[4:6] === 3'b100) CLK.FUNC_044 = CROBAR;
       if (DIAG[4:6] === 3'b101) CLK.FUNC_045 = CROBAR;
       if (DIAG[4:6] === 3'b110) CLK.FUNC_046 = CROBAR;
       if (DIAG[4:6] === 3'b111) CLK.FUNC_047 = CROBAR;
     end else begin
-      CLK.FUNC_042 = 0;
-      CLK.FUNC_043 = 0;
-      CLK.FUNC_044 = 0;
-      CLK.FUNC_045 = 0;
-      CLK.FUNC_046 = 0;
-      CLK.FUNC_047 = 0;
+      CLK.FUNC_042 = '0;
+      CLK.FUNC_043 = '0;
+      CLK.FUNC_044 = '0;
+      CLK.FUNC_045 = '0;
+      CLK.FUNC_046 = '0;
+      CLK.FUNC_047 = '0;
     end
   end
 
@@ -258,10 +297,10 @@ module clk(input clk,
     if (CLK.SYNC_HOLD) begin
 
       case ({|e25Counter[3:2], e25Counter[1], e25Counter[0]})
-      default: e31B = 0;
-      3'b000: e31B = ~(~CRAM.TIME[0] & ~CRAM.TIME[1]);
-      3'b001: e31B = ~CRAM.TIME[0];
-      3'b010: e31B = ~CRAM.TIME[1];
+      default: e31B = '0;
+      3'b000: e31B = ~(~CRAM._TIME[0] & ~CRAM._TIME[1]);
+      3'b001: e31B = ~CRAM._TIME[0];
+      3'b010: e31B = ~CRAM._TIME[1];
       3'b011: e31B = ~CON.DELAY_REQ;
       3'b100: e31B = e25Carry;
       3'b101: e31B = e25Carry;
@@ -269,7 +308,7 @@ module clk(input clk,
       3'b111: e31B = e25Carry;
       endcase
     end else begin
-      e31B = 0;
+      e31B = '0;
     end
 
     CLK.SYNC_EN = CLK.EBOX_SS & ~CLK.EBOX_CLK_EN | e31B & ~CLK.EBOX_CLK_EN;
@@ -285,8 +324,9 @@ module clk(input clk,
 
   logic [0:3] e12SR;
   logic e17out;
-  assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.MR_RESET;
+  assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | RESET;
   assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
+  assign CLK.EBOX_SRC_EN = CLK.SYNC & e17out;
 
   assign CLK.CRM = e12SR[0];
   assign CLK.CRA = e12SR[0];
@@ -301,20 +341,27 @@ module clk(input clk,
   assign CLK.SCD = e12SR[2];
 
   assign CLK.EBOX_SOURCE = e12SR[3];
+  logic holdAB;
+  assign holdAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
 
   always_ff @(posedge CLK.ODD) begin
-    
-    if (CLK.PAGE_FAIL && CLK.PF_DLYD) begin // HOLD
-      e12SR <= e12SR;
-    end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
-      e12SR <= {e12SR[1:3], 1'b0};
-    end else if (CLK.PF_DLYD) begin     // Shift down from 0in
-      e12SR <= {CLK.PF_DLYD, e12SR[0:2]};
-    end else begin                      // LOAD
-      e12SR <= {CLK.SYNC & e17out & CLK.ERROR_HOLD_A & CLK.ERROR_HOLD_B & CLK.EBOX_CRM_DIS,
-                CLK.SYNC & e17out & CLK.ERROR_HOLD_A & CLK.ERROR_HOLD_B & CLK.EBOX_EDP_DIS,
-                CLK.SYNC & e17out & CLK.ERROR_HOLD_A & CLK.ERROR_HOLD_B & CLK.EBOX_CTL_DIS,
-                CLK.EBOX_SRC_EN};
+
+    if (CLK.MR_RESET)
+      e12SR <= '0;
+    else begin
+      
+      if (CLK.PAGE_FAIL && CLK.PF_DLYD) begin // HOLD
+        e12SR <= e12SR;
+      end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
+        e12SR <= {e12SR[1:3], 1'b0};
+      end else if (CLK.PF_DLYD) begin     // Shift down from 0in
+        e12SR <= {CLK.PF_DLYD, e12SR[0:2]};
+      end else begin                      // LOAD
+        e12SR <= {CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CRM_DIS,
+                  CLK.SYNC & e17out & holdAB & ~CLK.EBOX_EDP_DIS,
+                  CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CTL_DIS,
+                  CLK.EBOX_SRC_EN};
+      end
     end
   end
 
@@ -491,9 +538,6 @@ module clk(input clk,
       CLK.ERR_STOP_EN = EBUS.data[35];
     end
   end
-
-  assign DIAG[4:6] = EBUS.ds[4:6];
-  assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 endmodule // clk
 // Local Variables:
 // verilog-library-files:("../ip/ebox_clocks/ebox_clocks_stub.v")

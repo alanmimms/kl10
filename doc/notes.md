@@ -20,6 +20,23 @@
     * FPGA implemented pager and PMA
     * FPGA DMA interface to ARM Linux provided RAM
 
+
+# KLINIT and PARSER functions in RSX-20F (klinit.l20 and parser.lst)
+  * Zero AC blocks 0 through 6
+  * Load AC blocks with instructions and starts KL
+  * Load CRAM and DRAM
+  * Configures and sweeps the cache
+  * Configures the memory
+  * Starts the clock
+  * Does resets
+  * Reads and writes KL memory
+  * Diagnostic read, write, execute functions
+  * Set and clear the RUN flop
+  * Set the CONTINUE "button"
+  * Reset APR, PI, clear paging, user base
+  * Enable CRAM, DRAM, FS, AR/ARX parity
+
+
 # EBUS
   * The front end can read/write DS00-06 any time.
     * See EK-DTE20-UD-003 p. 18.

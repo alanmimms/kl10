@@ -25,17 +25,20 @@ module ir(iIR IR,
 
   logic [8:10] DRAM_J_X, DRAM_J_Y;
 
+  logic IR_CLK;
+  assign IR_CLK = CLK.IR;
+
 `ifdef KL10PV_TB
   sim_mem
     #(.SIZE(DRAM_SIZE), .WIDTH(DRAM_WIDTH), .NBYTES(1))
   dram
-    (.clk(CLK.EBOX_CLK),
+    (.clk(IR_CLK),
      .din('0),                    // XXX
      .dout(DRAMdata),
      .addr(DRADR),
      .wea('0));                   // XXX
 `else
-  dram_mem dram(.clka(CLK.EBOX_CLK),
+  dram_mem dram(.clka(IR_CLK),
                 .addra(DRADR),
                 .douta(DRAMdata),
                 .dina('0),

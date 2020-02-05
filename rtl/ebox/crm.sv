@@ -19,13 +19,13 @@ module crm(iCRA CRA,
   sim_mem
     #(.SIZE(2048), .WIDTH(84), .NBYTES(1))
   cram
-  (.clk(CLK.EBOX_CLK),
+  (.clk(CLK.CRM),
    .din('0),                    // XXX
    .dout(CRAMdata),
    .addr(CRA.CRADR),
    .wea('0));                   // XXX
 `else
-  cram_mem cram(.clka(CLK.EBOX_CLK),
+  cram_mem cram(.clka(CLK.CRM),
                 .addra(CRADR),
                 .dina('0),
                 .douta(CRAMdata),
@@ -50,7 +50,7 @@ module crm(iCRA CRA,
     CRAM.FE = tFE'(CRAMdata[47:47]);
     CRAM.SH = tSH'(CRAMdata[49:50]);
     CRAM.VMA = tVMA'(CRAMdata[52:53]);
-    CRAM.TIME = tTIME'(CRAMdata[54:55]);
+    CRAM._TIME = tTIME'(CRAMdata[54:55]);
     CRAM.MEM = tMEM'(CRAMdata[56:59]);
     CRAM.COND = tCOND'(CRAMdata[60:65]);
     CRAM.CALL = CRAMdata[66:66];

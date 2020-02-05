@@ -26,8 +26,6 @@ module ctl(iAPR APR,
   logic CTL_COND_AR_EXP;
   logic CTL_COND_REG_CTL;
 
-  logic CTL_CONSOLE_CONTROL;
-
   logic [0:6] CTL_DS;
 
   logic CTL_36_BIT_EA;
@@ -246,16 +244,18 @@ module ctl(iAPR APR,
   end
 
   // CTL3 p.366
-  logic ds00OrDiagStrobe;
+  logic NOTds00AndDiagStrobe;
   logic en1xx;
+  assign NOTds00AndDiagStrobe = ~EBUS.ds[0] & CTL.DIAG_STROBE;
+  assign CTL.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
+  assign CTL.DIAG_STROBE = EBUS.diagStrobe;
   always_comb begin
-    ds00OrDiagStrobe = EBUS.ds[0] & CTL.DIAG_STROBE;
-    CTL.DIAG_CTL_FUNC_00x  = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b000;
-    DIAG_CONTROL_FUNC_01x  = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b010;
-    CTL.DIAG_LD_FUNC_04x   = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b100;
-    DIAG_LOAD_FUNC_05x     = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b101;
-    CTL.DIAG_LOAD_FUNC_06x = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b110;
-    CTL.DIAG_LOAD_FUNC_07x = ds00OrDiagStrobe && EBUS.ds[1:3] === 3'b111;
+    CTL.DIAG_CTL_FUNC_00x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b000;
+    DIAG_CONTROL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b010;
+    CTL.DIAG_LD_FUNC_04x   = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b100;
+    DIAG_LOAD_FUNC_05x     = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b101;
+    CTL.DIAG_LOAD_FUNC_06x = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b110;
+    CTL.DIAG_LOAD_FUNC_07x = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b111;
 
     DIAG_LOAD_FUNC_070     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b000;
     DIAG_LOAD_FUNC_071     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b001;
@@ -276,24 +276,20 @@ module ctl(iAPR APR,
     DIAG_READ_FUNC_16x     = en1xx && CTL_DS[1:3] === 3'b110;
     DIAG_READ_FUNC_17x     = en1xx && CTL_DS[1:3] === 3'b111;
 
-    CTL.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
+    CTL.CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
+    CTL_READ_STROBE = CTL.CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR.CLK;
+    CTL_DS = CTL.CONSOLE_CONTROL ? EBUS.ds[0:6] : CRAM.MAGIC[2:8];
 
-    CTL.DIAG_STROBE = EBUS.diagStrobe;
-
-    CTL_CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
-    CTL_READ_STROBE = CTL_CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR.CLK;
-    CTL_DS = CTL_CONSOLE_CONTROL ? EBUS.ds[0:6] : CRAM.MAGIC[2:8];
-
-    CTL.AD_TO_EBUS_L = CTL_CONSOLE_CONTROL &
+    CTL.AD_TO_EBUS_L = CTL.CONSOLE_CONTROL &
                        (APR.CONO_OR_DATAO | (CON.COND_DIAG_FUNC | CRAM.MAGIC[2] | APR.CLK));
     CTL.AD_TO_EBUS_R = CTL.AD_TO_EBUS_L;
 
     CTL.DIAG_AR_LOAD = CTL_DS[0] & &EBUS.ds[1:3] & &CTL.DIAG[4:6];
 
-    CTL.EBUS_T_TO_E_EN = (PI.GATE_TTL_TO_ECL | APR.CONI_OR_DATAI) & CTL_CONSOLE_CONTROL |
-                         (EBUS.ds[0] & CTL_CONSOLE_CONTROL);
+    CTL.EBUS_T_TO_E_EN = (PI.GATE_TTL_TO_ECL | APR.CONI_OR_DATAI) & CTL.CONSOLE_CONTROL |
+                         (EBUS.ds[0] & CTL.CONSOLE_CONTROL);
     CTL.EBUS_E_TO_T_EN = APR.EBUS_RETURN & CTL.EBUS_T_TO_E_EN |
-                         CTL_CONSOLE_CONTROL & CTL.EBUS_T_TO_E_EN;
+                         CTL.CONSOLE_CONTROL & CTL.EBUS_T_TO_E_EN;
     CTL.EBUS_PARITY_OUT = SHM.AR_PAR_ODD | CTL.AD_TO_EBUS_L;
   end
 

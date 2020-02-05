@@ -39,7 +39,7 @@ module edp(iAPR APR,
 `include "cram-aliases.svh"
   
   // Miscellaneous reset (XXX)
-  always_ff @(posedge CLK.EBOX_CLK) begin
+  always_ff @(posedge CLK.EDP) begin
     if (CLK.EBOX_RESET) cacheDataWrite <= 0;
   end
   
@@ -92,7 +92,7 @@ module edp(iAPR APR,
   end
   
   // EDP.AR
-  always_ff @(posedge CLK.EBOX_CLK) begin
+  always_ff @(posedge CLK.EDP) begin
 
     // RESET
     if (CLK.EBOX_RESET) begin
@@ -157,7 +157,7 @@ module edp(iAPR APR,
   end
 
   // ARX
-  always_ff @(posedge CLK.EBOX_CLK) begin
+  always_ff @(posedge CLK.EDP) begin
 
     // RESET
     if (CLK.EBOX_RESET) begin
@@ -182,7 +182,7 @@ module edp(iAPR APR,
   end
 
   // MQ mux and register
-  always_ff @(posedge CLK.EBOX_CLK) begin
+  always_ff @(posedge CLK.EDP) begin
 
     if (CLK.EBOX_RESET) begin
       EDP.MQ <= 0;
@@ -410,7 +410,7 @@ module edp(iAPR APR,
 
 
   // BRX
-  always_ff @(posedge CLK.EBOX_CLK)
+  always_ff @(posedge CLK.EDP)
 
     if (CLK.EBOX_RESET)
       EDP.BRX <= 0;
@@ -419,7 +419,7 @@ module edp(iAPR APR,
 
 
   // BR
-  always_ff @(posedge CLK.EBOX_CLK)
+  always_ff @(posedge CLK.EDP)
 
     if (CLK.EBOX_RESET)
       EDP.BR <= 0;
@@ -438,7 +438,7 @@ module edp(iAPR APR,
   assign EDP.EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ?
                                       ebusR[18:35] : '0;
 
-  always_ff @(posedge CLK.EBOX_CLK) begin
+  always_ff @(posedge CLK.EDP) begin
 
     if (CLK.EBOX_RESET) begin
       EDP.EBUSdriver.driving <= '0;
