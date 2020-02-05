@@ -1,11 +1,14 @@
 `include "ebox.svh"
 `include "mbox.svh"
 
-module kl10pv_tb(input clk);
+module kl10pv_tb;
   logic CROBAR;
   logic masterClk;
+  logic clk;
 
   top top0(.*);
+
+  assign clk = masterClk;
 
   // 50MHz EBOX clock
   initial masterClk = 0;

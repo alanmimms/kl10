@@ -1,3 +1,0 @@
-ebox_clocks_clk_wiz.v,verilog,xil_defaultlib,../../../ip/ebox_clocks/ebox_clocks_clk_wiz.v,incdir="$ref_dir/../../../ipstatic"incdir="../../../ipstatic"
-ebox_clocks.v,verilog,xil_defaultlib,../../../ip/ebox_clocks/ebox_clocks.v,incdir="$ref_dir/../../../ipstatic"incdir="../../../ipstatic"
-glbl.v,Verilog,xil_defaultlib,glbl.v

@@ -33,6 +33,9 @@ module clk(input clk,
 
   ebox_clocks ebox_clocks0(.clk_in1(clk));
 
+  // XXX this is for sim but probably won't work in hardware.
+  assign fastMemClk = CLK.EBOX_CLK;
+
   // CLK1 p.168
   always_comb begin
 
