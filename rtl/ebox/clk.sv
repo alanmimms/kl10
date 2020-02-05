@@ -2,6 +2,10 @@
 `include "ebox.svh"
 
 // M8526 CLK
+//
+// HUGE thanks to Rich Alderson of Living Computers Museum for a
+// gorgeous 600 DPI scan of the MP00301 p. 170 in which original scan
+// was obscured in a few places.
 module clk(input clk,
            input CROBAR,
            input EXTERNAL_CLK,
@@ -77,15 +81,10 @@ module clk(input clk,
   assign CLK.RATE_SELECTED = rateSelectorSR[0] | rateSelectorSR[2];
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MR_RESET)
-      rateSelectorSR <= '0;
-    else begin
-
-      if (CLK.RATE_SELECTED) begin
-        rateSelectorSR <= {CLK.RATE_SEL[1], CLK.RATE_SEL[1], CLK.RATE_SEL[0], 1'b0};
-      end else begin
-        rateSelectorSR <= {rateSelectorSR[1:3], 1'b0};
-      end
+    if (~CLK.RATE_SELECTED) begin       // SHIFT 3in (0)
+      rateSelectorSR <= {rateSelectorSR[1:3], 1'b0};
+    end else begin                      // LOAD
+      rateSelectorSR <= {CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0};
     end
   end
 
@@ -93,8 +92,8 @@ module clk(input clk,
   always @(posedge CLK.GATED) begin
 
     if (CLK.FUNC_CLR_RESET) begin
-      CLK.SBUS_CLK <= 0;
-      ebusClkIn <= 0;
+      CLK.SBUS_CLK <= '0;
+      ebusClkIn <= '0;
     end else begin
       CLK.SBUS_CLK <= ebusClkIn;
       ebusClkIn <= CLK.SBUS_CLK;
@@ -104,7 +103,7 @@ module clk(input clk,
   always @(posedge CLK.EBUS_CLK_SOURCE) begin
 
     if (CLK.FUNC_CLR_RESET) begin
-      CLK.EBUS_CLK <= 0;
+      CLK.EBUS_CLK <= '0;
     end else begin
       CLK.EBUS_CLK <= ebusClkIn;
     end
@@ -113,20 +112,15 @@ module clk(input clk,
   logic [0:3] gatedSR;
   always @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MR_RESET)
-      gatedSR <= '0;
-    else begin
-
-      case ({CLK.FUNC_GATE, ~(CLK.FUNC_GATE | CLK.RATE_SELECTED)})
-      default: gatedSR <= gatedSR;
-      2'b01: gatedSR <= {gatedSR[1:3], CROBAR};
-      2'b10: gatedSR <= {1'b0, gatedSR[0:2]};
-      3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,
-                         CLK.FUNC_EBOX_SS,
-                         ~(CLK.FUNC_EBOX_SS & ~CLK.SYNC),
-                         CLK.FUNC_EBOX_SS};
-      endcase
-    end
+    case ({CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED})
+    default: gatedSR <= gatedSR;
+    2'b01: gatedSR <= {gatedSR[1:3], CROBAR};
+    2'b10: gatedSR <= {1'b0, gatedSR[0:2]};
+    3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,
+                       CLK.FUNC_EBOX_SS,
+                       CLK.FUNC_EBOX_SS & ~CLK.SYNC,
+                       CLK.FUNC_EBOX_SS};
+    endcase
   end
 
   assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
@@ -143,30 +137,24 @@ module clk(input clk,
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MR_RESET) begin
-      e64SR <= 0;
-      e60FF <= 0;
+    if (CLK.MHZ16_FREE) begin
+      e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
     end else begin
-
-      if (CLK.MHZ16_FREE) begin
-        e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
-      end else begin
-        e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
-      end
-
-      e60FF <= {~e64SR[0], e64SR[1:3]};
+      e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
     end
+
+    e60FF <= {~e64SR[0], e64SR[1:3]};
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
   always @(posedge CLK.FUNC_CLR_RESET, posedge CROBAR, negedge CLK.FUNC_SET_RESET) begin
 
     if (CLK.FUNC_CLR_RESET) begin
-      CLK.MR_RESET <= 0;
+      CLK.MR_RESET <= '0;
     end else if (CROBAR) begin
-      CLK.MR_RESET <= 1;
+      CLK.MR_RESET <= '1;
     end else if (~CLK.FUNC_SET_RESET) begin
-      CLK.MR_RESET <= 1;
+      CLK.MR_RESET <= '1;
     end
   end
 
@@ -175,22 +163,22 @@ module clk(input clk,
     CLK.PT_WR <= CLK.EBOX_CLK & APR.PT_WR;
   end
 
-  logic [3:0] e52Counter;
-  logic e52Carry;
-  assign CLK.EBUS_RESET = e52Counter[3];
+  logic [0:3] e52Counter;
+  logic e52COUT;
+  assign CLK.EBUS_RESET = e52Counter[0];
   always @(posedge CLK.MHZ16_FREE) begin
     
-    if (e52Carry | CROBAR | CON.CONO_200000) begin
+    if (e52COUT | CROBAR | CON.CONO_200000) begin
 
       if (&e52Counter) begin
-        e52Carry <= 1;
-        e52Counter <= 0;
+        e52COUT <= '1;
+        e52Counter <= '0;
       end else begin
-        e52Counter <= e52Counter + 1;
+        e52Counter <= e52Counter - 1;
       end
     end else begin
-      e52Counter <= 0;
-      e52Carry <= 0;
+      e52Counter <= '0;
+      e52COUT <= '0;
     end
   end
 
@@ -198,54 +186,29 @@ module clk(input clk,
   assign {CLK.GO, CLK.BURST, CLK.EBOX_SS} = e37SR;
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MR_RESET)
-      e37SR <= '0;
-    else begin
-
-      if (CLK.FUNC_GATE | CROBAR) begin
-        e37SR <= {CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS};
-      end else begin
-        e37SR <= e37SR;
-      end
+    if (CLK.FUNC_GATE | CROBAR) begin
+      e37SR <= {CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS};
+    end else begin
+      e37SR <= e37SR;
     end
   end
 
-  always_comb begin
-
-    if (CLK.FUNC_GATE && CTL.DIAG_CTL_FUNC_00x) begin
-      if (DIAG[4:6] === 3'b001) CLK.FUNC_START = '1;
-      if (DIAG[4:6] === 3'b010) CLK.FUNC_SINGLE_STEP = '1;
-      if (DIAG[4:6] === 3'b011) CLK.FUNC_EBOX_SS = '1;
-      if (DIAG[4:6] === 3'b100) CLK.FUNC_COND_SS = '1;
-      if (DIAG[4:6] === 3'b101) CLK.FUNC_BURST = '1;
-      if (DIAG[4:6] === 3'b110) CLK.FUNC_CLR_RESET = '1;
-      if (DIAG[4:6] === 3'b111) CLK.FUNC_SET_RESET = '1;
-    end else begin
-      CLK.FUNC_START = '0;
-      CLK.FUNC_SINGLE_STEP = '0;
-      CLK.FUNC_EBOX_SS = '0;
-      CLK.FUNC_COND_SS = '0;
-      CLK.FUNC_BURST = '0;
-      CLK.FUNC_CLR_RESET = '0;
-      CLK.FUNC_SET_RESET = '0;
-    end
-    
-    if (CLK.FUNC_GATE && CTL.DIAG_LD_FUNC_04x) begin
-      if (DIAG[4:6] === 3'b010) CLK.FUNC_042 = '1;
-      if (DIAG[4:6] === 3'b011) CLK.FUNC_043 = '1;
-      if (DIAG[4:6] === 3'b100) CLK.FUNC_044 = CROBAR;
-      if (DIAG[4:6] === 3'b101) CLK.FUNC_045 = CROBAR;
-      if (DIAG[4:6] === 3'b110) CLK.FUNC_046 = CROBAR;
-      if (DIAG[4:6] === 3'b111) CLK.FUNC_047 = CROBAR;
-    end else begin
-      CLK.FUNC_042 = '0;
-      CLK.FUNC_043 = '0;
-      CLK.FUNC_044 = '0;
-      CLK.FUNC_045 = '0;
-      CLK.FUNC_046 = '0;
-      CLK.FUNC_047 = '0;
-    end
-  end
+  logic e47xx;
+  decoder e47Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x),
+                     .sel(DIAG[4:6]),
+                     .q({e47xx, CLK.FUNC_START, CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS,
+                         CLK.FUNC_COND_SS, CLK.FUNC_BURST, CLK.FUNC_CLR_RESET,
+                         CLK.FUNC_SET_RESET}));
+  logic [0:7] e50out;
+  assign CLK.FUNC_042 = e50out[2];
+  assign CLK.FUNC_043 = e50out[3];
+  assign CLK.FUNC_044 = CROBAR | e50out[4];
+  assign CLK.FUNC_045 = CROBAR | e50out[5];
+  assign CLK.FUNC_046 = CROBAR | e50out[6];
+  assign CLK.FUNC_047 = CROBAR | e50out[7];
+  decoder e50Decoder(.en(CLK_FUNC_GATE & CLK_DIAG_LD_FUNC_04x),
+                     .sel(DIAG[4:6]),
+                     .q(e50out));
 
   // CLK3 p.170
   logic [0:5] e58FF;
@@ -264,30 +227,28 @@ module clk(input clk,
               ~APR.FM_ODD_PARITY & CLK.FM_PAR_CHECK,
               CLK.EBOX_SRC_EN,
               ~CLK.ERROR_HOLD,
-              1'b0};               // XXX this is obscured in schematics p.170
+              CLK.ERROR_HOLD};
 
     e45FF4 <= CLK.ERROR_HOLD_B;
     e45FF13 <= CLK.ERROR_HOLD_A;
     e45FF14 <= CLK.ERROR_HOLD_B;
   end
 
-  logic [3:0] e25Counter, e25Carry;
+  logic [3:0] e25Counter;
+  logic e25COUT;
   always_ff @(posedge CLK.MBOX_CLK) begin
 
     if (CLK.EBOX_CLK_EN) begin
 
       if (&e25Counter) begin
-        e25Carry <= 1;
-        e25Counter <= 0;
+        e25COUT <= '1;
+        e25Counter <= '0;
       end else begin
-        e25Counter <= e25Counter + 1;
+        e25Counter <= e25Counter - 1;
       end
-    end else if (CROBAR) begin      // XXX GUESSING...
-      e25Carry <= 0;
-      e25Counter <= 0;
     end else begin
-      e25Counter <= 0;
-      e25Carry <= 0;
+      e25Counter <= '0;
+      e25COUT <= '0;
     end
   end
 
@@ -296,16 +257,16 @@ module clk(input clk,
 
     if (CLK.SYNC_HOLD) begin
 
-      case ({|e25Counter[3:2], e25Counter[1], e25Counter[0]})
+      case ({|e25Counter[3:2], e25Counter[1:0]})
       default: e31B = '0;
       3'b000: e31B = ~(~CRAM._TIME[0] & ~CRAM._TIME[1]);
       3'b001: e31B = ~CRAM._TIME[0];
       3'b010: e31B = ~CRAM._TIME[1];
       3'b011: e31B = ~CON.DELAY_REQ;
-      3'b100: e31B = e25Carry;
-      3'b101: e31B = e25Carry;
-      3'b110: e31B = e25Carry;
-      3'b111: e31B = e25Carry;
+      3'b100: e31B = e25COUT;
+      3'b101: e31B = e25COUT;
+      3'b110: e31B = e25COUT;
+      3'b111: e31B = e25COUT;
       endcase
     end else begin
       e31B = '0;
@@ -314,11 +275,12 @@ module clk(input clk,
     CLK.SYNC_EN = CLK.EBOX_SS & ~CLK.EBOX_CLK_EN | e31B & ~CLK.EBOX_CLK_EN;
   end
 
+  logic [0:1] e10FF;            // D0..D4 merged into one
+  assign CLK.EBOX_SYNC = e10FF[0];
+  assign CLK.SYNC = |e10FF;
+
   always_ff @(posedge CLK.MBOX_CLK) begin
-    CLK.EBOX_SYNC <= CLK.SYNC_EN;
-    CLK.SYNC <= CLK.SYNC_EN;
-    // XXX There is a sixth output signal that is obscured on p.170. WHAT IS IT?
-    // Its D5 input appears to be CLK.SYNC_EN, but what is Q5 tied to?
+    e10FF <= {CLK.SYNC_EN, ~CLK.SYNC_EN};
   end
 
 
@@ -330,38 +292,31 @@ module clk(input clk,
 
   assign CLK.CRM = e12SR[0];
   assign CLK.CRA = e12SR[0];
-
   assign CLK.EDP = CTL.DIAG_CLK_EDP | e12SR[1];
-
   assign CLK.APR = e12SR[2];
   assign CLK.CON = e12SR[2];
   assign CLK.VMA = e12SR[2];
   assign CLK.MCL = e12SR[2];
   assign CLK.IR  = e12SR[2];
   assign CLK.SCD = e12SR[2];
-
   assign CLK.EBOX_SOURCE = e12SR[3];
+
   logic holdAB;
   assign holdAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
 
   always_ff @(posedge CLK.ODD) begin
-
-    if (CLK.MR_RESET)
-      e12SR <= '0;
-    else begin
-      
-      if (CLK.PAGE_FAIL && CLK.PF_DLYD) begin // HOLD
-        e12SR <= e12SR;
-      end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
-        e12SR <= {e12SR[1:3], 1'b0};
-      end else if (CLK.PF_DLYD) begin     // Shift down from 0in
-        e12SR <= {CLK.PF_DLYD, e12SR[0:2]};
-      end else begin                      // LOAD
-        e12SR <= {CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CRM_DIS,
-                  CLK.SYNC & e17out & holdAB & ~CLK.EBOX_EDP_DIS,
-                  CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CTL_DIS,
-                  CLK.EBOX_SRC_EN};
-      end
+    
+    if (CLK.PAGE_FAIL && CLK.PF_DLYD) begin // HOLD
+      e12SR <= e12SR;
+    end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
+      e12SR <= {e12SR[1:3], 1'b0};
+    end else if (CLK.PF_DLYD) begin     // Shift down from 0in
+      e12SR <= {CLK.PF_DLYD, e12SR[0:2]};
+    end else begin                      // LOAD
+      e12SR <= {CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CRM_DIS,
+                CLK.SYNC & e17out & holdAB & ~CLK.EBOX_EDP_DIS,
+                CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CTL_DIS,
+                CLK.EBOX_SRC_EN};
     end
   end
 
@@ -492,13 +447,13 @@ module clk(input clk,
     // LSB
     if (CLK.FUNC_042) begin // LOAD 042
       burstLSB <= EBUS.data[32:35];
-      burstLSBcarry <= 0;
+      burstLSBcarry <= '0;
     end else if (CLK.BURST || CLK.RATE_SELECTED || CLK.FUNC_042) begin
       burstLSBcarry <= burstLSB === 4'b1111; // INCREMENT
       if (~burstCounterEQ0) burstLSB <= burstLSB + 4'b0001;
     end else begin                   // HOLD
       burstLSB <= burstLSB;
-      burstLSBcarry <= 0;
+      burstLSBcarry <= '0;
     end
 
     // MSB

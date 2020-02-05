@@ -7,10 +7,8 @@ module decoder
    output logic [0:N-1] q);
 
   always_comb begin
-    if (en) begin
-      q[sel] = '1;
-    end else
-      q = '0;
+    q = '0;
+    if (en) q[sel] = 1'b1;
   end
 endmodule
 
