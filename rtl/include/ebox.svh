@@ -697,6 +697,26 @@ interface iCLK;
   logic IR;
   logic SCD;
 
+  logic MBOX;
+  logic CCL;
+  logic CRC;
+  logic CHC;
+  logic MB_06;
+  logic MB_12;
+  logic CCW;
+  logic MB_00;
+  logic MBC;
+  logic MBX;
+  logic MBZ;
+  logic MBOX_13;
+  logic MBOX_14;
+  logic MTR;
+  logic CLK_OUT;
+  logic PI;
+  logic PMA;
+  logic CHX;
+  logic CSH;
+
   logic [0:1] SOURCE_SEL;
   logic [0:1] RATE_SEL;
 

@@ -1,5 +1,11 @@
-// PROBLEM: CLK.GATED_EN is false because CLK.GO & CLK.RATE_SELECTED are both 0.
+// PROBLEM: CLK.FUNC_GATE remains true forever, causing CLK.GO to go
+// low after a few clocks.
 
+// MISSING: CLK.CLK and CLK.CLK_DELAYED middle of CLK2 p.168. These
+// seem to relate to clock signals routed to far points in backplane
+// and back again per EK-EBUS-UD.
+
+// PROBLEM: CLK.GATED_EN is false because CLK.GO & CLK.RATE_SELECTED are both 0.
 `timescale 1ns/1ns
 `include "ebox.svh"
 
@@ -38,6 +44,7 @@ module clk(input clk,
   logic DIAG_READ;
   logic MBOX_RESP_SIM;
   logic AR_ARX_PAR_CHECK;
+  logic DIAG_CHANNEL_CLK_STOP = '0; // XXX used on CLK1. ??? where is this driven?
 
   logic [0:7] burstCounter;
   logic burstCounterEQ0;
@@ -84,8 +91,28 @@ module clk(input clk,
     latchedGatedEn <= CLK.GATED_EN;
   end
 
-  assign CLK.MBOX_CLK = CLK.CLK_ON;
+  assign CLK.MBOX = CLK.CLK_ON;
   assign CLK.ODD = CLK.CLK_ON;
+
+  assign CLK.CCL = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CRC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CHC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.MB_06 = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.MB_12 = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CCW = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
+
+  assign CLK.MB_00 = CLK.MBOX;
+  assign CLK.MBC = CLK.MBOX;
+  assign CLK.MBX = CLK.MBOX;
+  assign CLK.MBZ = CLK.MBOX;
+  assign CLK.MBOX_13 = CLK.MBOX;
+  assign CLK.MBOX_14 = CLK.MBOX;
+  assign CLK.MTR = CLK.MBOX;
+  assign CLK.CLK_OUT = CLK.MBOX;
+  assign CLK.PI = CLK.MBOX;
+  assign CLK.PMA = CLK.MBOX;
+  assign CLK.CHX = CLK.MBOX;
+  assign CLK.CSH = CLK.MBOX;
 
   logic [0:3] rateSelectorSR;
   assign CLK.RATE_SELECTED = rateSelectorSR[0] | rateSelectorSR[2];
@@ -119,14 +146,14 @@ module clk(input clk,
     end
   end
 
-  logic [0:3] gatedSR;
+  logic [0:3] gatedSR;          // E42 CLK1
   always @(posedge CLK.MAIN_SOURCE) begin
 
     case ({CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED})
-    default: gatedSR <= gatedSR;
-    2'b01: gatedSR <= {gatedSR[1:3], CROBAR};
-    2'b10: gatedSR <= {1'b0, gatedSR[0:2]};
-    3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,
+    default: gatedSR <= gatedSR;              // HOLD
+    2'b01: gatedSR <= {gatedSR[1:3], CROBAR}; // SHIFT 3in
+    2'b10: gatedSR <= {1'b0, gatedSR[0:2]};   // SHIFT 0in
+    3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,  // LOAD
                        CLK.FUNC_EBOX_SS,
                        CLK.FUNC_EBOX_SS & ~CLK.SYNC,
                        CLK.FUNC_EBOX_SS};
@@ -147,12 +174,14 @@ module clk(input clk,
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MHZ16_FREE) begin
+    if (CLK.MHZ16_FREE) begin   // LOAD
       e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
-    end else begin
-      e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
+    end else begin              // SHIFT 3in
+      e64SR <= {e64SR[1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
     end
 
+    // XXX this might need inversion on e64SR[0] - debugging
+    // CLK.FUNC_GATE issue.
     e60FF <= {e64SR[0], e64SR[1:3]};
   end
 
@@ -178,10 +207,19 @@ module clk(input clk,
   assign CLK.EBUS_RESET = e52Counter[0];
   always @(posedge CLK.MHZ16_FREE) begin
     
-    if (FPGA_RESET) begin
+    // I cannot see clearly how this would have worked as shown in the
+    // schematic, which shows the CRY OUT signal as active low on E52
+    // 10136 and has an inverting slash on the wire leading to the OR
+    // gate. This SHOULD mean e52COUT has no effect other than to keep
+    // on decrementing. But EK-EBOX-UD-004 p.225 Figure 3-8 NOTE says
+    // the CARRY OUT disables the -1 functions and loads 0's into the
+    // counter. So I changed the code to match this description and
+    // now it seems to do precisely what the NOTE says it should --
+    // and that seems right to me too.
+    if (FPGA_RESET || e52COUT) begin
       e52Counter <= '0;
       e52COUT <= '0;
-    end else if (e52COUT | CROBAR | CON.CONO_200000) begin
+    end else if(CROBAR | CON.CONO_200000) begin
 
       if (|e52Counter == '0) begin
         e52COUT <= '1;
@@ -192,10 +230,13 @@ module clk(input clk,
     end
   end
 
-  always_ff @(posedge CLK.MAIN_SOURCE iff CLK.FUNC_GATE | CROBAR) begin
-    CLK.GO <= CLK.FUNC_START;
-    CLK.BURST <= CLK.FUNC_BURST;
-    CLK.EBOX_SS <= CLK.FUNC_EBOX_SS;
+  always_ff @(posedge CLK.MAIN_SOURCE) begin
+
+    if (CLK.FUNC_GATE | CROBAR) begin
+      CLK.GO <= CLK.FUNC_START;
+      CLK.BURST <= CLK.FUNC_BURST;
+      CLK.EBOX_SS <= CLK.FUNC_EBOX_SS;
+    end
   end
 
   logic e47xx;
@@ -310,12 +351,12 @@ module clk(input clk,
 
   always_ff @(posedge CLK.ODD) begin
     
-    if (CLK.PAGE_FAIL && CLK.PF_DLYD) begin // HOLD
+    if (CLK.PAGE_FAIL && CLK.PF_DLYD_A) begin // HOLD
       e12SR <= e12SR;
     end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
       e12SR <= {e12SR[1:3], 1'b0};
-    end else if (CLK.PF_DLYD) begin     // Shift down from 0in
-      e12SR <= {CLK.PF_DLYD, e12SR[0:2]};
+    end else if (CLK.PF_DLYD_A) begin   // Shift down from 0in
+      e12SR <= {CLK.PF_DLYD_A, e12SR[0:2]};
     end else begin                      // LOAD
       e12SR <= {CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CRM_DIS,
                 CLK.SYNC & e17out & holdAB & ~CLK.EBOX_EDP_DIS,
