@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="416666fs"></ZoomStartTime>
-      <ZoomEndTime time="2916667fs"></ZoomEndTime>
-      <Cursor1Time time="2500000fs"></Cursor1Time>
+      <ZoomStartTime time="315667fs"></ZoomStartTime>
+      <ZoomEndTime time="613668fs"></ZoomEndTime>
+      <Cursor1Time time="732667fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="146"></NameColumnWidth>
+      <NameColumnWidth column_width="142"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="34" />
+   <WVObjectSize size="35" />
    <wave_markers>
       <marker label="" time="1935000" />
    </wave_markers>
@@ -84,6 +84,10 @@
       <obj_property name="ElementShortName">gatedSR[0:3]</obj_property>
       <obj_property name="ObjectShortName">gatedSR[0:3]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ERROR_STOP">
+      <obj_property name="ElementShortName">ERROR_STOP</obj_property>
+      <obj_property name="ObjectShortName">ERROR_STOP</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ODD">
       <obj_property name="ElementShortName">ODD</obj_property>

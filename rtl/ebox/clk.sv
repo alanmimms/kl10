@@ -1,3 +1,5 @@
+// PROBLEM: CLK.GATED_EN is false because CLK.GO & CLK.RATE_SELECTED are both 0.
+
 `timescale 1ns/1ns
 `include "ebox.svh"
 
@@ -12,14 +14,20 @@ module clk(input clk,
            input clk30,
            input clk31,
 
+           iAPR APR,
            iCLK CLK,
            iCON CON,
+           iCRAM CRAM,
+           iCRM CRM,
            iCSH CSH,
            iCTL CTL,
            iEDP EDP,
            iIR IR,
+           iMCL MCL,
            iPAG PAG,
+           iSCD SCD,
            iSHM SHM,
+           iVMA VMA,
 
            iEBUS EBUS
            );
@@ -54,8 +62,9 @@ module clk(input clk,
 
     case ({CROBAR, CLK.SOURCE_SEL})
     default:CLK.MAIN_SOURCE = clk30;
-    3'b0X1: CLK.MAIN_SOURCE = clk31;
+    3'b001: CLK.MAIN_SOURCE = clk31;
     3'b010: CLK.MAIN_SOURCE = EXTERNAL_CLK;
+    3'b011: CLK.MAIN_SOURCE = clk31;
     endcase
 
     CLK.ERROR_STOP = CLK.FS_ERROR & ~CLK.CLK_ON & CLK.ERR_STOP_EN |
@@ -147,13 +156,13 @@ module clk(input clk,
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
-  always @(posedge CLK.FUNC_CLR_RESET, posedge CROBAR, negedge CLK.FUNC_SET_RESET) begin
+  always @(posedge CLK.MHZ16_FREE) begin // Changed from async set/reset to synchronous
 
     if (CLK.FUNC_CLR_RESET) begin
       CLK.MR_RESET <= '0;
     end else if (CROBAR) begin
       CLK.MR_RESET <= '1;
-    end else if (~CLK.FUNC_SET_RESET) begin
+    end else if (CLK.FUNC_SET_RESET) begin
       CLK.MR_RESET <= '1;
     end
   end
@@ -202,11 +211,11 @@ module clk(input clk,
   logic [0:7] e50out;
   assign CLK.FUNC_042 = e50out[2];
   assign CLK.FUNC_043 = e50out[3];
-  assign CLK.FUNC_044 = CROBAR | e50out[4];
-  assign CLK.FUNC_045 = CROBAR | e50out[5];
-  assign CLK.FUNC_046 = CROBAR | e50out[6];
-  assign CLK.FUNC_047 = CROBAR | e50out[7];
-  decoder e50Decoder(.en(CLK_FUNC_GATE & CLK_DIAG_LD_FUNC_04x),
+  assign CLK.FUNC_044 = e50out[4] | CROBAR;
+  assign CLK.FUNC_045 = e50out[5] | CROBAR;
+  assign CLK.FUNC_046 = e50out[6] | CROBAR;
+  assign CLK.FUNC_047 = e50out[7] | CROBAR;
+  decoder e50Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_LD_FUNC_04x),
                      .sel(DIAG[4:6]),
                      .q(e50out));
 
@@ -258,7 +267,6 @@ module clk(input clk,
     if (CLK.SYNC_HOLD) begin
 
       case ({|e25Counter[3:2], e25Counter[1:0]})
-      default: e31B = '0;
       3'b000: e31B = ~(~CRAM._TIME[0] & ~CRAM._TIME[1]);
       3'b001: e31B = ~CRAM._TIME[0];
       3'b010: e31B = ~CRAM._TIME[1];
@@ -372,19 +380,18 @@ module clk(input clk,
   logic e38out6;
   assign e7out7 = CLK.EBOX_SOURCE | CLK.PF_DLYD_B | CLK.INSTR_1777;
   assign e38out6 = ~APR.APR_PAR_CHK_EN | ~AR_ARX_PAR_CHECK | e7out7;
-  always_comb begin
-    CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |
-                    ~SHM.AR_PAR_ODD & CON.AR_LOADED & e38out6 |
-                    ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & e38out6 |
-                    CRAM.MEM[2] & CLK.PAGE_FAIL_EN & e7out7;
-    CLK.EBOX_CYC_ABORT = CLK.PAGE_FAIL | CLK.PF_DLYD_B;
-  end
+  assign CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |
+                         ~SHM.AR_PAR_ODD & CON.AR_LOADED & e38out6 |
+                         ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & e38out6 |
+                         CRAM.MEM[2] & CLK.PAGE_FAIL_EN & e7out7;
+  assign CLK.EBOX_CYC_ABORT = CLK.PAGE_FAIL | CLK.PF_DLYD_B;
 
   // CLK5 p.172
   always_comb begin
 
     if (CLK_DIAG_READ) begin
       CLK.EBUSdriver.driving = '1;
+      CLK.EBUSdriver.data = '0;
 
       case (DIAG[4:6])
       3'b000: CLK.EBUSdriver.data = {CLK.EBUS_CLK,
@@ -431,6 +438,7 @@ module clk(input clk,
                                      ~CLK.ERR_STOP_EN};
       endcase
     end else begin
+      CLK.EBUSdriver.driving = '0;
       CLK.EBUSdriver.data[30:35] = 'z;
     end
   end
@@ -440,7 +448,7 @@ module clk(input clk,
   logic burstLSBcarry;
 
   assign burstCounter = {burstMSB, burstLSB};
-  assign burstCounterEQ0 = burstCounter === 8'b0;
+  assign burstCounterEQ0 = burstCounter == 8'b0;
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
@@ -449,7 +457,7 @@ module clk(input clk,
       burstLSB <= EBUS.data[32:35];
       burstLSBcarry <= '0;
     end else if (CLK.BURST || CLK.RATE_SELECTED || CLK.FUNC_042) begin
-      burstLSBcarry <= burstLSB === 4'b1111; // INCREMENT
+      burstLSBcarry <= burstLSB == 4'b1111; // INCREMENT
       if (~burstCounterEQ0) burstLSB <= burstLSB + 4'b0001;
     end else begin                   // HOLD
       burstLSB <= burstLSB;

@@ -34,7 +34,6 @@ module ctl(iAPR APR,
   logic DIAG_MEM_RESET;
   logic CTL_READ_STROBE;
 
-  logic DIAG_CONTROL_FUNC_01x;
   logic DIAG_LOAD_FUNC_05x;
   logic DIAG_LOAD_FUNC_070;
   logic DIAG_LOAD_FUNC_071;
@@ -52,31 +51,31 @@ module ctl(iAPR APR,
 
   // p.364: Decode all the things.
   // Dispatches
-  assign CTL_DISP_AREAD = CRAM.DISP === dispDRAM_A_RD;
-  assign CTL_DISP_RETURN = CRAM.DISP === dispRETURN;
-  assign CTL.DISP_NICOND = CRAM.DISP === dispNICOND;
-  assign CTL_DISP_MUL = CRAM.DISP === dispMUL;
-  assign CTL_DISP_DIV = CRAM.DISP === dispDIV;
-  assign CTL_DISP_NORM = CRAM.DISP === dispNORM;
-  assign CTL_DISP_EA_MOD = CRAM.DISP === dispEA_MOD;
+  assign CTL_DISP_AREAD = CRAM.DISP == dispDRAM_A_RD;
+  assign CTL_DISP_RETURN = CRAM.DISP == dispRETURN;
+  assign CTL.DISP_NICOND = CRAM.DISP == dispNICOND;
+  assign CTL_DISP_MUL = CRAM.DISP == dispMUL;
+  assign CTL_DISP_DIV = CRAM.DISP == dispDIV;
+  assign CTL_DISP_NORM = CRAM.DISP == dispNORM;
+  assign CTL_DISP_EA_MOD = CRAM.DISP == dispEA_MOD;
   
   // Special functions
-  assign CTL.SPEC_INH_CRY_18 = SPEC === specINH_CRY18;
-  assign CTL.SPEC_MQ_SHIFT = SPEC === specMQ_SHIFT;
-  assign CTL.SPEC_SCM_ALT = SPEC === specSCM_ALT;
-  assign CTL.SPEC_CLR_FPD = SPEC === specCLR_FPD;
-  assign CTL.SPEC_LOAD_PC = SPEC === specLOAD_PC;
-  assign CTL.SPEC_XCRY_AR0 = SPEC === specXCRY_AR0;
-  assign CTL.SPEC_GEN_CRY_18 = SPEC === specGEN_CRY18;
-  assign CTL.SPEC_STACK_UPDATE = SPEC === specSTACK_UPDATE;
-  assign CTL.SPEC_ARL_IND = SPEC === specARL_IND;
-  assign CTL.SPEC_FLAG_CTL = SPEC === specFLAG_CTL;
-  assign CTL.SPEC_SAVE_FLAGS = SPEC === specSAVE_FLAGS;
-  assign CTL.SPEC_SP_MEM_CYCLE = SPEC === specSP_MEM_CYCLE;
-  assign CTL.SPEC_AD_LONG = SPEC === specAD_LONG;
+  assign CTL.SPEC_INH_CRY_18 = SPEC == specINH_CRY18;
+  assign CTL.SPEC_MQ_SHIFT = SPEC == specMQ_SHIFT;
+  assign CTL.SPEC_SCM_ALT = SPEC == specSCM_ALT;
+  assign CTL.SPEC_CLR_FPD = SPEC == specCLR_FPD;
+  assign CTL.SPEC_LOAD_PC = SPEC == specLOAD_PC;
+  assign CTL.SPEC_XCRY_AR0 = SPEC == specXCRY_AR0;
+  assign CTL.SPEC_GEN_CRY_18 = SPEC == specGEN_CRY18;
+  assign CTL.SPEC_STACK_UPDATE = SPEC == specSTACK_UPDATE;
+  assign CTL.SPEC_ARL_IND = SPEC == specARL_IND;
+  assign CTL.SPEC_FLAG_CTL = SPEC == specFLAG_CTL;
+  assign CTL.SPEC_SAVE_FLAGS = SPEC == specSAVE_FLAGS;
+  assign CTL.SPEC_SP_MEM_CYCLE = SPEC == specSP_MEM_CYCLE;
+  assign CTL.SPEC_AD_LONG = SPEC == specAD_LONG;
 
   // This one is internal because of reclock with APR_CLK below.
-  assign SPEC_MTR_CTL = SPEC === specMTR_CTL;
+  assign SPEC_MTR_CTL = SPEC == specMTR_CTL;
 
   // EBUS
   always_comb begin
@@ -217,13 +216,13 @@ module ctl(iAPR APR,
     CTL.EBUS_XFER = CRAM.AR[0] & APR.CONO_OR_DATAO & ~(CRAM.AR[1] & CRAM.AR[2]);
     CTL_36_BIT_EA = CTL_DISP_AREAD & CTL.AR00to11_CLR;
 
-    CTL.COND_ARLL_LOAD = CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b001);
-    CTL.COND_ARLR_LOAD = CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b010);
-    CTL.COND_ARR_LOAD =  CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b011);
-    CTL.COND_AR_CLR =    CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b100);
-    CTL.COND_ARX_CLR =   CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b101);
-    CTL_COND_ARL_IND =   CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b110);
-    CTL_COND_REG_CTL =   CON.COND_EN_00_07 & (CRAM.COND[3:5] === 3'b111);
+    CTL.COND_ARLL_LOAD = CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b001);
+    CTL.COND_ARLR_LOAD = CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b010);
+    CTL.COND_ARR_LOAD =  CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b011);
+    CTL.COND_AR_CLR =    CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b100);
+    CTL.COND_ARX_CLR =   CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b101);
+    CTL_COND_ARL_IND =   CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b110);
+    CTL_COND_REG_CTL =   CON.COND_EN_00_07 & (CRAM.COND[3:5] == 3'b111);
 
     respMBOXorSIM = CLK.RESP_MBOX | CLK.RESP_SIM;
     diagLoadARorInd = CTL.ARL_IND | CTL.DIAG_AR_LOAD;
@@ -250,31 +249,31 @@ module ctl(iAPR APR,
   assign CTL.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
   assign CTL.DIAG_STROBE = EBUS.diagStrobe;
   always_comb begin
-    CTL.DIAG_CTL_FUNC_00x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b000;
-    DIAG_CONTROL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b010;
-    CTL.DIAG_LD_FUNC_04x   = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b100;
-    DIAG_LOAD_FUNC_05x     = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b101;
-    CTL.DIAG_LOAD_FUNC_06x = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b110;
-    CTL.DIAG_LOAD_FUNC_07x = NOTds00AndDiagStrobe && EBUS.ds[1:3] === 3'b111;
+    CTL.DIAG_CTL_FUNC_00x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b000;
+    CTL.DIAG_CTL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b010;
+    CTL.DIAG_LD_FUNC_04x   = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b100;
+    DIAG_LOAD_FUNC_05x     = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b101;
+    CTL.DIAG_LOAD_FUNC_06x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b110;
+    CTL.DIAG_LOAD_FUNC_07x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b111;
 
-    DIAG_LOAD_FUNC_070     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b000;
-    DIAG_LOAD_FUNC_071     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b001;
-    CTL.DIAG_LOAD_FUNC_072 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b010;
-    CTL.DIAG_LD_FUNC_073   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b011;
-    CTL.DIAG_LD_FUNC_074   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b100;
-    CTL.DIAG_SYNC_FUNC_075 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b101;
-    CTL.DIAG_LD_FUNC_076   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b110;
-    CTL.DIAG_CLK_EDP       = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] === 3'b111;
+    DIAG_LOAD_FUNC_070     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b000;
+    DIAG_LOAD_FUNC_071     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b001;
+    CTL.DIAG_LOAD_FUNC_072 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b010;
+    CTL.DIAG_LD_FUNC_073   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b011;
+    CTL.DIAG_LD_FUNC_074   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b100;
+    CTL.DIAG_SYNC_FUNC_075 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b101;
+    CTL.DIAG_LD_FUNC_076   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b110;
+    CTL.DIAG_CLK_EDP       = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b111;
 
     en1xx = CTL_DS[0] & CTL_READ_STROBE;
-    EDP.DIAG_READ_FUNC_10x = en1xx && CTL_DS[1:3] === 3'b000;
-    CTL.DIAG_READ_FUNC_11x = en1xx && CTL_DS[1:3] === 3'b001;
-    CTL.DIAG_READ_FUNC_12x = en1xx && CTL_DS[1:3] === 3'b010;
-    CTL.DIAG_READ_FUNC_13x = en1xx && CTL_DS[1:3] === 3'b011;
-    CTL.DIAG_READ_FUNC_14x = en1xx && CTL_DS[1:3] === 3'b100;
-    DIAG_READ_FUNC_15x     = en1xx && CTL_DS[1:3] === 3'b101;
-    DIAG_READ_FUNC_16x     = en1xx && CTL_DS[1:3] === 3'b110;
-    DIAG_READ_FUNC_17x     = en1xx && CTL_DS[1:3] === 3'b111;
+    EDP.DIAG_READ_FUNC_10x = en1xx && CTL_DS[1:3] == 3'b000;
+    CTL.DIAG_READ_FUNC_11x = en1xx && CTL_DS[1:3] == 3'b001;
+    CTL.DIAG_READ_FUNC_12x = en1xx && CTL_DS[1:3] == 3'b010;
+    CTL.DIAG_READ_FUNC_13x = en1xx && CTL_DS[1:3] == 3'b011;
+    CTL.DIAG_READ_FUNC_14x = en1xx && CTL_DS[1:3] == 3'b100;
+    DIAG_READ_FUNC_15x     = en1xx && CTL_DS[1:3] == 3'b101;
+    DIAG_READ_FUNC_16x     = en1xx && CTL_DS[1:3] == 3'b110;
+    DIAG_READ_FUNC_17x     = en1xx && CTL_DS[1:3] == 3'b111;
 
     CTL.CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
     CTL_READ_STROBE = CTL.CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR.CLK;

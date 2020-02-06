@@ -982,6 +982,7 @@ interface iCTL;
   logic ARX_CLR;
   logic CONSOLE_CONTROL;
   logic DIAG_CTL_FUNC_00x;
+  logic DIAG_CTL_FUNC_01x;
   logic DIAG_LD_FUNC_04x;
   logic DIAG_LOAD_FUNC_06x;
   logic DIAG_LOAD_FUNC_07x;

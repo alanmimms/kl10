@@ -9,16 +9,21 @@
 //
 // In a real KL10PV, M8541 contains the last six bits of CRAM storage.
 // This has been moved to crm.v in a single unified storage module.
-module cra(iCLK CLK,
+module cra(iAPR APR,
+           iCLK CLK,
            iCON CON,
            iCRA CRA,
+           iCRAM CRAM,
+           iCRM CRM,
+           iCSH CSH,
            iCTL CTL,
            iEDP EDP,
            iIR IR,
+           iMCL MCL,
+           iPAG PAG,
+           iSCD SCD,
            iSHM SHM,
-
-           iCRAM CRAM,
-
+           iVMA VMA,
            iEBUS EBUS
 );
 
@@ -45,9 +50,9 @@ module cra(iCLK CLK,
   // they are simple CRAM storage mapping to logical fields.
 
   // Remaining features of E47,E35 are CRAM DISP field decoding.
-  assign dispEn00_03 = CRAM.DISP[0:4] === 5'b00011;
-  assign dispEn00_07 = CRAM.DISP[0:4] === 5'b00111;
-  assign dispEn30_37 = CRAM.DISP[0:4] === 5'b11111;
+  assign dispEn00_03 = CRAM.DISP[0:4] == 5'b00011;
+  assign dispEn00_07 = CRAM.DISP[0:4] == 5'b00111;
+  assign dispEn30_37 = CRAM.DISP[0:4] == 5'b11111;
 
   assign shortIndirWord = ~CON.LONG_EN | EDP.ARX[1];
   assign CALL_FORCE_1777 = CRAM.CALL | CLK.FORCE_1777;
@@ -205,7 +210,7 @@ module cra(iCLK CLK,
     else if (CTL.diaFunc052)
       diagAdr[0:4] = EBUS.data[1:5];
 
-    CRA.AREAD = IR.DRAM_A === 3'b000 ? IR.DRAM_J : 0;
+    CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : 0;
   end
 
   // Diagnostics driving EBUS

@@ -346,14 +346,14 @@ module edp(iAPR APR,
         // this logic. But when N > 0, they wire-OR with other
         // signals. I am resolving this by forcing this logic only for
         // N=0.
-        if (n === 0) begin
+        if (n == 0) begin
           unique case(CRAM.ADB)
           default: ADB[n-2:n-1] = 'x;
           adbFM:   ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
-          adbBRx2: ADB[n-2:n-1] = {2{n === 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
+          adbBRx2: ADB[n-2:n-1] = {2{n == 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
           adbBR:   ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
-          adbARx4: ADB[n-2:n-1] = {n === 0 ? EDP.AR[n+0] : EDP.AR[n+2],
-                                   n === 0 ? EDP.AR[n+1] : EDP.AR[n+2]};
+          adbARx4: ADB[n-2:n-1] = {n == 0 ? EDP.AR[n+0] : EDP.AR[n+2],
+                                   n == 0 ? EDP.AR[n+1] : EDP.AR[n+2]};
           endcase
         end
 
@@ -414,7 +414,7 @@ module edp(iAPR APR,
 
     if (CLK.EBOX_RESET)
       EDP.BRX <= 0;
-    else if (CRAM.BRX === brxARX)
+    else if (CRAM.BRX == brxARX)
       EDP.BRX <= EDP.ARX;
 
 
@@ -423,7 +423,7 @@ module edp(iAPR APR,
 
     if (CLK.EBOX_RESET)
       EDP.BR <= 0;
-    else if (CRAM.BR === brAR)
+    else if (CRAM.BR == brAR)
       EDP.BR <= EDP.AR;
 
 

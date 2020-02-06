@@ -7,7 +7,8 @@
 //
 // In a real KL10PV there are five instances of M8548. This is coded
 // to act as all five slots.
-module crm(iCRA CRA,
+module crm(iCLK CLK,
+           iCRA CRA,
            iCRM CRM
 );
 

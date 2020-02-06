@@ -50,14 +50,14 @@ module ir(iIR IR,
 
   // JRST is 0o254,F
   logic JRST;
-  assign JRST = IR.IR[0:8] === 13'b010_101_100;
-  assign IR.JRST0 = IR.IR[0:12] === 13'b010_101_100_0000;
+  assign JRST = IR.IR[0:8] == 13'b010_101_100;
+  assign IR.JRST0 = IR.IR[0:12] == 13'b010_101_100_0000;
 
   // XXX In addition to the below, this has two mystery OR term
   // signals on each input to the AND that are unlabeled except for
   // backplane references ES2 and ER2. See E66 p.128.
   assign IR.IO_LEGAL = &IR.IR[3:6];
-  assign IR.ACeq0 = IR.IR[9:12] === 4'b0;
+  assign IR.ACeq0 = IR.IR[9:12] == 4'b0;
 
   logic enIO_JRST;
   logic enAC;

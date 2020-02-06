@@ -3,17 +3,19 @@
 `include "mbox.svh"
 
 // M8525 CON
-module con(iCRAM CRAM,
+module con(iAPR APR,
            iCLK CLK,
            iCON CON,
+           iCRAM CRAM,
+           iCRM CRM,
            iCTL CTL,
            iIR IR,
+           iMBZ MBZ,
            iMCL MCL,
+           iMTR MTR,
            iPI PI,
            iSCD SCD,
-           iAPR APR,
-           iMTR MTR,
-           iMBZ MBZ,
+           iVMA VMA,
 
            iEBUS EBUS,
 
@@ -50,11 +52,9 @@ module con(iCRAM CRAM,
   logic CON_LOAD_AR_EN;
   logic CON_PI_DISMISS;
 
-  logic DIAG_CONTROL_FUNC_01x;
   logic CON_DIAG_CLR_RUN;
   logic CON_DIAG_SET_RUN;
   logic CON_DIAG_CONTINUE;
-  logic CON_VM_AC_REF;
   logic CON_MAGIC_FUNC_02x;
   logic CON_LOAD_AC_BLOCKS;
   logic CON_LOAD_PREV_CONTEXT;
@@ -140,7 +140,7 @@ module con(iCRAM CRAM,
                     ~CON.LOAD_SPEC_INSTR,
                     ~CON.VMA_SEL}));
 
-  logic ebus20mux_nothing;
+  logic ebus20mux_nothing = '0;
   mux ebus20mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[20]),
@@ -150,7 +150,7 @@ module con(iCRAM CRAM,
                     CON.EBUS_REL,
                     CON.SR}));
 
-  logic ebus21mux_nothing;
+  logic ebus21mux_nothing = '0;
   mux ebus21mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[21]),
@@ -161,7 +161,7 @@ module con(iCRAM CRAM,
                     CON.NICOND_TRAP_EN,
                     CON.NICOND[7:9]}));
 
-  logic ebus22mux_nothing;
+  logic ebus22mux_nothing = '0;
   mux ebus22mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[22]),
@@ -174,7 +174,7 @@ module con(iCRAM CRAM,
                     CON.LOAD_DRAM,
                     CON.COND_ADR_10}));
 
-  logic [0:1] ebus23mux_nothing;
+  logic [0:1] ebus23mux_nothing = '0;
   mux ebus23mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[23]),
@@ -186,7 +186,7 @@ module con(iCRAM CRAM,
                     CON.UCODE_STATE5,
                     CON.UCODE_STATE7}));
 
-  logic [0:1] ebus24mux_nothing;
+  logic [0:1] ebus24mux_nothing = '0;
   mux ebus24mux(.sel(CTL.DIAG[4:6]),
                 .en(CON_DIAG_READ),
                 .q(EBUS.data[24]),
@@ -249,7 +249,7 @@ module con(iCRAM CRAM,
   end
 
   logic runStateNC1, runStateNC2, runStateNC3;
-  decoder runStateDecoder(.en(DIAG_CONTROL_FUNC_01x),
+  decoder runStateDecoder(.en(CTL.DIAG_CTL_FUNC_01x),
                           .sel(EBUS.ds[4:6]),
                           .q({CON_DIAG_CLR_RUN,
                               CON_DIAG_SET_RUN,
@@ -289,15 +289,15 @@ module con(iCRAM CRAM,
   end
   
   logic [0:2] nicondPriority;
-  priority_encoder nicondEncoder(.d({CON.PI_CYCLE,
-                                     CON.RUN,
-                                     CON_MTR_INT_REQ,
-                                     CON_INT_REQ,
-                                     CON.UCODE_STATE5,
-                                     CON_VM_AC_REF,
-                                     '0,
-                                     CON.PI_CYCLE}),
-                                    .q(nicondPriority));
+  priority_encoder8 nicondEncoder(.d({CON.PI_CYCLE,
+                                      CON.RUN,
+                                      CON_MTR_INT_REQ,
+                                      CON_INT_REQ,
+                                      CON.UCODE_STATE5,
+                                      ~VMA.AC_REF,
+                                      '0,
+                                      CON.PI_CYCLE}),
+                                  .q(nicondPriority));
   always_ff @(posedge conCLK) begin
     CON.NICOND_TRAP_EN <= nicondPriority[0];
     CON.NICOND[7:9] = nicondPriority;
@@ -469,7 +469,7 @@ module con(iCRAM CRAM,
     CON_PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
 
     waitingACStore = MCL.STORE_AR & CON.MBOX_WAIT & VMA.AC_REF;
-    cond345_1s = CRAM.COND[3:5] === 3'b111;
+    cond345_1s = CRAM.COND[3:5] == 3'b111;
     CON.FM_WRITE00_17 = (cond345_1s & CON.COND_EN_10_17) | waitingACStore;
     CON.FM_WRITE18_35 = CON.FM_WRITE00_17;
     CON.FM_WRITE_PAR = ~CLK.SBR_CALL & ~conCLK;
