@@ -9,6 +9,7 @@
 // gorgeous 600 DPI scan of the MP00301 p. 170 in which original scan
 // was obscured in a few places.
 module clk(input clk,
+           input FPGA_RESET,
            input CROBAR,
            input EXTERNAL_CLK,
            input clk30,
@@ -152,7 +153,7 @@ module clk(input clk,
       e64SR <= {e64SR[0:1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
     end
 
-    e60FF <= {~e64SR[0], e64SR[1:3]};
+    e60FF <= {e64SR[0], e64SR[1:3]};
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
@@ -177,29 +178,24 @@ module clk(input clk,
   assign CLK.EBUS_RESET = e52Counter[0];
   always @(posedge CLK.MHZ16_FREE) begin
     
-    if (e52COUT | CROBAR | CON.CONO_200000) begin
+    if (FPGA_RESET) begin
+      e52Counter <= '0;
+      e52COUT <= '0;
+    end else if (e52COUT | CROBAR | CON.CONO_200000) begin
 
-      if (&e52Counter) begin
+      if (|e52Counter == '0) begin
         e52COUT <= '1;
-        e52Counter <= '0;
+        e52Counter <= '1;
       end else begin
         e52Counter <= e52Counter - 1;
       end
-    end else begin
-      e52Counter <= '0;
-      e52COUT <= '0;
     end
   end
 
-  logic [0:2] e37SR;
-  assign {CLK.GO, CLK.BURST, CLK.EBOX_SS} = e37SR;
-  always_ff @(posedge CLK.MAIN_SOURCE) begin
-
-    if (CLK.FUNC_GATE | CROBAR) begin
-      e37SR <= {CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS};
-    end else begin
-      e37SR <= e37SR;
-    end
+  always_ff @(posedge CLK.MAIN_SOURCE iff CLK.FUNC_GATE | CROBAR) begin
+    CLK.GO <= CLK.FUNC_START;
+    CLK.BURST <= CLK.FUNC_BURST;
+    CLK.EBOX_SS <= CLK.FUNC_EBOX_SS;
   end
 
   logic e47xx;

@@ -2,7 +2,8 @@
 `include "ebox.svh"
 
 module top(input clk,
-           input CROBAR
+           input CROBAR,
+           input FPGA_RESET
 );
 
   logic eboxCCA;

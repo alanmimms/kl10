@@ -49,16 +49,34 @@ module kl10pv_tb;
   endtask
 
 
+  // FPGA_RESET resets each module separate from CROBAR mostly for
+  // simulation since it depends on e.g., decrementing counters whose
+  // values are indeterminate to run its startup processes (e.g., CLK
+  // and CROBAR and e52Counter).
+  logic FPGA_RESET;
+  initial begin
+    FPGA_RESET = 1;
+
+    #100 FPGA_RESET = 0;
+  end
+
+  // CROBAR stays asserted for a long time
+  initial begin
+    CROBAR = 1;
+
+    // Release system CROBAR reset
+    repeat(100) @(posedge masterClk) ;
+    CROBAR = 0;
+  end
+  
+
   initial begin                 // Smash RESET on for a few clocks
     $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
-    CROBAR = 1;
     top0.ebox0.EBUS.ds = '0;
     top0.ebox0.EBUS.data = '0;
     top0.ebox0.EBUS.diagStrobe = '0;
 
-    // Release system CROBAR reset
-    repeat(10) @(posedge masterClk) ;
-    CROBAR = 0;
+    repeat(100) @(posedge masterClk) ;
 
     // Do (as a front-end would) the CLK diagnostic functions:
     //
