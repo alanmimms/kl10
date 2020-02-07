@@ -32,19 +32,24 @@ module kl10pv_tb;
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
   task doCLKFunction(input int func);
-    @(negedge top0.ebox0.clk0.CLK.EBUS_CLK) begin
+    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
       top0.ebox0.EBUS.ds[0:3] = 4'b0000;          // DIAG_CTL_FUNC_00x for CLK
       top0.ebox0.EBUS.ds[4:6] = func;
       top0.ebox0.EBUS.diagStrobe = '1;            // Strobe this
     end
 
-    @(negedge top0.ebox0.clk0.CLK.EBUS_CLK) begin
+//    #100;                       // How long should this really hold?
+
+    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
+    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
+
+    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
       top0.ebox0.EBUS.diagStrobe = '0;
       top0.ebox0.EBUS.ds[0:3] = 4'b0000;
       top0.ebox0.EBUS.ds[4:6] = 3'b000;
     end
 
-    repeat(4) @(posedge top0.ebox0.clk0.CLK.EBUS_CLK) ;
+    repeat(4) @(posedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
   endtask
 
 
@@ -75,7 +80,8 @@ module kl10pv_tb;
     top0.ebox0.EBUS.data = '0;
     top0.ebox0.EBUS.diagStrobe = '0;
 
-    repeat(100) @(posedge masterClk) ;
+    @(negedge CROBAR) ;
+    repeat(10) @(posedge masterClk) ;
 
     // Do (as a front-end would) the CLK diagnostic functions:
     //

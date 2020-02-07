@@ -1,5 +1,7 @@
-// PROBLEM: CLK.FUNC_GATE remains true forever, causing CLK.GO to go
-// low after a few clocks.
+// PROBLEM: EBUS_CLK never starts running.
+
+// [fixed by fixing slashed wires?] PROBLEM: CLK.FUNC_GATE remains
+// true forever, causing CLK.GO to go low after a few clocks.
 
 // MISSING: CLK.CLK and CLK.CLK_DELAYED middle of CLK2 p.168. These
 // seem to relate to clock signals routed to far points in backplane
@@ -114,35 +116,48 @@ module clk(input clk,
   assign CLK.CHX = CLK.MBOX;
   assign CLK.CSH = CLK.MBOX;
 
-  logic [0:3] rateSelectorSR;
-  assign CLK.RATE_SELECTED = rateSelectorSR[0] | rateSelectorSR[2];
+  logic [0:3] rateSelSR;
+  // XXX this is the test case for the slashed wire in the schematic.
+  // Q0 | Q2 on p.168 E5 shift register are wire-ORed and there is a
+  // slash on the wire after the OR before label CLK1 RATE SELECTED L.
+  // Inputs for CLK RATE SEL 2 H and CLK RATE SEL 1 H are the only
+  // ways any 1s can be in the SR, but "normal" rate is 2'b00.
+  // So I am trying to invert this wire-ORed output to see if that
+  // works.
+  assign CLK.RATE_SELECTED = !(rateSelSR[0] | rateSelSR[2]);
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (~CLK.RATE_SELECTED) begin       // SHIFT 3in (0)
-      rateSelectorSR <= {rateSelectorSR[1:3], 1'b0};
-    end else begin                      // LOAD
-      rateSelectorSR <= {CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0};
+    if (FPGA_RESET) begin       // XXX needed?
+      rateSelSR <= '0;
+    end else if (CLK.RATE_SELECTED) begin        // SHIFT 3in (0)
+      rateSelSR <= {rateSelSR[1:3], 1'b0};
+    end else begin                               // LOAD
+      rateSelSR <= {CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0};
     end
   end
 
-  logic ebusClkIn;
+  logic sbusClkFF1, sbusClkFF2;
+  assign CLK.SBUS_CLK = sbusClkFF2;
   always @(posedge CLK.GATED) begin
 
     if (CLK.FUNC_CLR_RESET) begin
       CLK.SBUS_CLK <= '0;
-      ebusClkIn <= '0;
+      sbusClkFF1 <= '0;
+      sbusClkFF2 <= '0;
     end else begin
-      CLK.SBUS_CLK <= ebusClkIn;
-      ebusClkIn <= CLK.SBUS_CLK;
+      sbusClkFF1 <= ~sbusClkFF2; // XXX slashed wire in schematics
+      sbusClkFF2 <= sbusClkFF1;
     end
   end
 
+  logic ebusClkFF;
+  assign CLK.EBUS_CLK = ebusClkFF;
   always @(posedge CLK.EBUS_CLK_SOURCE) begin
 
     if (CLK.FUNC_CLR_RESET) begin
-      CLK.EBUS_CLK <= '0;
+      ebusClkFF <= '0;
     end else begin
-      CLK.EBUS_CLK <= ebusClkIn;
+      ebusClkFF <= sbusClkFF1;
     end
   end
 
@@ -169,7 +184,10 @@ module clk(input clk,
   logic [0:3] e64SR;
   logic [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
-  assign CLK.FUNC_GATE = |e60FF[0:2];
+
+  // XXX another slashed wire in schematic.
+  assign CLK.FUNC_GATE = ~|e60FF[0:2];
+
   assign CLK.TENELEVEN_CLK = e60FF[3];
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
@@ -177,23 +195,25 @@ module clk(input clk,
     if (CLK.MHZ16_FREE) begin   // LOAD
       e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
     end else begin              // SHIFT 3in
-      e64SR <= {e64SR[1], CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x, 1'b1};
+      // XXX slashed wire on E64 input D2
+      e64SR <= {e64SR[1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1};
     end
 
     // XXX this might need inversion on e64SR[0] - debugging
     // CLK.FUNC_GATE issue.
+    // XXX another schematic slashed wire
     e60FF <= {e64SR[0], e64SR[1:3]};
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
   always @(posedge CLK.MHZ16_FREE) begin // Changed from async set/reset to synchronous
 
-    if (CLK.FUNC_CLR_RESET) begin
+    if (CROBAR) begin           // See E66 asynchronous CLEAR pin 13
       CLK.MR_RESET <= '0;
-    end else if (CROBAR) begin
-      CLK.MR_RESET <= '1;
     end else if (CLK.FUNC_SET_RESET) begin
       CLK.MR_RESET <= '1;
+    end else if (CLK.FUNC_CLR_RESET) begin
+      CLK.MR_RESET <= '0;
     end
   end
 
@@ -207,12 +227,12 @@ module clk(input clk,
   assign CLK.EBUS_RESET = e52Counter[0];
   always @(posedge CLK.MHZ16_FREE) begin
     
-    // I cannot see clearly how this would have worked as shown in the
-    // schematic, which shows the CRY OUT signal as active low on E52
-    // 10136 and has an inverting slash on the wire leading to the OR
-    // gate. This SHOULD mean e52COUT has no effect other than to keep
-    // on decrementing. But EK-EBOX-UD-004 p.225 Figure 3-8 NOTE says
-    // the CARRY OUT disables the -1 functions and loads 0's into the
+    // XXX I cannot see clearly how this would have worked as shown in
+    // the schematic, which shows the CRY OUT signal as active low on
+    // E52 10136 and has a slash on the wire leading to the OR gate.
+    // This SHOULD mean e52COUT has no effect other than to keep on
+    // decrementing. But EK-EBOX-UD-004 p.225 Figure 3-8 NOTE says the
+    // CARRY OUT disables the -1 functions and loads 0's into the
     // counter. So I changed the code to match this description and
     // now it seems to do precisely what the NOTE says it should --
     // and that seems right to me too.
@@ -272,8 +292,8 @@ module clk(input clk,
               ~CRM.PAR_16 & CLK.CRAM_PAR_CHECK,
               ~APR.FM_ODD_PARITY & CLK.FM_PAR_CHECK,
               CLK.EBOX_SRC_EN,
-              ~CLK.ERROR_HOLD,
-              CLK.ERROR_HOLD};
+              ~CLK.ERROR_HOLD_B,
+              CLK.ERROR_HOLD_A};
 
     e45FF4 <= CLK.ERROR_HOLD_B;
     e45FF13 <= CLK.ERROR_HOLD_A;
@@ -320,12 +340,12 @@ module clk(input clk,
     CLK.SYNC_EN = CLK.EBOX_SS & ~CLK.EBOX_CLK_EN | e31B & ~CLK.EBOX_CLK_EN;
   end
 
-  logic [0:1] e10FF;            // D0..D4 merged into one
-  assign CLK.EBOX_SYNC = e10FF[0];
-  assign CLK.SYNC = |e10FF;
+  logic e10FF;                  // Merged into single FF
+  assign CLK.EBOX_SYNC = e10FF;
+  assign CLK.SYNC = e10FF;      // XXX slashed signals
 
   always_ff @(posedge CLK.MBOX_CLK) begin
-    e10FF <= {CLK.SYNC_EN, ~CLK.SYNC_EN};
+    e10FF <= CLK.SYNC_EN;       // XXX slashed signals
   end
 
 
@@ -391,8 +411,8 @@ module clk(input clk,
     if (CLK.PAGE_FAIL) begin
       CLK.PF_DISP[7] <= PAG.PF_EBOX_HANDLE;
       CLK.PF_DISP[8] <= CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN;
-      CLK.PF_DISP[9] <= ~SHM.AR_PAR_ODD & CON.AR_LOADED;
-      CLK.PF_DISP[10] <= ~SHM.ARX_PAR_ODD & CON.ARX_LOADED;
+      CLK.PF_DISP[9] <= ~SHM.AR_PAR_ODD & CON.AR_LOADED; // XXX slashed
+      CLK.PF_DISP[10] <= ~SHM.ARX_PAR_ODD & CON.ARX_LOADED; // XXX slashed
     end else begin
       CLK.PF_DISP <= CLK.PF_DISP;
     end
@@ -413,13 +433,13 @@ module clk(input clk,
     CLK.SBR_CALL <= CLK.PF_DLYD_B;
   end
 
-  logic e7out7;
-  logic e38out6;
+  logic e7out7;                 // XXX slashed
+  logic e38out6;                // XXX slashed
   assign e7out7 = CLK.EBOX_SOURCE | CLK.PF_DLYD_B | CLK.INSTR_1777;
-  assign e38out6 = ~APR.APR_PAR_CHK_EN | ~AR_ARX_PAR_CHECK | e7out7;
+  assign e38out7 = ~APR.APR_PAR_CHK_EN | ~AR_ARX_PAR_CHECK | e7out7;
   assign CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |
-                         ~SHM.AR_PAR_ODD & CON.AR_LOADED & e38out6 |
-                         ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & e38out6 |
+                         ~SHM.AR_PAR_ODD & CON.AR_LOADED & e38out7 |
+                         ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & e38out7 |
                          CRAM.MEM[2] & CLK.PAGE_FAIL_EN & e7out7;
   assign CLK.EBOX_CYC_ABORT = CLK.PAGE_FAIL | CLK.PF_DLYD_B;
 
