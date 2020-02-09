@@ -42,7 +42,8 @@ module clk(input clk,
            );
 
   logic DESKEW_CLK = '0;
-  logic SYNCHRONIZE_CLK = '0;
+  logic SYNCHRONIZE_CLK;
+  assign SYNCHRONIZE_CLK = '0;
   logic DIAG_READ;
   logic MBOX_RESP_SIM;
   logic AR_ARX_PAR_CHECK;
@@ -192,17 +193,19 @@ module clk(input clk,
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
-    if (CLK.MHZ16_FREE) begin   // LOAD
+    if (FPGA_RESET) begin
+      e64SR <= '0;
+    end else if (~CLK.MHZ16_FREE) begin   // LOAD
+      // NOTE slashed wire XXX
+      e64SR <= {e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1};
+    end else begin                        // SHIFT 3in
       e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
-    end else begin              // SHIFT 3in
-      // XXX slashed wire on E64 input D2
-      e64SR <= {e64SR[1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1};
     end
 
     // XXX this might need inversion on e64SR[0] - debugging
     // CLK.FUNC_GATE issue.
     // XXX another schematic slashed wire
-    e60FF <= {e64SR[0], e64SR[1:3]};
+    e60FF <= {~e64SR[0], e64SR[1:3]};
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;

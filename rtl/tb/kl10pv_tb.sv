@@ -53,6 +53,37 @@ module kl10pv_tb;
   endtask
 
 
+  // Patterned after PARSER .RESET function and table RESETT.
+  task KLMasterReset();
+    // Reset the DTE-20
+    // D2.RST (100)
+    // D3.RST (001)
+
+    // Set and then clear EBOX_RESET (XXX not in .RESET function)
+    doCLKFunction(3'b111);      // CLK.FUNC_SET_RESET
+    doCLKFunction(3'b110);      // CLK.FUNC_CLR_RESET
+
+    // (000) Stop the KL clock
+    doCLKFunction(0);
+    // (044) Clear the KL clock source and rate
+    doCLKFunction(9'b000_100_100);
+    // FW.IPE (046) Reset the parity registers
+    doCLKFunction(9'b000_100_110);
+    // Do contents of RESETT table:
+    // FW.LBR (042) Clear burst counter RIGHT
+    doCLKFunction(9'b000_100_010);
+    // FW.LBL (043) Clear burst counter LEFT
+    doCLKFunction(9'b000_100_011);
+    // FW.CA2 (052) Clear CRAM diag address LEFT
+    // FW.CA1 (051) Clear CRAM diag address RIGHT
+    doCLKFunction(9'b000_101_001);
+    // FW.KLO (067) Enable KL opcodes
+    doCLKFunction(9'b000_110_111);
+    // FW.EBL (076) EBUS load
+    doCLKFunction(9'b000_111_110);
+  endtask
+
+
   // FPGA_RESET resets each module separate from CROBAR mostly for
   // simulation since it depends on e.g., decrementing counters whose
   // values are indeterminate to run its startup processes (e.g., CLK
@@ -69,7 +100,7 @@ module kl10pv_tb;
     CROBAR = 1;
 
     // Release system CROBAR reset
-    repeat(100) @(posedge masterClk) ;
+    repeat(50) @(posedge masterClk) ;
     CROBAR = 0;
   end
   
@@ -83,6 +114,8 @@ module kl10pv_tb;
     @(negedge CROBAR) ;
     repeat(10) @(posedge masterClk) ;
 
+    KLMasterReset();
+
     // Do (as a front-end would) the CLK diagnostic functions:
     //
     // * FUNC_SET_RESET
@@ -91,9 +124,7 @@ module kl10pv_tb;
     //
     // // XXX this needs to change when we have channels. See
     // PARSER.LST .MRCLR function.
-    doCLKFunction(3'b111);      // CLK.FUNC_SET_RESET
     doCLKFunction(3'b001);      // CLK.FUNC_START
-    doCLKFunction(3'b110);      // CLK.FUNC_CLR_RESET
   end
   
 endmodule

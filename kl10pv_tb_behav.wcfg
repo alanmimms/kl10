@@ -13,17 +13,21 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="5000001fs"></ZoomEndTime>
-      <Cursor1Time time="5000000fs"></Cursor1Time>
+      <ZoomEndTime time="135801fs"></ZoomEndTime>
+      <Cursor1Time time="32000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="134"></NameColumnWidth>
+      <NameColumnWidth column_width="130"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="33" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/FPGA_RESET">
+      <obj_property name="ElementShortName">FPGA_RESET</obj_property>
+      <obj_property name="ObjectShortName">FPGA_RESET</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MAIN_SOURCE">
       <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
@@ -48,6 +52,12 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ODD">
       <obj_property name="ElementShortName">ODD</obj_property>
       <obj_property name="ObjectShortName">ODD</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_GATE">
+      <obj_property name="ElementShortName">FUNC_GATE</obj_property>
+      <obj_property name="ObjectShortName">FUNC_GATE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
       <obj_property name="ElementShortName">GO</obj_property>
@@ -83,37 +93,11 @@
       <obj_property name="ElementShortName">e64SR[0:3]</obj_property>
       <obj_property name="ObjectShortName">e64SR[0:3]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64SR[0]">
-         <obj_property name="ElementShortName">[0]</obj_property>
-         <obj_property name="ObjectShortName">[0]</obj_property>
-         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64SR[1]">
-         <obj_property name="ElementShortName">[1]</obj_property>
-         <obj_property name="ObjectShortName">[1]</obj_property>
-         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64SR[2]">
-         <obj_property name="ElementShortName">[2]</obj_property>
-         <obj_property name="ObjectShortName">[2]</obj_property>
-         <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64SR[3]">
-         <obj_property name="ElementShortName">[3]</obj_property>
-         <obj_property name="ObjectShortName">[3]</obj_property>
-      </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e60FF">
       <obj_property name="ElementShortName">e60FF[0:3]</obj_property>
       <obj_property name="ObjectShortName">e60FF[0:3]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_GATE">
-      <obj_property name="ElementShortName">FUNC_GATE</obj_property>
-      <obj_property name="ObjectShortName">FUNC_GATE</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_RESET">
       <obj_property name="ElementShortName">EBUS_RESET</obj_property>
