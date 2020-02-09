@@ -3,7 +3,8 @@
 // together in ebox.v?
 `include "ebox.svh"
 
-module edp(iAPR APR,
+module edp(logic FPGA_RESET,
+           iAPR APR,
            iCRAM CRAM,
            iCON CON,
            iCTL CTL,
@@ -40,7 +41,7 @@ module edp(iAPR APR,
   
   // Miscellaneous reset (XXX)
   always_ff @(posedge CLK.EDP) begin
-    if (CLK.EBOX_RESET) cacheDataWrite <= 0;
+    if (FPGA_RESET) cacheDataWrite <= '0;
   end
   
   // XXX wrong?
@@ -94,25 +95,24 @@ module edp(iAPR APR,
   // EDP.AR
   always_ff @(posedge CLK.EDP) begin
 
-    // RESET
-    if (CLK.EBOX_RESET) begin
+    if (FPGA_RESET) begin
       EDP.AR <= '0;
     end else begin
 
       if (CTL.AR00to11_CLR) begin
-        EDP.AR[0:11] <= 0;
+        EDP.AR[0:11] <= '0;
       end else if (CTL.AR00to08_LOAD) begin
         EDP.AR[0:8] <= ARL[0:8];
       end
 
       if (CTL.AR12to17_CLR) begin
-        EDP.AR[12:17] <= 0;
+        EDP.AR[12:17] <= '0;
       end else if (CTL.AR09to17_LOAD) begin
         EDP.AR[9:17] <= ARL[9:17];
       end
 
       if (CTL.ARR_CLR) begin
-        EDP.AR[18:35] <= 0;
+        EDP.AR[18:35] <= '0;
       end else if (CTL.ARR_LOAD) begin
         unique case (CRAM.AR)
         3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
@@ -133,7 +133,7 @@ module edp(iAPR APR,
 
     unique case (CTL.ARXL_SEL)
     default: ARXL = 'x;
-    3'b000: ARXL = 0;
+    3'b000: ARXL = '0;
     3'b001: ARXL = cacheDataRead[0:17];
     3'b010: ARXL = EDP.AD[0:17];
     3'b011: ARXL = EDP.MQ[0:17];
@@ -145,7 +145,7 @@ module edp(iAPR APR,
 
     unique case (CTL.ARXR_SEL)
     default: ARXR = 'x;
-    3'b000: ARXR = 0;
+    3'b000: ARXR = '0;
     3'b001: ARXR = cacheDataRead[18:35];
     3'b010: ARXR = EDP.AD[18:35];
     3'b011: ARXR = EDP.MQ[18:35];
@@ -159,8 +159,7 @@ module edp(iAPR APR,
   // ARX
   always_ff @(posedge CLK.EDP) begin
 
-    // RESET
-    if (CLK.EBOX_RESET) begin
+    if (FPGA_RESET) begin
       EDP.ARX <= '0;
     end else if (CTL.ARX_LOAD)
       EDP.ARX <= {ARXL, ARXR};
@@ -184,8 +183,8 @@ module edp(iAPR APR,
   // MQ mux and register
   always_ff @(posedge CLK.EDP) begin
 
-    if (CLK.EBOX_RESET) begin
-      EDP.MQ <= 0;
+    if (FPGA_RESET) begin
+      EDP.MQ <= '0;
     end else begin
       
       // MQ: 36-bit MC10141-ish universal shift register
@@ -209,7 +208,7 @@ module edp(iAPR APR,
   // AD
   genvar n;
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADaluE1E2
+    for (n = '0; n < 36; n = n + 6) begin : ADaluE1E2
 
       // Misc carry logic, top p.17
       assign ADEXxortmp[n] = EDP.AD[n+0] ^ EDP.AD_EX[n-1];
@@ -240,7 +239,7 @@ module edp(iAPR APR,
   
   // ADX
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
+    for (n = '0; n < 36; n = n + 6) begin : ADXaluE3E4
       logic x1, x2;
 
       mc10181 alu2(.M(AD_BOOL),
@@ -336,7 +335,7 @@ module edp(iAPR APR,
 
   // ADB mux
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADBmux
+    for (n = '0; n < 36; n = n + 6) begin : ADBmux
 
       always_comb begin
         // The irregular part of ADB mux: E22 and E21.
@@ -371,7 +370,7 @@ module edp(iAPR APR,
 
   // ADXB mux
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADXBmux
+    for (n = '0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
         unique case(CRAM.ADB)
         default: ADXB[n+0:n+5] = 'x;
@@ -385,7 +384,7 @@ module edp(iAPR APR,
 
   // ADXA mux
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADXAmux
+    for (n = '0; n < 36; n = n + 6) begin : ADXAmux
       always_comb ADXA[n+0:n+5] = ADA_EN ? 6'b0 : EDP.ARX[n+0:n+5];
     end
   endgenerate
@@ -393,7 +392,7 @@ module edp(iAPR APR,
 
   // ADA mux
   generate
-    for (n = 0; n < 36; n = n + 6) begin : ADAmux
+    for (n = '0; n < 36; n = n + 6) begin : ADAmux
       always_comb
         if (~ADA_EN)
           unique case(CRAM.ADA)
@@ -412,8 +411,8 @@ module edp(iAPR APR,
   // BRX
   always_ff @(posedge CLK.EDP)
 
-    if (CLK.EBOX_RESET)
-      EDP.BRX <= 0;
+    if (FPGA_RESET)
+      EDP.BRX <= '0;
     else if (CRAM.BRX == brxARX)
       EDP.BRX <= EDP.ARX;
 
@@ -421,8 +420,8 @@ module edp(iAPR APR,
   // BR
   always_ff @(posedge CLK.EDP)
 
-    if (CLK.EBOX_RESET)
-      EDP.BR <= 0;
+    if (FPGA_RESET)
+      EDP.BR <= '0;
     else if (CRAM.BR == brAR)
       EDP.BR <= EDP.AR;
 
@@ -440,7 +439,7 @@ module edp(iAPR APR,
 
   always_ff @(posedge CLK.EDP) begin
 
-    if (CLK.EBOX_RESET) begin
+    if (FPGA_RESET) begin
       EDP.EBUSdriver.driving <= '0;
     end else if (EDP.EBUSdriver.driving) begin
 

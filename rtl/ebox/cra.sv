@@ -39,6 +39,9 @@ module cra(iAPR APR,
   logic retNotForce1777;
   logic ret;
 
+  logic RESET;
+  assign RESET = CLK.MR_RESET;
+
   // TEMPORARY? This looks like it belongs to an incompletely
   // implemented feature that might have been called DISP/EA TYPE
   // (37). This dispatch is never used in microcode.
@@ -122,7 +125,7 @@ module cra(iAPR APR,
   // CRA.CRADR
   always @(posedge CLK.CRA) begin
 
-    if (CLK.EBOX_RESET)
+    if (RESET)
       CRA.CRADR <= 0;
     else
       CRA.CRADR <= CRAM.J | {11{CLK.FORCE_1777}} | dispMux;
@@ -136,24 +139,24 @@ module cra(iAPR APR,
   // Y  ABCD EFGH  Z  |  WRITE  READ
   // -----------------|------------
   // 0  1111 000X  0  |   16    10         RESET
-  // 1  0111 1000  1  |   17    14         RESET
-  // 0  1011 1100  0  |   07    16         RESET
-  // 1  0101 1110  0  |   13    17         RESET
+  // 1  0111 1000  1  |   17    14
+  // 0  1011 1100  0  |   07    16
+  // 1  0101 1110  0  |   13    17
   //                  |
-  // 1  1010 1111  0  |   05    07         RESET
-  // 0  1101 0111  1  |   12    13         RESET
-  // 0  0110 1011  1  |   15    05         RESET
-  // 1  0011 0101  1  |   06    12         RESET
+  // 1  1010 1111  0  |   05    07
+  // 0  1101 0111  1  |   12    13
+  // 0  0110 1011  1  |   15    05
+  // 1  0011 0101  1  |   06    12
   //                  |
-  // 0  1001 1010  1  |   03    15         RESET
-  // 0  0100 1101  0  |   11    06         RESET
-  // 0  0010 0110  1  |   04    03         RESET
-  // 1  0001 0011  0  |   02    11         RESET
+  // 0  1001 1010  1  |   03    15
+  // 0  0100 1101  0  |   11    06
+  // 0  0010 0110  1  |   04    03
+  // 1  0001 0011  0  |   02    11
   //                  |
-  // 1  1000 1001  1  |   01    04         RESET
-  // 1  1100 0100  1  |   10    02         RESET
-  // 1  1110 0010  0  |   14    01         RESET
-  // 0  1111 0001  0  |   16    10         RESET
+  // 1  1000 1001  1  |   01    04
+  // 1  1100 0100  1  |   10    02
+  // 1  1110 0010  0  |   14    01
+  // 0  1111 0001  0  |   16    10
 
   // E56,E57
   logic [0:7] stackAdrAD, stackAdrEH;

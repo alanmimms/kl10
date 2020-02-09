@@ -3,10 +3,6 @@
 // [fixed by fixing slashed wires?] PROBLEM: CLK.FUNC_GATE remains
 // true forever, causing CLK.GO to go low after a few clocks.
 
-// MISSING: CLK.CLK and CLK.CLK_DELAYED middle of CLK2 p.168. These
-// seem to relate to clock signals routed to far points in backplane
-// and back again per EK-EBUS-UD.
-
 // PROBLEM: CLK.GATED_EN is false because CLK.GO & CLK.RATE_SELECTED are both 0.
 `timescale 1ns/1ns
 `include "ebox.svh"
@@ -52,9 +48,7 @@ module clk(input clk,
   logic [0:7] burstCounter;
   logic burstCounterEQ0;
 
-  logic RESET;
-  assign RESET = CLK.MR_RESET;
-  assign CLK.EBOX_RESET = CLK.MR_RESET;
+  assign CLK.MR_RESET = CLK.RESET;
 
   ebox_clocks ebox_clocks0(.clk_in1(clk));
 
@@ -96,6 +90,15 @@ module clk(input clk,
 
   assign CLK.MBOX = CLK.CLK_ON;
   assign CLK.ODD = CLK.CLK_ON;
+
+  // In real KL this is routed to far end of backplane and back
+  // according to EBOX-UD Logical Delays and Skew, Figure 3-25. In
+  // KL10B this signal is called CLK.CLK when it leaves the CLK board
+  // (see CLK1 A1 E72 pin 3). I'm not sure what it's called when it
+  // returns.
+  assign CLK.CLK = CLK.MBOX;
+  assign CLK.DELAYED = CLK.CLK;
+  assign CLK.MBOX_CLK = CLK.DELAYED;
 
   assign CLK.CCL = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CRC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
@@ -212,11 +215,11 @@ module clk(input clk,
   always @(posedge CLK.MHZ16_FREE) begin // Changed from async set/reset to synchronous
 
     if (CROBAR) begin           // See E66 asynchronous CLEAR pin 13
-      CLK.MR_RESET <= '0;
+      CLK.RESET <= '0;
     end else if (CLK.FUNC_SET_RESET) begin
-      CLK.MR_RESET <= '1;
+      CLK.RESET <= '1;
     end else if (CLK.FUNC_CLR_RESET) begin
-      CLK.MR_RESET <= '0;
+      CLK.RESET <= '0;
     end
   end
 
@@ -327,7 +330,7 @@ module clk(input clk,
     if (CLK.SYNC_HOLD) begin
 
       case ({|e25Counter[3:2], e25Counter[1:0]})
-      3'b000: e31B = ~(~CRAM._TIME[0] & ~CRAM._TIME[1]);
+      3'b000: e31B = CRAM._TIME[0] | CRAM._TIME[1]; // DeMorgan E26 pin 7
       3'b001: e31B = ~CRAM._TIME[0];
       3'b010: e31B = ~CRAM._TIME[1];
       3'b011: e31B = ~CON.DELAY_REQ;
@@ -354,9 +357,9 @@ module clk(input clk,
 
   logic [0:3] e12SR;
   logic e17out;
-  assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | RESET;
-  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
+  assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.RESET;
   assign CLK.EBOX_SRC_EN = CLK.SYNC & e17out;
+  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
 
   assign CLK.CRM = e12SR[0];
   assign CLK.CRA = e12SR[0];

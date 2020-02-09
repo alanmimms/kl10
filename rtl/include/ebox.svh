@@ -680,10 +680,10 @@ endinterface
 
 
 interface iCLK;
+  logic RESET;
   logic MR_RESET;
   logic MAIN_SOURCE;
   logic EBOX_SOURCE;
-  logic EBOX_RESET;
   logic EBUS_CLK_SOURCE;
   logic MHZ16_FREE;
 
@@ -716,6 +716,9 @@ interface iCLK;
   logic PMA;
   logic CHX;
   logic CSH;
+
+  logic CLK;
+  logic DELAYED;
 
   logic [0:1] SOURCE_SEL;
   logic [0:1] RATE_SEL;

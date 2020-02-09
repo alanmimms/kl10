@@ -3,4 +3,7 @@
 
 // M8542 VMA
 module vma(iVMA VMA);
+
+  // XXX temporary
+  assign VMA.AC_REF = '0;
 endmodule // vma
