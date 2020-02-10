@@ -1163,7 +1163,8 @@ interface iVMA;
   logic [0:35] VMA_HELD_OR_PC;
   logic LOCAL_AC_ADDRESS;
   logic AC_REF;
-  logic VMA[12:35];
+  logic PC[13:35];
+  logic VMA[13:35];
   tEBUSdriver EBUSdriver;
 endinterface
 

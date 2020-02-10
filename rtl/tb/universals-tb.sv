@@ -5,18 +5,18 @@ module universal_tb();
   logic [0:1] sel;
   logic [0:3] d, q;
 
-  UniversalShiftRegister4 sr4(.S0(s0),
-                              .D(d),
-                              .S3(s3),
-                              .SEL(sel),
-                              .CLK(clk),
-                              .Q(q));
-  UniversalCounter4 c4(.CIN(cin),
-                       .D(d),
-                       .SEL(sel),
-                       .CLK(clk),
-                       .Q(q),
-                       .COUT(cout));
+  USR4 sr4(.S0(s0),
+           .D(d),
+           .S3(s3),
+           .SEL(sel),
+           .CLK(clk),
+           .Q(q));
+  UCR c4(.CIN(cin),
+         .D(d),
+         .SEL(sel),
+         .CLK(clk),
+         .Q(q),
+         .COUT(cout));
 
   initial begin
     $display($time, " >>>>>>>>>>>>>>>>>>>> COUNTER <<<<<<<<<<<<<<<<<<<<");

@@ -1,11 +1,11 @@
 `timescale 1ns/1ns
 // This is like MC10136 ECL universal up-down counter
-module UniversalCounter4(input [0:3] D,
-                         input CIN,
-                         input [0:1] SEL,
-                         input CLK,
-                         output logic [0:3] Q,
-                         output logic COUT);
+module UCR4(input [0:3] D,
+            input CIN,
+            input [0:1] SEL,
+            input CLK,
+            output logic [0:3] Q,
+            output logic COUT);
 
   always_ff @(posedge CLK) begin
 
