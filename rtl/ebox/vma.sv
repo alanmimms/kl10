@@ -50,7 +50,7 @@ module vma(iVMA VMA,
   end
 
   logic AD_CRY_20, AD_CRY_24, AD_CRY_28, AD_CRY_32;
-  logic AD_CG_20_23, AD_CP_20_23, AD_CG_24_27, AD_CP_24_27;
+  logic AD_CG_20_23, AD_CP_20_23, AD_CG_24_27, AD_CP_24_27, AD_CG_28_31, AD_CP_28_31;
   logic [18:35] VMA_AD;
   logic [0:1] ignored01;
   mc10181 e1 (.S({4{SPEC_VMA_MAGIC}}),
@@ -243,7 +243,12 @@ module vma(iVMA VMA,
       always_comb begin
 
         if (VMAX_EN) begin
-          VMA_IN[k] = {VMA.VMA[k], VMA.PC[k], VMA.PREV_SEC[k], EDP.AD[k]}[MCL.VMAX_SEL];
+          case (MCL.VMAX_SEL)
+          2'b00: VMA_IN[k] = VMA.VMA[k];
+          2'b01: VMA_IN[k] = VMA.PC[k];
+          2'b10: VMA_IN[k] = VMA.PREV_SEC[k];
+          2'b11: VMA_IN[k] = EDP.AD[k];
+          endcase
         end
       end
     end
@@ -269,73 +274,95 @@ module vma(iVMA VMA,
   assign PCS_SECTION_0 = VMA.PREV_SEC[13:15] == '0 && ps == '0;
 
   // VMA5 p. 358
+
+  function logic [2:0] rev3(input [0:2] pdp);
+    rev3[2] = pdp[0];
+    rev3[1] = pdp[1];
+    rev3[0] = pdp[2];
+  endfunction
+
+  function logic [3:0] rev4(input [0:3] pdp);
+    rev4[3] = pdp[0];
+    rev4[2] = pdp[1];
+    rev4[1] = pdp[2];
+    rev4[0] = pdp[3];
+  endfunction
+
+  function logic [4:0] rev5(input [0:4] pdp);
+    rev5[4] = pdp[0];
+    rev5[3] = pdp[1];
+    rev5[2] = pdp[2];
+    rev5[1] = pdp[3];
+    rev5[0] = pdp[4];
+  endfunction
+
   logic [4:6] diag;
   logic READ_VMA;
   assign diag = CTL.DIAG[4:6];
   assign READ_VMA = CTL.DIAG_READ_FUNC_15x;
   mux e33(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.PC[15:13], ~MISCeq0, VMA.HELD[15:13], ~VMA.AC_REF}),
+          .d({rev3(VMA.PC[13:15]), ~MISCeq0, rev3(VMA.HELD[13:15]), ~VMA.AC_REF}),
           .q(VMA.EBUSdriver.data[13]));
 
   mux e38(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.ADR_BRK[15:13], ~LOCAL_AC_ADDRESS, VMA.VMA[15:13], ~match}),
+          .d({rev3(VMA.ADR_BRK[13:15]), ~LOCAL_AC_ADDRESS, rev3(VMA.VMA[13:15]), ~match}),
           .q(VMA.EBUSdriver.data[15]));
 
   mux  e9(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.PC[19:16], VMA.HELD[19:16]}),
+          .d({rev4(VMA.PC[16:19]), rev4(VMA.HELD[16:19])}),
           .q(VMA.EBUSdriver.data[17]));
           
   mux e28(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.ADR_BRK[19:16], VMA.VMA[19:16]}),
+          .d({rev4(VMA.ADR_BRK[16:19]), rev4(VMA.VMA[16:19])}),
           .q(VMA.EBUSdriver.data[19]));
 
   mux e35(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.PC[23:20], VMA.HELD[23:20]}),
+          .d({rev4(VMA.PC[20:23]), rev4(VMA.HELD[20:23])}),
           .q(VMA.EBUSdriver.data[21]));
           
   mux e34(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.ADR_BRK[23:20], VMA.VMA[23:20]}),
+          .d({rev4(VMA.ADR_BRK[20:23]), rev4(VMA.VMA[20:23])}),
           .q(VMA.EBUSdriver.data[23]));
           
   mux e52(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.PC[27:24], VMA.HELD[27:24]}),
+          .d({rev4(VMA.PC[24:27]), rev4(VMA.HELD[24:27])}),
           .q(VMA.EBUSdriver.data[25]));
           
   mux e50(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.ADR_BRK[27:24], VMA.VMA[27:24]}),
+          .d({rev4(VMA.ADR_BRK[24:27]), rev4(VMA.VMA[24:27])}),
           .q(VMA.EBUSdriver.data[27]));
           
   mux e61(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.PC[31:28], VMA.HELD[31:28]}),
+          .d({rev4(VMA.PC[28:31]), rev4(VMA.HELD[28:31])}),
           .q(VMA.EBUSdriver.data[29]));
           
   mux e71(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.ADR_BRK[31:28], VMA.VMA[31:28]}),
+          .d({rev4(VMA.ADR_BRK[28:31]), rev4(VMA.VMA[28:31])}),
           .q(VMA.EBUSdriver.data[31]));
           
   mux e76(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.PC[35:32], VMA.HELD[35:32]}),
+          .d({rev4(VMA.PC[32:35]), rev4(VMA.HELD[32:35])}),
           .q(VMA.EBUSdriver.data[33]));
           
   mux e60(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({VMA.ADR_BRK[35:32], VMA.VMA[35:32]}),
+          .d({rev4(VMA.ADR_BRK[32:35]), rev4(VMA.VMA[32:35])}),
           .q(VMA.EBUSdriver.data[35]));
 
   mux e22(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({~VMA_SECTION_0, ~PC_SECTION_0, ~PCS_SECTION_0, VMA.PREV_SEC[17:13]}),
+          .d({~VMA_SECTION_0, ~PC_SECTION_0, ~PCS_SECTION_0, rev5(VMA.PREV_SEC[13:17])}),
           .q(VMA.EBUSdriver.data[11]));
 
   assign VMA.EBUSdriver.driving = READ_VMA;
