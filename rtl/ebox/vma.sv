@@ -197,18 +197,20 @@ module vma(iVMA VMA,
     end
   endgenerate
 
-  logic VMAX_EN;
+  logic VMAX_EN, ignored6;
   assign VMAX_EN = ~MCL.VMAX_EN | CON.COND_VMAX_MAGIC;
   mix4 e12a(.SEL(VMA.VMAX_EN),
-            .D({VMA.VMA[12], 3'b0}),
-            .B(VMA.VMA[12]));
+            .D0({VMA.VMA[12], 3'b0}),
+            .D1('0),
+            .B({VMA.VMA[12], ignored6}));
 
   // Note change of signal name from VMA_nn_IN to VMA_IN[nn].
   generate
-    for (k = 13; k < 18; ++k) begin: vmaIN
+    for (k = 13; k < 18; k += 2) begin: vmaIN
       mix4 m(.SEL(VMA.VMAX_EN),
-             .D({VMA.VMA[k], VMA.PC[k], VMA.PREV_SEC[k], EDP.AD[k]}),
-             .B(VMA.VMA_IN[k]));
+             .D0({VMA.VMA[k], VMA.PC[k], VMA.PREV_SEC[k], EDP.AD[k]}),
+             .D1({VMA.VMA[k+1], VMA.PC[k+1], VMA.PREV_SEC[k+1], EDP.AD[k+1]}),
+             .B({VMA.VMA_IN[k], VMA.VMA_IN[k+1]}));
     end
   endgenerate
 

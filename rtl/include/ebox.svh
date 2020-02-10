@@ -1097,6 +1097,7 @@ interface iMCL;
   logic VMA_SECTION_0;
   logic VMA_SECTION_01;
   logic [27:33] VMA_G;
+  logic ADR_ERR;
   tEBUSdriver EBUSdriver;
 endinterface
 
