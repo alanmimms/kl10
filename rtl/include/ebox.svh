@@ -1091,8 +1091,12 @@ interface iMCL;
   logic SKIP_SATISFIED;
   logic STORE_AR;
   logic PC_SECTION_0;
+  logic VMA_INC;
   logic VMA_FETCH;
+  logic VMA_EXTENDED;
   logic VMA_SECTION_0;
+  logic VMA_SECTION_01;
+  logic [27:33] VMA_G;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1159,6 +1163,7 @@ interface iVMA;
   logic [0:35] VMA_HELD_OR_PC;
   logic LOCAL_AC_ADDRESS;
   logic AC_REF;
+  logic VMA[12:35];
   tEBUSdriver EBUSdriver;
 endinterface
 

@@ -7,4 +7,5 @@ module mcl(iEBUS EBUS,
 );
 
   assign MCL.EBUSdriver.driving = '0; // XXX temporary
+  assign MCL.ADR_ERR = '0;            // XXX temporary
 endmodule // mcl
