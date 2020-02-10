@@ -400,7 +400,7 @@ module edp(logic FPGA_RESET,
           adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
           adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
           adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
-          adaPC:  ADA[n+0:n+5] = VMA.VMA_HELD_OR_PC[n+0:n+5];
+          adaPC:  ADA[n+0:n+5] = VMA.HELD_OR_PC[n+0:n+5];
           endcase
         else
           ADA[n+0:n+5] = '0;

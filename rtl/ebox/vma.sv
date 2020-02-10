@@ -1,5 +1,6 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
+`include "mbox.svh"
 
 // M8542 VMA
 module vma(iVMA VMA,
@@ -26,10 +27,11 @@ module vma(iVMA VMA,
 
   logic LOCAL;
   logic VMA_SECTION_0, VMA_SECTION_01, LOCAL_AC_ADDRESS;
-  assign VMA_SECTION_0 = VMA.VMA[12:16] == 0;
+  logic PC_SECTION_0;
+  assign VMA_SECTION_0 = VMA.VMA[13:16] == 0;
   assign VMA_SECTION_01 = VMA.VMA[13:16] == 0;
   assign LOCAL = ~MCL.VMA_EXTENDED | MCL.VMA_FETCH | VMA_SECTION_01;
-  assign LOCAL_AC_ADDRESS = ~VMA.VMA_SECTION_01 & LOCAL & MISCeq0 & VMA20_27eq0;
+  assign LOCAL_AC_ADDRESS = ~VMA_SECTION_01 & LOCAL & MISCeq0 & VMA20_27eq0;
 
   assign VMA.AC_REF = VMA20_27eq0 &
                       (MISCeq0 | VMA28_31eq0) &
@@ -38,114 +40,122 @@ module vma(iVMA VMA,
                       LOCAL;
 
 
-  assign VMA.SPEC_VMA_MAGIC = CON.COND_VMA_MAGIC;
+  logic SPEC_VMA_MAGIC;
+  assign SPEC_VMA_MAGIC = CON.COND_VMA_MAGIC;
 
+  logic VMA_G;
   always_comb begin
-    VMA.VMA_G = CSH.GATE_VMA_27_33 ? VMA.VMA[27:33] : '0;
+    // XXX this goes nowhere. Why?
+    VMA_G = CSH.GATE_VMA_27_33 ? VMA.VMA[27:33] : '0;
   end
 
-  logic [0:1] ignored1;
-  mc10181 vma0(.S({4{VMA.SPEC_VMA_MAGIC}}),
-               .M(VMA.SPEC_VMA_MAGIC),
-               .CIN(VMA.AD_CRY_20),
-               .A({2'b0, VMA.PC[18:19]}),
-               .B(4'b0),
-               .F({ignored, VMA.AD[18:19]}),
-               .COUT(), .CG(), .CP());
+  logic AD_CRY_20, AD_CRY_24, AD_CRY_28, AD_CRY_32;
+  logic AD_CG_20_23, AD_CP_20_23, AD_CG_24_27, AD_CP_24_27;
+  logic [18:35] VMA_AD;
+  logic [0:1] ignored01;
+  mc10181 e1 (.S({4{SPEC_VMA_MAGIC}}),
+              .M(SPEC_VMA_MAGIC),
+              .CIN(AD_CRY_20),
+              .A({2'b0, VMA.PC[18:19]}),
+              .B(4'b0),
+              .F({ignored01, VMA_AD[18:19]}),
+              .COUT(), .CG(), .CP());
 
-  mc10181 vma1(.S({CON.COND_VMA_MAGIC, 1'b0, CON.COND_VMA_MAGIC, 1'b0}),
-               .M(VMA.SPEC_VMA_MAGIC),
-               .CIN(VMA.AD_CRY_24),
-               .A(VMA.PC[20:23]),
-               .B(4'b0),
-               .F(VMA.AD[20:23]),
-               .COUT(),
-               .CG(VMA.AD_CG_20_23),
-               .CP(VMA.AD_CP_20_23));
+  mc10181 e48(.S({CON.COND_VMA_MAGIC, 1'b0, CON.COND_VMA_MAGIC, 1'b0}),
+              .M(SPEC_VMA_MAGIC),
+              .CIN(AD_CRY_24),
+              .A(VMA.PC[20:23]),
+              .B(4'b0),
+              .F(VMA_AD[20:23]),
+              .COUT(),
+              .CG(AD_CG_20_23),
+              .CP(AD_CP_20_23));
 
-  mc10181 vma2(.S({CON.COND_VMA_MAGIC, 1'b0, CON.COND_VMA_MAGIC, 1'b0}),
-               .M(VMA.SPEC_VMA_MAGIC),
-               .CIN(VMA.AD_CRY_28),
-               .A(VMA.PC[24:27]),
-               .B({3'b0, CRAM.MAGIC[0]}),
-               .F(VMA.AD[24:27]),
-               .COUT(),
-               .CG(VMA.AD_CG_24_27),
-               .CP(VMA.AD_CP_24_27));
+  mc10181 e59(.S({CON.COND_VMA_MAGIC, 1'b0, CON.COND_VMA_MAGIC, 1'b0}),
+              .M(SPEC_VMA_MAGIC),
+              .CIN(AD_CRY_28),
+              .A(VMA.PC[24:27]),
+              .B({3'b0, CRAM.MAGIC[0]}),
+              .F(VMA_AD[24:27]),
+              .COUT(),
+              .CG(AD_CG_24_27),
+              .CP(AD_CP_24_27));
 
-  mc10181 vma3(.S({CON.COND_VMA_MAGIC, 1'b0, CON.COND_VMA_MAGIC, 1'b0}),
-               .M(VMA.SPEC_VMA_MAGIC),
-               .CIN(VMA.AD_CRY_32),
-               .A(VMA.PC[28:31]),
-               .B(CRAM.MAGIC[1:4]),
-               .F(VMA.AD[28:31]),
-               .COUT(VMA.AD_CRY_28),
-               .CG(VMA.AD_CG_28_31),
-               .CP(VMA.AD_CP_28_31));
+  mc10181 e85(.S({CON.COND_VMA_MAGIC, 1'b0, CON.COND_VMA_MAGIC, 1'b0}),
+              .M(SPEC_VMA_MAGIC),
+              .CIN(AD_CRY_32),
+              .A(VMA.PC[28:31]),
+              .B(CRAM.MAGIC[1:4]),
+              .F(VMA_AD[28:31]),
+              .COUT(AD_CRY_28),
+              .CG(AD_CG_28_31),
+              .CP(AD_CP_28_31));
 
-  mc10181 vma4(.S({CON.COND_VMA_MAGIC, 2'b11, CON.COND_VMA_MAGIC}),
-               .M(VMA.SPEC_VMA_MAGIC),
-               .CIN(MCL.VMA_INC),
-               .A(SCD.TRAP_MIX[32:35]),
-               .B(VMA.PC[32:35]),
-               .F(VMA.AD[32:35]),
-               .COUT(VMA.AD_CRY_32),
-               .CG(), .CP());
+  mc10181 e84(.S({CON.COND_VMA_MAGIC, 2'b11, CON.COND_VMA_MAGIC}),
+              .M(SPEC_VMA_MAGIC),
+              .CIN(MCL.VMA_INC),
+              .A(SCD.TRAP_MIX[32:35]),
+              .B(VMA.PC[32:35]),
+              .F(VMA_AD[32:35]),
+              .COUT(AD_CRY_32),
+              .CG(), .CP());
 
-  mc10179 vmaCG0(.G({VMA.AD_CG_20_23, VMA.AD_CG_20_23, VMA.AD_CG_24_27, VMA.AD_CG_28_31}),
-                 .P({VMA.AD_CP_20_23, VMA.AD_CP_20_23, VMA.AD_CP_24_27, VMA.AD_CP_28_31}),
-                 .CIN(VMA.AD_CRY_32),
-                 .C8OUT(VMA.AD_CRY_20),
-                 .C2OUT(VMA.AD_CRY_24),
+  mc10179 vmaCG0(.G({AD_CG_20_23, AD_CG_20_23, AD_CG_24_27, AD_CG_28_31}),
+                 .P({AD_CP_20_23, AD_CP_20_23, AD_CP_24_27, AD_CP_28_31}),
+                 .CIN(AD_CRY_32),
+                 .C8OUT(AD_CRY_20),
+                 .C2OUT(AD_CRY_24),
                  .GG(), .PG());
 
   // VMA2 p. 355
+  logic [12:17] VMA_IN;
+  logic CRY_16, CRY_20, CRY_24, CRY_28, CRY_32;
   logic [18:35] vmaMux;
   always_comb begin
-    vmaMux = MCL.VMA_AD ? VMA.AD[18:35] : EDP.AD[18:35];
+    vmaMux = MCL.VMA_AD ? EDP.AD[18:35] : VMA_AD[18:35];
   end
 
-  UCR4 e11(.D(VMA.VMA_IN[12:15]),
-           .CIN(VMA.CRY_16),
+  UCR4 e11(.D(VMA_IN[12:15]),
+           .CIN(CRY_16),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[12:15]),
            .COUT());
 
-  UCR4 e6 (.D({VMA.VMA_IN[16:17], vmaMux[18:19]}),
-           .CIN(VMA.CRY_20),
+  UCR4 e6 (.D({VMA_IN[16:17], vmaMux[18:19]}),
+           .CIN(CRY_20),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[16:19]),
-           .COUT(VMA.CRY_16));
+           .COUT(CRY_16));
 
   UCR4 e21(.D(vmaMux[20:23]),
-           .CIN(VMA.CRY_24),
+           .CIN(CRY_24),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[20:23]),
-           .COUT(VMA.CRY_20));
+           .COUT(CRY_20));
 
   UCR4 e25(.D(vmaMux[24:27]),
-           .CIN(VMA.CRY_28),
+           .CIN(CRY_28),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[24:27]),
-           .COUT(VMA.CRY_24));
+           .COUT(CRY_24));
 
   UCR4 e64(.D(vmaMux[28:31]),
-           .CIN(VMA.CRY_32),
+           .CIN(CRY_32),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[28:31]),
-           .COUT(VMA.CRY_28));
+           .COUT(CRY_28));
 
-  UCR4 e48(.D(vmaMux[32:35]),
+  UCR4 e58(.D(vmaMux[32:35]),
            .CIN('0),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[32:35]),
-           .COUT(VMA.CRY_32));
+           .COUT(CRY_32));
 
   // VMA3 p.356
   logic match;                  // Note signal name changed from VMA.MATCH 13-35
@@ -159,7 +169,7 @@ module vma(iVMA VMA,
       USR4 r(.S0(1'b0),
              .D(k == 12 ? {1'b0, EDP.AD[k+1:k+3]} : {EDP.AD[k:k+3]}),
              .S3(1'b0),
-             .Q(k == 12 ? {ignored2, VMA.ADR_BRK[k+1:k+3]} : {VMA.ADR_BRK[k:k+3]}),
+             .Q(VMA.ADR_BRK[k:k+3]),
              .SEL({2{~CON.DATAO_APR}}),
              .CLK(clk));
     end
@@ -167,13 +177,20 @@ module vma(iVMA VMA,
 
   generate
 
+    USR4 VMA3r12(.S0(1'b0),
+                 .D({VMA_SECTION_0, VMA.VMA[13:15]}),
+                 .S3(1'b0),
+                 .Q({PC_SECTION_0, VMA.PC[13:15]}),
+                 .SEL({2{~CON.DATAO_APR}}),
+                 .CLK(clk));
+
     for (k = 12; k < 36; k += 6) begin: fullPC
-      USR4 r(.S0(1'b0),
-             .D(k == 12 ? {VMA.VMA_SECTION_0, VMA.VMA[k+1:k+3]} : {VMA.VMA[k:k+3]}),
-             .S3(1'b0),
-             .Q(k == 12 ? {VMA.PC_SECTION_0, VMA.PC[k+1:k+3]} : {VMA.PC[k:k+3]}),
-             .SEL(k == 12 ? {2{~CON.DATAO_APR}} : {2{~VMA.LOAD_PC}}),
-             .CLK(clk));
+      USR4 VMA3r(.S0(1'b0),
+                 .D(VMA.VMA[k:k+3]),
+                 .S3(1'b0),
+                 .Q(VMA.PC[k:k+3]),
+                 .SEL({2{~VMA.LOAD_PC}}),
+                 .CLK(clk));
     end
   endgenerate
 
@@ -182,35 +199,53 @@ module vma(iVMA VMA,
   logic ignored3, ignored4;
   generate
 
-    for (k = 12; k < 36; k += 6) begin: heldOrPC
-      mix4 m(.SEL(CON.COND_SEL_VMA),
-             .D0(k == 12 ? {1'b0, VMA.PC[k+1:k+3]} : VMA.PC[k:k+3]),
-             .D1(k == 12 ? {1'b0, VMA.HELD[k+1:k+3]} : VMA.HELD[k:k+3]),
-             .B(k == 12 ? {ignored3, VMA.HELD_OR_PC[k+1:k+3]} : VMA.HELD_OR_PC[k:k+3]));
+    // k = 12 case is persnickety enough that it's easier to just code it here.
+    mux4x2 VMA4m12(.SEL(CON.COND_SEL_VMA),
+                   .D0({1'b0, VMA.PC[13:15]}),
+                   .D1({1'b0, VMA.HELD[13:15]}),
+                   .B({ignored3, VMA.HELD_OR_PC[13:15]}));
+
+    USR4 VMA4r12(.S0('0),
+                 .D({1'b0, VMA.VMA[13:15]}),
+                 .S3('0),
+                 .SEL({2{~MCL.LOAD_VMA_HELD}}),
+                 .CLK(clk),
+                 .Q({ignored4, VMA.HELD[13:15]}));
+
+    for (k = 18; k < 36; k += 6) begin: heldOrPC
+      mux4x2 m(.SEL(CON.COND_SEL_VMA),
+               .D0(VMA.PC[k:k+3]),
+               .D1(VMA.HELD[k:k+3]),
+               .B(VMA.HELD_OR_PC[k:k+3]));
 
       USR4 r(.S0('0),
-             .D(k == 12 ? {1'b0, VMA.VMA[k+1:k+3]} : VMA.VMA[k:k+3]),
+             .D(VMA.VMA[k:k+3]),
              .S3('0),
-             .SEL(k == 12 ? {2{~MCL.LOAD_VMA_HELD}} : {2{VMA.LOAD_VMA_HELD}}),
+             .SEL({2{VMA.LOAD_VMA_HELD}}),
              .CLK(clk),
-             .Q(k == 12 ? {ignored4, VMA.HELD[k+1:k+3]} : VMA.HELD[k:k+3]));
+             .Q(VMA.HELD[k:k+3]));
     end
   endgenerate
 
   logic VMAX_EN, ignored6;
   assign VMAX_EN = ~MCL.VMAX_EN | CON.COND_VMAX_MAGIC;
-  mix4 e12a(.SEL(VMA.VMAX_EN),
-            .D0({VMA.VMA[12], 3'b0}),
-            .D1('0),
-            .B({VMA.VMA[12], ignored6}));
+
+  // E12 top half
+  always_comb begin
+    if (VMAX_EN && MCL.VMAX_SEL == 2'b00) VMA_IN[12] = VMA.VMA[12];
+  end
 
   // Note change of signal name from VMA_nn_IN to VMA_IN[nn].
+  // E12 bottom half, E17, E19
   generate
     for (k = 13; k < 18; k += 2) begin: vmaIN
-      mix4 m(.SEL(VMA.VMAX_EN),
-             .D0({VMA.VMA[k], VMA.PC[k], VMA.PREV_SEC[k], EDP.AD[k]}),
-             .D1({VMA.VMA[k+1], VMA.PC[k+1], VMA.PREV_SEC[k+1], EDP.AD[k+1]}),
-             .B({VMA.VMA_IN[k], VMA.VMA_IN[k+1]}));
+
+      always_comb begin
+
+        if (VMAX_EN) begin
+          VMA_IN[k] = {VMA.VMA[k], VMA.PC[k], VMA.PREV_SEC[k], EDP.AD[k]}[MCL.VMAX_SEL];
+        end
+      end
     end
   endgenerate
 
@@ -225,82 +260,85 @@ module vma(iVMA VMA,
   logic [16:17] ps;
   
   USR4 e24(.S0('0),
-           .D({EDP.AD[16:17], EDP.AD[17:16]}),
+           .D({EDP.AD[16:17], EDP.AD[17], EDP.AD[16]}),
            .S3('0),
            .SEL({2{~CON.LOAD_PREV_CONTEXT}}),
            .CLK(clk),
            .Q({VMA.PREV_SEC[16:17], ps}));
-  assign VMA.PCS_SECTION_0 = VMA.PREV_SEC[13:15] == '0 && ps == '0;
+  logic PCS_SECTION_0;
+  assign PCS_SECTION_0 = VMA.PREV_SEC[13:15] == '0 && ps == '0;
 
   // VMA5 p. 358
   logic [4:6] diag;
+  logic READ_VMA;
   assign diag = CTL.DIAG[4:6];
-  mux e33(.en(VMA.READ_VMA),
+  assign READ_VMA = CTL.DIAG_READ_FUNC_15x;
+  mux e33(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.PC[15:13], ~MISCeq0, VMA.HELD[15:13], ~VMA.AC_REF}),
-          .q(EBUSdriver.data[13]));
+          .q(VMA.EBUSdriver.data[13]));
 
-  mux e38(.en(VMA.READ_VMA),
+  mux e38(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.ADR_BRK[15:13], ~LOCAL_AC_ADDRESS, VMA.VMA[15:13], ~match}),
-          .q(EBUSdriver.data[15]));
+          .q(VMA.EBUSdriver.data[15]));
 
-  mux  e9(.en(VMA.READ_VMA),
+  mux  e9(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.PC[19:16], VMA.HELD[19:16]}),
-          .q(EBUSdriver.data[17]));
+          .q(VMA.EBUSdriver.data[17]));
           
-  mux e28(.en(VMA.READ_VMA),
+  mux e28(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.ADR_BRK[19:16], VMA.VMA[19:16]}),
-          .q(EBUSdriver.data[19]));
+          .q(VMA.EBUSdriver.data[19]));
 
-  mux e35(.en(VMA.READ_VMA),
+  mux e35(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.PC[23:20], VMA.HELD[23:20]}),
-          .q(EBUSdriver.data[21]));
+          .q(VMA.EBUSdriver.data[21]));
           
-  mux e34(.en(VMA.READ_VMA),
+  mux e34(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.ADR_BRK[23:20], VMA.VMA[23:20]}),
-          .q(EBUSdriver.data[23]));
+          .q(VMA.EBUSdriver.data[23]));
           
-  mux e52(.en(VMA.READ_VMA),
+  mux e52(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.PC[27:24], VMA.HELD[27:24]}),
-          .q(EBUSdriver.data[25]));
+          .q(VMA.EBUSdriver.data[25]));
           
-  mux e50(.en(VMA.READ_VMA),
+  mux e50(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.ADR_BRK[27:24], VMA.VMA[27:24]}),
-          .q(EBUSdriver.data[27]));
+          .q(VMA.EBUSdriver.data[27]));
           
-  mux e61(.en(VMA.READ_VMA),
+  mux e61(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.PC[31:28], VMA.HELD[31:28]}),
-          .q(EBUSdriver.data[29]));
+          .q(VMA.EBUSdriver.data[29]));
           
-  mux e71(.en(VMA.READ_VMA),
+  mux e71(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.ADR_BRK[31:28], VMA.VMA[31:28]}),
-          .q(EBUSdriver.data[31]));
+          .q(VMA.EBUSdriver.data[31]));
           
-  mux e76(.en(VMA.READ_VMA),
+  mux e76(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.PC[35:32], VMA.HELD[35:32]}),
-          .q(EBUSdriver.data[33]));
+          .q(VMA.EBUSdriver.data[33]));
           
-  mux e60(.en(VMA.READ_VMA),
+  mux e60(.en(READ_VMA),
           .sel(diag[4:6]),
           .d({VMA.ADR_BRK[35:32], VMA.VMA[35:32]}),
-          .q(EBUSdriver.data[35]));
+          .q(VMA.EBUSdriver.data[35]));
 
-  mux e22(.en(VMA.READ_VMA),
+  mux e22(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({~VMA.VMA_SECTION0, ~VMA.PC_SECTION_0, ~VMA.PCS_SECTION_0, VMA.PREV_SEC[17:13]}),
-          .q(EBUSdriver.data[11]));
+          .d({~VMA_SECTION_0, ~PC_SECTION_0, ~PCS_SECTION_0, VMA.PREV_SEC[17:13]}),
+          .q(VMA.EBUSdriver.data[11]));
 
-  assign EBUSdriver.driving = VMA.READ_VMA;
+  assign VMA.EBUSdriver.driving = READ_VMA;
 
   // VMA5 DATAO APR, VMA5 LOAD PC, VMA5 LOAD VMA HELD, VMA5 READ VMA A
   // are all unused and are basically just copies of signals from

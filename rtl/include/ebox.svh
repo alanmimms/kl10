@@ -878,7 +878,9 @@ interface iCON;
   logic COND_ADR_10;
   logic COND_LOAD_IR;
   logic COND_EBUS_STATE;
+  logic COND_VMAX_MAGIC;
 
+  logic LOAD_PREV_CONTEXT;
   logic LONG_EN;
   logic PI_CYCLE;
   logic PCplus1_INH;
@@ -1019,6 +1021,9 @@ interface iCTL;
   logic DIAG_READ_FUNC_12x;
   logic DIAG_READ_FUNC_13x;
   logic DIAG_READ_FUNC_14x;
+  logic DIAG_READ_FUNC_15x;
+  logic DIAG_READ_FUNC_16x;
+  logic DIAG_READ_FUNC_17x;
   logic PI_CYCLE_SAVE_FLAGS;
   logic LOAD_PC;
   logic DIAG_STROBE;
@@ -1091,11 +1096,17 @@ interface iMCL;
   logic SKIP_SATISFIED;
   logic STORE_AR;
   logic PC_SECTION_0;
+  logic VMA_AD;
   logic VMA_INC;
   logic VMA_FETCH;
   logic VMA_EXTENDED;
   logic VMA_SECTION_0;
   logic VMA_SECTION_01;
+  logic VMA_READ_OR_WRITE;
+  logic VMAX_EN;
+  logic [0:1] VMAX_SEL;
+  logic LOAD_VMA_HELD;
+  logic PAGE_UEBR_REF;
   logic [27:33] VMA_G;
   logic ADR_ERR;
   tEBUSdriver EBUSdriver;
@@ -1141,6 +1152,7 @@ interface iSCD;
   logic TRAP_REQ2;
   logic TRAP_CYC1;
   logic TRAP_CYC2;
+  logic [32:35] TRAP_MIX;
   logic USER;
   logic USER_IOT;
   logic PUBLIC;
@@ -1161,11 +1173,16 @@ endinterface
 
 
 interface iVMA;
-  logic [0:35] VMA_HELD_OR_PC;
   logic LOCAL_AC_ADDRESS;
   logic AC_REF;
-  logic PC[13:35];
-  logic VMA[13:35];
+  logic [12:35] PC;
+  logic [12:35] VMA;
+  logic [12:35] ADR_BRK;
+  logic [12:17] PREV_SEC;
+  logic [12:35] HELD;
+  logic [0:35] HELD_OR_PC;
+  logic LOAD_PC;
+  logic LOAD_VMA_HELD;
   tEBUSdriver EBUSdriver;
 endinterface
 

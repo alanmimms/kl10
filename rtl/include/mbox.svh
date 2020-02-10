@@ -6,6 +6,7 @@ interface iCSH;
   logic EBOX_RETRY_REQ;
   logic EBOX_T0_IN;
   logic PAGE_FAIL_HOLD;
+  logic GATE_VMA_27_33;
 endinterface
 
 

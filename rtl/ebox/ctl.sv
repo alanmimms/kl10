@@ -37,9 +37,6 @@ module ctl(iAPR APR,
   logic DIAG_LOAD_FUNC_05x;
   logic DIAG_LOAD_FUNC_070;
   logic DIAG_LOAD_FUNC_071;
-  logic DIAG_READ_FUNC_15x;
-  logic DIAG_READ_FUNC_16x;
-  logic DIAG_READ_FUNC_17x;
 
   logic SPEC_MTR_CTL;
 
@@ -271,9 +268,9 @@ module ctl(iAPR APR,
     CTL.DIAG_READ_FUNC_12x = en1xx && CTL_DS[1:3] == 3'b010;
     CTL.DIAG_READ_FUNC_13x = en1xx && CTL_DS[1:3] == 3'b011;
     CTL.DIAG_READ_FUNC_14x = en1xx && CTL_DS[1:3] == 3'b100;
-    DIAG_READ_FUNC_15x     = en1xx && CTL_DS[1:3] == 3'b101;
-    DIAG_READ_FUNC_16x     = en1xx && CTL_DS[1:3] == 3'b110;
-    DIAG_READ_FUNC_17x     = en1xx && CTL_DS[1:3] == 3'b111;
+    CTL.DIAG_READ_FUNC_15x = en1xx && CTL_DS[1:3] == 3'b101;
+    CTL.DIAG_READ_FUNC_16x = en1xx && CTL_DS[1:3] == 3'b110;
+    CTL.DIAG_READ_FUNC_17x = en1xx && CTL_DS[1:3] == 3'b111;
 
     CTL.CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
     CTL_READ_STROBE = CTL.CONSOLE_CONTROL ? CTL.DIAG_STROBE : CON.COND_DIAG_FUNC & APR.CLK;

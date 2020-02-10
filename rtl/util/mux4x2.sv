@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
-
-module mix4
+// Quad 1-of-2 mux
+module mux4x2
   (input SEL,
    input [0:3] D0,
    input [0:3] D1,
