@@ -5,7 +5,7 @@
 // Date        : Tue Jan 28 12:50:23 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode synth_stub
-//               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/ebox_clocks_synth_1/ebox_clocks_stub.v
+//               /home/alan/kl10-rtl/kl10-rtl.runs/ebox_clocks_synth_1/ebox_clocks_stub.v
 // Design      : ebox_clocks
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7z010clg400-1
@@ -28,7 +28,7 @@ endmodule
 // Date        : Mon Jan 27 11:55:11 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode synth_stub
-//               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/cram_mem_synth_1/cram_mem_stub.v
+//               /home/alan/kl10-rtl/kl10-rtl.runs/cram_mem_synth_1/cram_mem_stub.v
 // Design      : cram_mem
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7z010clg400-1
@@ -54,7 +54,7 @@ endmodule
 // Date        : Thu Jan 16 13:10:10 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode synth_stub
-//               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.srcs/sources_1/ip/dram_mem/dram_mem_stub.v
+//               /home/alan/kl10-rtl/kl10-rtl.srcs/sources_1/ip/dram_mem/dram_mem_stub.v
 // Design      : dram_mem
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7z010clg400-1
@@ -108,7 +108,7 @@ endmodule
 // Date        : Mon Jan 27 15:35:59 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode synth_stub
-//               /home/alan/kl10-fpga-rtl/kl10-fpga-rtl.runs/fm_mem_synth_1/fm_mem_stub.v
+//               /home/alan/kl10-rtl/kl10-rtl.runs/fm_mem_synth_1/fm_mem_stub.v
 // Design      : fm_mem
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xc7z010clg400-1
