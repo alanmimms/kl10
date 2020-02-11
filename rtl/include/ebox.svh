@@ -1129,6 +1129,8 @@ endinterface
 
 
 interface iSCD;
+  logic SC_GE_36;
+  logic SC_36_TO_63;
   logic [0:8] ARMM_UPPER;
   logic [13:17] ARMM_LOWER;
   logic [0:9] FE;
@@ -1155,9 +1157,12 @@ interface iSCD;
   logic [32:35] TRAP_MIX;
   logic USER;
   logic USER_IOT;
+  logic KERNEL_USER_IOT;
   logic PUBLIC;
+  logic PUBLIC_EN;
   logic PRIVATE;
   logic ADR_BRK_PREVENT;
+  logic ADR_BRK_INH;
   tEBUSdriver EBUSdriver;
 endinterface
 
