@@ -1,5 +1,6 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
+`include "mbox.svh"
 
 // M8524 SCD
 module scd(iCRAM CRAM,
@@ -30,7 +31,7 @@ module scd(iCRAM CRAM,
 
   logic SET_AD_FLAGS, LOAD_FLAGS, PUBLIC_PAGE, PCF_MAGIC, PUBLIC_PAGE, INSTR_FETCH;
   logic USER_EN, USER_IOT_EN, CLR_PUBLIC, LEAVE_USER, PUBLIC_EN, PRIVATE_INSTR_EN;
-  logic JFCL, DISP_FLAG_CTL, SPEC_PORTAL;
+  logic JFCL, DISP_FLAG_CTL, SPEC_PORTAL, TRAP_REQ_1, TRAP_REQ_2;
 
   // SCD1 p. 138
   logic SCAD_S1, SCAD_S0, SCARY_CRY_IN;
@@ -229,7 +230,7 @@ module scd(iCRAM CRAM,
 
   mux e13(.EN(SCD.EBUSdriver.driving),
           .SEL(DIAG),
-          .D({SCD.TRAP_REQ_2, SCD.OV, VMA.HELD_OR_PC[0], SCD.PCP,
+          .D({TRAP_REQ_2, SCD.OV, VMA.HELD_OR_PC[0], SCD.PCP,
               ~SCD.USER, ~SCD.PUBLIC_EN, SCD.KERNEL_USER_IOT, SCD.ADR_BRK_INH}),
           .B(SCD.EBUSdriver.data[2]));
   
@@ -247,7 +248,7 @@ module scd(iCRAM CRAM,
   
   mux e17(.EN(SCD.EBUSdriver.driving),
           .SEL(DIAG),
-          .D({SCD.TRAP_REQ_1, ~EDP.AD_CRY[1], ~EDP.AD_OVERFLOW[0], CON.CLR_PRIVATE_INSTR,
+          .D({TRAP_REQ_1, ~EDP.AD_CRY[1], ~EDP.AD_OVERFLOW[0], CON.CLR_PRIVATE_INSTR,
               ~SCD.USER_EN, ~SCD.PRIVATE_INSTR, SCD.USER_IOT, SCD.ADR_BRK_CYC}),
           .B(SCD.EBUSdriver.data[5]));
   
@@ -338,15 +339,15 @@ module scd(iCRAM CRAM,
   logic e38OR;
   assign e38OR = EDP.AR[10] & LOAD_FLAGS |
                  SCAD[1] & EXP_TEST |
-                 CRAM_MAGIC[4] & PCF_MAGIC |
-                 CON.COND_INSTR_ABORT & (SCD.TRAP_REQ_1 | SCD.TRAP_CYC_1);
+                 CRAM.MAGIC[4] & PCF_MAGIC |
+                 CON.COND_INSTR_ABORT & (TRAP_REQ_1 | SCD.TRAP_CYC_1);
   assign TRAP_REQ_1_EN = SCD.SET_AD_FLAGS & EDP.AD_OVERFLOW[0] |
                          (TRAP_CLEAR | e38OR) &
-                         (SCD.TRAP_REQ_1 | e38OR);
-  assign TRAP_REQ_2_EN = SCD.TRAP_REQ_2 & ~SCD.TRAP_CLEAR |
+                         (TRAP_REQ_1 | e38OR);
+  assign TRAP_REQ_2_EN = TRAP_REQ_2 & ~SCD.TRAP_CLEAR |
                          EDP.AR[9] & LOAD_FLAGS |
-                         CRAM_MAGIC[3] & PCF_MAGIC |
-                         CON.COND_INSTR_ABORT & (SCD.TRAP_CYC_2 | SCD.TRAP_REQ_2);
+                         CRAM.MAGIC[3] & PCF_MAGIC |
+                         CON.COND_INSTR_ABORT & (SCD.TRAP_CYC_2 | TRAP_REQ_2);
 
   assign TRAP_CLEAR = CON.COND_INSTR_ABORT | PIandSAVE_FLAGS |
                       CTL.DISP_NICOND | LOAD_FLAGS;
@@ -355,18 +356,18 @@ module scd(iCRAM CRAM,
 
   logic CLR_FPD;
   logic DISP_SAVE_FLAGS;
-  assign = LOAD_FLAGS | DISP_SAVE_FLAGS | CTL.SPEC_CLR_FPD;
+  assign DISP_SAVE_FLAGS = LOAD_FLAGS | DISP_SAVE_FLAGS | CTL.SPEC_CLR_FPD;
 
   logic LOAD_PCP;
   assign LOAD_PCP = LOAD_FLAGS & ~JFCL;
 
-  assign NICOND_10 = (SCD.TRAP_REQ_1 | SCD.TRAP_REQ_2) & CON.TRAP_EN & CON.NICOND_TRAP_EN;
+  assign NICOND_10 = (TRAP_REQ_1 | TRAP_REQ_2) & CON.TRAP_EN & CON.NICOND_TRAP_EN;
 
   always_ff @(posedge clk) begin
     SCD.OV <= EDP.AD_OVERFLOW_00 & SCD.SET_AD_FLAGS |
               (LOAD_FLAGS ?
-               (SCD.OV | (SCAD[1] & SCD.EXP_TEST | CRAM.MAGIC[0] & PCF_MAGIC) :
-                EDP.AR[0]));
+               (SCD.OV | SCAD[1] & SCD.EXP_TEST | CRAM.MAGIC[0] & PCF_MAGIC) :
+                EDP.AR[0]);
 
     SCD.CRY0 <= EDP.AD_CRY[-2] & SCD.SET_AD_FLAGS |
                 (LOAD_FLAGS ? SCD.CRY0 : EDP.AR[1]);
@@ -379,25 +380,25 @@ module scd(iCRAM CRAM,
                (~LOAD_FLAGS | EDP.AR[3]);
 
     SCD.FXU <= (LOAD_FLAGS | SCD.FXU |
-               (SCAD[0] & SCD>EXP_TEST | CRAM_MAGIC[5] & PCF_MAGIC)) &
+               (SCAD[0] & SCD>EXP_TEST | CRAM.MAGIC[5] & PCF_MAGIC)) &
                (~LOAD_FLAGS | EDP.AR[11]);
 
-    SCD.DIV_CHK <= (LOAD_FLAGS | SCD.DIV_CHK | CRAM_MAGIC[6] & PCF_MAGIC) &
-                   (~SCD_LOAD_FLAGS | EDP.AR[12]);
+    SCD.DIV_CHK <= (LOAD_FLAGS | SCD.DIV_CHK | CRAM.MAGIC[6] & PCF_MAGIC) &
+                   (~LOAD_FLAGS | EDP.AR[12]);
 
-    SCD.TRAP_REQ_2 <= TRAP_REQ_2_EN;
+    TRAP_REQ_2 <= TRAP_REQ_2_EN;
 
     SCD.TRAP_CYC_2 <= SCD.TRAP_CYC_2 & ~SCD.TRAP_CLEAR |
-                      SCD.TRAP_REQ_2 & e22p15;
+                      TRAP_REQ_2 & e22p15;
 
-    SCD.TRAP_REQ_1 <= TRAP_REQ_1_EN;
+    TRAP_REQ_1 <= TRAP_REQ_1_EN;
 
     SCD.TRAP_CYC_1 <= SCD.TRAP_CYC_1 & TRAP_CLEAR |
-                      SCD_TRAP_REQ_1 & e22p15;
+                      TRAP_REQ_1 & e22p15;
 
     SCD.FPD <= CLR_FPD & SCD.FPD |
                EDP.AR[4] & LOAD_FLAGS |
-               CRAM_MAGIC[2] & PCF_MAGIC;
+               CRAM.MAGIC[2] & PCF_MAGIC;
 
     SCD.PCP <= (SCD.LOAD_PCP | SCD.PCP) &
                (~LOAD_FLAGS | EDP.AR[0] | JFCL);
@@ -453,7 +454,7 @@ module scd(iCRAM CRAM,
   assign PIandSAVE_FLAGS = CTL.SPEC_SAVE_FLAGS & CON.PI_CYCLE;
   assign DISP_SAVE_FLAGS = CTL.SPEC_SAVE_FLAGS;
   assign SCD.KERNEL_MODE = ~SCD.PUBLIC & ~SCD.USER;
-  assign PUBLIC_PAGE = PT_PUBLIC;
+  assign PUBLIC_PAGE = PAG.PT_PUBLIC;
   assign INSTR_FETCH = MCL.PAGED_FETCH;
   assign RESET = CLK.MR_RESET;
 

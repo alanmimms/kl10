@@ -12,6 +12,7 @@ endinterface
 
 interface iPAG;
   logic PF_EBOX_HANDLE;
+  logic PT_PUBLIC;
 endinterface
 
 
