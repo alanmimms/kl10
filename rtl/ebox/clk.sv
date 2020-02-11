@@ -440,7 +440,7 @@ module clk(input clk,
   end
 
   logic e7out7;                 // XXX slashed
-  logic e38out6;                // XXX slashed
+  logic e38out7;                // XXX slashed
   assign e7out7 = CLK.EBOX_SOURCE | CLK.PF_DLYD_B | CLK.INSTR_1777;
   assign e38out7 = ~APR.APR_PAR_CHK_EN | ~AR_ARX_PAR_CHECK | e7out7;
   assign CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |

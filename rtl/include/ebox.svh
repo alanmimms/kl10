@@ -1091,6 +1091,7 @@ interface iMCL;
   logic LOAD_ARX;
   logic LOAD_VMA;
   logic MBOX_CYC_REQ;
+  logic PAGED_FETCH;
   logic MEM_ARL_IND;
   logic SHORT_STACK;
   logic SKIP_SATISFIED;
@@ -1124,6 +1125,7 @@ interface iPI;
   logic EBUS_CP_GRANT;
   logic EXT_TRAN_REC;
   logic READY;
+  logic [0:2] PI;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1137,7 +1139,6 @@ interface iSCD;
   logic [0:9] SC;
   logic [0:35] SCADA;
   logic [0:35] SCADB;
-  logic SC_GE_36;
   logic SCADeq0;
   logic SCAD_SIGN;
   logic SC_SIGN;
@@ -1152,17 +1153,20 @@ interface iSCD;
   logic DIV_CHK;
   logic TRAP_REQ1;
   logic TRAP_REQ2;
-  logic TRAP_CYC1;
-  logic TRAP_CYC2;
+  logic TRAP_CYC_1;
+  logic TRAP_CYC_2;
   logic [32:35] TRAP_MIX;
+  logic KERNEL_MODE;
   logic USER;
   logic USER_IOT;
   logic KERNEL_USER_IOT;
   logic PUBLIC;
   logic PUBLIC_EN;
   logic PRIVATE;
+  logic PRIVATE_INSTR;
   logic ADR_BRK_PREVENT;
   logic ADR_BRK_INH;
+  logic ADR_BRK_CYC;
   tEBUSdriver EBUSdriver;
 endinterface
 
