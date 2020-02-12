@@ -2,26 +2,58 @@
 `include "ebox.svh"
 
 // M8544 MCL
-module mcl(iEBUS EBUS,
+module mcl(iAPR APR,
            iCRAM CRAM,
+           iCTL CTL,
+           iEBUS EBUS,
+           iIR IR,
            iMCL MCL,
+           iSCD SCD,
            iVMA VMA
 );
 
-  assign MCL.EBUSdriver.driving = '0; // XXX temporary
-  assign MCL.ADR_ERR = '0;            // XXX temporary
+  logic clk;
+  assign clk = CLK.MCL;
 
   // MCL1 p.371
   logic [4:6] DS;
   logic DIAG_READ;
-  logic AREAD_EA, Aeq001;
+  logic AREAD_EA;
   logic MEM_AREAD, MEM_WR_CYCLE, MEM_RPW_CYCLE, MEM_COND_FETCH;
   logic MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR, MEM_LOAD_ARX;
-  logic MEM_RW_CYCLE, MEM_RPW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
-  logic VMA_READ, VMA_READ_OR_WRITE;
+  logic MEM_RW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
+  logic VMA_READ, VMA_READ_OR_WRITE, XR_PREVIOUS;
+  logic REQ_EN, LOAD_AD_FUNC, LOAD_VMA_HELD;
+  logic AREAD_EA, RW_OR_RPW_CYCLE, MEM_COND_JUMP;
+  logic USER_EN, PUBLIC_EN, VMA_EXT_EN;
+  logic VMA_AD, VMAslashAD, AD_FUNC_08, AD_FUNC_09;
+  logic AREAD_3_6_7, AREAD_001, AREAD_x11, Aeq0x0, Aeq001, AREAD_1xx;
+  logic PXCT_09, PXCT_10, PXCT_11, PXCT_12;
+  logic EA_PREVIOUS, EA_EXTENDED, FETCH_EN, FETCH_EN_IN;
+  logic USER, USER_IOT, PUBLIC, PUBLIC_EN, KERNEL_CYCLE;
+  logic UPT_EN, EPT_EN, SPEC_EXEC;
+  logic PAGE_ADDRESS_COND, PAGE_ILL_ENTRY, USER_COMP, PAGE_TEST_PRIVATE;
+  logic BWRITE_01;
+  logic REG_FUNC, MAP_FUNC, SPEC_SP_MEM_CYCLE, AD_LONG_EN, VMA_LONG_EN;
+  logic AREAD_EN, XR_SHORT, PXCT, ADR_ERR, SP_MEM_CYCLE;
+  logic VMA_PREVIOUS, PC_SECTION_0, PCS_SECTION_0, VMA_SECTION_0;
+  logic EBOX_CACHE, EBOX_PAGING_EN, EBOX_MAY_BE_PAGED;
+  logic VMA_EPT, VMA_UPT, PAGED_FETCH, PHYS_REF;
+
+  logic RESET;                  // XXX not yet initialized
 
   assign DS = CTL.DIAG[4:6];
-  assign DIAG_READ = CTL.DIAG_READ_FUNC_10x;
+  assign DIAG_READ = EDP.DIAG_READ_FUNC_10x;
+
+  always_comb begin
+    AREAD_EA = MEM_AREAD & ~Aeq001;
+    RW_OR_RPW_CYCLE = MEM_RW_CYCLE | MEM_RPW_CYCLE;
+    MEM_COND_JUMP = CRAM.MAGIC[5] & MEM_COND_FETCH;
+    REQ_EN = (BWRITE_01 | ~MEM_B_WRITE) &
+             (CRAM.MEM[0] & CRAM.MEM[1] & RESET);
+    LOAD_AD_FUNC = MEM_RESTORE_VMA | MEM_AD_FUNC;
+    LOAD_VMA_HELD = CON.COND_LOAD_VMA_HELD | CRAM.MEM[2];
+  end
 
   logic ignoredE70;
   decoder e70(.en(~CRAM.MEM[0]),
@@ -39,43 +71,41 @@ module mcl(iEBUS EBUS,
                   MEM_LOAD_ARX, MEM_RW_CYCLE, MEM_RPW_CYCLE,
                   MEM_WRITE, MEM_UNCOND_FETCH}));
 
-  assign AREAD_EA = MEM_AREAD & ~Aeq001;
-
   mux  e6(.en(DIAG_READ),
-          .sel(ds),
+          .sel(DS),
           .d({VMA.HELD_OR_PC[1], VMA.HELD_OR_PC[7], VMA_READ, VMA_PAUSE,
               VMA_WRITE, MCL.LOAD_AR, MCL.LOAD_ARX, MCL.STORE_AR}),
           .q(MCL.EBUSdriver.data[18]));
 
   mux e11(.en(DIAG_READ),
-          .sel(ds),
+          .sel(DS),
           .d({VMA.HELD_OR_PC[2], VMA.HELD_OR_PC[8], MEM_ARL_IND, ~REQ_EN,
-              VMA_USER, VMA_PUBLIC, ~VMA_PREVIOUS, ~VMA_EXTENDED}),
+              MCL.VMA_USER, MCL.VMA_PUBLIC, ~MCL.VMA_PREVIOUS, ~MCL.VMA_EXTENDED}),
           .q(MCL.EBUSdriver.data[19]));
 
   mux e16(.en(DIAG_READ),
-          .sel(ds),
+          .sel(DS),
           .d({VMA.HELD_OR_PC[3], VMA.HELD_OR_PC[9], PAGE_TEST_PRIVATE, VMA_UPT,
               MCL.PAGE_UEBR_REF, PAGE_ADDRESS_COND, PAGE_ILL_ENTRY, MCL.VMA_FETCH}),
           .q(MCL.EBUSdriver.data[20]));
 
   mux e26(.en(DIAG_READ),
-          .sel(ds),
-          .d({VMA.HELD_OR_PC[4], VMA.HELD_OR_PC[10], XR_PREVIOUS, VMA_ADR_EPR,
+          .sel(DS),
+          .d({VMA.HELD_OR_PC[4], VMA.HELD_OR_PC[10], XR_PREVIOUS, MCL.VMA_ADR_ERR,
               ~MCL.VMAX_EN, MCL.VMAX_SEL, ~MCL.PAGED_FETCH}),
           .q(MCL.EBUSdriver.data[21]));
 
   mux e36(.en(DIAG_READ),
-          .sel(ds),
+          .sel(DS),
           .d({VMA.HELD_OR_PC[5], VMA.HELD_OR_PC[11], MCL.VMA_AD, MCL.VMA_INC,
               ~MCL.LOAD_VMA_CONTEXT, MCL._23_BIT_EA, MCL._18_BIT_EA,
               MCL.MBOX_CYC_REQ}),
           .q(MCL.EBUSdriver.data[22]));
 
   mux e27(.en(DIAG_READ),
-          .sel(ds),
+          .sel(DS),
           .d({VMA.HELD_OR_PC[6], VMA.HELD_OR_PC[12], XP_SHORT, MCL.SHORT_STACK,
-              ~MCL.EBOX_CACHE, ~MCL.EBOX_MAY_BE_PAGED, EBOX_REG_FUNC,
+              ~MCL.EBOX_CACHE, ~EBOX_MAY_BE_PAGED, EBOX_REG_FUNC,
               ~MCL.EBOX_MAP}),
           .q(MCL.EBUSdriver.data[23]));
 
@@ -111,7 +141,7 @@ module mcl(iEBUS EBUS,
               SPEC_SP_MEM_CYCLE & CRAM.MAGIC[1] & ~SPEC_EXEC |
               LOAD_AD_FUNC & EDP.AD[5];
     PUBLIC_EN = ~MCL.VMA_PREV_EN & (KERNEL_CYCLE | FETCH_EN) & PUBLIC |
-                PCP & ~USER & MCL.VMA_PREV_EN |
+                SCD.PCP & ~USER & MCL.VMA_PREV_EN |
                 USER & PUBLIC & MCL.VMA_PREV_EN |
                 LOAD_AD_FUNC & EDP.AD[6];
   end
@@ -120,7 +150,7 @@ module mcl(iEBUS EBUS,
   always_ff @(posedge clk) begin
 
     if (MCL.LOAD_VMA_CONTEXT) begin
-      e14SR <= {USER_EN PUBLIC_EN, MCL.VMA_PREV_EN, MCL.VMA_EXT_EN};
+      e14SR <= {USER_EN, PUBLIC_EN, MCL.VMA_PREV_EN, VMA_EXT_EN};
     end
   end
 
@@ -129,16 +159,245 @@ module mcl(iEBUS EBUS,
     MCL.VMA_PUBLIC = e14SR[1] & ~REG_FUNC;
     MCL.VMA_PREVIOUS = e14SR[2] & ~REG_FUNC;
     MCL.VMA_EXTENDED = e14SR[3];
-    MCL.VMA_USER = e14SR[3] & ~REG_FUNC;
   end
 
 
   // MCL3 p.373
-  logic UPT_EN, EPT_EN, SPEC_EXEC;
+  logic e5pin3;
 
   always_comb begin
     UPT_EN = SPEC_SP_MEM_CYCLE & USER_EN & CRAM.MAGIC[4];
     EPT_EN = SPEC_SP_MEM_CYCLE & ~USER_EN & CRAM.MAGIC[5];
     SPEC_EXEC = SPEC_SP_MEM_CYCLE & CRAM.MAGIC[2];
+
+    e5pin3 = (APR.FETCH_COMP & MCL.VMA_FETCH |
+              APR.WRITE_COMP & VMA_WRITE |
+              APR.READ_COMP & ~MCL.VMA_FETCH & VMA_READ) &
+             (~MCL.VMA_USER | USER_COMP) &
+             (MCL.VMA_USER | ~USER_COMP) &
+             ~SCD.ADR_BRK_PREVENT & ~MAP_FUNC & ~REG_FUNC;
+
+    PAGE_ADDRESS_COND = VMA.MATCH_13_35 & e5pin3 |
+                        MCL.VMA_ADR_ERR & ~RESET;
+
+    PAGE_ILL_ENTRY = e5pin3 & VMA.MATCH_13_35 & EBOX_PAGING_EN |
+                     SCD.PRIVATE_INSTR & PUBLIC |
+                     MCL.VMA_ADR_ERR;
+    USER_COMP = APR.USER_COMP;
+    PAGE_TEST_PRIVATE = MCL.VMA_PUBLIC & EBOX_PAGING_EN & ~MCL.VMA_FETCH;
+  end
+
+  logic [1:12] heldSR;
+  always_ff @(posedge clk) begin
+
+    if (LOAD_VMA_HELD) begin
+      heldSR[1:4] <= {MCL.LOAD_AR, MCL.LOAD_ARX, MCL.VMA_PAUSE, MCL.VMA_WRITE};
+      heldSR[5:8] <= {MCL.VMA_USER, MCL.VMA_PUBLIC,
+                      MCL.VMA_PREVIOUS, MCL.VMA_EXTENDED};
+      heldSR[9:12] <= {MCL.VMA_FETCH, MCL.EBOX_MAP,
+                       ~MCL.EBOX_CACHE, ~EBOX_MAY_BE_PAGED};
+    end
+  end
+
+  always_comb begin
+    VMA.HELD_OR_PC[1:4] = CON.COND_SEL_VMA ?
+                          heldSR[1:4] :
+                          {SCD.CRY0, SCD.CRY1, SCD.FOV, SCD.FPD};
+    VMA.HELD_OR_PC[5:8] = CON.COND_SEL_VMA ?
+                          heldSR[5:8] :
+                          {SCD.USER, SCD.USER_IOT, SCD.PUBLIC, SCD.ADR_BRK_INH};
+    VMA.HELD_OR_PC[9:12] = CON.COND_SEL_VMA ?
+                           heldSR[9:12] :
+                           {SCD.TRAP_REQ_2, SCD.TRAP_REQ_1, SCD.FXU, SCD.DIV_CHK};
+  end
+
+
+  // MCL4 p.374
+  logic [0:2] SR;
+  always_ff @(posedge clk) begin
+
+    if (CON.LOAD_ACCESS_COND | MEM_AREAD | RESET) begin
+      SR <= CRAM.MAGIC[0:2];
+    end
+  end
+
+  logic e46pin3;
+  logic e48B0, e48B1;
+  mux2x4 e48(.EN('1),
+             .SEL(SR[1:2]),
+             .D0({RESET, PXCT_B10, PXCT_B11, PXCT_B12}),
+             .D1({PXCT_B09, PXCT_B11, PXCT_B12, PXCT_B12}),
+             .B0(e48B0),
+             .B1(e48B1));
+
+  always_comb begin
+    e46pin3 = AD_LONG_EN & MEM_EA_CALC |
+              EA_EXTENDED & CRAM.MAGIC[7] & MEM_EA_CALC |
+              ~MCL.SHORT_STACK & CRAM.MAGIC[8] & MEM_EA_CALC |
+              AD_LONG_EN & AREAD_EN;
+    VMA_EXT_EN = VMA_AD & ~SR[0] |
+                 AD_FUNC_08 |
+                 e46pin3;
+    VMA_LONG_EN = e46pin3 |
+                  MEM_REG_FUNC |
+                  LOAD_AD_FUNC |
+                  VMA_AD |
+                  MEM_EA_CALC & CRAM.MAGIC[5];
+    MCL.VMAX_SEL[0] = MCL.VMA_PREV_EN & ~VMA_PREVIOUS |
+                      CRAM.SH[0] & ~MCL.LOAD_VMA |
+                      VMA_LONG_EN |
+                      PXCT_B12 & CRAM.MAGIC[5] & MEM_EA_CALC;
+    MCL.VMAX_SEL[1] = AREAD_001 |
+                      MEM_EA_CALC & CRAM.MAGIC[5] & ~PXCT_B12 |
+                      VMA_LONG_EN |
+                      ~MCL.LOAD_VMA & CRAM.SH[0] |
+                      MCL.LOAD_VMA & ~MEM_AREAD & ~MEM_EA_CALC;
+    XR_SHORT = ~MCL.VMA_PREV_EN & VMA_SECTION_0 |
+               VMA_PREVIOUS & VMA_SECTION_0 & MCL.VMA_PREV_EN |
+               ~VMA_PREVIOUS & PCS_SECTION_0 & MCL.VMA_PREV_EN |
+               ~APR.FM_EXTENDED;
+    MCL.SHORT_STACK = ~APR.FM_EXTENDED |
+                      PC_SECTION_0 & ~PXCT_B12 |
+                      PXCT_B12 & PCS_SECTION_0 |
+                      ~APR.FM_EXTENDED;
+    VMA_AD = MEM_EA_CALC | LOAD_AD_FUNC | VMA_AD | RESET | AREAD_EA;
+    VMAslashAD = &CRAM.VMA;     // XXX find all earlier refs to VMA_AD and fixup
+    MCL.VMA_INC = MCL.SKIP_SATISFIED & ~CON.PI_CYCLE;
+    MCL.LOAD_VMA_CONTEXT = SPEC_SP_MEM_CYCLE | MCL.LOAD_VMA;
+    MCL.LOAD_VMA = (~MEM_COND_JUMP | ~IR.TEST_SATISFIED) &
+                   (CRAM.VMA[0] | CRAM.VMA[1] | RESET);
+    MCL.VMA_PREV_EN = e48B0 & VMAslashAD |
+                      AREAD_EA & PXCT_B10 |
+                      EDP.AD[7] & LOAD_AD_FUNC |
+                      MEM_EA_CALC &
+                      (e48B1 & CRAM.MAGIC[5] |
+                       XR_PREVIOUS & CRAM.MAGIC[5] |
+                       EA_PREVIOUS & CRAM.MAGIC[7] |
+                       PXCT_B12 & CRAM.MAGIC[8]);
+  end
+
+  mux e47(.en('1),
+          .sel({PXCT_B09, SR[1:2]}),
+          .d({3'b000, PXCT_B11, PXCT_B09, PXCT_B11, PXCT_B12, PXCT_B11}),
+          .q(XR_PREVIOUS));
+
+  logic e50SR;
+  always_ff @(posedge clk) begin
+
+    if (CON.LOAD_SPEC_INSTR) begin
+      PXCT <= CRAM.MAGIC[4];
+      KERNEL_CYCLE <= CRAM.MAGIC[1];
+      e50SR <= APR.AC[9:12];
+    end
+  end
+
+  always_comb begin
+    {PXCT_09, PXCT_10, PXCT_11, PXCT_12} = {4{PXCT}} & e50SR;
+  end
+
+
+  // MCL5 p.375
+  logic adrErr;
+  assign adrErr = ~LOAD_AD_FUNC &
+                  ~MEM_REG_FUNC &
+                  VMA_LONG_EN &
+                  ((EDP.AD[6:11] !== '0) | ~EDP.AD[12]);
+
+  always_ff @(posedge clk) begin
+
+    if (MCL.LOAD_VMA) begin
+      ADR_ERR <= adrErr;
+      MCL.VMA_ADR_ERR <= VMA.VMA[12] | adrErr;
+    end
+  end
+
+  logic syncNotReg;
+  assign syncNotReg = ~REG_FUNC | CLK.EBOX_SYNC;
+  always_comb begin
+    BWRITE_01 = MEM_B_WRITE & IR.DRAM_B[2];
+    MCL.MBOX_CYC_REQ = CRAM.MEM[0] & syncNotReg |
+                       MEM_AREAD & ~Aeq0x0 & syncNotReg |
+                       MEM_COND_FETCH & ~CON.PI_CYCLE & syncNotReg |
+                       CLK.EBOX_SYNC & (BWRITE_01 |
+                                        MEM_REG_FUNC |
+                                        MCL.SKIP_SATISFIED |
+                                        FETCH_EN_IN);
+    FETCH_EN_IN = IR.JRST0 & MEM_AREAD |
+                  MEM_COND_FETCH & CRAM.MAGIC[0] |
+                  SPEC_SP_MEM_CYCLE & CRAM.MAGIC[0] |
+                  MEM_COND_FETCH & ~CON.PI_CYCLE;
+    FETCH_EN = MCL.SKIP_SATISFIED | AREAD_001 | AD_FUNC_09 | MEM_UNCOND_FETCH;
+    MCL.VMAX_EN = ~(SPEC_SP_MEM_CYCLE & RESET |
+                    CRAM.MAGIC[3] & RESET);
+    MCL._18_BIT_EA = MEM_AREAD & ~IR.DRAM_A[0] & ~IR.DRAM_A[1];
+    MCL._23_BIT_EA = MEM_AREAD & ~AD_LONG_EN;
+    AD_LONG_EN = CRAM.SH[1] | CRAM.SH[0] & ~XR_SHORT;
+    MCL.SKIP_SATISFIED = MEM_COND_FETCH & CRAM.MAGIC[5] & IR.TEST_SATISFIED;
+    SP_MEM_CYCLE = CTL.SPEC_SP_MEM_CYCLE;
+    RESET = CLK.MR_RESET;
+
+    Aeq0x0 = IR.DRAM_A == 3'b000 || IR.DRAM_A == 3'b010;
+    Aeq001 = IR.DRAM_A == 3'b001;
+    AREAD_001 = Aeq001 && MEM_AREAD;
+    AREAD_x11 = IR.DRAM_A == 3'b111 && MEM_AREAD;
+    AREAD_3_6_7 = (IR.DRAM_A == 3'b011 ||
+                   IR.DRAM_A == 3'b110 ||
+                   IR.DRAM_A == 3'b111) &
+                  MEM_AREAD;
+  end
+
+  always_ff @(posedge clk) begin
+
+    if (MEM_AREAD) begin
+      EA_PREVIOUS <= MCL.VMA_PREV_EN;
+      EA_EXTENDED <= VMA_EXT_EN;
+    end
+  end
+
+
+  // MCL6 p.376
+  logic [0:3] e33SR;
+  always_comb begin
+    AD_FUNC_08 = EDP.AD[8] & LOAD_AD_FUNC;
+    AD_FUNC_09 = EDP.AD[9] & LOAD_AD_FUNC;
+    VMA_SECTION_0 = ~CTL.DIAG_FORCE_EXTEND & VMA.VMA_SECTION_0;
+    PC_SECTION_0 = ~CTL.DIAG_FORCE_EXTEND & VMA.PC_SECTION_0;
+    PCS_SECTION_0 = ~CTL.DIAG_FORCE_EXTEND & VMA.PCS_SECTION_0;
+
+    USER = SCD.USER;
+    USER_IOT = SCD.USER_IOT;
+    PUBLIC = SCD.PUBLIC;
+
+    EBOX_CACHE = e33SR[0] & ~REG_FUNC;
+    EBOX_PAGING_EN = e33SR[1];
+    EBOX_MAY_BE_PAGED = EBOX_PAGING_EN & ~REG_FUNC;
+    VMA_EPT = e33SR[2];
+    VMA_UPT = e33SR[3];
+    MCL.PAGE_UEBR_REF = VMA_EPT | VMA_UPT;
+    MCL.EBOX_MAP = MAP_FUNC;
+    PAGED_FETCH = MCL.VMA_FETCH & ~MCL.PAGE_UEBR_REF & EBOX_MAY_BE_PAGED;
+    PHYS_REF = CRAM.MAGIC[8] & SPEC_SP_MEM_CYCLE;
+  end
+
+  always_ff @(posedge clk) begin
+
+    if (MCL.LOAD_VMA_CONTEXT) begin
+      e33SR[0] = ~CON.CACHE_LOAD_EN |
+                 SPEC_SP_MEM_CYCLE & CRAM.MAGIC[7] |
+                 LOAD_AD_FUNC & EDP.AD[11];
+      e33SR[1] = ~CON.TRAP_EN |
+                 SPEC_SP_MEM_CYCLE & LOAD_AD_FUNC |
+                 SPEC_SP_MEM_CYCLE & CRAM.MAGIC[08] |
+                 LOAD_AD_FUNC & EDP.AD[12];
+      e33SR[2] = EPT_EN;
+      e33SR[3] = UPT_EN;
+      MCL.PAGE_UEBR_REF_A <= PHYS_REF | EPT_EN | UPT_EN; // XXX find wrong references
+    end
+
+    if (REQ_EN) begin
+      MAP_FUNC <= MEM_REG_FUNC & CRAM.MAGIC[3] | LOAD_AD_FUNC & EDP.AD[12];
+      REG_FUNC <= MEM_REG_FUNC & CRAM.MAGIC[0];
+      MCL.VMA_FETCH <= FETCH_EN;
+    end
   end
 endmodule // mcl

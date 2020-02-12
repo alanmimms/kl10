@@ -158,8 +158,7 @@ module vma(iVMA VMA,
            .COUT(CRY_32));
 
   // VMA3 p.356
-  logic match;                  // Note signal name changed from VMA.MATCH 13-35
-  assign match = VMA.ADR_BRK[13:35] == VMA.VMA[13:35];
+  assign VMA.MATCH_13_35 = VMA.ADR_BRK[13:35] == VMA.VMA[13:35];
 
   genvar k;
   generate
@@ -307,7 +306,8 @@ module vma(iVMA VMA,
 
   mux e38(.en(READ_VMA),
           .sel(diag[4:6]),
-          .d({rev3(VMA.ADR_BRK[13:15]), ~LOCAL_AC_ADDRESS, rev3(VMA.VMA[13:15]), ~match}),
+          .d({rev3(VMA.ADR_BRK[13:15]), ~LOCAL_AC_ADDRESS,
+              rev3(VMA.VMA[13:15]), ~VMA.MATCH_13_35}),
           .q(VMA.EBUSdriver.data[15]));
 
   mux  e9(.en(READ_VMA),
