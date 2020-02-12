@@ -1,6 +1,11 @@
 `ifndef _MBOX_SVH_
  `define _MBOX_SVH_
 
+interface iMBOX;
+  logic MB_PAR_ERR;
+  logic NXM_ERR;
+endinterface
+
 interface iCSH;
   logic MBOX_RESP_IN;
   logic EBOX_RETRY_REQ;
@@ -21,5 +26,3 @@ interface iMBZ;
 endinterface
 
 `endif
-  
-    

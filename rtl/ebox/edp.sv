@@ -48,8 +48,6 @@ module edp(logic FPGA_RESET,
   assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
 
   // FM. No static at all!
-  logic [0:6] fmAddress = {APR.FMblk, APR.FMadr};
-
 `ifdef KL10PV_TB
   // Simulated fake memory can have "bytes" of 18 bits for simple
   // LH/RH byte write enable.
@@ -59,12 +57,12 @@ module edp(logic FPGA_RESET,
   (.clk(EDP.FM_WRITE),
    .din(EDP.AR),
    .dout(EDP.FM),
-   .addr(fmAddress),
+   .addr({APR.FMblk, APR.FMadr}),
    .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
-  fm_mem fm(.addra(fmAddress),
+  fm_mem fm(.addra({APR.FMblk, APR.FMadr}),
             .clka(EDP.FM_WRITE),
             .dina(EDP.AR),
             .douta(EDP.FM),
