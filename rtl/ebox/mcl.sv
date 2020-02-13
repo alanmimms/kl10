@@ -22,7 +22,7 @@ module mcl(iAPR APR,
   logic MEM_AREAD, MEM_WR_CYCLE, MEM_RPW_CYCLE, MEM_COND_FETCH;
   logic MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR, MEM_LOAD_ARX;
   logic MEM_RW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
-  logic VMA_READ, VMA_READ_OR_WRITE, XR_PREVIOUS;
+  logic VMA_READ, VMA_READ_OR_WRITE;
   logic REQ_EN, LOAD_AD_FUNC, LOAD_VMA_HELD;
   logic AREAD_EA, RW_OR_RPW_CYCLE, MEM_COND_JUMP;
   logic USER_EN, PUBLIC_EN, VMA_EXT_EN;
@@ -91,7 +91,7 @@ module mcl(iAPR APR,
 
   mux e26(.en(DIAG_READ),
           .sel(DS),
-          .d({VMA.HELD_OR_PC[4], VMA.HELD_OR_PC[10], XR_PREVIOUS, MCL.VMA_ADR_ERR,
+          .d({VMA.HELD_OR_PC[4], VMA.HELD_OR_PC[10], MCL.XR_PREVIOUS, MCL.VMA_ADR_ERR,
               ~MCL.VMAX_EN, MCL.VMAX_SEL, ~MCL.PAGED_FETCH}),
           .q(MCL.EBUSdriver.data[21]));
 
@@ -271,7 +271,7 @@ module mcl(iAPR APR,
                       EDP.AD[7] & LOAD_AD_FUNC |
                       MEM_EA_CALC &
                       (e48B1 & CRAM.MAGIC[5] |
-                       XR_PREVIOUS & CRAM.MAGIC[5] |
+                       MCL.XR_PREVIOUS & CRAM.MAGIC[5] |
                        EA_PREVIOUS & CRAM.MAGIC[7] |
                        PXCT_B12 & CRAM.MAGIC[8]);
   end
@@ -279,7 +279,7 @@ module mcl(iAPR APR,
   mux e47(.en('1),
           .sel({PXCT_B09, SR[1:2]}),
           .d({3'b000, PXCT_B11, PXCT_B09, PXCT_B11, PXCT_B12, PXCT_B11}),
-          .q(XR_PREVIOUS));
+          .q(MCL.XR_PREVIOUS));
 
   logic e50SR;
   always_ff @(posedge clk) begin

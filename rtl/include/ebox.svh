@@ -669,6 +669,8 @@ interface iAPR;
   logic EBUS_RETURN;
   logic PT_DIR_WR;
   logic PT_WR;
+  logic WR_PT_SEL_0;
+  logic WR_PT_SEL_1;
   logic FM_ODD_PARITY;
   logic APR_PAR_CHK_EN;
   logic SET_PAGE_FAIL;
@@ -681,6 +683,10 @@ interface iAPR;
   logic [9:12] AC;
   logic [0:2] FMblk;
   logic [0:3] FMadr;
+  logic [0:2] XR_BLOCK;
+  logic [0:2] VMA_BLOCK;
+  logic [0:2] PREV_BLOCK;
+  logic [0:2] CURRENT_BLOCK;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1122,6 +1128,7 @@ interface iMCL;
   logic VMA_USER;
   logic VMA_PUBLIC;
   logic VMA_PREVIOUS;
+  logic XR_PREVIOUS;
   logic [0:1] VMAX_SEL;
   logic LOAD_VMA_HELD;
   logic PAGE_UEBR_REF;
@@ -1144,6 +1151,7 @@ interface iPI;
   logic EXT_TRAN_REC;
   logic READY;
   logic [0:2] PI;
+  logic [0:2] APR_PIA;
   tEBUSdriver EBUSdriver;
 endinterface
 
