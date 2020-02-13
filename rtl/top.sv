@@ -63,6 +63,7 @@ module top(input clk,
   logic clk31;                  // XXX
 
   // TEMPORARY
+  logic PWR_WARN = 0;
   logic cshEBOXT0 = 0;
   logic cshEBOXRetry = 0;
   logic mboxRespIn = 0;
@@ -105,6 +106,7 @@ module top(input clk,
   iSHM SHM();
   iVMA VMA();
 
+  iMBOX MBOX();
   iMBZ MBZ();
 
   ebox ebox0(.*);

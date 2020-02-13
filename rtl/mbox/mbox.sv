@@ -9,13 +9,13 @@ module mbox(input mboxClk,
             input PSE,
             input write,
 
+            output logic [0:35] cacheDataRead,
+
             iCSH CSH,
             iMBZ MBZ,
             iPAG PAG,
-
-            output logic [27:35] MBOX_GATE_VMA,
-            output logic [0:35] cacheDataRead,
-            output logic [0:10] pfDisp);
+            iMBOX MBOX
+);
 
 `ifdef KL10PV_TB
   sim_mem

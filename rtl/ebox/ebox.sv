@@ -27,6 +27,7 @@ module ebox(input clk,
             iSHM SHM,
             iVMA VMA,
 
+            iMBOX MBOX,
             iMBZ MBZ,
 
             input CSH_PAR_BIT_A,
@@ -45,6 +46,8 @@ module ebox(input clk,
             input sbusErr,
             input nxmErr,
             input mboxCDirParErr,
+
+            input PWR_WARN,
 
             input [27:35] MBOX_GATE_VMA,
             input [0:35] cacheDataRead,

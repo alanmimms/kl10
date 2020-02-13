@@ -2,8 +2,13 @@
  `define _MBOX_SVH_
 
 interface iMBOX;
+  logic [27:35] MBOX_GATE_VMA;
+  logic [0:10] pfDisp;
+  logic CSH_ADR_PAR_ERR;
   logic MB_PAR_ERR;
+  logic ADR_PAR_ERR;
   logic NXM_ERR;
+  logic SBUS_ERR;
 endinterface
 
 interface iCSH;
