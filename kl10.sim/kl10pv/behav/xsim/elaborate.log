@@ -1,0 +1,9 @@
+Vivado Simulator 2019.2
+Copyright 1986-1999, 2001-2019 Xilinx, Inc. All Rights Reserved.
+Running: /opt/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/xelab -wto d6bd9f2d678743fd9b60b8d99f7bf270 --debug typical --relax --mt 8 -d KL10PV_TB=1 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip -L xpm --snapshot kl10pv_tb_behav xil_defaultlib.kl10pv_tb xil_defaultlib.glbl -log elaborate.log 
+Using 8 slave threads.
+Starting static elaboration
+Pass Through NonSizing Optimizer
+Completed static elaboration
+Starting simulation data flow analysis
+ERROR: [XSIM 43-3316] Signal SIGSEGV received.

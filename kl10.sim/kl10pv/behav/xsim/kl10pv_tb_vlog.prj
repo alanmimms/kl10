@@ -1,0 +1,49 @@
+# compile verilog/system verilog design source files
+sv xil_defaultlib  -i "../../../../rtl/include" -d "KL10PV_TB=1" \
+"../../../../rtl/top.sv" \
+"../../../../rtl/ebox/clk.sv" \
+"../../../../rtl/ebox/cra.sv" \
+"../../../../rtl/util/mc10181.sv" \
+"../../../../rtl/ebox/scd.sv" \
+"../../../../rtl/util/mc10179.sv" \
+"../../../../rtl/mbox/ccw.sv" \
+"../../../../rtl/ebox/apr.sv" \
+"../../../../rtl/tb/kl10pv_tb.sv" \
+"../../../../rtl/mbox/chd.sv" \
+"../../../../rtl/ebox/ctl.sv" \
+"../../../../rtl/ebox/mtr.sv" \
+"../../../../rtl/ebox/crm.sv" \
+"../../../../rtl/ebox/mcl.sv" \
+"../../../../rtl/mbox/mbc.sv" \
+"../../../../rtl/mbox/mbox.sv" \
+"../../../../rtl/mbox/chx.sv" \
+"../../../../rtl/ebox/ebox.sv" \
+"../../../../rtl/ebox/vma.sv" \
+"../../../../rtl/mbox/chc.sv" \
+"../../../../rtl/mbox/crc.sv" \
+"../../../../rtl/mbox/pag.sv" \
+"../../../../rtl/ebox/ir.sv" \
+"../../../../rtl/mbox/csh.sv" \
+"../../../../rtl/mbox/mbz.sv" \
+"../../../../rtl/mbox/cha.sv" \
+"../../../../rtl/ebox/shm.sv" \
+"../../../../rtl/util/mux.sv" \
+"../../../../rtl/ebox/edp.sv" \
+"../../../../rtl/ebox/con.sv" \
+"../../../../rtl/util/decoder.sv" \
+"../../../../rtl/mbox/pma.sv" \
+"../../../../rtl/mbox/ccl.sv" \
+"../../../../rtl/ebox/pi.sv" \
+"../../../../rtl/tb/sim-mem.sv" \
+"../../../../rtl/ip-stubs.sv" \
+"../../../../rtl/util/priority-encoder8.sv" \
+"../../../../rtl/util/universal-shift-register.sv" \
+"../../../../rtl/util/universal-counter.sv" \
+"../../../../rtl/util/mux2x4.sv" \
+"../../../../rtl/util/mux4x2.sv" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
