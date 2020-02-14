@@ -11,7 +11,7 @@ module apr(iAPR APR,
            iEBUS EBUS,
            iMBOX MBOX,
            input PWR_WARN
-);
+           );
 
   logic clk;
   logic RESET;
@@ -19,10 +19,10 @@ module apr(iAPR APR,
   logic READ_110_117;
   logic [6:7] magic;
 
- module IntEnabler(input clk,
-                  input int m,
-                  output logic e,
-                  output logic i);
+module APRInt(input clk,
+              input int m,
+              output logic e,
+              output logic i);
   always_comb
     i = CON.SEL_EN & EBUS.data[m] |
         i & ~RESET & CON.SEL_DIS & EBUS.data[m];
@@ -30,11 +30,11 @@ module apr(iAPR APR,
     e <= i;
 endmodule
 
-module Event(input clk,
-             input int m,
-             input o,
-             output logic e,
-             output logic i);
+module APREvent(input clk,
+                input int m,
+                input o,
+                output logic e,
+                output logic i);
   always_comb
     i = CON.SEL_SET & EBUS.data[m] |
         ~CON.SEL_CLR & e & ~RESET |
@@ -69,32 +69,32 @@ endmodule
   logic F02_EN, REG_FUNC_EN;
 
   // APR1 p.382
-  IntEnabler sbusInt(clk, 6, SBUS_ERR_INT_EN, SBUS_ERR_EN_IN);
-  Event sbusErr(clk, 6, MBOX.SBUS_ERR, SBUS_ERR_EN, SBUS_ERR_IN);
+  APRInt sbusInt(clk, 6, SBUS_ERR_INT_EN, SBUS_ERR_EN_IN);
+  APREvent sbusErr(clk, 6, MBOX.SBUS_ERR, SBUS_ERR_EN, SBUS_ERR_IN);
 
-  IntEnabler nxmInt(clk, 7, NXM_ERR_INT_EN, NXM_ERR_EN_IN);
-  Event nxmErr(clk, 7, MBOX.NXM_ERR, NXM_ERR_EN, NXM_ERR_IN);
+  APRInt nxmInt(clk, 7, NXM_ERR_INT_EN, NXM_ERR_EN_IN);
+  APREvent nxmErr(clk, 7, MBOX.NXM_ERR, NXM_ERR_EN, NXM_ERR_IN);
 
-  IntEnabler iopfInt(clk, 8, IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN);
-  Event iopfErr(clk, 8, APR.SET_IO_PF_ERR, IO_PF_ERR_EN, IO_PF_ERR_IN);
+  APRInt iopfInt(clk, 8, IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN);
+  APREvent iopfErr(clk, 8, APR.SET_IO_PF_ERR, IO_PF_ERR_EN, IO_PF_ERR_IN);
 
-  IntEnabler mbParInt(clk, 9, MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN);
-  Event mbParErr(clk, 9, MBOX.MB_PAR_ERR, MB_PAR_ERR, MB_PAR_ERR_IN);
+  APRInt mbParInt(clk, 9, MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN);
+  APREvent mbParErr(clk, 9, MBOX.MB_PAR_ERR, MB_PAR_ERR, MB_PAR_ERR_IN);
 
   // APR2 p.383
-  IntEnabler cdirpInt(clk, 10, C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN);
-  Event cdirpErr(clk, 10, MBOX.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
+  APRInt cdirpInt(clk, 10, C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN);
+  APREvent cdirpErr(clk, 10, MBOX.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
 
-  IntEnabler sadrpInt(clk, 11, S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN);
-  Event sadrpErr(clk, 11, MBOX.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
+  APRInt sadrpInt(clk, 11, S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN);
+  APREvent sadrpErr(clk, 11, MBOX.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
 
-  IntEnabler pwrfInt(clk, 12, PWR_FAIL_INT_EN, PWR_FAIL_EN_IN);
-  Event pwrfErr(clk, 12, PWR_WARN, PWR_FAIL, PWR_FAIL_IN);
+  APRInt pwrfInt(clk, 12, PWR_FAIL_INT_EN, PWR_FAIL_EN_IN);
+  APREvent pwrfErr(clk, 12, PWR_WARN, PWR_FAIL, PWR_FAIL_IN);
 
-  IntEnabler swpdInt(clk, 13, SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN);
-  Event swpdErr(clk, 13,
-                ~APR.SWEEP_BUSY & APR.SWEEP_BUSY,
-                SWEEP_DONE_EN, SWEEP_DONE_IN);
+  APRInt swpdInt(clk, 13, SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN);
+  APREvent swpdErr(clk, 13,
+                   ~APR.SWEEP_BUSY & APR.SWEEP_BUSY,
+                   SWEEP_DONE_EN, SWEEP_DONE_IN);
 
   assign APR.APR_INTERRUPT = APR.SBUS_ERR & SBUS_ERR_INT_EN |
                              APR.NXM_ERR & NXM_ERR_INT_EN |
@@ -111,7 +111,6 @@ endmodule
   always_ff @(posedge clk) begin
     APR.ANY_EBOX_ERR_FLG <= NXM_ERR_IN | MB_PAR_ERR_IN | S_ADR_P_ERR_IN;
   end
-
 
   // APR3 p.384
   logic [0:3] e14SR;
@@ -146,11 +145,11 @@ endmodule
   sim_mem
     #(.SIZE(128), .WIDTH(2), .NBYTES(1))
   fm
-  (.clk(clk),
-   .din({SHM.AR_EXTENDED, SHM.AR_PAR_ODD ^ SHM.AR_EXTENDED}),
-   .dout({APR.FM_EXTENDED, fm36XORin}),
-   .addr({APR.FMblk, APR.FMadr}),
-   .wea(~clk & CON.FM_WRITE_PAR & APR.SPARE)); // ??? WTF ???
+    (.clk(clk),
+     .din({SHM.AR_EXTENDED, SHM.AR_PAR_ODD ^ SHM.AR_EXTENDED}),
+     .dout({APR.FM_EXTENDED, fm36XORin}),
+     .addr({APR.FMblk, APR.FMadr}),
+     .wea(~clk & CON.FM_WRITE_PAR & APR.SPARE)); // ??? WTF ???
 `else
   fm_ext_mem fm_ext(.addra({APR.FMblk, APR.FMadr}),
                     .clka(clk),
