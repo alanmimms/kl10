@@ -166,8 +166,8 @@ module ctl(iAPR APR,
   logic load1;
   logic d2, d3;
   logic shortEA;
-  logic FMandARload;
-  logic FMandARXload;
+  logic FMandAR_LOAD;
+  logic FMandARX_LOAD;
   logic diagLoadARorInd;
   logic diagLoadARorARM;
   logic respMBOXorSIM;
@@ -198,12 +198,12 @@ module ctl(iAPR APR,
     CTL.ARL_SEL[1] = CTL.ARL_IND ? CRAM.MAGIC[7] : CRAM.AR[1];
     CTL.ARL_IND_SEL[0] = CTL.ARL_IND ? CRAM.MAGIC[8] : CRAM.AR[0];
 
-    FMandARload = CON.FM_XFER & MCL.LOAD_AR;
-    CTL.ARL_SEL[1] = CTL.ARL_IND_SEL[1] | CTL_36_BIT_EA | CTL.DIAG_AR_LOAD | FMandARload;
-    CTL.ARR_SEL[1] = CRAM.AR[1] | CTL_DISP_AREAD | CTL.DIAG_AR_LOAD | FMandARload;
+    FMandAR_LOAD = CON.FM_XFER & MCL.LOAD_AR;
+    CTL.ARL_SEL[1] = CTL.ARL_IND_SEL[1] | CTL_36_BIT_EA | CTL.DIAG_AR_LOAD | FMandAR_LOAD;
+    CTL.ARR_SEL[1] = CRAM.AR[1] | CTL_DISP_AREAD | CTL.DIAG_AR_LOAD | FMandAR_LOAD;
     
-    FMandARXload = CON.FM_XFER & MCL.LOAD_ARX;
-    CTL.ARXL_SEL[1] = CRAM.ARX[1] | FMandARXload;
+    FMandARX_LOAD = CON.FM_XFER & MCL.LOAD_ARX;
+    CTL.ARXL_SEL[1] = CRAM.ARX[1] | FMandARX_LOAD;
     CTL.ARXR_SEL[1] = CTL.ARXL_SEL[1];
 
     CTL.ARX_LOAD = CRAM.ARX[0] | CTL.ARXR_SEL[1] | CTL.ARXR_SEL[2] | CTL.ARX_CLR | CTL_RESET;

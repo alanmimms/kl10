@@ -65,8 +65,8 @@ module edptb;
 //    CRAM = '{default: 0};
 
     CRAM.FMADR = fmadrAC0;
-    APR.FMblk = 0;              // Select a good block number
-    APR.FMadr = 7;              // And a good FM AC #
+    APR.FM_BLOCK = 0;              // Select a good block number
+    APR.FM_ADR = 7;              // And a good FM AC #
 
     CON.FM_WRITE00_17 = 0;       // No writing to FM
     CON.FM_WRITE18_35 = 0;

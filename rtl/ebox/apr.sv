@@ -148,10 +148,10 @@ endmodule
     (.clk(clk),
      .din({SHM.AR_EXTENDED, SHM.AR_PAR_ODD ^ SHM.AR_EXTENDED}),
      .dout({APR.FM_EXTENDED, fm36XORin}),
-     .addr({APR.FMblk, APR.FMadr}),
+     .addr({APR.FM_BLOCK, APR.FM_ADR}),
      .wea(~clk & CON.FM_WRITE_PAR & APR.SPARE)); // ??? WTF ???
 `else
-  fm_ext_mem fm_ext(.addra({APR.FMblk, APR.FMadr}),
+  fm_ext_mem fm_ext(.addra({APR.FM_BLOCK, APR.FM_ADR}),
                     .clka(clk),
                     .dina({SHM.AR_EXTENDED, SHM.AR_PAR_ODD ^ SHM.AR_EXTENDED}),
                     .douta({APR.FM_EXTENDED, fm36XORin}),
@@ -180,25 +180,25 @@ endmodule
           .sel(CRAM.FMADR),
           .d({APR.AC[9], ACplus1[9], SHM.XR[10], VMA.VMA[32],
               ACplus2[9], ACplus3[9], ACplusMAGIC[9], CRAM.MAGIC[5]}),
-          .q(APR.FMadr[0]));
+          .q(APR.FM_ADR[0]));
 
   mux e54(.en('1),
           .sel(CRAM.FMADR),
           .d({APR.AC[10], ACplus1[10], SHM.XR[4], VMA.VMA[33],
               ACplus2[10], ACplus3[10], ACplusMAGIC[10], CRAM.MAGIC[6]}),
-          .q(APR.FMadr[1]));
+          .q(APR.FM_ADR[1]));
 
   mux e65(.en('1),
           .sel(CRAM.FMADR),
           .d({APR.AC[11], ACplus1[11], SHM.XR[2], VMA.VMA[34],
               ACplus2[11], ACplus3[11], ACplusMAGIC[11], CRAM.MAGIC[7]}),
-          .q(APR.FMadr[2]));
+          .q(APR.FM_ADR[2]));
 
   mux e59(.en('1),
           .sel(CRAM.FMADR),
           .d({APR.AC[12], ACplus1[12], SHM.XR[1], VMA.VMA[35],
               ACplus2[12], ACplus3[12], ACplusMAGIC[12], CRAM.MAGIC[8]}),
-          .q(APR.FMadr[3]));
+          .q(APR.FM_ADR[3]));
 
   logic AC7, AC67, AC37, AC567, AC01;
   always_comb begin
@@ -247,21 +247,21 @@ endmodule
           .d({APR.CURRENT_BLOCK[0], APR.CURRENT_BLOCK[0], APR.XR_BLOCK[0],
               APR.VMA_BLOCK[0], APR.CURRENT_BLOCK[0], APR.CURRENT_BLOCK[0],
               APR.CURRENT_BLOCK[0], CRAM.MAGIC[2]}),
-          .q(APR.FMblk[0]));
+          .q(APR.FM_BLOCK[0]));
 
   mux e72(.en('0),
           .sel(CRAM.FMADR),
           .d({APR.CURRENT_BLOCK[2], APR.CURRENT_BLOCK[2], APR.XR_BLOCK[2],
               APR.VMA_BLOCK[2], APR.CURRENT_BLOCK[2], APR.CURRENT_BLOCK[2],
               APR.CURRENT_BLOCK[2], CRAM.MAGIC[3]}),
-          .q(APR.FMblk[1]));
+          .q(APR.FM_BLOCK[1]));
 
   mux e71(.en('0),
           .sel(CRAM.FMADR),
           .d({APR.CURRENT_BLOCK[1], APR.CURRENT_BLOCK[1], APR.XR_BLOCK[1],
               APR.VMA_BLOCK[1], APR.CURRENT_BLOCK[1], APR.CURRENT_BLOCK[1],
               APR.CURRENT_BLOCK[1], CRAM.MAGIC[4]}),
-          .q(APR.FMblk[0]));
+          .q(APR.FM_BLOCK[0]));
 
   logic ignoreE68, ignoreE63;
   USR4 e68(.S0(1'bX),
@@ -326,45 +326,45 @@ endmodule
   mux e19(.en(READ_110_117),
           .sel(DS),
           .d({IO_PF_ERR_IN, APR.CURRENT_BLOCK[2], IO_PF_ERR_EN_IN, 1'b0,
-              APR.FMblk[0], ~APR.SET_PAGE_FAIL, ~APR.PT_DIR_WR, ~APR.PT_WR}),
+              APR.FM_BLOCK[0], ~APR.SET_PAGE_FAIL, ~APR.PT_DIR_WR, ~APR.PT_WR}),
           .q(APR.EBUSdriver.data[8]));
 
   mux e18(.en(READ_110_117),
           .sel(DS),
           .d({MB_PAR_ERR_IN, APR.PREV_BLOCK[0], MB_PAR_ERR_EN_IN,
-              APR.FETCH_COMP, APR.FMblk[1], APR.EBUS_RETURN, ~APR.EBUS_REQ,
+              APR.FETCH_COMP, APR.FM_BLOCK[1], APR.EBUS_RETURN, ~APR.EBUS_REQ,
               APR.EBUS_DEMAND}),
           .q(APR.EBUSdriver.data[9]));
 
   mux e17(.en(READ_110_117),
           .sel(DS),
           .d({C_DIR_P_ERR_IN, APR.PREV_BLOCK[1], C_DIR_P_ERR_EN_IN,
-              APR.READ_COMP, APR.FMblk[2], APR.EBUS_DISABLE_CS,
+              APR.READ_COMP, APR.FM_BLOCK[2], APR.EBUS_DISABLE_CS,
               APR.EBUS_F01, APR.EBOX_SEND_F02}),
           .q(APR.EBUSdriver.data[10]));
 
   mux e22(.en(READ_110_117),
           .sel(DS),
           .d({S_ADR_P_ERR, APR.PREV_BLOCK[2], S_ADR_P_ERR_EN_IN,
-              APR.WRITE_COMP, APR.FMadr[0], ~APR.WR_BAD_ADR_PAR,
+              APR.WRITE_COMP, APR.FM_ADR[0], ~APR.WR_BAD_ADR_PAR,
               APR.ANY_EBOX_ERR_FLG, ~CON.FM_WRITE_PAR}),
           .q(APR.EBUSdriver.data[11]));
 
   mux e21(.en(READ_110_117),
           .sel(DS),
           .d({PWR_FAIL_IN, SHM.AR_EXTENDED, PWR_FAIL_EN_IN, APR.USER_COMP,
-              APR.FMadr[1], APR.EBOX_CCA, APR.EBOX_UBR, APR.EBOX_EBR}),
+              APR.FM_ADR[1], APR.EBOX_CCA, APR.EBOX_UBR, APR.EBOX_EBR}),
           .q(APR.EBUSdriver.data[12]));
 
   mux e11(.en(READ_110_117),
           .sel(DS),
           .d({SWEEP_DONE_IN, APR.FM_EXTENDED, SWEEP_DONE_EN, 1'b0,
-              APR.FMadr[2], APR.EBOX_ERA, APR.EN_REFILL_RAM_WR, APR.EBOX_SPARE}),
+              APR.FM_ADR[2], APR.EBOX_ERA, APR.EN_REFILL_RAM_WR, APR.EBOX_SPARE}),
           .q(APR.EBUSdriver.data[13]));
 
   mux2x4 e34(.EN(~DS[5]),
              .SEL({DS[4], DS[6]}),
-             .D0({APR.APR_INTERRUPT, ACplusMAGIC[9], APR.FMadr[3],
+             .D0({APR.APR_INTERRUPT, ACplusMAGIC[9], APR.FM_ADR[3],
                   APR.EBOX_SBUS_DIAG}),
              .D1({PI.APR_PIA[0], ACplusMAGIC[10], F02_EN, ~MCL.MEM_REG_FUNC}),
              .B0(APR.EBUSdriver.data[14]),

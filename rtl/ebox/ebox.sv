@@ -88,7 +88,7 @@ module ebox(input clk,
             output logic wrPtSel0,
             output logic wrPtSel1,
 
-            output logic anyEboxError,
+            output logic ANY_EBOX_ERR_FLG,
 
             output logic [13:35] EBOX_VMA,
             output logic [10:12] CACHE_CLEARER,

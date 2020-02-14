@@ -57,12 +57,12 @@ module edp(logic FPGA_RESET,
   (.clk(EDP.FM_WRITE),
    .din(EDP.AR),
    .dout(EDP.FM),
-   .addr({APR.FMblk, APR.FMadr}),
+   .addr({APR.FM_BLOCK, APR.FM_ADR}),
    .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
-  fm_mem fm(.addra({APR.FMblk, APR.FMadr}),
+  fm_mem fm(.addra({APR.FM_BLOCK, APR.FM_ADR}),
             .clka(EDP.FM_WRITE),
             .dina(EDP.AR),
             .douta(EDP.FM),

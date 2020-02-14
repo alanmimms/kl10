@@ -45,7 +45,7 @@ module top(input clk,
   logic [10:12] CACHE_CLEARER;
   logic [13:35] eboxVMA;
 
-  logic anyEboxError;
+  logic ANY_EBOX_ERR_FLG;
 
   logic [13:35] EBOX_VMA;
   logic req;
