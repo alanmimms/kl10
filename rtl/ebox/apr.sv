@@ -19,13 +19,7 @@ module apr(iAPR APR,
   logic READ_110_117;
   logic [6:7] magic;
 
-  assign clk = CLK.APR;
-  assign RESET = CLK.MR_RESET;
-  assign DIAG = CTL.DIAG[4:6];
-  assign DS = ~DIAG & CTL.DIAG_READ_FUNC_11x;
-  assign READ_110_117 = CTL.DIAG_READ_FUNC_11x;
-
-module IntEnabler(input clk,
+ module IntEnabler(input clk,
                   input int m,
                   output logic e,
                   output logic i);
@@ -50,6 +44,11 @@ module Event(input clk,
     e <= i;
 endmodule
 
+  assign clk = CLK.APR;
+  assign RESET = CLK.MR_RESET;
+  assign DIAG = CTL.DIAG[4:6];
+  assign DS = ~DIAG & CTL.DIAG_READ_FUNC_11x;
+  assign READ_110_117 = CTL.DIAG_READ_FUNC_11x;
 
   logic SBUS_ERR_IN, SBUS_ERR_IN_EN;
   logic NXM_ERR_INT_EN, NXM_ERR_EN_IN;
