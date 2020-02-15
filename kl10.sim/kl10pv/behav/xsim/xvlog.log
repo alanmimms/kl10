@@ -14,8 +14,6 @@ INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/mbox/ccw.
 INFO: [VRFC 10-311] analyzing module ccw
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/ebox/apr.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module apr
-INFO: [VRFC 10-311] analyzing module APRInt
-INFO: [VRFC 10-311] analyzing module APREvent
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/tb/kl10pv_tb.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module kl10pv_tb
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/mbox/chd.sv" into library xil_defaultlib

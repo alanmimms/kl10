@@ -6,4 +6,74 @@ Starting static elaboration
 Pass Through NonSizing Optimizer
 Completed static elaboration
 Starting simulation data flow analysis
-ERROR: [XSIM 43-3316] Signal SIGSEGV received.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling package xil_defaultlib.$unit_top_sv
+Compiling module xil_defaultlib.iEBUS
+Compiling module xil_defaultlib.iAPR
+Compiling module xil_defaultlib.iCLK
+Compiling module xil_defaultlib.iCON
+Compiling module xil_defaultlib.iCRA
+Compiling module xil_defaultlib.iCRAM
+Compiling module xil_defaultlib.iCRM
+Compiling module xil_defaultlib.iCSH
+Compiling module xil_defaultlib.iCTL
+Compiling module xil_defaultlib.iEDP
+Compiling module xil_defaultlib.iIR
+Compiling module xil_defaultlib.iMCL
+Compiling module xil_defaultlib.iMTR
+Compiling module xil_defaultlib.iPAG
+Compiling module xil_defaultlib.iPI
+Compiling module xil_defaultlib.iSCD
+Compiling module xil_defaultlib.iSHM
+Compiling module xil_defaultlib.iVMA
+Compiling module xil_defaultlib.iMBOX
+Compiling module xil_defaultlib.iMBZ
+Compiling module xil_defaultlib.sim_mem(SIZE=128,WIDTH=2,NBYTES=...
+Compiling module xil_defaultlib.mux
+Compiling module xil_defaultlib.mc10181
+Compiling module xil_defaultlib.mux4x2
+Compiling module xil_defaultlib.USR4
+Compiling module xil_defaultlib.mux2x4
+Compiling module xil_defaultlib.decoder
+Compiling module xil_defaultlib.apr_1
+Compiling module xil_defaultlib.ebox_clocks
+Compiling module xil_defaultlib.clk
+Compiling module xil_defaultlib.priority_encoder8
+Compiling module xil_defaultlib.mux(N=4)
+Compiling module xil_defaultlib.con
+Compiling module xil_defaultlib.cra
+Compiling module xil_defaultlib.sim_mem(SIZE=2048,WIDTH=84,NBYTE...
+Compiling module xil_defaultlib.crm
+Compiling module xil_defaultlib.ctl
+Compiling module xil_defaultlib.sim_mem(SIZE=128,WIDTH=36,NBYTES...
+Compiling module xil_defaultlib.mc10179
+Compiling module xil_defaultlib.edp_default_1
+Compiling module xil_defaultlib.sim_mem(SIZE=512,WIDTH=15,NBYTES...
+Compiling module xil_defaultlib.ir_default
+Compiling module xil_defaultlib.mcl_1
+Compiling module xil_defaultlib.mtr
+Compiling module xil_defaultlib.pi
+Compiling module xil_defaultlib.scd_1
+Compiling module xil_defaultlib.shm
+Compiling module xil_defaultlib.UCR4
+Compiling module xil_defaultlib.vma_default_1
+Compiling module xil_defaultlib.ebox
+Compiling module xil_defaultlib.sim_mem(SIZE=4096,WIDTH=36,NBYTE...
+Compiling module xil_defaultlib.ccl
+Compiling module xil_defaultlib.ccw
+Compiling module xil_defaultlib.cha
+Compiling module xil_defaultlib.chc
+Compiling module xil_defaultlib.chd
+Compiling module xil_defaultlib.chx
+Compiling module xil_defaultlib.crc
+Compiling module xil_defaultlib.csh
+Compiling module xil_defaultlib.mbc
+Compiling module xil_defaultlib.mbz
+Compiling module xil_defaultlib.pag
+Compiling module xil_defaultlib.pma
+Compiling module xil_defaultlib.mbox
+Compiling module xil_defaultlib.top
+Compiling module xil_defaultlib.kl10pv_tb
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot kl10pv_tb_behav

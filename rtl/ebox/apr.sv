@@ -12,37 +12,11 @@ module apr(iAPR APR,
            iMBOX MBOX,
            input PWR_WARN
            );
-
   logic clk;
   logic RESET;
   logic [4:6] DIAG, DS;
   logic READ_110_117;
   logic [6:7] magic;
-
-module APRInt(input clk,
-              input int m,
-              output logic e,
-              output logic i);
-  always_comb
-    i = CON.SEL_EN & EBUS.data[m] |
-        i & ~RESET & CON.SEL_DIS & EBUS.data[m];
-  always_ff @(posedge clk)
-    e <= i;
-endmodule
-
-module APREvent(input clk,
-                input int m,
-                input o,
-                output logic e,
-                output logic i);
-  always_comb
-    i = CON.SEL_SET & EBUS.data[m] |
-        ~CON.SEL_CLR & e & ~RESET |
-        e & ~EBUS.data[m] & ~RESET |
-        o;
-  always_ff @(posedge clk)
-    e <= i;
-endmodule
 
   assign clk = CLK.APR;
   assign RESET = CLK.MR_RESET;
@@ -68,31 +42,42 @@ endmodule
   logic SWEEP_DONE, SWEEP_DONE_IN, SWEEP_DONE_EN;
   logic F02_EN, REG_FUNC_EN;
 
-  // APR1 p.382
-  APRInt sbusInt(clk, 6, SBUS_ERR_INT_EN, SBUS_ERR_EN_IN);
-  APREvent sbusErr(clk, 6, MBOX.SBUS_ERR, SBUS_ERR_EN, SBUS_ERR_IN);
+// I wanted to use nested modules for this but they broke xelab (SIGSEGV)
+`define APRInt(clk, m, e, i) \
+  always_comb i = CON.SEL_EN & EBUS.data[m] | i & ~RESET & CON.SEL_DIS & EBUS.data[m]; \
+  always_ff @(posedge clk) e <= i;
 
-  APRInt nxmInt(clk, 7, NXM_ERR_INT_EN, NXM_ERR_EN_IN);
-  APREvent nxmErr(clk, 7, MBOX.NXM_ERR, NXM_ERR_EN, NXM_ERR_IN);
+`define APREvent(clk, m, o, e, i) \
+  always_comb \
+        i = CON.SEL_SET & EBUS.data[m] | ~CON.SEL_CLR & e & ~RESET | \
+        e & ~EBUS.data[m] & ~RESET | o; \
+  always_ff @(posedge clk) e <= i;
 
-  APRInt iopfInt(clk, 8, IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN);
-  APREvent iopfErr(clk, 8, APR.SET_IO_PF_ERR, IO_PF_ERR_EN, IO_PF_ERR_IN);
+   // APR1 p.382
+  `APRInt(clk, 6, SBUS_ERR_INT_EN, SBUS_ERR_EN_IN);
+  `APREvent(clk, 6, MBOX.SBUS_ERR, SBUS_ERR_EN, SBUS_ERR_IN);
 
-  APRInt mbParInt(clk, 9, MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN);
-  APREvent mbParErr(clk, 9, MBOX.MB_PAR_ERR, MB_PAR_ERR, MB_PAR_ERR_IN);
+  `APRInt(clk, 7, NXM_ERR_INT_EN, NXM_ERR_EN_IN);
+  `APREvent(clk, 7, MBOX.NXM_ERR, NXM_ERR_EN, NXM_ERR_IN);
+
+  `APRInt(clk, 8, IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN);
+  `APREvent(clk, 8, APR.SET_IO_PF_ERR, IO_PF_ERR_EN, IO_PF_ERR_IN);
+
+  `APRInt(clk, 9, MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN);
+  `APREvent(clk, 9, MBOX.MB_PAR_ERR, MB_PAR_ERR, MB_PAR_ERR_IN);
 
   // APR2 p.383
-  APRInt cdirpInt(clk, 10, C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN);
-  APREvent cdirpErr(clk, 10, MBOX.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
+  `APRInt(clk, 10, C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN);
+  `APREvent(clk, 10, MBOX.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
 
-  APRInt sadrpInt(clk, 11, S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN);
-  APREvent sadrpErr(clk, 11, MBOX.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
+  `APRInt(clk, 11, S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN);
+  `APREvent(clk, 11, MBOX.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
 
-  APRInt pwrfInt(clk, 12, PWR_FAIL_INT_EN, PWR_FAIL_EN_IN);
-  APREvent pwrfErr(clk, 12, PWR_WARN, PWR_FAIL, PWR_FAIL_IN);
+  `APRInt(clk, 12, PWR_FAIL_INT_EN, PWR_FAIL_EN_IN);
+  `APREvent(clk, 12, PWR_WARN, PWR_FAIL, PWR_FAIL_IN);
 
-  APRInt swpdInt(clk, 13, SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN);
-  APREvent swpdErr(clk, 13,
+  `APRInt(clk, 13, SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN);
+  `APREvent(clk, 13,
                    ~APR.SWEEP_BUSY & APR.SWEEP_BUSY,
                    SWEEP_DONE_EN, SWEEP_DONE_IN);
 
