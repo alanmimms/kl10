@@ -3,10 +3,14 @@
 
 // M8544 MCL
 module mcl(iAPR APR,
+           iCLK CLK,
+           iCON CON,
            iCRAM CRAM,
            iCTL CTL,
            iEBUS EBUS,
+           iEDP EDP,
            iIR IR,
+           iPI PI,
            iMCL MCL,
            iSCD SCD,
            iVMA VMA

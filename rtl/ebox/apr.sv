@@ -5,11 +5,18 @@
 module apr(iAPR APR,
            iCLK CLK,
            iCON CON,
+           iCRAM CRAM,
            iCTL CTL,
-           iEDP EDP,
-           iSHM SHM,
            iEBUS EBUS,
+           iEDP EDP,
+           iIR IR,
            iMBOX MBOX,
+           iMCL MCL,
+           iPI PI,
+           iSCD SCD,
+           iSHM SHM,
+           iVMA VMA,
+
            input PWR_WARN
            );
   logic clk;

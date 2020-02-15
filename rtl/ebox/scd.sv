@@ -3,10 +3,19 @@
 `include "mbox.svh"
 
 // M8524 SCD
-module scd(iCRAM CRAM,
+module scd(iAPR APR,
+           iCLK CLK,
+           iCON CON,
+           iCRAM CRAM,
            iCTL CTL,
            iEDP EDP,
-           iSCD SCD
+           iIR IR,
+           iMCL MCL,
+           iPAG PAG,
+           iPI PI,
+           iSCD SCD,
+           iSHM SHM,
+           iVMA VMA
 );
 
 

@@ -1,8 +1,8 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2019.2.1 (lin64) Build 2729669 Thu Dec  5 04:48:12 MST 2019
-// Date        : Tue Feb 11 21:47:10 2020
-// Host        : alanxps running 64-bit Ubuntu 19.10
+// Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
+// Date        : Sat Feb 15 00:51:15 2020
+// Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode funcsim /home/alan/kl10/kl10.runs/fm_ext_mem_synth_1/fm_ext_mem_sim_netlist.v
 // Design      : fm_ext_mem
 // Purpose     : This verilog netlist is a functional simulation representation of the design and should not be modified
@@ -11,17 +11,15 @@
 // --------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
-(* CHECK_LICENSE_TYPE = "fm_ext_mem,blk_mem_gen_v8_4_4,{}" *) (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "blk_mem_gen_v8_4_4,Vivado 2019.2.1" *) 
+(* CHECK_LICENSE_TYPE = "fm_ext_mem,blk_mem_gen_v8_4_4,{}" *) (* downgradeipidentifiedwarnings = "yes" *) (* x_core_info = "blk_mem_gen_v8_4_4,Vivado 2019.2" *) 
 (* NotValidForBitStream *)
 module fm_ext_mem
    (clka,
-    ena,
     wea,
     addra,
     dina,
     douta);
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK" *) (* x_interface_parameter = "XIL_INTERFACENAME BRAM_PORTA, MEM_SIZE 8192, MEM_WIDTH 32, MEM_ECC NONE, MASTER_TYPE OTHER, READ_LATENCY 1" *) input clka;
-  (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA EN" *) input ena;
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA WE" *) input [0:0]wea;
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR" *) input [6:0]addra;
   (* x_interface_info = "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN" *) input [1:0]dina;
@@ -31,7 +29,6 @@ module fm_ext_mem
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
   wire NLW_U0_dbiterr_UNCONNECTED;
   wire NLW_U0_rsta_busy_UNCONNECTED;
@@ -80,7 +77,7 @@ module fm_ext_mem
   (* C_EST_POWER_SUMMARY = "Estimated Power for IP     :     2.205164 mW" *) 
   (* C_FAMILY = "zynq" *) 
   (* C_HAS_AXI_ID = "0" *) 
-  (* C_HAS_ENA = "1" *) 
+  (* C_HAS_ENA = "0" *) 
   (* C_HAS_ENB = "0" *) 
   (* C_HAS_INJECTERR = "0" *) 
   (* C_HAS_MEM_OUTPUT_REGS_A = "1" *) 
@@ -142,7 +139,7 @@ module fm_ext_mem
         .douta(douta),
         .doutb(NLW_U0_doutb_UNCONNECTED[1:0]),
         .eccpipece(1'b0),
-        .ena(ena),
+        .ena(1'b0),
         .enb(1'b0),
         .injectdbiterr(1'b0),
         .injectsbiterr(1'b0),
@@ -200,13 +197,11 @@ endmodule
 module fm_ext_mem_blk_mem_gen_generic_cstr
    (douta,
     clka,
-    ena,
     addra,
     dina,
     wea);
   output [1:0]douta;
   input clka;
-  input ena;
   input [6:0]addra;
   input [1:0]dina;
   input [0:0]wea;
@@ -215,7 +210,6 @@ module fm_ext_mem_blk_mem_gen_generic_cstr
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
 
   fm_ext_mem_blk_mem_gen_prim_width \ramloop[0].ram.r 
@@ -223,7 +217,6 @@ module fm_ext_mem_blk_mem_gen_generic_cstr
         .clka(clka),
         .dina(dina),
         .douta(douta),
-        .ena(ena),
         .wea(wea));
 endmodule
 
@@ -231,13 +224,11 @@ endmodule
 module fm_ext_mem_blk_mem_gen_prim_width
    (douta,
     clka,
-    ena,
     addra,
     dina,
     wea);
   output [1:0]douta;
   input clka;
-  input ena;
   input [6:0]addra;
   input [1:0]dina;
   input [0:0]wea;
@@ -246,7 +237,6 @@ module fm_ext_mem_blk_mem_gen_prim_width
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
 
   fm_ext_mem_blk_mem_gen_prim_wrapper_init \prim_init.ram 
@@ -254,7 +244,6 @@ module fm_ext_mem_blk_mem_gen_prim_width
         .clka(clka),
         .dina(dina),
         .douta(douta),
-        .ena(ena),
         .wea(wea));
 endmodule
 
@@ -262,13 +251,11 @@ endmodule
 module fm_ext_mem_blk_mem_gen_prim_wrapper_init
    (douta,
     clka,
-    ena,
     addra,
     dina,
     wea);
   output [1:0]douta;
   input clka;
-  input ena;
   input [6:0]addra;
   input [1:0]dina;
   input [0:0]wea;
@@ -311,7 +298,6 @@ module fm_ext_mem_blk_mem_gen_prim_wrapper_init
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
 
   (* box_type = "PRIMITIVE" *) 
@@ -428,10 +414,10 @@ module fm_ext_mem_blk_mem_gen_prim_wrapper_init
         .DOBDO({\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_16 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_17 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_18 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_19 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_20 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_21 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_22 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_23 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_24 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_25 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_26 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_27 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_28 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_29 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_30 ,douta[1]}),
         .DOPADOP({\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_32 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_33 }),
         .DOPBDOP({\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_34 ,\DEVICE_7SERIES.NO_BMM_INFO.SP.WIDE_PRIM18.ram_n_35 }),
-        .ENARDEN(ena),
-        .ENBWREN(ena),
-        .REGCEAREGCE(ena),
-        .REGCEB(ena),
+        .ENARDEN(1'b1),
+        .ENBWREN(1'b1),
+        .REGCEAREGCE(1'b1),
+        .REGCEB(1'b1),
         .RSTRAMARSTRAM(1'b0),
         .RSTRAMB(1'b0),
         .RSTREGARSTREG(1'b0),
@@ -444,13 +430,11 @@ endmodule
 module fm_ext_mem_blk_mem_gen_top
    (douta,
     clka,
-    ena,
     addra,
     dina,
     wea);
   output [1:0]douta;
   input clka;
-  input ena;
   input [6:0]addra;
   input [1:0]dina;
   input [0:0]wea;
@@ -459,7 +443,6 @@ module fm_ext_mem_blk_mem_gen_top
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
 
   fm_ext_mem_blk_mem_gen_generic_cstr \valid.cstr 
@@ -467,7 +450,6 @@ module fm_ext_mem_blk_mem_gen_top
         .clka(clka),
         .dina(dina),
         .douta(douta),
-        .ena(ena),
         .wea(wea));
 endmodule
 
@@ -479,7 +461,7 @@ endmodule
 (* C_ENABLE_32BIT_ADDRESS = "0" *) (* C_EN_DEEPSLEEP_PIN = "0" *) (* C_EN_ECC_PIPE = "0" *) 
 (* C_EN_RDADDRA_CHG = "0" *) (* C_EN_RDADDRB_CHG = "0" *) (* C_EN_SAFETY_CKT = "0" *) 
 (* C_EN_SHUTDOWN_PIN = "0" *) (* C_EN_SLEEP_PIN = "0" *) (* C_EST_POWER_SUMMARY = "Estimated Power for IP     :     2.205164 mW" *) 
-(* C_FAMILY = "zynq" *) (* C_HAS_AXI_ID = "0" *) (* C_HAS_ENA = "1" *) 
+(* C_FAMILY = "zynq" *) (* C_HAS_AXI_ID = "0" *) (* C_HAS_ENA = "0" *) 
 (* C_HAS_ENB = "0" *) (* C_HAS_INJECTERR = "0" *) (* C_HAS_MEM_OUTPUT_REGS_A = "1" *) 
 (* C_HAS_MEM_OUTPUT_REGS_B = "0" *) (* C_HAS_MUX_OUTPUT_REGS_A = "0" *) (* C_HAS_MUX_OUTPUT_REGS_B = "0" *) 
 (* C_HAS_REGCEA = "0" *) (* C_HAS_REGCEB = "0" *) (* C_HAS_RSTA = "0" *) 
@@ -630,7 +612,6 @@ module fm_ext_mem_blk_mem_gen_v8_4_4
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
 
   assign dbiterr = \<const0> ;
@@ -682,7 +663,6 @@ module fm_ext_mem_blk_mem_gen_v8_4_4
         .clka(clka),
         .dina(dina),
         .douta(douta),
-        .ena(ena),
         .wea(wea));
 endmodule
 
@@ -690,13 +670,11 @@ endmodule
 module fm_ext_mem_blk_mem_gen_v8_4_4_synth
    (douta,
     clka,
-    ena,
     addra,
     dina,
     wea);
   output [1:0]douta;
   input clka;
-  input ena;
   input [6:0]addra;
   input [1:0]dina;
   input [0:0]wea;
@@ -705,7 +683,6 @@ module fm_ext_mem_blk_mem_gen_v8_4_4_synth
   wire clka;
   wire [1:0]dina;
   wire [1:0]douta;
-  wire ena;
   wire [0:0]wea;
 
   fm_ext_mem_blk_mem_gen_top \gnbram.gnativebmg.native_blk_mem_gen 
@@ -713,7 +690,6 @@ module fm_ext_mem_blk_mem_gen_v8_4_4_synth
         .clka(clka),
         .dina(dina),
         .douta(douta),
-        .ena(ena),
         .wea(wea));
 endmodule
 `ifndef GLBL

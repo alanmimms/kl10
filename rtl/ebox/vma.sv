@@ -3,14 +3,21 @@
 `include "mbox.svh"
 
 // M8542 VMA
-module vma(iVMA VMA,
+module vma(iAPR APR,
            iCLK CLK,
            iCON CON,
-           iCTL CTL,
            iCRAM CRAM,
+           iCSH CSH,
+           iCTL CTL,
            iEDP EDP,
-           iMCL MCL
-           );
+           iIR IR,
+           iMCL MCL,
+           iPAG PAG,
+           iPI PI,
+           iSCD SCD,
+           iSHM SHM,
+           iVMA VMA
+);
 
   logic clk;
   assign clk = CLK.VMA;

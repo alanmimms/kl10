@@ -5,10 +5,13 @@
 
 module edp(logic FPGA_RESET,
            iAPR APR,
-           iCRAM CRAM,
+           iCLK CLK,
            iCON CON,
+           iCRAM CRAM,
            iCTL CTL,
            iEDP EDP,
+           iIR IR,
+           iPI PI,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA,
@@ -169,6 +172,7 @@ module edp(logic FPGA_RESET,
     if (CTL.MQM_EN) begin
 
       unique case (CTL.MQM_SEL)
+      default: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
       usrLOAD: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
       usrSHL:  MQM = SHM.SH;
       usrSHR:  MQM = EDP.AD[0:35];
