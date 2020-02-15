@@ -1,0 +1,1 @@
+-wto "d6bd9f2d678743fd9b60b8d99f7bf270" --debug "typical" --relax --mt "8" -d "KL10PV_TB=1" -L "xil_defaultlib" -L "unisims_ver" -L "unimacro_ver" -L "secureip" -L "xpm" --snapshot "kl10pv_tb_behav" "xil_defaultlib.kl10pv_tb" "xil_defaultlib.glbl" -log "elaborate.log" 
