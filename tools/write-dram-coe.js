@@ -18,6 +18,9 @@ const DRAM = require('./dram');
 // * P[6]=1
 // * J[7:14]=8
 // for total used of 15.
+console.log(`memory_initialization_radix = 2;
+memory_initialization_vector = `);
+
 DRAM.forEach(w => {
   const inN = 24;               // Input word width
   const jN = 11;                // Input J word width
@@ -38,6 +41,7 @@ DRAM.forEach(w => {
   w = fieldInsert(w, jLo, 11, 14, outN);
   console.log(w.toString(2).padStart(outN, '0'));
 });
+console.log(';');
 
 
 // Stolen from kl10-microcode project util.js.
@@ -98,5 +102,3 @@ function fieldExtract(v, s, e, w = 36) {
   return (v & fieldMask(s, e, w)) >> shiftForBit(e, w);
 }
 module.exports.fieldExtract = fieldExtract;
-
-
