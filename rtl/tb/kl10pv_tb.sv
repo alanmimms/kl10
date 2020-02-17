@@ -74,13 +74,6 @@ module kl10pv_tb;
   end
 
   initial begin
-    top.mbox0.CSH.EBOX_RETRY_REQ = '0;
-    top.mbox0.CSH.EBOX_T0_IN = '0;
-    top.mbox0.CSH.MBOX_RESP_IN = '0;
-    top.mbox0.CSH.PAGE_FAIL_HOLD = '0;
-  end
-  
-  initial begin
     top.ebox0.CRM.PAR_16 = '0;
   end
   

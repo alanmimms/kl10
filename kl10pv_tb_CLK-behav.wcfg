@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1000000fs"></ZoomStartTime>
-      <ZoomEndTime time="7000001fs"></ZoomEndTime>
+      <ZoomStartTime time="76305fs"></ZoomStartTime>
+      <ZoomEndTime time="7184740fs"></ZoomEndTime>
       <Cursor1Time time="6000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="126"></NameColumnWidth>
-      <ValueColumnWidth column_width="76"></ValueColumnWidth>
+      <ValueColumnWidth column_width="72"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="22" />
+   <WVObjectSize size="21" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -44,22 +44,57 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK">
       <obj_property name="ElementShortName">EBOX_CLK</obj_property>
       <obj_property name="ObjectShortName">EBOX_CLK</obj_property>
+      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SS">
       <obj_property name="ElementShortName">EBOX_SS</obj_property>
       <obj_property name="ObjectShortName">EBOX_SS</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/MBOX_WAIT">
-      <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
-      <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/APR/SET_PAGE_FAIL">
+      <obj_property name="ElementShortName">SET_PAGE_FAIL</obj_property>
+      <obj_property name="ObjectShortName">SET_PAGE_FAIL</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RESP_MBOX">
-      <obj_property name="ElementShortName">RESP_MBOX</obj_property>
-      <obj_property name="ObjectShortName">RESP_MBOX</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/VMA/AC_REF">
-      <obj_property name="ElementShortName">AC_REF</obj_property>
-      <obj_property name="ObjectShortName">AC_REF</obj_property>
+   <wvobject type="vbus" fp_name="vbus70">
+      <obj_property name="label">e12</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/S0">
+         <obj_property name="ElementShortName">S0</obj_property>
+         <obj_property name="ObjectShortName">S0</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/D">
+         <obj_property name="ElementShortName">D[0:3]</obj_property>
+         <obj_property name="ObjectShortName">D[0:3]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/S3">
+         <obj_property name="ElementShortName">S3</obj_property>
+         <obj_property name="ObjectShortName">S3</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/SEL">
+         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/CLK">
+         <obj_property name="ElementShortName">CLK</obj_property>
+         <obj_property name="ObjectShortName">CLK</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/Q">
+         <obj_property name="ElementShortName">Q[0:3]</obj_property>
+         <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e17out">
       <obj_property name="ElementShortName">e17out</obj_property>
@@ -74,18 +109,26 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SRC_EN">
       <obj_property name="ElementShortName">EBOX_SRC_EN</obj_property>
       <obj_property name="ObjectShortName">EBOX_SRC_EN</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SYNC">
       <obj_property name="ElementShortName">SYNC</obj_property>
       <obj_property name="ObjectShortName">SYNC</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SYNC_EN">
       <obj_property name="ElementShortName">SYNC_EN</obj_property>
       <obj_property name="ObjectShortName">SYNC_EN</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/SYNC_HOLD">
       <obj_property name="ElementShortName">SYNC_HOLD</obj_property>
       <obj_property name="ObjectShortName">SYNC_HOLD</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
       <obj_property name="ElementShortName">EBUS_CLK</obj_property>
