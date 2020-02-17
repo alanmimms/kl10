@@ -1,4 +1,7 @@
-Running: xsim.dir/kl10pv_tb_behav/xsimk -simmode gui -wdb kl10pv_tb_behav.wdb -simrunnum 0 -socket 36633
+Running: xsim.dir/kl10pv_tb_behav/xsimk -simmode gui -wdb kl10pv_tb_behav.wdb -simrunnum 0 -socket 32845
 Design successfully loaded
-Design Loading Memory Usage: 35772 KB (Peak: 35772 KB)
-Design Loading CPU Usage: 30 ms
+Design Loading Memory Usage: 35776 KB (Peak: 35776 KB)
+Design Loading CPU Usage: 20 ms
+Simulation completed
+Simulation Memory Usage: 122352 KB (Peak: 175044 KB)
+Simulation CPU Usage: 30 ms
