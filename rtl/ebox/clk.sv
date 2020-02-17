@@ -294,7 +294,7 @@ module clk(input clk,
   assign CLK.ERROR = e45FF4 | e45FF13;
   assign CLK.FS_ERROR = ~e45FF14;
   always_ff @(posedge CLK.ODD) begin
-    e58FF <= {CLK.ERROR_HOLD,
+    e58FF <= {CLK.ERROR_HOLD_A,
               ~CRM.PAR_16 & CLK.CRAM_PAR_CHECK,
               ~APR.FM_ODD_PARITY & CLK.FM_PAR_CHECK,
               CLK.EBOX_SRC_EN,

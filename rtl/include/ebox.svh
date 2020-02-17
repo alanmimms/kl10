@@ -818,7 +818,6 @@ interface iCLK;
   logic FM_ODD_PARITY;
 
   logic ERROR;
-  logic ERROR_HOLD;
   logic ERROR_HOLD_A;
   logic ERROR_HOLD_B;
 

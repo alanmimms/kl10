@@ -29,6 +29,16 @@ module kl10pv_tb;
   initial $readmemh("../../../../images/CRAM.mem", top0.ebox0.crm0.cram.mem);
 
 
+  // XXX until implemented
+  initial begin
+    top0.ebox0.CON.MBOX_WAIT = '0;
+    top0.ebox0.con0.CON_MEM_CYCLE = '0;
+    top0.ebox0.CLK.RESP_MBOX = '0;
+    top0.ebox0.CLK.SYNC = '0;
+    top0.ebox0.VMA.AC_REF = '0;
+  end
+
+
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
   task doCLKFunction(input int func);
