@@ -306,43 +306,23 @@ module clk(input clk,
     e45FF14 <= CLK.ERROR_HOLD_B;
   end
 
-  logic [3:0] e25Counter;
+  logic [3:0] e25Count;
   logic e25COUT;
-  always_ff @(posedge CLK.MBOX_CLK) begin
-
-    if (CLK.EBOX_CLK_EN) begin
-
-      if (&e25Counter) begin
-        e25COUT <= '1;
-        e25Counter <= '0;
-      end else begin
-        e25Counter <= e25Counter - 1;
-      end
-    end else begin
-      e25Counter <= '0;
-      e25COUT <= '0;
-    end
-  end
+  UCR4 e25(.CIN('0),
+           .SEL({CLK.EBOX_CLK_EN, 1'b0}),
+           .CLK(CLK.MBOX_CLK),
+           .D(4'b0000),
+           .COUT(e25COUT),
+           .Q(e25Count));
 
   logic e31B;
+  mux e31(.en(~CLK.SYNC_HOLD),
+          .sel({|e25Count[3:2], e25Count[1:0]}),
+          .d({CRAM._TIME[0] | CRAM._TIME[1], // DeMorgan E26 pin 7
+              ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{e25COUT}}}),
+          .q(e31B));
+
   always_comb begin
-
-    if (CLK.SYNC_HOLD) begin
-
-      case ({|e25Counter[3:2], e25Counter[1:0]})
-      3'b000: e31B = CRAM._TIME[0] | CRAM._TIME[1]; // DeMorgan E26 pin 7
-      3'b001: e31B = ~CRAM._TIME[0];
-      3'b010: e31B = ~CRAM._TIME[1];
-      3'b011: e31B = ~CON.DELAY_REQ;
-      3'b100: e31B = e25COUT;
-      3'b101: e31B = e25COUT;
-      3'b110: e31B = e25COUT;
-      3'b111: e31B = e25COUT;
-      endcase
-    end else begin
-      e31B = '0;
-    end
-
     CLK.SYNC_EN = CLK.EBOX_SS & ~CLK.EBOX_CLK_EN | e31B & ~CLK.EBOX_CLK_EN;
   end
 
@@ -354,10 +334,23 @@ module clk(input clk,
     e10FF <= CLK.SYNC_EN;       // XXX slashed signals
   end
 
-
+  logic notHoldAB;
   logic [0:3] e12SR;
   logic e17out;
+  assign notHoldAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
   assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.RESET;
+
+  USR4 e12(.S0(CLK.PF_DLYD_A),
+           .D({CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_CRM_DIS,
+               CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_EDP_DIS,
+               CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_CTL_DIS,
+               CLK.EBOX_SRC_EN}),
+           .S3(1'b0),
+           .SEL({CLK.PAGE_FAIL, CLK.PF_DLYD_A}),
+           .CLK(CLK.ODD),
+           .Q(e12SR));
+           
+
   assign CLK.EBOX_SRC_EN = CLK.SYNC & e17out;
   assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
 
@@ -371,25 +364,6 @@ module clk(input clk,
   assign CLK.IR  = e12SR[2];
   assign CLK.SCD = e12SR[2];
   assign CLK.EBOX_SOURCE = e12SR[3];
-
-  logic holdAB;
-  assign holdAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
-
-  always_ff @(posedge CLK.ODD) begin
-    
-    if (CLK.PAGE_FAIL && CLK.PF_DLYD_A) begin // HOLD
-      e12SR <= e12SR;
-    end else if (CLK.PAGE_FAIL) begin   // Shift up from 3in (0)
-      e12SR <= {e12SR[1:3], 1'b0};
-    end else if (CLK.PF_DLYD_A) begin   // Shift down from 0in
-      e12SR <= {CLK.PF_DLYD_A, e12SR[0:2]};
-    end else begin                      // LOAD
-      e12SR <= {CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CRM_DIS,
-                CLK.SYNC & e17out & holdAB & ~CLK.EBOX_EDP_DIS,
-                CLK.SYNC & e17out & holdAB & ~CLK.EBOX_CTL_DIS,
-                CLK.EBOX_SRC_EN};
-    end
-  end
 
   // p.171
   logic e32Q3, e32Q13;

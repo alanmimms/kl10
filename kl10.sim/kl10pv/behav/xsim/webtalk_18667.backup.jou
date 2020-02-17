@@ -2,13 +2,11 @@
 # Webtalk v2019.2 (64-bit)
 # SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
 # IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
-# Start of session at: Fri Feb 14 23:36:45 2020
-# Process ID: 22031
+# Start of session at: Sun Feb 16 16:30:36 2020
+# Process ID: 18667
 # Current directory: /home/alan/kl10/kl10.sim/kl10pv/behav/xsim
 # Command line: wbtcv -mode batch -source /home/alan/kl10/kl10.sim/kl10pv/behav/xsim/xsim.dir/kl10pv_tb_behav/webtalk/xsim_webtalk.tcl -notrace
 # Log file: /home/alan/kl10/kl10.sim/kl10pv/behav/xsim/webtalk.log
 # Journal file: /home/alan/kl10/kl10.sim/kl10pv/behav/xsim/webtalk.jou
 #-----------------------------------------------------------
 source /home/alan/kl10/kl10.sim/kl10pv/behav/xsim/xsim.dir/kl10pv_tb_behav/webtalk/xsim_webtalk.tcl -notrace
-INFO: [Common 17-186] '/home/alan/kl10/kl10.sim/kl10pv/behav/xsim/xsim.dir/kl10pv_tb_behav/webtalk/usage_statistics_ext_xsim.xml' has been successfully sent to Xilinx on Fri Feb 14 23:36:46 2020. For additional details about this file, please refer to the WebTalk help file at /opt/Xilinx/Vivado/2019.2/doc/webtalk_introduction.html.
-INFO: [Common 17-206] Exiting Webtalk at Fri Feb 14 23:36:46 2020...

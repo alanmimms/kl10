@@ -1,6 +1,6 @@
 Vivado Simulator 2019.2
 Copyright 1986-1999, 2001-2019 Xilinx, Inc. All Rights Reserved.
-Running: /home/alan/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/xelab -wto d6bd9f2d678743fd9b60b8d99f7bf270 --debug typical --relax --mt 8 -d KL10PV_TB=1 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip -L xpm --snapshot kl10pv_tb_behav xil_defaultlib.kl10pv_tb xil_defaultlib.glbl -log elaborate.log 
+Running: /opt/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/xelab -wto d6bd9f2d678743fd9b60b8d99f7bf270 --debug typical --relax --mt 8 -d KL10PV_TB=1 -L xil_defaultlib -L xilinx_vip -L unisims_ver -L unimacro_ver -L secureip -L xpm --snapshot kl10pv_tb_behav xil_defaultlib.kl10pv_tb xil_defaultlib.glbl -log elaborate.log 
 Using 8 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
@@ -36,8 +36,9 @@ Compiling module xil_defaultlib.mux4x2
 Compiling module xil_defaultlib.USR4
 Compiling module xil_defaultlib.mux2x4
 Compiling module xil_defaultlib.decoder
-Compiling module xil_defaultlib.apr_1
+Compiling module xil_defaultlib.apr
 Compiling module xil_defaultlib.ebox_clocks
+Compiling module xil_defaultlib.UCR4
 Compiling module xil_defaultlib.clk
 Compiling module xil_defaultlib.priority_encoder8
 Compiling module xil_defaultlib.mux(N=4)
@@ -48,16 +49,15 @@ Compiling module xil_defaultlib.crm
 Compiling module xil_defaultlib.ctl
 Compiling module xil_defaultlib.sim_mem(SIZE=128,WIDTH=36,NBYTES...
 Compiling module xil_defaultlib.mc10179
-Compiling module xil_defaultlib.edp_default_1
+Compiling module xil_defaultlib.edp_default
 Compiling module xil_defaultlib.sim_mem(SIZE=512,WIDTH=15,NBYTES...
 Compiling module xil_defaultlib.ir_default
-Compiling module xil_defaultlib.mcl_1
+Compiling module xil_defaultlib.mcl
 Compiling module xil_defaultlib.mtr
 Compiling module xil_defaultlib.pi
-Compiling module xil_defaultlib.scd_1
+Compiling module xil_defaultlib.scd
 Compiling module xil_defaultlib.shm
-Compiling module xil_defaultlib.UCR4
-Compiling module xil_defaultlib.vma_default_1
+Compiling module xil_defaultlib.vma_default
 Compiling module xil_defaultlib.ebox
 Compiling module xil_defaultlib.sim_mem(SIZE=4096,WIDTH=36,NBYTE...
 Compiling module xil_defaultlib.ccl

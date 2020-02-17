@@ -1,7 +1,7 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
--- Date        : Sat Feb 15 13:02:46 2020
+-- Date        : Sat Feb 15 13:27:37 2020
 -- Host        : alanm running 64-bit Ubuntu 19.10
 -- Command     : write_vhdl -force -mode funcsim /home/alan/kl10/kl10.runs/fake_mem_synth_1/fake_mem_sim_netlist.vhdl
 -- Design      : fake_mem
@@ -17,6 +17,7 @@ entity fake_mem_blk_mem_gen_prim_wrapper_init is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -242,12 +243,12 @@ begin
       DOPADOP(0) => douta(8),
       DOPBDOP(3 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_DOPBDOP_UNCONNECTED\(3 downto 0),
       ECCPARITY(7 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_ECCPARITY_UNCONNECTED\(7 downto 0),
-      ENARDEN => '1',
+      ENARDEN => ena,
       ENBWREN => '0',
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => ena,
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -269,6 +270,7 @@ entity \fake_mem_blk_mem_gen_prim_wrapper_init__parameterized0\ is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -494,12 +496,12 @@ begin
       DOPADOP(0) => douta(8),
       DOPBDOP(3 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_DOPBDOP_UNCONNECTED\(3 downto 0),
       ECCPARITY(7 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_ECCPARITY_UNCONNECTED\(7 downto 0),
-      ENARDEN => '1',
+      ENARDEN => ena,
       ENBWREN => '0',
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => ena,
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -521,6 +523,7 @@ entity \fake_mem_blk_mem_gen_prim_wrapper_init__parameterized1\ is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -746,12 +749,12 @@ begin
       DOPADOP(0) => douta(8),
       DOPBDOP(3 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_DOPBDOP_UNCONNECTED\(3 downto 0),
       ECCPARITY(7 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_ECCPARITY_UNCONNECTED\(7 downto 0),
-      ENARDEN => '1',
+      ENARDEN => ena,
       ENBWREN => '0',
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => ena,
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -773,6 +776,7 @@ entity \fake_mem_blk_mem_gen_prim_wrapper_init__parameterized2\ is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -998,12 +1002,12 @@ begin
       DOPADOP(0) => douta(8),
       DOPBDOP(3 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_DOPBDOP_UNCONNECTED\(3 downto 0),
       ECCPARITY(7 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_ECCPARITY_UNCONNECTED\(7 downto 0),
-      ENARDEN => '1',
+      ENARDEN => ena,
       ENBWREN => '0',
       INJECTDBITERR => '0',
       INJECTSBITERR => '0',
       RDADDRECC(8 downto 0) => \NLW_DEVICE_7SERIES.NO_BMM_INFO.SP.SIMPLE_PRIM36.ram_RDADDRECC_UNCONNECTED\(8 downto 0),
-      REGCEAREGCE => '1',
+      REGCEAREGCE => ena,
       REGCEB => '0',
       RSTRAMARSTRAM => '0',
       RSTRAMB => '0',
@@ -1025,6 +1029,7 @@ entity fake_mem_blk_mem_gen_prim_width is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1041,6 +1046,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(8 downto 0),
       douta(8 downto 0) => douta(8 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1052,6 +1058,7 @@ entity \fake_mem_blk_mem_gen_prim_width__parameterized0\ is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1068,6 +1075,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(8 downto 0),
       douta(8 downto 0) => douta(8 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1079,6 +1087,7 @@ entity \fake_mem_blk_mem_gen_prim_width__parameterized1\ is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1095,6 +1104,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(8 downto 0),
       douta(8 downto 0) => douta(8 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1106,6 +1116,7 @@ entity \fake_mem_blk_mem_gen_prim_width__parameterized2\ is
   port (
     douta : out STD_LOGIC_VECTOR ( 8 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 8 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1122,6 +1133,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(8 downto 0),
       douta(8 downto 0) => douta(8 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1133,6 +1145,7 @@ entity fake_mem_blk_mem_gen_generic_cstr is
   port (
     douta : out STD_LOGIC_VECTOR ( 35 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1149,6 +1162,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(8 downto 0),
       douta(8 downto 0) => douta(8 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 \ramloop[1].ram.r\: entity work.\fake_mem_blk_mem_gen_prim_width__parameterized0\
@@ -1157,6 +1171,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(17 downto 9),
       douta(8 downto 0) => douta(17 downto 9),
+      ena => ena,
       wea(0) => wea(0)
     );
 \ramloop[2].ram.r\: entity work.\fake_mem_blk_mem_gen_prim_width__parameterized1\
@@ -1165,6 +1180,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(26 downto 18),
       douta(8 downto 0) => douta(26 downto 18),
+      ena => ena,
       wea(0) => wea(0)
     );
 \ramloop[3].ram.r\: entity work.\fake_mem_blk_mem_gen_prim_width__parameterized2\
@@ -1173,6 +1189,7 @@ begin
       clka => clka,
       dina(8 downto 0) => dina(35 downto 27),
       douta(8 downto 0) => douta(35 downto 27),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1184,6 +1201,7 @@ entity fake_mem_blk_mem_gen_top is
   port (
     douta : out STD_LOGIC_VECTOR ( 35 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1200,6 +1218,7 @@ begin
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1211,6 +1230,7 @@ entity fake_mem_blk_mem_gen_v8_4_4_synth is
   port (
     douta : out STD_LOGIC_VECTOR ( 35 downto 0 );
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
     wea : in STD_LOGIC_VECTOR ( 0 to 0 )
@@ -1227,6 +1247,7 @@ begin
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1353,7 +1374,7 @@ entity fake_mem_blk_mem_gen_v8_4_4 is
   attribute C_HAS_AXI_ID : integer;
   attribute C_HAS_AXI_ID of fake_mem_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_HAS_ENA : integer;
-  attribute C_HAS_ENA of fake_mem_blk_mem_gen_v8_4_4 : entity is 0;
+  attribute C_HAS_ENA of fake_mem_blk_mem_gen_v8_4_4 : entity is 1;
   attribute C_HAS_ENB : integer;
   attribute C_HAS_ENB of fake_mem_blk_mem_gen_v8_4_4 : entity is 0;
   attribute C_HAS_INJECTERR : integer;
@@ -1589,6 +1610,7 @@ inst_blk_mem_gen: entity work.fake_mem_blk_mem_gen_v8_4_4_synth
       clka => clka,
       dina(35 downto 0) => dina(35 downto 0),
       douta(35 downto 0) => douta(35 downto 0),
+      ena => ena,
       wea(0) => wea(0)
     );
 end STRUCTURE;
@@ -1599,6 +1621,7 @@ use UNISIM.VCOMPONENTS.ALL;
 entity fake_mem is
   port (
     clka : in STD_LOGIC;
+    ena : in STD_LOGIC;
     wea : in STD_LOGIC_VECTOR ( 0 to 0 );
     addra : in STD_LOGIC_VECTOR ( 11 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 35 downto 0 );
@@ -1688,7 +1711,7 @@ architecture STRUCTURE of fake_mem is
   attribute C_HAS_AXI_ID : integer;
   attribute C_HAS_AXI_ID of U0 : label is 0;
   attribute C_HAS_ENA : integer;
-  attribute C_HAS_ENA of U0 : label is 0;
+  attribute C_HAS_ENA of U0 : label is 1;
   attribute C_HAS_ENB : integer;
   attribute C_HAS_ENB of U0 : label is 0;
   attribute C_HAS_INJECTERR : integer;
@@ -1790,6 +1813,7 @@ architecture STRUCTURE of fake_mem is
   attribute x_interface_info of clka : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA CLK";
   attribute x_interface_parameter : string;
   attribute x_interface_parameter of clka : signal is "XIL_INTERFACENAME BRAM_PORTA, MEM_SIZE 8192, MEM_WIDTH 32, MEM_ECC NONE, MASTER_TYPE OTHER, READ_LATENCY 1";
+  attribute x_interface_info of ena : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA EN";
   attribute x_interface_info of addra : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA ADDR";
   attribute x_interface_info of dina : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA DIN";
   attribute x_interface_info of douta : signal is "xilinx.com:interface:bram:1.0 BRAM_PORTA DOUT";
@@ -1808,7 +1832,7 @@ U0: entity work.fake_mem_blk_mem_gen_v8_4_4
       douta(35 downto 0) => douta(35 downto 0),
       doutb(35 downto 0) => NLW_U0_doutb_UNCONNECTED(35 downto 0),
       eccpipece => '0',
-      ena => '0',
+      ena => ena,
       enb => '0',
       injectdbiterr => '0',
       injectsbiterr => '0',
