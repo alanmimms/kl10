@@ -1,3 +1,3 @@
 `timescale 1ns/1ns
-module csh();
+module csh(iCSH CSH);
 endmodule // csh

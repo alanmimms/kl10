@@ -91,11 +91,10 @@ module clk(input clk,
   assign CLK.MBOX = CLK.CLK_ON;
   assign CLK.ODD = CLK.CLK_ON;
 
-  // In real KL this is routed to far end of backplane and back
-  // according to EBOX-UD Logical Delays and Skew, Figure 3-25. In
-  // KL10B this signal is called CLK.CLK when it leaves the CLK board
-  // (see CLK1 A1 E72 pin 3). I'm not sure what it's called when it
-  // returns.
+  // In real KL, CLK.CLK is routed to far end of backplane and back as
+  // CLK.DELAYED according to EBOX-UD Logical Delays and Skew, Figure
+  // 3-25. In KL10B this signal is called CLK.CLK when it leaves the
+  // CLK board (see CLK1 A1 E72 pin 3).
   assign CLK.CLK = CLK.MBOX;
   assign CLK.DELAYED = CLK.CLK;
   assign CLK.MBOX_CLK = CLK.DELAYED;
@@ -289,6 +288,7 @@ module clk(input clk,
 
   logic e45FF4, e45FF13, e45FF14;
   assign CLK.ERROR_HOLD_A = ~IR.DRAM_ODD_PARITY & ~CON.LOAD_DRAM & CLK.DRAM_PAR_CHECK;
+  // XXX these CLK.FS_EN_xxx are not initialized
   assign CLK.ERROR_HOLD_B = (CLK.FS_EN_A | CLK.FS_EN_B | CLK.FS_EN_C | CLK.FS_EN_D) &
                             CLK.FS_EN_E & CLK.FS_EN_F & CLK.FS_EN_G & CLK.FS_CHECK;
   assign CLK.ERROR = e45FF4 | e45FF13;

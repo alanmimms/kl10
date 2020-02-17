@@ -291,9 +291,9 @@ module ctl(iAPR APR,
 
   always_ff @(posedge CTL.DIAG_LD_FUNC_076) begin
     DIAG_MEM_RESET <= EBUS.data[24];
-    CTL.DIAG_CHANNEL_CLK_STOP = EBUS.data[25];
-    CTL.DIAG_LD_EBUS_REG = EBUS.data[26];
-    CTL.DIAG_FORCE_EXTEND = EBUS.data[27];
-    CTL.DIAG[4] = EBUS.data[28];
+    CTL.DIAG_CHANNEL_CLK_STOP <= EBUS.data[25];
+    CTL.DIAG_LD_EBUS_REG <= EBUS.data[26];
+    CTL.DIAG_FORCE_EXTEND <= EBUS.data[27];
+    CTL.DIAG[4] <= EBUS.data[28];
   end
 endmodule // ctl

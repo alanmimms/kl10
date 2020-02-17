@@ -36,9 +36,54 @@ module kl10pv_tb;
     top0.ebox0.CLK.RESP_MBOX = '0;
     top0.ebox0.CLK.SYNC = '0;
     top0.ebox0.VMA.AC_REF = '0;
+    top0.ebox0.APR.APR_PAR_CHK_EN = '0;
+    top0.ebox0.PAG.PF_EBOX_HANDLE = '0;
+
+    top0.ebox0.CLK.FS_EN_A = '0;
+    top0.ebox0.CLK.FS_EN_B = '0;
+    top0.ebox0.CLK.FS_EN_C = '0;
+    top0.ebox0.CLK.FS_EN_D = '0;
+    top0.ebox0.CLK.FS_EN_E = '0;
+    top0.ebox0.CLK.FS_EN_F = '0;
+    top0.ebox0.CLK.FS_EN_G = '0;
+    top0.ebox0.CLK.FS_EN_A = '0;
   end
 
+  // XXX these should be initialized by front end via diag functions?
+  initial begin
+    top0.ebox0.CLK.SOURCE_SEL = '0;
+    top0.ebox0.CLK.RATE_SEL = '0;
+    top0.ebox0.CLK.EBOX_CRM_DIS = '0;
+    top0.ebox0.CLK.EBOX_EDP_DIS = '0;
+    top0.ebox0.CLK.EBOX_CTL_DIS = '0;
+    top0.ebox0.CLK.FM_PAR_CHECK = '0;
+    top0.ebox0.CLK.CRAM_PAR_CHECK = '0;
+    top0.ebox0.CLK.DRAM_PAR_CHECK = '0;
+    top0.ebox0.CLK.FS_CHECK = '0;
+    top0.ebox0.CLK.MBOX_CYCLE_DIS = '0;
+    top0.ebox0.clk0.MBOX_RESP_SIM = '0;
+    top0.ebox0.clk0.AR_ARX_PAR_CHECK = '0;
+    top0.ebox0.CLK.ERR_STOP_EN = '0;
+  end
 
+  initial begin
+    top.ebox0.ctl0.DIAG_MEM_RESET = '0;
+    top.ebox0.CTL.DIAG_CHANNEL_CLK_STOP = '0;
+    top.ebox0.CTL.DIAG_LD_EBUS_REG = '0;
+    top.ebox0.CTL.DIAG_FORCE_EXTEND = '0;
+  end
+
+  initial begin
+    top.mbox0.CSH.EBOX_RETRY_REQ = '0;
+    top.mbox0.CSH.EBOX_T0_IN = '0;
+    top.mbox0.CSH.MBOX_RESP_IN = '0;
+    top.mbox0.CSH.PAGE_FAIL_HOLD = '0;
+  end
+  
+  initial begin
+    top.ebox0.CRM.PAR_16 = '0;
+  end
+  
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
   task doCLKFunction(input int func);
