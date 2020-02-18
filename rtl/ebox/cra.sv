@@ -42,6 +42,11 @@ module cra(iAPR APR,
   logic RESET;
   assign RESET = CLK.MR_RESET;
 
+  // Required to get CLK to run
+  initial begin
+    CRA.CRADR = '0;
+  end
+  
   // TEMPORARY? This looks like it belongs to an incompletely
   // implemented feature that might have been called DISP/EA TYPE
   // (37). This dispatch is never used in microcode.
