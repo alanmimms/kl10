@@ -6,7 +6,6 @@ Starting static elaboration
 Pass Through NonSizing Optimizer
 WARNING: [VRFC 10-3823] variable 'e25COUT' might have multiple concurrent drivers [/home/alan/kl10/rtl/ebox/clk.sv:328]
 WARNING: [VRFC 10-3823] variable 'e25Count' might have multiple concurrent drivers [/home/alan/kl10/rtl/ebox/clk.sv:329]
-WARNING: [VRFC 10-3823] variable 'CRAMdata' might have multiple concurrent drivers [/home/alan/kl10/rtl/ebox/crm.sv:29]
 Completed static elaboration
 Starting simulation data flow analysis
 Completed simulation data flow analysis

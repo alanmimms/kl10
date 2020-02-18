@@ -15,11 +15,6 @@ module crm(iCLK CLK,
 
   logic [0:83] CRAMdata;
 
-  // XXX required to get CLK to run
-  initial begin
-    CRAMdata = '0;
-  end
-
 `ifdef KL10PV_TB
   sim_mem
     #(.SIZE(2048), .WIDTH(84), .NBYTES(1))

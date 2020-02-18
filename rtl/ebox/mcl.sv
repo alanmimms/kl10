@@ -43,7 +43,7 @@ module mcl(iAPR APR,
   logic VMA_EPT, VMA_UPT, PAGED_FETCH, PHYS_REF;
   logic MEM_ARL_IND, MEM_MB_WAIT, MEM_RESTORE_VMA, MEM_B_WRITE;
   logic VMA_PAUSE, VMA_WRITE, XP_SHORT, EBOX_REG_FUNC;
-  logic PXCT_B09, PXCT_B10, PXCT_B11, PXCT_B12;
+  logic PXCT_B09, PXCT_B10, PXCT_B11, PXCT_B12, MEM_REG_FUNC;
 
   logic RESET;                  // XXX not yet initialized
 

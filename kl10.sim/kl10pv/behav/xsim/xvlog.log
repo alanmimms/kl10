@@ -26,7 +26,6 @@ INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/ebox/crm.
 INFO: [VRFC 10-311] analyzing module crm
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/ebox/mcl.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mcl
-INFO: [VRFC 10-2458] undeclared symbol MEM_REG_FUNC, assumed default net type wire [/home/alan/kl10/rtl/ebox/mcl.sv:68]
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/mbox/mbc.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mbc
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/mbox/mbox.sv" into library xil_defaultlib
