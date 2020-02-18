@@ -50,7 +50,9 @@ module clk(input clk,
 
   assign CLK.MR_RESET = CLK.RESET;
 
+`ifndef KL10PV_TB
   ebox_clocks ebox_clocks0(.clk_in1(clk));
+`endif
 
   // XXX this is for sim but probably won't work in hardware.
   logic fastMemClk;
@@ -61,6 +63,11 @@ module clk(input clk,
 
   logic CLK_DIAG_READ;
   assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
+
+  // XXX temporary?
+  initial begin
+    CLK.FORCE_1777 = '0;
+  end
 
   // CLK1 p.168
   always_comb begin
@@ -308,7 +315,13 @@ module clk(input clk,
 
   logic [3:0] e25Count;
   logic e25COUT;
-  UCR4 e25(.CIN('0),
+  // XXX temporary?
+  initial begin
+    e25Count = '0;
+    e25COUT = '0;
+  end
+  
+  UCR4 e25(.CIN('1),
            .SEL({CLK.EBOX_CLK_EN, 1'b0}),
            .CLK(CLK.MBOX_CLK),
            .D(4'b0000),
@@ -352,7 +365,7 @@ module clk(input clk,
            
 
   assign CLK.EBOX_SRC_EN = CLK.SYNC & e17out;
-  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
+  assign CLK.EBOX_CLK_EN = CLK.GO | CLK.EBOX_SRC_EN | CLK.F1777_EN;
 
   assign CLK.CRM = e12SR[0];
   assign CLK.CRA = e12SR[0];
@@ -365,7 +378,7 @@ module clk(input clk,
   assign CLK.SCD = e12SR[2];
   assign CLK.EBOX_SOURCE = e12SR[3];
 
-  // p.171
+  // CLK4 p.171
   logic e32Q3, e32Q13;
   assign CLK.MBOX_RESP = e32Q3 | e32Q13;
   assign CLK.MB_XFER = e32Q3 | e32Q13;

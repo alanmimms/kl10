@@ -68,6 +68,11 @@ module con(iAPR APR,
   assign conCLK = CLK.CON;
   assign CON.RESET = CLK.MR_RESET;
 
+  initial begin
+    CON.AR_LOADED = '0;
+    CON.ARX_LOADED = '0;
+  end
+
   // COND decoder CON1 p.158
   decoder cond_decoder(.en(~CON.RESET),
                        .sel(CRAM.COND[0:2]),

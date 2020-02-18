@@ -10,8 +10,8 @@ module shm(iCRAM CRAM,
 
   // XXX temporary
   initial begin
-    SHM.AR_PAR_ODD = '0;
-    SHM.ARX_PAR_ODD = '0;
+    SHM.AR_PAR_ODD = '1;
+    SHM.ARX_PAR_ODD = '1;
     SHM.AR_EXTENDED = '0;
     SHM.SH = '0;
     SHM.INDEXED = '0;

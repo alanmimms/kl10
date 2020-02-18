@@ -4,6 +4,8 @@ Running: /opt/Xilinx/Vivado/2019.2/bin/unwrapped/lnx64.o/xelab -wto d6bd9f2d6787
 Using 8 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
+WARNING: [VRFC 10-3823] variable 'e25COUT' might have multiple concurrent drivers [/home/alan/kl10/rtl/ebox/clk.sv:328]
+WARNING: [VRFC 10-3823] variable 'e25Count' might have multiple concurrent drivers [/home/alan/kl10/rtl/ebox/clk.sv:329]
 Completed static elaboration
 Starting simulation data flow analysis
 Completed simulation data flow analysis
@@ -37,7 +39,6 @@ Compiling module xil_defaultlib.USR4
 Compiling module xil_defaultlib.mux2x4
 Compiling module xil_defaultlib.decoder
 Compiling module xil_defaultlib.apr
-Compiling module xil_defaultlib.ebox_clocks
 Compiling module xil_defaultlib.UCR4
 Compiling module xil_defaultlib.clk
 Compiling module xil_defaultlib.priority_encoder8

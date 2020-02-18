@@ -84,10 +84,19 @@ module ir(iIR IR,
   logic [7:10] DRAM_PAR_J;
   logic DRAM_PAR;
 
+  // XXX this is to allow CLK to start up
+  initial begin
+    IR.DRAM_A = '0;
+    IR.DRAM_B = '0;
+    DRAM_PAR_J = '0;
+  end
+
   // XXX THIS SIGNAL does not appear to be defined in IR or anywhere.
   // It would seem it is to be combinatorially drived from
   // DRAM_PAR_X/DRAM_PAR_Y. But I can find no logic to do this.
-  initial DRAM_PAR = 0;
+  initial begin
+    DRAM_PAR = 0;
+  end
 
   // Latch-mux
   always @(posedge CON.LOAD_DRAM) begin
