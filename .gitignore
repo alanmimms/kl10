@@ -2,3 +2,7 @@ kl10.cache
 *~
 .*~
 kl10.runs
+*.log
+*.jou
+webtalk/
+xsim.dir

@@ -43,10 +43,10 @@ module shm(iCRAM CRAM,
   always_comb begin
 
     case (CRAM.SH)
-    2'b00: SHM.SH = {EDP.AR, EDP.ARX} << sc;
-    2'b01: SHM.SH = EDP.AR << sc;
-    2'b10: SHM.SH = EDP.ARX << sc;
-    2'b11: SHM.SH = {EDP.AR[18:35], EDP.AR[0:17]} << sc;
+    2'b00: SHM.SH = ({EDP.AR, EDP.ARX} << sc) >> 36;
+    2'b01: SHM.SH = EDP.AR;
+    2'b10: SHM.SH = EDP.ARX;
+    2'b11: SHM.SH = {EDP.AR[18:35], EDP.AR[0:17]};
     endcase
   end
 endmodule // shm
