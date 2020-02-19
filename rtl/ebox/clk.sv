@@ -233,33 +233,30 @@ module clk(input clk,
     CLK.PT_WR <= CLK.EBOX_CLK & APR.PT_WR;
   end
 
-  logic [0:3] e52Counter;
+  logic [0:3] e52Count;
   logic e52COUT;
-  assign CLK.EBUS_RESET = e52Counter[0];
-  always @(posedge CLK.MHZ16_FREE) begin
-    
-    // XXX I cannot see clearly how this would have worked as shown in
-    // the schematic, which shows the CRY OUT signal as active low on
-    // E52 10136 and has a slash on the wire leading to the OR gate.
-    // This SHOULD mean e52COUT has no effect other than to keep on
-    // decrementing. But EK-EBOX-UD-004 p.225 Figure 3-8 NOTE says the
-    // CARRY OUT disables the -1 functions and loads 0's into the
-    // counter. So I changed the code to match this description and
-    // now it seems to do precisely what the NOTE says it should --
-    // and that seems right to me too.
-    if (FPGA_RESET || e52COUT) begin
-      e52Counter <= '0;
-      e52COUT <= '0;
-    end else if(CROBAR | CON.CONO_200000) begin
+  assign CLK.EBUS_RESET = e52Count[0];
 
-      if (|e52Counter == '0) begin
-        e52COUT <= '1;
-        e52Counter <= '1;
-      end else begin
-        e52Counter <= e52Counter - 1;
-      end
-    end
+  initial begin
+    e52Count = '0;
+    e52COUT = '0;
   end
+
+  // XXX I cannot see clearly how this would have worked as shown in
+  // the schematic, which shows the CRY OUT signal as active low on
+  // E52 10136 and has a slash on the wire leading to the OR gate.
+  // This SHOULD mean e52COUT has no effect other than to keep on
+  // decrementing. But EK-EBOX-UD-004 p.225 Figure 3-8 NOTE says the
+  // CARRY OUT disables the -1 functions and loads 0's into the
+  // counter. So I changed the code to match this description and
+  // now it seems to do precisely what the NOTE says it should --
+  // and that seems right to me too.
+  UCR4 e52(.CIN('1),            // Always count
+           .SEL({1'b0, e52COUT | CROBAR | CON.CONO_200000}),
+           .CLK(CLK.MHZ16_FREE),
+           .D('0),
+           .COUT(e52COUT),
+           .Q(e52Count));
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
@@ -497,31 +494,27 @@ module clk(input clk,
   logic burstLSBcarry;
 
   assign burstCounter = {burstMSB, burstLSB};
-  assign burstCounterEQ0 = burstCounter == 8'b0;
+  assign burstCounterEQ0 = burstCounter == '0;
 
-  always_ff @(posedge CLK.MAIN_SOURCE) begin
-
-    // LSB
-    if (CLK.FUNC_042) begin // LOAD 042
-      burstLSB <= EBUS.data[32:35];
-      burstLSBcarry <= '0;
-    end else if (CLK.BURST || CLK.RATE_SELECTED || CLK.FUNC_042) begin
-      burstLSBcarry <= burstLSB == 4'b1111; // INCREMENT
-      if (~burstCounterEQ0) burstLSB <= burstLSB + 4'b0001;
-    end else begin                   // HOLD
-      burstLSB <= burstLSB;
-      burstLSBcarry <= '0;
-    end
-
-    // MSB
-    if (CLK.BURST) begin             // INCREMENT
-      if (burstLSBcarry) burstMSB <= burstMSB + 4'b0001;
-    end else if (CLK.FUNC_043) begin // LOAD 043
-      burstMSB[0:3] <= EBUS.data[32:35];
-    end else begin                   // HOLD
-      burstMSB <= burstMSB;
-    end
+  initial begin
+    burstLSB = '0;
+    burstMSB = '0;
+    burstLSBcarry = '0;
   end
+
+  UCR4 e15(.CIN(burstLSBCarry),
+           .SEL({CLK.BURST | CLK.FUNC_043, CLK.FUNC_043}),
+           .D(EBUS.data[32:35]),
+           .COUT(),
+           .Q(burstMSB),
+           .CLK(CLK.MAIN_SOURCE));
+
+  UCR4 e21(.CIN(~burstCounterEQ0),
+           .SEL({CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
+           .COUT(burstLSBcarry),
+           .D(EBUS.data[32:35]),
+           .Q(burstLSB),
+           .CLK(CLK.MAIN_SOURCE));
 
   always_ff @(posedge CLK.MAIN_SOURCE) begin
 
