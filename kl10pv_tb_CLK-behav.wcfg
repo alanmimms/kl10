@@ -12,15 +12,20 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="1000000fs"></ZoomStartTime>
-      <ZoomEndTime time="7000001fs"></ZoomEndTime>
+      <ZoomStartTime time="2905680fs"></ZoomStartTime>
+      <ZoomEndTime time="3331179fs"></ZoomEndTime>
       <Cursor1Time time="6000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="114"></NameColumnWidth>
+      <NameColumnWidth column_width="110"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="21" />
+   <WVObjectSize size="25" />
+   <wave_markers>
+      <marker label="" time="3016870" />
+      <marker label="" time="3372430" />
+      <marker label="" time="3049357" />
+   </wave_markers>
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -59,9 +64,26 @@
       <obj_property name="ElementShortName">EBOX_SS</obj_property>
       <obj_property name="ObjectShortName">EBOX_SS</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/MEM">
+      <obj_property name="ElementShortName">MEM[0:3]</obj_property>
+      <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e7out7">
+      <obj_property name="ElementShortName">e7out7</obj_property>
+      <obj_property name="ObjectShortName">e7out7</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL">
+      <obj_property name="ElementShortName">PAGE_FAIL</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL_EN">
+      <obj_property name="ElementShortName">PAGE_FAIL_EN</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL_EN</obj_property>
+   </wvobject>
    <wvobject type="vbus" fp_name="vbus70">
       <obj_property name="label">e12</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/S0">
          <obj_property name="ElementShortName">S0</obj_property>
          <obj_property name="ObjectShortName">S0</obj_property>
@@ -73,6 +95,7 @@
          <obj_property name="ObjectShortName">D[0:3]</obj_property>
          <obj_property name="CustomSignalColor">#FFFF00</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/S3">
          <obj_property name="ElementShortName">S3</obj_property>
@@ -85,6 +108,7 @@
          <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
          <obj_property name="CustomSignalColor">#FFFF00</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="isExpanded"></obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/CLK">
          <obj_property name="ElementShortName">CLK</obj_property>
@@ -148,10 +172,6 @@
          <obj_property name="ObjectShortName">q</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e17out">
-      <obj_property name="ElementShortName">e17out</obj_property>
-      <obj_property name="ObjectShortName">e17out</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK_EN">
       <obj_property name="ElementShortName">EBOX_CLK_EN</obj_property>
       <obj_property name="ObjectShortName">EBOX_CLK_EN</obj_property>
@@ -162,6 +182,12 @@
       <obj_property name="ElementShortName">EBOX_SRC_EN</obj_property>
       <obj_property name="ObjectShortName">EBOX_SRC_EN</obj_property>
       <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e17out">
+      <obj_property name="ElementShortName">e17out</obj_property>
+      <obj_property name="ObjectShortName">e17out</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SYNC">

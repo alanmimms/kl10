@@ -195,7 +195,7 @@ module clk(input clk,
   logic [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
-  // XXX another slashed wire in schematic.
+  // XXX slashed wire
   assign CLK.FUNC_GATE = ~|e60FF[0:2];
 
   assign CLK.TENELEVEN_CLK = e60FF[3];
@@ -211,9 +211,8 @@ module clk(input clk,
       e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
     end
 
-    // XXX this might need inversion on e64SR[0] - debugging
     // CLK.FUNC_GATE issue.
-    // XXX another schematic slashed wire
+    // XXX slashed wire
     e60FF <= {~e64SR[0], e64SR[1:3]};
   end
 
@@ -295,7 +294,7 @@ module clk(input clk,
 
   logic e45FF4, e45FF13, e45FF14;
   assign CLK.ERROR_HOLD_A = ~IR.DRAM_ODD_PARITY & ~CON.LOAD_DRAM & CLK.DRAM_PAR_CHECK;
-  // XXX these CLK.FS_EN_xxx are not initialized
+  // XXX these CLK.FS_EN_xxx are only initialized in kl10pv_tb
   assign CLK.ERROR_HOLD_B = (CLK.FS_EN_A | CLK.FS_EN_B | CLK.FS_EN_C | CLK.FS_EN_D) &
                             CLK.FS_EN_E & CLK.FS_EN_F & CLK.FS_EN_G & CLK.FS_CHECK;
   assign CLK.ERROR = e45FF4 | e45FF13;
@@ -365,7 +364,7 @@ module clk(input clk,
            
 
   assign CLK.EBOX_SRC_EN = CLK.SYNC & e17out;
-  assign CLK.EBOX_CLK_EN = CLK.GO | CLK.EBOX_SRC_EN | CLK.F1777_EN;
+  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
 
   assign CLK.CRM = e12SR[0];
   assign CLK.CRA = e12SR[0];
