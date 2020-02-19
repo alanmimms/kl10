@@ -122,42 +122,48 @@ module vma(iAPR APR,
     vmaMux = MCL.VMA_AD ? EDP.AD[18:35] : VMA_AD[18:35];
   end
 
-  UCR4 e11(.D(VMA_IN[12:15]),
+  UCR4 e11(.RESET(CLK.MR_RESET),
+           .D(VMA_IN[12:15]),
            .CIN(CRY_16),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[12:15]),
            .COUT());
 
-  UCR4 e6 (.D({VMA_IN[16:17], vmaMux[18:19]}),
+  UCR4 e6 (.RESET(CLK.MR_RESET),
+           .D({VMA_IN[16:17], vmaMux[18:19]}),
            .CIN(CRY_20),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[16:19]),
            .COUT(CRY_16));
 
-  UCR4 e21(.D(vmaMux[20:23]),
+  UCR4 e21(.RESET(CLK.MR_RESET),
+           .D(vmaMux[20:23]),
            .CIN(CRY_24),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[20:23]),
            .COUT(CRY_20));
 
-  UCR4 e25(.D(vmaMux[24:27]),
+  UCR4 e25(.RESET(CLK.MR_RESET),
+           .D(vmaMux[24:27]),
            .CIN(CRY_28),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[24:27]),
            .COUT(CRY_24));
 
-  UCR4 e64(.D(vmaMux[28:31]),
+  UCR4 e64(.RESET(CLK.MR_RESET),
+           .D(vmaMux[28:31]),
            .CIN(CRY_32),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
            .Q(VMA.VMA[28:31]),
            .COUT(CRY_28));
 
-  UCR4 e58(.D(vmaMux[32:35]),
+  UCR4 e58(.RESET(CLK.MR_RESET),
+           .D(vmaMux[32:35]),
            .CIN('0),
            .SEL(~CON.VMA_SEL),
            .CLK(clk),
@@ -172,7 +178,8 @@ module vma(iAPR APR,
     logic ignored2;
 
     for (k = 12; k < 36; k += 6) begin: adrBrkR
-      USR4 r(.S0(1'b0),
+      USR4 r(.RESET(CLK.MR_RESET),
+             .S0(1'b0),
              .D(k == 12 ? {1'b0, EDP.AD[k+1:k+3]} : {EDP.AD[k:k+3]}),
              .S3(1'b0),
              .Q(VMA.ADR_BRK[k:k+3]),
@@ -183,7 +190,8 @@ module vma(iAPR APR,
 
   generate
 
-    USR4 VMA3r12(.S0(1'b0),
+    USR4 VMA3r12(.RESET(CLK.MR_RESET),
+                 .S0(1'b0),
                  .D({VMA_SECTION_0, VMA.VMA[13:15]}),
                  .S3(1'b0),
                  .Q({PC_SECTION_0, VMA.PC[13:15]}),
@@ -191,7 +199,8 @@ module vma(iAPR APR,
                  .CLK(clk));
 
     for (k = 12; k < 36; k += 6) begin: fullPC
-      USR4 VMA3r(.S0(1'b0),
+      USR4 VMA3r(.RESET(CLK.MR_RESET),
+                 .S0(1'b0),
                  .D(VMA.VMA[k:k+3]),
                  .S3(1'b0),
                  .Q(VMA.PC[k:k+3]),
@@ -211,7 +220,8 @@ module vma(iAPR APR,
                    .D1({1'b0, VMA.HELD[13:15]}),
                    .B({ignored3, VMA.HELD_OR_PC[13:15]}));
 
-    USR4 VMA4r12(.S0('0),
+    USR4 VMA4r12(.RESET(CLK.MR_RESET),
+                 .S0('0),
                  .D({1'b0, VMA.VMA[13:15]}),
                  .S3('0),
                  .SEL({2{~MCL.LOAD_VMA_HELD}}),
@@ -224,7 +234,8 @@ module vma(iAPR APR,
                .D1(VMA.HELD[k:k+3]),
                .B(VMA.HELD_OR_PC[k:k+3]));
 
-      USR4 r(.S0('0),
+      USR4 r(.RESET(CLK.MR_RESET),
+             .S0('0),
              .D(VMA.VMA[k:k+3]),
              .S3('0),
              .SEL({2{VMA.LOAD_VMA_HELD}}),
@@ -261,7 +272,8 @@ module vma(iAPR APR,
   endgenerate
 
   logic ignored5;
-  USR4 e32(.S0('0),
+  USR4 e32(.RESET(CLK.MR_RESET),
+           .S0('0),
            .D({1'b0, EDP.AD[13:15]}),
            .S3('0),
            .SEL({2{~CON.LOAD_PREV_CONTEXT}}),
@@ -270,7 +282,8 @@ module vma(iAPR APR,
 
   logic [16:17] ps;
   
-  USR4 e24(.S0('0),
+  USR4 e24(.RESET(CLK.MR_RESET),
+           .S0('0),
            .D({EDP.AD[16:17], EDP.AD[17], EDP.AD[16]}),
            .S3('0),
            .SEL({2{~CON.LOAD_PREV_CONTEXT}}),

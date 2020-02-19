@@ -4,14 +4,17 @@ module universal_tb();
   logic cin, cout, clk, s0, s3;
   logic [0:1] sel;
   logic [0:3] d, q;
+  logic reset;
 
-  USR4 sr4(.S0(s0),
+  USR4 sr4(.RESET(reset),
+           .S0(s0),
            .D(d),
            .S3(s3),
            .SEL(sel),
            .CLK(clk),
            .Q(q));
-  UCR c4(.CIN(cin),
+  UCR c4(.RESET(reset),
+         .CIN(cin),
          .D(d),
          .SEL(sel),
          .CLK(clk),
@@ -20,6 +23,9 @@ module universal_tb();
 
   initial begin
     $display($time, " >>>>>>>>>>>>>>>>>>>> COUNTER <<<<<<<<<<<<<<<<<<<<");
+
+    reset = '1;
+    #5 reset = '0;
 
     $display($time, " >>>> LOAD 1010");
     cin = '1;

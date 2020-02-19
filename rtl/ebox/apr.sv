@@ -256,21 +256,24 @@ module apr(iAPR APR,
           .q(APR.FM_BLOCK[0]));
 
   logic ignoreE68, ignoreE63;
-  USR4 e68(.S0(1'bX),
+  USR4 e68(.RESET(CLK.MR_RESET),
+           .S0(1'bX),
            .D({EBUS.data[6:8], 1'bX}),
            .S3(1'bX),
            .CLK(clk),
            .SEL({2{CON.LOAD_AC_BLOCKS}}),
            .Q({APR.CURRENT_BLOCK, ignoreE68}));
 
-  USR4 e63(.S0(1'bX),
+  USR4 e63(.RESET(CLK.MR_RESET),
+           .S0(1'bX),
            .D({EBUS.data[9:11], 1'bX}),
            .S3(1'bX),
            .CLK(clk),
            .SEL({2{CON.LOAD_AC_BLOCKS}}),
            .Q({APR.PREV_BLOCK, ignoreE63}));
 
-  USR4  e8(.S0(1'bX),
+  USR4  e8(.RESET(CLK.MR_RESET),
+           .S0(1'bX),
            .D({CRAM.MAGIC[3], CRAM.MAGIC[6:8]}),
            .S3(1'bX),
            .SEL({2{CON.COND_MBOX_CTL | RESET}}),
@@ -285,7 +288,8 @@ module apr(iAPR APR,
              .B(e24out));
 
   logic ignoreE29;
-  USR4 e29(.S0(1'bX),
+  USR4 e29(.RESET(CLK.MR_RESET),
+           .S0(1'bX),
            .D(e24out),
            .S3(1'bX),
            .SEL({2{MCL.LOAD_VMA_CONTEXT}}),
@@ -373,14 +377,16 @@ module apr(iAPR APR,
   assign magic = CRAM.MAGIC[6:7] ^ {2{~RESET}};
   logic [0:3] e4out, e7out;
   logic ignoreE6a, ignoreE6b, ignoreE6c;
-  USR4  e4(.S0('0),
+  USR4  e4(.RESET(CLK.MR_RESET),
+           .S0('0),
            .D({CRAM.MAGIC[1:2], {2{MCL.MEM_REG_FUNC}}}),
            .S3('0),
            .SEL({2{MCL.REQ_EN}}),
            .CLK(clk),
            .Q(e4out));
 
-  USR4  e7(.S0('0),
+  USR4  e7(.RESET(CLK.MR_RESET),
+           .S0('0),
            .D({magic[7], magic[6], ~CRAM.MAGIC[7], ~CRAM.MAGIC[8]}),
            .S3('0),
            .SEL({2{MCL.REQ_EN}}),

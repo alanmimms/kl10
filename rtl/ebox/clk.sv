@@ -1,9 +1,6 @@
 // PROBLEM: EBUS_CLK never starts running.
 
-// [fixed by fixing slashed wires?] PROBLEM: CLK.FUNC_GATE remains
-// true forever, causing CLK.GO to go low after a few clocks.
-
-// PROBLEM: CLK.GATED_EN is false because CLK.GO & CLK.RATE_SELECTED are both 0.
+// PROBLEM: CLK.CRM stays high rather than pulsing.
 `timescale 1ns/1ns
 `include "ebox.svh"
 
@@ -127,24 +124,15 @@ module clk(input clk,
   assign CLK.CSH = CLK.MBOX;
 
   logic [0:3] rateSelSR;
-  // XXX this is the test case for the slashed wire in the schematic.
-  // Q0 | Q2 on p.168 E5 shift register are wire-ORed and there is a
-  // slash on the wire after the OR before label CLK1 RATE SELECTED L.
-  // Inputs for CLK RATE SEL 2 H and CLK RATE SEL 1 H are the only
-  // ways any 1s can be in the SR, but "normal" rate is 2'b00.
-  // So I am trying to invert this wire-ORed output to see if that
-  // works.
-  assign CLK.RATE_SELECTED = !(rateSelSR[0] | rateSelSR[2]);
-  always_ff @(posedge CLK.MAIN_SOURCE) begin
-
-    if (FPGA_RESET) begin       // XXX needed?
-      rateSelSR <= '0;
-    end else if (CLK.RATE_SELECTED) begin        // SHIFT 3in (0)
-      rateSelSR <= {rateSelSR[1:3], 1'b0};
-    end else begin                               // LOAD
-      rateSelSR <= {CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0};
-    end
-  end
+  assign CLK.RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
+  
+  USR4 e5(.RESET(CROBAR),
+          .S0('0),
+          .D({CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0}),
+          .S3('0),
+          .SEL({~CLK.RATE_SELECTED, 1'b0}),
+          .CLK(CLK.MAIN_SOURCE),
+          .Q(rateSelSR));
 
   logic sbusClkFF1, sbusClkFF2;
   assign CLK.SBUS_CLK = sbusClkFF2;
@@ -217,16 +205,25 @@ module clk(input clk,
   end
 
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
-  always @(posedge CLK.MHZ16_FREE) begin // Changed from async set/reset to synchronous
 
-    if (CROBAR) begin           // See E66 asynchronous CLEAR pin 13
-      CLK.RESET <= '0;
-    end else if (CLK.FUNC_SET_RESET) begin
-      CLK.RESET <= '1;
-    end else if (CLK.FUNC_CLR_RESET) begin
-      CLK.RESET <= '0;
+  // This is made more painful because async CLEAR means to ASSERT
+  // CLK.RESET and async SET means to DEASSERT it. So I defined the FF
+  // separately to do the inversion in an assignment.
+  logic e66SRFF;
+  always @(posedge ~CLK.FUNC_SET_RESET,
+           posedge CLK.FUNC_CLR_RESET,
+           posedge CROBAR)
+  begin
+
+    if (CROBAR) begin                       // CLEAR
+      e66SRFF <= '0;
+    end else if (CLK.FUNC_CLR_RESET) begin  // PRESET
+      e66SRFF <= '1;
+    end else if (!CLK.FUNC_SET_RESET) begin // LOAD (0)
+      e66SRFF <= '0;
     end
   end
+  assign CLK.RESET = ~e66SRFF;
 
   always_ff @(posedge CLK.MBOX_CLK) begin
     CLK.PT_DIR_WR <= CLK.EBOX_CLK & APR.PT_DIR_WR;
@@ -251,22 +248,23 @@ module clk(input clk,
   // counter. So I changed the code to match this description and
   // now it seems to do precisely what the NOTE says it should --
   // and that seems right to me too.
-  UCR4 e52(.CIN('1),            // Always count
+  UCR4 e52(.RESET(CROBAR),
+           .CIN('1),            // Always count
            .SEL({1'b0, e52COUT | CROBAR | CON.CONO_200000}),
            .CLK(CLK.MHZ16_FREE),
            .D('0),
            .COUT(e52COUT),
            .Q(e52Count));
 
-  always_ff @(posedge CLK.MAIN_SOURCE) begin
-
-    if (CLK.FUNC_GATE | CROBAR) begin
-      CLK.GO <= CLK.FUNC_START;
-      CLK.BURST <= CLK.FUNC_BURST;
-      CLK.EBOX_SS <= CLK.FUNC_EBOX_SS;
-    end
-  end
-
+  logic ignoredE37;
+  USR4 e37(.RESET(CROBAR),
+           .S0('0),
+           .D({CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS, 1'b0}),
+           .S3('0),
+           .SEL({2{CLK.FUNC_GATE | CROBAR}}),
+           .CLK(CLK.MAIN_SOURCE),
+           .Q({CLK.GO, CLK.BURST, CLK.EBOX_SS, ignoredE37}));
+  
   logic e47xx;
   decoder e47Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x),
                      .sel(DIAG[4:6]),
@@ -317,7 +315,8 @@ module clk(input clk,
     e25COUT = '0;
   end
   
-  UCR4 e25(.CIN('1),
+  UCR4 e25(.RESET(CROBAR),
+           .CIN('1),
            .SEL({CLK.EBOX_CLK_EN, 1'b0}),
            .CLK(CLK.MBOX_CLK),
            .D(4'b0000),
@@ -349,7 +348,8 @@ module clk(input clk,
   assign notHoldAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
   assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.RESET;
 
-  USR4 e12(.S0(CLK.PF_DLYD_A),
+  USR4 e12(.RESET(CROBAR),
+           .S0(CLK.PF_DLYD_A),
            .D({CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_CRM_DIS,
                CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_EDP_DIS,
                CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_CTL_DIS,
@@ -361,7 +361,7 @@ module clk(input clk,
            
 
   assign CLK.EBOX_SRC_EN = CLK.SYNC & e17out;
-  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK.F1777_EN;
+  assign CLK.EBOX_CLK_EN = CLK.EBOX_SRC_EN | CLK._1777_EN;
 
   assign CLK.CRM = e12SR[0];
   assign CLK.CRA = e12SR[0];
@@ -395,29 +395,33 @@ module clk(input clk,
     CLK.EBOX_CLK <= CLK.EBOX_CLK_EN;
   end
 
-  always_ff @(posedge CLK.ODD) begin
-
-    if (CLK.PAGE_FAIL) begin
-      CLK.PF_DISP[7] <= PAG.PF_EBOX_HANDLE;
-      CLK.PF_DISP[8] <= CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN;
-      CLK.PF_DISP[9] <= ~SHM.AR_PAR_ODD & CON.AR_LOADED; // XXX slashed
-      CLK.PF_DISP[10] <= ~SHM.ARX_PAR_ODD & CON.ARX_LOADED; // XXX slashed
-    end else begin
-      CLK.PF_DISP <= CLK.PF_DISP;
-    end
-  end
+  USR4 e30(.RESET(CROBAR),
+           .S0('0),
+           .D({PAG.PF_EBOX_HANDLE,
+               CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN,
+               ~SHM.AR_PAR_ODD & CON.AR_LOADED,
+               ~SHM.ARX_PAR_ODD & CON.ARX_LOADED}),
+           .S3('0),
+           .SEL({2{CLK.PAGE_FAIL}}),
+           .CLK(CLK.ODD),
+           .Q(CLK.PF_DISP[7:10]));
 
   always @(posedge CLK.ODD) begin
     CLK.PF_DLYD_A <= CLK.PAGE_FAIL;
     CLK.PF_DLYD_B <= CLK.PF_DLYD_A;
   end
 
+  initial CLK.PAGE_FAIL_EN = '0;
+  initial CLK.FORCE_1777 = '0;
+  initial CLK.INSTR_1777 = '0;
+  initial CLK.SBR_CALL = '0;
+
   assign CLK.PAGE_ERROR = CLK.PAGE_FAIL_EN | CLK.INSTR_1777;
-  assign CLK.F1777_EN = CLK.FORCE_1777 & CLK.SBR_CALL;
+  assign CLK._1777_EN = CLK.FORCE_1777 & CLK.SBR_CALL;
   always @(posedge CLK.MBOX_CLK) begin
     CLK.PAGE_FAIL_EN <= ~CLK.INSTR_1777 &
                         (CSH.PAGE_FAIL_HOLD | (CLK.PAGE_FAIL_EN & ~CLK.MR_RESET));
-    CLK.INSTR_1777 <= CLK.F1777_EN | (~CLK.EBOX_CLK_EN & CLK.INSTR_1777);
+    CLK.INSTR_1777 <= CLK._1777_EN | (~CLK.EBOX_CLK_EN & CLK.INSTR_1777);
     CLK.FORCE_1777 <= CLK.PF_DLYD_A;
     CLK.SBR_CALL <= CLK.PF_DLYD_B;
   end
@@ -457,7 +461,7 @@ module clk(input clk,
                                      CLK.MB_XFER,
                                      ~CLK.EBOX_CLK,
                                      CLK.PAGE_ERROR,
-                                     CLK.F1777_EN};
+                                     CLK._1777_EN};
       3'b100: CLK.EBUSdriver.data = {CLK.CRAM_PAR_ERR,
                                      ~CLK.EBOX_SS,
                                      CLK.SOURCE_SEL[0],
@@ -496,20 +500,16 @@ module clk(input clk,
   assign burstCounter = {burstMSB, burstLSB};
   assign burstCounterEQ0 = burstCounter == '0;
 
-  initial begin
-    burstLSB = '0;
-    burstMSB = '0;
-    burstLSBcarry = '0;
-  end
-
-  UCR4 e15(.CIN(burstLSBCarry),
+  UCR4 e15(.RESET(CROBAR),
+           .CIN(burstLSBCarry),
            .SEL({CLK.BURST | CLK.FUNC_043, CLK.FUNC_043}),
            .D(EBUS.data[32:35]),
            .COUT(),
            .Q(burstMSB),
            .CLK(CLK.MAIN_SOURCE));
 
-  UCR4 e21(.CIN(~burstCounterEQ0),
+  UCR4 e21(.RESET(CROBAR),
+           .CIN(~burstCounterEQ0),
            .SEL({CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
            .COUT(burstLSBcarry),
            .D(EBUS.data[32:35]),

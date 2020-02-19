@@ -23,46 +23,46 @@ module con(iAPR APR,
            input CSH_PAR_BIT_B);
 
   logic conCLK;
-  logic CON_DIAG_READ;
+  logic DIAG_READ;
 
-  logic CON_WR_EVEN_PAR_DATA;
-  logic CON_WR_EVEN_PAR_DIR;
-  logic CON_INSTR_GO;
-  logic CON_INT_DISABLE;
-  logic CON_INT_REQ;
-  logic CON_MTR_INT_REQ;
-  logic CON_MEM_CYCLE;
-  logic CON_FETCH_CYCLE;
-  logic CON_DIAG_IR_STROBE;
-  logic CON_KERNEL_MODE;
-  logic CON_KERNEL_CYCLE;
-  logic CON_DIAG_DRAM_STROBE;
-  logic CON_NICOND_OR_LOAD_IR_DELAYED;
-  logic CON_KL10_PAGING_EN;
-  logic CON_PI_XFER;
-  logic CON_XFER;
-  logic CON_PXCT;
-  logic CON_SPEC8;
-  logic CON_MBOX_DATA;
-  logic CON_FM_DATA;
-  logic CON_FM_BIT_36;
-  logic CON_CSH_BIT_36;
-  logic CON_EBUS_BIT_36;
-  logic CON_AR_FROM_MEM;
-  logic CON_LOAD_AR_EN;
-  logic CON_PI_DISMISS;
+  logic WR_EVEN_PAR_DATA;
+  logic WR_EVEN_PAR_DIR;
+  logic INSTR_GO;
+  logic INT_DISABLE;
+  logic INT_REQ;
+  logic MTR_INT_REQ;
+  logic MEM_CYCLE;
+  logic FETCH_CYCLE;
+  logic DIAG_IR_STROBE;
+  logic KERNEL_MODE;
+  logic KERNEL_CYCLE;
+  logic DIAG_DRAM_STROBE;
+  logic NICOND_OR_LOAD_IR_DELAYED;
+  logic KL10_PAGING_EN;
+  logic PI_XFER;
+  logic XFER;
+  logic PXCT;
+  logic SPEC8;
+  logic MBOX_DATA;
+  logic FM_DATA;
+  logic FM_BIT_36;
+  logic CSH_BIT_36;
+  logic EBUS_BIT_36;
+  logic AR_FROM_MEM;
+  logic LOAD_AR_EN;
+  logic PI_DISMISS;
 
-  logic CON_DIAG_CLR_RUN;
-  logic CON_DIAG_SET_RUN;
-  logic CON_DIAG_CONTINUE;
-  logic CON_MAGIC_FUNC_02x;
-  logic CON_LOAD_AC_BLOCKS;
-  logic CON_LOAD_PREV_CONTEXT;
-  logic CON_MAGIC_FUNC_01x;
-  logic CON_MAGIC_FUNC_04x;
-  logic CON_MAGIC_FUNC_05x;
-  logic CON_MAGIC_FUNC_010;
-  logic CON_MAGIC_FUNC_011;
+  logic DIAG_CLR_RUN;
+  logic DIAG_SET_RUN;
+  logic DIAG_CONTINUE;
+  logic MAGIC_FUNC_02x;
+  logic LOAD_AC_BLOCKS;
+  logic LOAD_PREV_CONTEXT;
+  logic MAGIC_FUNC_01x;
+  logic MAGIC_FUNC_04x;
+  logic MAGIC_FUNC_05x;
+  logic MAGIC_FUNC_010;
+  logic MAGIC_FUNC_011;
 
 
   assign conCLK = CLK.CON;
@@ -121,9 +121,9 @@ module con(iAPR APR,
   assign CON.COND_VMA_MAGIC = |condVMAmagic;
 
   // EBUS
-  assign CON.EBUSdriver.driving = CON_DIAG_READ;
+  assign CON.EBUSdriver.driving = DIAG_READ;
   mux ebus18mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[18]),
                 .d({CON.WR_EVEN_PAR_ADR,
                     CON.CACHE_LOOK_EN,
@@ -135,9 +135,9 @@ module con(iAPR APR,
                     CON.ARX_36}));
 
   mux ebus19mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[19]),
-                .d({CON_WR_EVEN_PAR_DATA,
+                .d({WR_EVEN_PAR_DATA,
                     CON.CACHE_LOAD_EN,
                     ~CON.COND_SEL_VMA,
                     CON.COND_VMA_MAGIC,
@@ -147,9 +147,9 @@ module con(iAPR APR,
 
   logic ebus20mux_nothing = '0;
   mux ebus20mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[20]),
-                .d({CON_WR_EVEN_PAR_DIR,
+                .d({WR_EVEN_PAR_DIR,
                     ebus20mux_nothing,
                     ~CON.COND_MBOX_CTL,
                     CON.EBUS_REL,
@@ -157,7 +157,7 @@ module con(iAPR APR,
 
   logic ebus21mux_nothing = '0;
   mux ebus21mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[21]),
                 .d({ebus21mux_nothing,
                     ~CON.KI10_PAGING_MODE,
@@ -168,20 +168,20 @@ module con(iAPR APR,
 
   logic ebus22mux_nothing = '0;
   mux ebus22mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[22]),
                 .d({ebus22mux_nothing,
                     CON.TRAP_EN,
                     ~CON.LOAD_IR,
                     CON.COND_INSTR_ABORT,
                     CON.LOAD_ACCESS_COND,
-                    ~CON_INSTR_GO,
+                    ~INSTR_GO,
                     CON.LOAD_DRAM,
                     CON.COND_ADR_10}));
 
   logic [0:1] ebus23mux_nothing = '0;
   mux ebus23mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[23]),
                 .d({ebus23mux_nothing,
                     CON.AR_LOADED,
@@ -193,19 +193,19 @@ module con(iAPR APR,
 
   logic [0:1] ebus24mux_nothing = '0;
   mux ebus24mux(.sel(CTL.DIAG[4:6]),
-                .en(CON_DIAG_READ),
+                .en(DIAG_READ),
                 .q(EBUS.data[24]),
                 .d({ebus24mux_nothing,
                     CON.PI_CYCLE,
-                    ~CON_MEM_CYCLE,
+                    ~MEM_CYCLE,
                     ~CON.FM_WRITE_PAR,
                     ~CON.MBOX_WAIT,
                     ~CON.FM_XFER,
-                    ~CON_PI_DISMISS}));
+                    ~PI_DISMISS}));
 
   // CON1 miscellaneous controls
   always_comb begin
-    CON_DIAG_READ = CTL.DIAG_READ_FUNC_13x;
+    DIAG_READ = CTL.DIAG_READ_FUNC_13x;
     CON.LOAD_SPEC_INSTR = CTL.DISP_NICOND | CON.COND_SPEC_INSTR | CON.RESET;
     CON.VMA_SEL[1] = CON.COND_VMA_DEC | MCL.LOAD_VMA;
     CON.VMA_SEL[0] = CON.COND_VMA_INC | MCL.LOAD_VMA;
@@ -215,7 +215,7 @@ module con(iAPR APR,
   logic piReadyReg;
   logic legalReg;
   always_ff @(posedge conCLK) begin
-    CON_MTR_INT_REQ <= MTR.INTERRUPT_REQ;
+    MTR_INT_REQ <= MTR.INTERRUPT_REQ;
     piReadyReg <= PI.READY;
     CON.LONG_EN <= (~MCL.VMA_SECTION_0 & CON.COND_LONG_EN) |
                    (~MCL.MBOX_CYC_REQ & CON.LONG_EN & ~CON.RESET);
@@ -223,21 +223,21 @@ module con(iAPR APR,
   end
 
   always_comb begin
-    CON_INT_REQ = (CON_MTR_INT_REQ | piReadyReg) & (~CON_INT_DISABLE | CON.RESET);
+    INT_REQ = (MTR_INT_REQ | piReadyReg) & (~INT_DISABLE | CON.RESET);
 
-    CON.LOAD_IR = CON_FETCH_CYCLE | CON.COND_LOAD_IR | CON_DIAG_IR_STROBE;
+    CON.LOAD_IR = FETCH_CYCLE | CON.COND_LOAD_IR | DIAG_IR_STROBE;
     CON.COND_INSTR_ABORT = CON.COND_SPEC_INSTR & CRAM.MAGIC[6];
     CON.CLR_PRIVATE_INSTR = CLK.PAGE_ERROR | CON.COND_INSTR_ABORT;
     CON.LOAD_ACCESS_COND = CON.COND_LOAD_IR | CON.COND_SR_MAGIC;
 
-    CON_INSTR_GO = legalReg & ~CON_INSTR_GO & ~CON.RESET;
-    CON.IO_LEGAL = IR.IO_LEGAL | CON_KERNEL_MODE | CON_KERNEL_CYCLE |
+    INSTR_GO = legalReg & ~INSTR_GO & ~CON.RESET;
+    CON.IO_LEGAL = IR.IO_LEGAL | KERNEL_MODE | KERNEL_CYCLE |
                    (SCD.USER & SCD.USER_IOT);
   end
 
   logic start0 = '0;
   logic start1, start2;
-  always_comb start0 = CON_DIAG_CONTINUE | (~CON.START & ~start0 & ~CON.RESET);
+  always_comb start0 = DIAG_CONTINUE | (~CON.START & ~start0 & ~CON.RESET);
   always_ff @(posedge conCLK) begin
     start1 <= start0;
     start2 = start1;
@@ -246,7 +246,7 @@ module con(iAPR APR,
 
   logic run0 = '0;
   logic run1, run2;
-  always_comb run0 = CON_DIAG_SET_RUN | (~CON_DIAG_CLR_RUN & ~run0 & ~CON.RESET);
+  always_comb run0 = DIAG_SET_RUN | (~DIAG_CLR_RUN & ~run0 & ~CON.RESET);
   always_ff @(posedge conCLK) begin
     run1 <= run0;
     run2 <= run1;
@@ -256,12 +256,12 @@ module con(iAPR APR,
   logic runStateNC1, runStateNC2, runStateNC3;
   decoder runStateDecoder(.en(CTL.DIAG_CTL_FUNC_01x),
                           .sel(EBUS.ds[4:6]),
-                          .q({CON_DIAG_CLR_RUN,
-                              CON_DIAG_SET_RUN,
-                              CON_DIAG_CONTINUE,
+                          .q({DIAG_CLR_RUN,
+                              DIAG_SET_RUN,
+                              DIAG_CONTINUE,
                               runStateNC1,
-                              CON_DIAG_IR_STROBE,
-                              CON_DIAG_DRAM_STROBE,
+                              DIAG_IR_STROBE,
+                              DIAG_DRAM_STROBE,
                               runStateNC2,
                               runStateNC3}));
 
@@ -270,24 +270,24 @@ module con(iAPR APR,
                    .en('1),
                    .q(skipEn6x),
                    .d({MCL.VMA_FETCH,
-                       CON_KERNEL_MODE,
+                       KERNEL_MODE,
                        SCD.USER,
                        SCD.PUBLIC,
                        MBZ.RD_PSE_WR,
                        CON.PI_CYCLE,
                        ~CON.EBUS_GRANT,
-                       ~CON_PI_XFER}));
+                       ~PI_XFER}));
   mux skipEn7x_mux(.sel(CRAM.COND[3:5]),
                    .en('1),
                    .q(skipEn7x),
-                   .d({CON_INT_REQ,
+                   .d({INT_REQ,
                        ~CON.START,
                        CON.RUN,
                        CON.IO_LEGAL,
-                       CON_PXCT,
+                       PXCT,
                        MCL.VMA_SECTION_0,
                        VMA.AC_REF,
-                       ~CON_MTR_INT_REQ}));
+                       ~MTR_INT_REQ}));
   always_comb begin
     CON.COND_ADR_10 = CON.SKIP_EN_60_67 & skipEn6x |
                       CON.SKIP_EN_70_77 & skipEn7x & CON.RESET;
@@ -296,8 +296,8 @@ module con(iAPR APR,
   logic [0:2] nicondPriority;
   priority_encoder8 nicondEncoder(.d({CON.PI_CYCLE,
                                       CON.RUN,
-                                      CON_MTR_INT_REQ,
-                                      CON_INT_REQ,
+                                      MTR_INT_REQ,
+                                      INT_REQ,
                                       CON.UCODE_STATE5,
                                       ~VMA.AC_REF,
                                       '0,
@@ -307,18 +307,18 @@ module con(iAPR APR,
     CON.NICOND_TRAP_EN <= nicondPriority[0];
     CON.NICOND[7:9] = nicondPriority;
     CON.EBUS_GRANT <= PI.EBUS_CP_GRANT;
-    CON_PI_XFER <= PI.EXT_TRAN_REC;
+    PI_XFER <= PI.EXT_TRAN_REC;
   end
   // XXX This is a guess
   assign CON.NICOND[10] = CON.NICOND_TRAP_EN;
 
   always_ff @(posedge conCLK) begin
-    CON_NICOND_OR_LOAD_IR_DELAYED <= CTL.DISP_NICOND | CON.COND_LOAD_IR;
+    NICOND_OR_LOAD_IR_DELAYED <= CTL.DISP_NICOND | CON.COND_LOAD_IR;
   end
   
   always_comb begin
-    CON.LOAD_DRAM = CON_DIAG_DRAM_STROBE | CON_NICOND_OR_LOAD_IR_DELAYED;
-    CON_KERNEL_MODE = ~SCD.USER & ~SCD.PUBLIC;
+    CON.LOAD_DRAM = DIAG_DRAM_STROBE | NICOND_OR_LOAD_IR_DELAYED;
+    KERNEL_MODE = ~SCD.USER & ~SCD.PUBLIC;
   end
 
 
@@ -329,33 +329,33 @@ module con(iAPR APR,
 
   always_ff @(posedge conCLK iff CON.CONO_PI) begin
     CON.WR_EVEN_PAR_ADR <= EBUS.data[18];
-    CON_WR_EVEN_PAR_DATA <= EBUS.data[19];
-    CON_WR_EVEN_PAR_DIR <= EBUS.data[20];
+    WR_EVEN_PAR_DATA <= EBUS.data[19];
+    WR_EVEN_PAR_DIR <= EBUS.data[20];
   end
 
   always_ff @(posedge conCLK iff CON.CONO_PAG) begin
     CON.CACHE_LOOK_EN <= EBUS.data[18];
     CON.CACHE_LOAD_EN <= EBUS.data[19];
-    CON_KL10_PAGING_EN <= EBUS.data[21];
+    KL10_PAGING_EN <= EBUS.data[21];
     CON.TRAP_EN <= EBUS.data[22];
   end
 
-  assign CON.KI10_PAGING_MODE = ~CON_KL10_PAGING_EN;
+  assign CON.KI10_PAGING_MODE = ~KL10_PAGING_EN;
 
   mux #(.N(4)) acbmux(.en(~CON.RESET),
-                      .sel({CON_MAGIC_FUNC_02x, CRAM.MAGIC[6]}),
+                      .sel({MAGIC_FUNC_02x, CRAM.MAGIC[6]}),
                       .d({~EBUS.data[18],
                           CRAM.MAGIC[7],
-                          CON_MAGIC_FUNC_02x,
-                          CON_MAGIC_FUNC_02x}),
-                      .q(CON_LOAD_AC_BLOCKS));
+                          MAGIC_FUNC_02x,
+                          MAGIC_FUNC_02x}),
+                      .q(LOAD_AC_BLOCKS));
   mux #(.N(4)) pcxmux(.en(~CON.RESET),
-                      .sel({CON_MAGIC_FUNC_02x, CRAM.MAGIC[6]}),
+                      .sel({MAGIC_FUNC_02x, CRAM.MAGIC[6]}),
                       .d({~EBUS.data[19],
                           CRAM.MAGIC[8],
-                          ~CON_MAGIC_FUNC_02x,
-                          ~CON_MAGIC_FUNC_02x}),
-                      .q(CON_LOAD_PREV_CONTEXT));
+                          ~MAGIC_FUNC_02x,
+                          ~MAGIC_FUNC_02x}),
+                      .q(LOAD_PREV_CONTEXT));
 
   assign CON.DELAY_REQ = CON.COND_DIAG_FUNC & CRAM.MAGIC[3];
 
@@ -363,20 +363,20 @@ module con(iAPR APR,
   decoder func0xx(.en(~CRAM.MAGIC[2] & CON.COND_DIAG_FUNC),
                   .sel(CRAM.MAGIC[3:5]),
                   .q({func0xxNC1,
-                      CON_MAGIC_FUNC_01x,
-                      CON_MAGIC_FUNC_02x,
+                      MAGIC_FUNC_01x,
+                      MAGIC_FUNC_02x,
                       func0xxNC2,
-                      CON_MAGIC_FUNC_04x,
-                      CON_MAGIC_FUNC_05x,
+                      MAGIC_FUNC_04x,
+                      MAGIC_FUNC_05x,
                       func0xxNC3,
                       func0xxNC4}));
 
   logic func01xNC1, func01xNC2;
   logic conoAPR, conoPI, conoPAG, dataoAPR;
-  decoder func01x(.en(CON_MAGIC_FUNC_01x & ~CTL.CONSOLE_CONTROL),
+  decoder func01x(.en(MAGIC_FUNC_01x & ~CTL.CONSOLE_CONTROL),
                   .sel(CRAM.MAGIC[6:8]),
-                  .q({CON_MAGIC_FUNC_010,
-                      CON_MAGIC_FUNC_011,
+                  .q({MAGIC_FUNC_010,
+                      MAGIC_FUNC_011,
                       func01xNC1,
                       func01xNC2,
                       conoAPR,
@@ -409,23 +409,23 @@ module con(iAPR APR,
   // CTL4 p.161.
   always_comb begin
     CON.PI_DISABLE = ~CON.RUN | CON.EBOX_HALTED;
-    CON.AR_36 = (CON_WR_EVEN_PAR_DATA | CON.AR_LOADED) &
-                (CON_MBOX_DATA | CON_CSH_BIT_36 | CON_AR_FROM_MEM) &
-                (CON_FM_DATA | CON_FM_BIT_36 | CON_AR_FROM_MEM) &
-                (CON.AR_FROM_EBUS | CON_EBUS_BIT_36);
-    CON.ARX_36 = (CON_MBOX_DATA | CON_CSH_BIT_36) &
-                 (CON_FM_DATA | CON_FM_BIT_36);
+    CON.AR_36 = (WR_EVEN_PAR_DATA | CON.AR_LOADED) &
+                (MBOX_DATA | CSH_BIT_36 | AR_FROM_MEM) &
+                (FM_DATA | FM_BIT_36 | AR_FROM_MEM) &
+                (CON.AR_FROM_EBUS | EBUS_BIT_36);
+    CON.ARX_36 = (MBOX_DATA | CSH_BIT_36) &
+                 (FM_DATA | FM_BIT_36);
   end
 
   always_ff @(posedge conCLK iff CON.LOAD_SPEC_INSTR) begin
-    CON_KERNEL_CYCLE <= CRAM.MAGIC[1];
+    KERNEL_CYCLE <= CRAM.MAGIC[1];
     CON.PCplus1_INH <= CRAM.MAGIC[2];
-    CON_PXCT <= CRAM.MAGIC[4];
-    CON_INT_DISABLE <= CRAM.MAGIC[5];
+    PXCT <= CRAM.MAGIC[4];
+    INT_DISABLE <= CRAM.MAGIC[5];
 
     CON.EBOX_HALTED <= CRAM.MAGIC[7];
     CON.PCplus1_INH <= CRAM.MAGIC[2];
-    CON_SPEC8 <= CRAM.MAGIC[8]; // XXX not used?
+    SPEC8 <= CRAM.MAGIC[8]; // XXX not used?
   end
 
   always_ff @(posedge conCLK iff CON.COND_EBUS_STATE | CON.RESET) begin
@@ -436,42 +436,42 @@ module con(iAPR APR,
   end
 
   always_ff @(posedge conCLK) begin
-    CON_CSH_BIT_36 <= CSH_PAR_BIT_A | CSH_PAR_BIT_B;
-    CON_FM_BIT_36 <= APR.FM_BIT_36;
-    CON_EBUS_BIT_36 <= EBUS.parity;
-    CON_MBOX_DATA <= CON.FM_XFER;
-    CON_FM_DATA <= CON.MB_XFER;
+    CSH_BIT_36 <= CSH_PAR_BIT_A | CSH_PAR_BIT_B;
+    FM_BIT_36 <= APR.FM_BIT_36;
+    EBUS_BIT_36 <= EBUS.parity;
+    MBOX_DATA <= CON.FM_XFER;
+    FM_DATA <= CON.MB_XFER;
   end
 
   always_comb begin
-    CON_LOAD_AR_EN = MCL.LOAD_ARX | MCL.LOAD_AR;
+    LOAD_AR_EN = MCL.LOAD_ARX | MCL.LOAD_AR;
     // WIRE-OR of negated signals! XXX (there are more I need to go fix)
-    CON_AR_FROM_MEM = ~(~CON_LOAD_AR_EN | ~CON_XFER | ~CLK.PAGE_ERROR);
+    AR_FROM_MEM = ~(~LOAD_AR_EN | ~XFER | ~CLK.PAGE_ERROR);
   end
   
 
   always_ff @(posedge conCLK) begin
     CON.AR_FROM_EBUS <= CTL.EBUS_XFER & EBUS.parity;
-    CON.ARX_LOADED <= CON_XFER & ~CON.FM_XFER & ~CLK.PAGE_ERROR & MCL.LOAD_ARX;
-    CON.AR_LOADED <= CON_AR_FROM_MEM | CON.AR_FROM_EBUS;
+    CON.ARX_LOADED <= XFER & ~CON.FM_XFER & ~CLK.PAGE_ERROR & MCL.LOAD_ARX;
+    CON.AR_LOADED <= AR_FROM_MEM | CON.AR_FROM_EBUS;
   end
 
   // CON5 p.162
   logic cond345_1s;
   logic specFlagMagic2;
   logic waitingACStore;
-  logic CON_PI_CYCLE_IN;
-  logic CON_MEM_CYCLE_IN;
-  logic CON_CLR_PI_CYCLE;
+  logic PI_CYCLE_IN;
+  logic MEM_CYCLE_IN;
+  logic CLR_PI_CYCLE;
   always_comb begin
-    CON_PI_CYCLE_IN = CON.PI_CYCLE;
-    CON_MEM_CYCLE_IN = CON_MEM_CYCLE;
-    CON_XFER = CON.FM_XFER | CON.MB_XFER;
+    PI_CYCLE_IN = CON.PI_CYCLE;
+    MEM_CYCLE_IN = MEM_CYCLE;
+    XFER = CON.FM_XFER | CON.MB_XFER;
 
     specFlagMagic2 = (CTL.SPEC_FLAG_CTL & CRAM.MAGIC[2]);
-    CON_CLR_PI_CYCLE = (CTL.SPEC_SAVE_FLAGS & CON.PI_CYCLE & CLK.EBOX_SYNC) |
+    CLR_PI_CYCLE = (CTL.SPEC_SAVE_FLAGS & CON.PI_CYCLE & CLK.EBOX_SYNC) |
                        specFlagMagic2;
-    CON_PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
+    PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
 
     waitingACStore = MCL.STORE_AR & CON.MBOX_WAIT & VMA.AC_REF;
     cond345_1s = CRAM.COND[3:5] == 3'b111;
@@ -479,15 +479,15 @@ module con(iAPR APR,
     CON.FM_WRITE18_35 = CON.FM_WRITE00_17;
     CON.FM_WRITE_PAR = ~CLK.SBR_CALL & ~conCLK;
 
-    CON.MBOX_WAIT = CRAM.MEM[2] & CON_MEM_CYCLE;
-    CON.FM_XFER = CRAM.MEM[2] & CON_MEM_CYCLE & VMA.AC_REF;
-    CON_FETCH_CYCLE = MCL.VMA_FETCH & CON_MEM_CYCLE;
+    CON.MBOX_WAIT = CRAM.MEM[2] & MEM_CYCLE;
+    CON.FM_XFER = CRAM.MEM[2] & MEM_CYCLE & VMA.AC_REF;
+    FETCH_CYCLE = MCL.VMA_FETCH & MEM_CYCLE;
   end
 
   always_ff @(posedge conCLK) begin
     CON.PI_CYCLE <= (CON.COND_SPEC_INSTR & CRAM.MAGIC[0]) |
-                    (~MCL.SKIP_SATISFIED & ~CON_CLR_PI_CYCLE & ~CON.RESET & CON.PI_CYCLE);
-    CON_MEM_CYCLE <= MCL.MBOX_CYC_REQ |
-                     (CON_MEM_CYCLE & ~CON_XFER & ~CLK.PAGE_ERROR & ~CON.RESET);
+                    (~MCL.SKIP_SATISFIED & ~CLR_PI_CYCLE & ~CON.RESET & CON.PI_CYCLE);
+    MEM_CYCLE <= MCL.MBOX_CYC_REQ |
+                     (MEM_CYCLE & ~XFER & ~CLK.PAGE_ERROR & ~CON.RESET);
   end
 endmodule // con

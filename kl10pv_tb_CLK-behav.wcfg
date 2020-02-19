@@ -12,20 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="2905680fs"></ZoomStartTime>
-      <ZoomEndTime time="3331179fs"></ZoomEndTime>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="6000001fs"></ZoomEndTime>
       <Cursor1Time time="6000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="110"></NameColumnWidth>
-      <ValueColumnWidth column_width="60"></ValueColumnWidth>
+      <NameColumnWidth column_width="147"></NameColumnWidth>
+      <ValueColumnWidth column_width="75"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="25" />
-   <wave_markers>
-      <marker label="" time="3016870" />
-      <marker label="" time="3372430" />
-      <marker label="" time="3049357" />
-   </wave_markers>
+   <WVObjectSize size="29" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -68,6 +63,26 @@
       <obj_property name="ElementShortName">MEM[0:3]</obj_property>
       <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SOURCE">
+      <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">EBOX_SOURCE</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PF_DLYD_A">
+      <obj_property name="ElementShortName">PF_DLYD_A</obj_property>
+      <obj_property name="ObjectShortName">PF_DLYD_A</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PF_DLYD_B">
+      <obj_property name="ElementShortName">PF_DLYD_B</obj_property>
+      <obj_property name="ObjectShortName">PF_DLYD_B</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/_1777_EN">
+      <obj_property name="ElementShortName">_1777_EN</obj_property>
+      <obj_property name="ObjectShortName">_1777_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/INSTR_1777">
+      <obj_property name="ElementShortName">INSTR_1777</obj_property>
+      <obj_property name="ObjectShortName">INSTR_1777</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e7out7">
       <obj_property name="ElementShortName">e7out7</obj_property>
       <obj_property name="ObjectShortName">e7out7</obj_property>
@@ -83,7 +98,6 @@
    <wvobject type="vbus" fp_name="vbus70">
       <obj_property name="label">e12</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/S0">
          <obj_property name="ElementShortName">S0</obj_property>
          <obj_property name="ObjectShortName">S0</obj_property>
@@ -221,9 +235,5 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
       <obj_property name="ElementShortName">GO</obj_property>
       <obj_property name="ObjectShortName">GO</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/CLK/MHZ16_FREE">
-      <obj_property name="ElementShortName">MHZ16_FREE</obj_property>
-      <obj_property name="ObjectShortName">MHZ16_FREE</obj_property>
    </wvobject>
 </wave_config>

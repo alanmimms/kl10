@@ -785,7 +785,7 @@ interface iCLK;
   logic ERR_STOP_EN;
   logic ERROR_STOP;
 
-  logic F1777_EN;
+  logic _1777_EN;
   logic FORCE_1777;
   logic INSTR_1777;
   logic PAGE_FAIL;
