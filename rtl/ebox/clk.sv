@@ -10,7 +10,6 @@
 // gorgeous 600 DPI scan of the MP00301 p. 170 in which original scan
 // was obscured in a few places.
 module clk(input clk,
-           input FPGA_RESET,
            input CROBAR,
            input EXTERNAL_CLK,
            input clk30,
@@ -45,8 +44,6 @@ module clk(input clk,
   logic [0:7] burstCounter;
   logic burstCounterEQ0;
 
-  assign CLK.MR_RESET = CLK.RESET;
-
 `ifndef KL10PV_TB
   ebox_clocks ebox_clocks0(.clk_in1(clk));
 `endif
@@ -55,53 +52,38 @@ module clk(input clk,
   logic fastMemClk;
   assign fastMemClk = CLK.EDP;
 
+  assign CLK.CROBAR = CROBAR;
+
   logic [4:6] DIAG;
   assign DIAG[4:6] = EBUS.ds[4:6];
 
   logic CLK_DIAG_READ;
   assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
-  // XXX temporary?
-  initial begin
-    CLK.FORCE_1777 = '0;
-  end
-
   // CLK1 p.168
-  always_comb begin
 
-    case ({CROBAR, CLK.SOURCE_SEL})
-    default:CLK.MAIN_SOURCE = clk30;
-    3'b001: CLK.MAIN_SOURCE = clk31;
-    3'b010: CLK.MAIN_SOURCE = EXTERNAL_CLK;
-    3'b011: CLK.MAIN_SOURCE = clk31;
-    endcase
+  mux e67(.en('1),
+          .sel({CROBAR, CLK.SOURCE_SEL}),
+          .d({clk30, clk31, EXTERNAL_CLK, {5{clk30}}}),
+          .q(CLK.MAIN_SOURCE));
 
-    CLK.ERROR_STOP = CLK.FS_ERROR & ~CLK.CLK_ON & CLK.ERR_STOP_EN |
-                     CLK.EBOX_CLK_ERROR & CLK.EBOX_SOURCE & ~CLK.CLK_ON & CLK.ERR_STOP_EN;
-  end
+  assign CLK.ERROR_STOP = ~CLK.CLK_ON & CLK.ERR_STOP_EN & CLK.FS_ERROR |
+                          CLK.EBOX_CLK_ERROR & CLK.EBOX_SOURCE & ~CLK.CLK_ON & CLK.ERR_STOP_EN;
 
   // XXX ignoring the delay lines
   logic latchedGatedEn;
-  assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
-  assign CLK.EBUS_CLK_SOURCE = CLK.GATED;
-  assign CLK.SOURCE_DELAYED = CLK.EBUS_CLK_SOURCE;
-  assign CLK.CLK_ON = (~CLK.ERROR_STOP | DESKEW_CLK) &
-                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
-
   always_ff @(posedge CLK.MAIN_SOURCE) begin
     latchedGatedEn <= CLK.GATED_EN;
   end
 
+  assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
+  assign CLK.EBUS_CLK_SOURCE = CLK.GATED;           // 20ns delayed in KL
+  assign CLK.SOURCE_DELAYED = CLK.EBUS_CLK_SOURCE;  // 20+{10,20,30,40,50}+{10,20,30,40,50}+2.5ns
+  assign CLK.CLK_ON = (~CLK.ERROR_STOP | DESKEW_CLK) &
+                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
+
   assign CLK.MBOX = CLK.CLK_ON;
   assign CLK.ODD = CLK.CLK_ON;
-
-  // In real KL, CLK.CLK is routed to far end of backplane and back as
-  // CLK.DELAYED according to EBOX-UD Logical Delays and Skew, Figure
-  // 3-25. In KL10B this signal is called CLK.CLK when it leaves the
-  // CLK board (see CLK1 A1 E72 pin 3).
-  assign CLK.CLK = CLK.MBOX;
-  assign CLK.DELAYED = CLK.CLK;
-  assign CLK.MBOX_CLK = CLK.DELAYED;
 
   assign CLK.CCL = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CRC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
@@ -136,7 +118,7 @@ module clk(input clk,
 
   logic sbusClkFF1, sbusClkFF2;
   assign CLK.SBUS_CLK = sbusClkFF2;
-  always @(posedge CLK.GATED) begin
+  always @(posedge CLK.GATED, posedge CLK.FUNC_CLR_RESET) begin
 
     if (CLK.FUNC_CLR_RESET) begin
       CLK.SBUS_CLK <= '0;
@@ -150,7 +132,7 @@ module clk(input clk,
 
   logic ebusClkFF;
   assign CLK.EBUS_CLK = ebusClkFF;
-  always @(posedge CLK.EBUS_CLK_SOURCE) begin
+  always @(posedge CLK.EBUS_CLK_SOURCE, posedge CLK.FUNC_CLR_RESET) begin
 
     if (CLK.FUNC_CLR_RESET) begin
       ebusClkFF <= '0;
@@ -159,23 +141,20 @@ module clk(input clk,
     end
   end
 
-  logic [0:3] gatedSR;          // E42 CLK1
-  always @(posedge CLK.MAIN_SOURCE) begin
-
-    case ({CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED})
-    default: gatedSR <= gatedSR;              // HOLD
-    2'b01: gatedSR <= {gatedSR[1:3], CROBAR}; // SHIFT 3in
-    2'b10: gatedSR <= {1'b0, gatedSR[0:2]};   // SHIFT 0in
-    3'b11: gatedSR <= {CLK.FUNC_SINGLE_STEP,  // LOAD
-                       CLK.FUNC_EBOX_SS,
-                       CLK.FUNC_EBOX_SS & ~CLK.SYNC,
-                       CLK.FUNC_EBOX_SS};
-    endcase
-  end
+  logic [0:3] gatedSR;
+  USR4 e42(.S0('0),
+           .D({CLK.FUNC_SINGLE_STEP,
+               CLK.FUNC_EBOX_SS,
+               CLK.FUNC_EBOX_SS & ~CLK.SYNC,
+               CLK.FUNC_EBOX_SS}),
+           .S3(CROBAR),
+           .CLK(CLK.MAIN_SOURCE),
+           .SEL({CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED}),
+           .Q(gatedSR));
 
   assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
-                        burstCounterEQ0 & CLK.BURST & CLK.RATE_SELECTED |
-                        CLK.RATE_SELECTED & gatedSR[0] |
+                        ~burstCounterEQ0 & CLK.BURST & CLK.RATE_SELECTED |
+                        gatedSR[0] & CLK.RATE_SELECTED |
                         CLK.FUNC_COND_SS & CLK.EBOX_CLK;
 
   // CLK2 p.169
@@ -183,32 +162,22 @@ module clk(input clk,
   logic [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
+  USR4 e64(.RESET(CROBAR),
+           .S0('0),
+           .D({e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1}),
+           .S3(1'b0),
+           .SEL({CLK.MHZ16_FREE, 1'b0}),
+           .CLK(CLK.MAIN_SOURCE),
+           .Q(e64SR));
+
   // XXX slashed wire
   assign CLK.FUNC_GATE = ~|e60FF[0:2];
-
   assign CLK.TENELEVEN_CLK = e60FF[3];
-
   always_ff @(posedge CLK.MAIN_SOURCE) begin
-
-    if (FPGA_RESET) begin
-      e64SR <= '0;
-    end else if (~CLK.MHZ16_FREE) begin   // LOAD
-      // NOTE slashed wire XXX
-      e64SR <= {e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1};
-    end else begin                        // SHIFT 3in
-      e64SR <= {e64SR[1:3], SYNCHRONIZE_CLK};
-    end
-
-    // CLK.FUNC_GATE issue.
     // XXX slashed wire
     e60FF <= {~e64SR[0], e64SR[1:3]};
   end
 
-  assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
-
-  // This is made more painful because async CLEAR means to ASSERT
-  // CLK.RESET and async SET means to DEASSERT it. So I defined the FF
-  // separately to do the inversion in an assignment.
   logic e66SRFF;
   always @(posedge ~CLK.FUNC_SET_RESET,
            posedge CLK.FUNC_CLR_RESET,
@@ -223,34 +192,32 @@ module clk(input clk,
       e66SRFF <= '0;
     end
   end
-  assign CLK.RESET = ~e66SRFF;
+  assign CLK.MR_RESET = CLK.RESET;
+  assign CLK.RESET = e66SRFF;
+  assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
 
+  // In real KL, CLK.CLK is routed to far end of backplane and back as
+  // CLK.DELAYED according to EBOX-UD Logical Delays and Skew, Figure
+  // 3-25. In KL10B this signal is called CLK.CLK when it leaves the
+  // CLK board (see CLK1 A1 E72 pin 3).
+  assign CLK.CLK = CLK.MBOX;
+  assign CLK.DELAYED = CLK.CLK;
+  assign CLK.MBOX_CLK = CLK.DELAYED;
+
+  logic eboxClkFF;
   always_ff @(posedge CLK.MBOX_CLK) begin
-    CLK.PT_DIR_WR <= CLK.EBOX_CLK & APR.PT_DIR_WR;
-    CLK.PT_WR <= CLK.EBOX_CLK & APR.PT_WR;
+    eboxClkFF <= CLK.EBOX_CLK;
   end
+  assign CLK.PT_DIR_WR = eboxClkFF & APR.PT_DIR_WR;
+  assign CLK.PT_WR = eboxClkFF & APR.PT_WR;
 
   logic [0:3] e52Count;
   logic e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];
 
-  initial begin
-    e52Count = '0;
-    e52COUT = '0;
-  end
-
-  // XXX I cannot see clearly how this would have worked as shown in
-  // the schematic, which shows the CRY OUT signal as active low on
-  // E52 10136 and has a slash on the wire leading to the OR gate.
-  // This SHOULD mean e52COUT has no effect other than to keep on
-  // decrementing. But EK-EBOX-UD-004 p.225 Figure 3-8 NOTE says the
-  // CARRY OUT disables the -1 functions and loads 0's into the
-  // counter. So I changed the code to match this description and
-  // now it seems to do precisely what the NOTE says it should --
-  // and that seems right to me too.
   UCR4 e52(.RESET(CROBAR),
            .CIN('1),            // Always count
-           .SEL({1'b0, e52COUT | CROBAR | CON.CONO_200000}),
+           .SEL({1'b0, ~e52COUT | CROBAR | CON.CONO_200000}),
            .CLK(CLK.MHZ16_FREE),
            .D('0),
            .COUT(e52COUT),
@@ -265,12 +232,13 @@ module clk(input clk,
            .CLK(CLK.MAIN_SOURCE),
            .Q({CLK.GO, CLK.BURST, CLK.EBOX_SS, ignoredE37}));
   
-  logic e47xx;
+  logic e47Ignore;
   decoder e47Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x),
                      .sel(DIAG[4:6]),
-                     .q({e47xx, CLK.FUNC_START, CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS,
-                         CLK.FUNC_COND_SS, CLK.FUNC_BURST, CLK.FUNC_CLR_RESET,
-                         CLK.FUNC_SET_RESET}));
+                     .q({e47Ignore, CLK.FUNC_START,
+                         CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS,
+                         CLK.FUNC_COND_SS, CLK.FUNC_BURST,
+                         CLK.FUNC_CLR_RESET, CLK.FUNC_SET_RESET}));
   logic [0:7] e50out;
   assign CLK.FUNC_042 = e50out[2];
   assign CLK.FUNC_043 = e50out[3];
@@ -304,17 +272,11 @@ module clk(input clk,
 
     e45FF4 <= CLK.ERROR_HOLD_B;
     e45FF13 <= CLK.ERROR_HOLD_A;
-    e45FF14 <= CLK.ERROR_HOLD_B;
+    e45FF14 <= ~CLK.ERROR_HOLD_B;
   end
 
-  logic [3:0] e25Count;
+  logic [0:3] e25Count;
   logic e25COUT;
-  // XXX temporary?
-  initial begin
-    e25Count = '0;
-    e25COUT = '0;
-  end
-  
   UCR4 e25(.RESET(CROBAR),
            .CIN('1),
            .SEL({CLK.EBOX_CLK_EN, 1'b0}),
@@ -325,7 +287,7 @@ module clk(input clk,
 
   logic e31B;
   mux e31(.en(~CLK.SYNC_HOLD),
-          .sel({|e25Count[3:2], e25Count[1:0]}),
+          .sel({|e25Count[0:1], e25Count[2:3]}),
           .d({CRAM._TIME[0] | CRAM._TIME[1], // DeMorgan E26 pin 7
               ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{e25COUT}}}),
           .q(e31B));

@@ -7,7 +7,6 @@ module ebox(input clk,
             input clk31,
             input EXTERNAL_CLK,
             input CROBAR,
-            input FPGA_RESET,
 
             iAPR APR,
             iCLK CLK,

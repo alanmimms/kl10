@@ -8,7 +8,7 @@ module USR4(input RESET,
             input CLK,
             output logic [0:3] Q);
 
-  always_ff @(posedge CLK or posedge RESET) begin
+  always_ff @(posedge CLK, posedge RESET) begin
 
     if (RESET)
       Q <= '0;

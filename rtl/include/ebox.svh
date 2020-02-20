@@ -719,6 +719,7 @@ endinterface
 
 
 interface iCLK;
+  logic CROBAR;
   logic RESET;
   logic MR_RESET;
   logic MAIN_SOURCE;

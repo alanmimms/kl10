@@ -132,17 +132,6 @@ module kl10pv_tb;
   endtask
 
 
-  // FPGA_RESET resets each module separate from CROBAR mostly for
-  // simulation since it depends on e.g., decrementing counters whose
-  // values are indeterminate to run its startup processes (e.g., CLK
-  // and CROBAR and e52Counter).
-  logic FPGA_RESET;
-  initial begin
-    FPGA_RESET = 1;
-
-    #100 FPGA_RESET = 0;
-  end
-
   // CROBAR stays asserted for a long time
   initial begin
     CROBAR = 1;

@@ -13,14 +13,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="6000001fs"></ZoomEndTime>
+      <ZoomEndTime time="9203684fs"></ZoomEndTime>
       <Cursor1Time time="6000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="147"></NameColumnWidth>
-      <ValueColumnWidth column_width="75"></ValueColumnWidth>
+      <ValueColumnWidth column_width="71"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="29" />
+   <WVObjectSize size="28" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -28,10 +28,6 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RESET">
       <obj_property name="ElementShortName">RESET</obj_property>
       <obj_property name="ObjectShortName">RESET</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/FPGA_RESET">
-      <obj_property name="ElementShortName">FPGA_RESET</obj_property>
-      <obj_property name="ObjectShortName">FPGA_RESET</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MR_RESET">
       <obj_property name="ElementShortName">MR_RESET</obj_property>

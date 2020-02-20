@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-// This is like MC10136 ECL universal up-down counter
+// This is like MC10136 ECL universal up-down counter but all positive logic
 module UCR4(input RESET,
             input [0:3] D,
             input CIN,

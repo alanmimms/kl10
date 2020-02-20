@@ -3,8 +3,7 @@
 // together in ebox.v?
 `include "ebox.svh"
 
-module edp(logic FPGA_RESET,
-           iAPR APR,
+module edp(iAPR APR,
            iCLK CLK,
            iCON CON,
            iCRAM CRAM,
@@ -43,8 +42,8 @@ module edp(logic FPGA_RESET,
 `include "cram-aliases.svh"
   
   // Miscellaneous reset (XXX)
-  always_ff @(posedge CLK.EDP) begin
-    if (FPGA_RESET) cacheDataWrite <= '0;
+  always_ff @(posedge CLK.CROBAR) begin
+    cacheDataWrite <= '0;
   end
   
   // XXX wrong?
@@ -94,9 +93,9 @@ module edp(logic FPGA_RESET,
   end
   
   // EDP.AR
-  always_ff @(posedge CLK.EDP) begin
+  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
 
-    if (FPGA_RESET) begin
+    if (CLK.CROBAR) begin
       EDP.AR <= '0;
     end else begin
 
@@ -158,9 +157,9 @@ module edp(logic FPGA_RESET,
   end
 
   // ARX
-  always_ff @(posedge CLK.EDP) begin
+  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
 
-    if (FPGA_RESET) begin
+    if (CLK.CROBAR) begin
       EDP.ARX <= '0;
     end else if (CTL.ARX_LOAD)
       EDP.ARX <= {ARXL, ARXR};
@@ -183,9 +182,9 @@ module edp(logic FPGA_RESET,
   end
 
   // MQ mux and register
-  always_ff @(posedge CLK.EDP) begin
+  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
 
-    if (FPGA_RESET) begin
+    if (CLK.CROBAR) begin
       EDP.MQ <= '0;
     end else begin
       
@@ -411,18 +410,18 @@ module edp(logic FPGA_RESET,
 
 
   // BRX
-  always_ff @(posedge CLK.EDP)
+  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR)
 
-    if (FPGA_RESET)
+    if (CLK.CROBAR)
       EDP.BRX <= '0;
     else if (CRAM.BRX == brxARX)
       EDP.BRX <= EDP.ARX;
 
 
   // BR
-  always_ff @(posedge CLK.EDP)
+  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR)
 
-    if (FPGA_RESET)
+    if (CLK.CROBAR)
       EDP.BR <= '0;
     else if (CRAM.BR == brAR)
       EDP.BR <= EDP.AR;
@@ -439,9 +438,9 @@ module edp(logic FPGA_RESET,
   assign EDP.EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ?
                                       ebusR[18:35] : '0;
 
-  always_ff @(posedge CLK.EDP) begin
+  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
 
-    if (FPGA_RESET) begin
+    if (CLK.CROBAR) begin
       EDP.EBUSdriver.driving <= '0;
     end else if (EDP.EBUSdriver.driving) begin
 
