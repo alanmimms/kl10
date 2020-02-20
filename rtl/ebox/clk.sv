@@ -61,7 +61,6 @@ module clk(input clk,
   assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
   // CLK1 p.168
-
   mux e67(.en('1),
           .sel({CROBAR, CLK.SOURCE_SEL}),
           .d({clk30, clk31, EXTERNAL_CLK, {5{clk30}}}),
@@ -142,7 +141,8 @@ module clk(input clk,
   end
 
   logic [0:3] gatedSR;
-  USR4 e42(.S0('0),
+  USR4 e42(.RESET('0),
+           .S0('0),
            .D({CLK.FUNC_SINGLE_STEP,
                CLK.FUNC_EBOX_SS,
                CLK.FUNC_EBOX_SS & ~CLK.SYNC,
@@ -211,6 +211,10 @@ module clk(input clk,
   assign CLK.PT_DIR_WR = eboxClkFF & APR.PT_DIR_WR;
   assign CLK.PT_WR = eboxClkFF & APR.PT_WR;
 
+  // This counter's operation is described in EK-EBOX-UD-006 p. 231
+  // (C-32). It counts down to zero over and over again while CROBAR
+  // is asserted and then stops after reaching zero after CROBAR's
+  // trailing edge.
   logic [0:3] e52Count;
   logic e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];

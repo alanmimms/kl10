@@ -12,18 +12,17 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="499634561fs"></ZoomStartTime>
-      <ZoomEndTime time="500433429fs"></ZoomEndTime>
-      <Cursor1Time time="500167705fs"></Cursor1Time>
+      <ZoomStartTime time="499755969fs"></ZoomStartTime>
+      <ZoomEndTime time="501088970fs"></ZoomEndTime>
+      <Cursor1Time time="499978135fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="147"></NameColumnWidth>
       <ValueColumnWidth column_width="71"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="29" />
+   <WVObjectSize size="31" />
    <wave_markers>
-      <marker label="" time="499969936" />
-      <marker label="" time="500167705" />
+      <marker label="" time="499978135" />
    </wave_markers>
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
@@ -94,6 +93,49 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL_EN">
       <obj_property name="ElementShortName">PAGE_FAIL_EN</obj_property>
       <obj_property name="ObjectShortName">PAGE_FAIL_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RATE_SELECTED">
+      <obj_property name="ElementShortName">RATE_SELECTED</obj_property>
+      <obj_property name="ObjectShortName">RATE_SELECTED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_GATE">
+      <obj_property name="ElementShortName">FUNC_GATE</obj_property>
+      <obj_property name="ObjectShortName">FUNC_GATE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group141">
+      <obj_property name="label">e42</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/RESET">
+         <obj_property name="ElementShortName">RESET</obj_property>
+         <obj_property name="ObjectShortName">RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/S0">
+         <obj_property name="ElementShortName">S0</obj_property>
+         <obj_property name="ObjectShortName">S0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/D">
+         <obj_property name="ElementShortName">D[0:3]</obj_property>
+         <obj_property name="ObjectShortName">D[0:3]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/S3">
+         <obj_property name="ElementShortName">S3</obj_property>
+         <obj_property name="ObjectShortName">S3</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/SEL">
+         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/CLK">
+         <obj_property name="ElementShortName">CLK</obj_property>
+         <obj_property name="ObjectShortName">CLK</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/Q">
+         <obj_property name="ElementShortName">Q[0:3]</obj_property>
+         <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group129">
       <obj_property name="label">e52</obj_property>
@@ -258,12 +300,6 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
       <obj_property name="ElementShortName">EBUS_CLK</obj_property>
       <obj_property name="ObjectShortName">EBUS_CLK</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_GATE">
-      <obj_property name="ElementShortName">FUNC_GATE</obj_property>
-      <obj_property name="ObjectShortName">FUNC_GATE</obj_property>
-      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
       <obj_property name="ElementShortName">GO</obj_property>
