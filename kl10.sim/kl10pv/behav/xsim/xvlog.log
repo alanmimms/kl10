@@ -2,7 +2,7 @@ INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/top.sv" i
 INFO: [VRFC 10-311] analyzing module top
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/ebox/clk.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module clk
-INFO: [VRFC 10-2458] undeclared symbol burstLSBCarry, assumed default net type wire [/home/alan/kl10/rtl/ebox/clk.sv:472]
+INFO: [VRFC 10-2458] undeclared symbol burstLSBCarry, assumed default net type wire [/home/alan/kl10/rtl/ebox/clk.sv:466]
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/ebox/cra.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module cra
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/util/mc10181.sv" into library xil_defaultlib
@@ -85,5 +85,3 @@ INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/util/mux2
 INFO: [VRFC 10-311] analyzing module mux2x4
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/home/alan/kl10/rtl/util/mux4x2.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mux4x2
-INFO: [VRFC 10-2263] Analyzing Verilog file "/home/alan/kl10/kl10.sim/kl10pv/behav/xsim/glbl.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module glbl

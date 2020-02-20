@@ -5,8 +5,9 @@ module UCR4(input RESET,
             input CIN,
             input [0:1] SEL,
             input CLK,
-            output logic [0:3] Q,
-            output logic COUT);
+            // NOTE these outputs are BIT, not LOGIC, so counting happens at power-on
+            output bit [0:3] Q,
+            output bit COUT);
 
   always_ff @(posedge CLK or posedge RESET) begin
 

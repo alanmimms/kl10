@@ -29,6 +29,49 @@ module kl10pv_tb;
   initial $readmemh("../../../../images/CRAM.mem", top0.ebox0.crm0.cram.mem);
 
 
+  // Initialization because of ECL
+  initial begin
+    // EBUS
+    top0.ebox0.EBUS.data = '0;
+    top0.ebox0.EBUS.parity = '0;
+    top0.ebox0.EBUS.cs = '0;
+    top0.ebox0.EBUS.ds = '0;
+    top0.ebox0.EBUS.func = tEBUSfunction'('0);
+    top0.ebox0.EBUS.demand = '0;
+    top0.ebox0.EBUS.pi = '0;
+    top0.ebox0.EBUS.ack = '0;
+    top0.ebox0.EBUS.xfer = '0;
+    top0.ebox0.EBUS.reset = '0;
+    top0.ebox0.EBUS.diagStrobe = '0;
+    top0.ebox0.EBUS.dfunc = '0;
+
+    top0.ebox0.APR.EBUSdriver.driving = '0;
+    top0.ebox0.APR.EBUSdriver.data = '0;
+    top0.ebox0.CON.EBUSdriver.driving = '0;
+    top0.ebox0.CON.EBUSdriver.data = '0;
+    top0.ebox0.CRA.EBUSdriver.driving = '0;
+    top0.ebox0.CRA.EBUSdriver.data = '0;
+    top0.ebox0.CTL.EBUSdriver.driving = '0;
+    top0.ebox0.CTL.EBUSdriver.data = '0;
+    top0.ebox0.EDP.EBUSdriver.driving = '0;
+    top0.ebox0.EDP.EBUSdriver.data = '0;
+    top0.ebox0.IR.EBUSdriver.driving = '0;
+    top0.ebox0.IR.EBUSdriver.data = '0;
+    top0.ebox0.MTR.EBUSdriver.driving = '0;
+    top0.ebox0.MTR.EBUSdriver.data = '0;
+    top0.ebox0.PI.EBUSdriver.driving = '0;
+    top0.ebox0.PI.EBUSdriver.data = '0;
+    top0.ebox0.SCD.EBUSdriver.driving = '0;
+    top0.ebox0.SCD.EBUSdriver.data = '0;
+    top0.ebox0.SHM.EBUSdriver.driving = '0;
+    top0.ebox0.SHM.EBUSdriver.data = '0;
+    top0.ebox0.VMA.EBUSdriver.driving = '0;
+    top0.ebox0.VMA.EBUSdriver.data = '0;
+
+    top0.ebox0.CON.CONO_200000 = '0;
+  end
+
+
   // XXX until implemented
   initial begin
     top0.ebox0.CON.MBOX_WAIT = '0;
@@ -132,26 +175,13 @@ module kl10pv_tb;
   endtask
 
 
-  // CROBAR stays asserted for a long time
   initial begin
-    CROBAR = 1;
-
-    // Release system CROBAR reset
-    repeat(50) @(posedge masterClk) ;
-    CROBAR = 0;
-  end
-  
-
-  initial begin                 // Smash RESET on for a few clocks
     $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
-    top0.ebox0.EBUS.ds = '0;
-    top0.ebox0.EBUS.data = '0;
-    top0.ebox0.EBUS.diagStrobe = '0;
+    CROBAR = 1;               // CROBAR stays asserted for a long time
+    #500_000;                 // 500us CROBAR for the 21st century (and simulations)
+    CROBAR = 0;
 
-    @(negedge CROBAR) ;
-    repeat(10) @(posedge masterClk) ;
-
-    KLMasterReset();
+    #1000 KLMasterReset();
 
     // Do (as a front-end would) the CLK diagnostic functions:
     //

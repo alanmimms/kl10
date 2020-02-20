@@ -6,7 +6,7 @@ module USR4(input RESET,
             input S3,
             input [0:1] SEL,
             input CLK,
-            output logic [0:3] Q);
+            output bit [0:3] Q);
 
   always_ff @(posedge CLK, posedge RESET) begin
 

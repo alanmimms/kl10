@@ -108,7 +108,7 @@ module clk(input clk,
   logic [0:3] rateSelSR;
   assign CLK.RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
   
-  USR4 e5(.RESET(CROBAR),
+  USR4 e5(.RESET('0),
           .S0('0),
           .D({CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0}),
           .S3('0),
@@ -162,7 +162,7 @@ module clk(input clk,
   logic [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
-  USR4 e64(.RESET(CROBAR),
+  USR4 e64(.RESET('0),
            .S0('0),
            .D({e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1}),
            .S3(1'b0),
@@ -215,7 +215,7 @@ module clk(input clk,
   logic e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];
 
-  UCR4 e52(.RESET(CROBAR),
+  UCR4 e52(.RESET('0),
            .CIN('1),            // Always count
            .SEL({1'b0, ~e52COUT | CROBAR | CON.CONO_200000}),
            .CLK(CLK.MHZ16_FREE),
@@ -224,7 +224,7 @@ module clk(input clk,
            .Q(e52Count));
 
   logic ignoredE37;
-  USR4 e37(.RESET(CROBAR),
+  USR4 e37(.RESET('0),
            .S0('0),
            .D({CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS, 1'b0}),
            .S3('0),
@@ -277,7 +277,7 @@ module clk(input clk,
 
   logic [0:3] e25Count;
   logic e25COUT;
-  UCR4 e25(.RESET(CROBAR),
+  UCR4 e25(.RESET('0),
            .CIN('1),
            .SEL({CLK.EBOX_CLK_EN, 1'b0}),
            .CLK(CLK.MBOX_CLK),
@@ -289,7 +289,7 @@ module clk(input clk,
   mux e31(.en(~CLK.SYNC_HOLD),
           .sel({|e25Count[0:1], e25Count[2:3]}),
           .d({CRAM._TIME[0] | CRAM._TIME[1], // DeMorgan E26 pin 7
-              ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{e25COUT}}}),
+              ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{~e25COUT}}}),
           .q(e31B));
 
   always_comb begin
@@ -310,7 +310,7 @@ module clk(input clk,
   assign notHoldAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
   assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.RESET;
 
-  USR4 e12(.RESET(CROBAR),
+  USR4 e12(.RESET('0),
            .S0(CLK.PF_DLYD_A),
            .D({CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_CRM_DIS,
                CLK.SYNC & e17out & notHoldAB & ~CLK.EBOX_EDP_DIS,
@@ -357,7 +357,7 @@ module clk(input clk,
     CLK.EBOX_CLK <= CLK.EBOX_CLK_EN;
   end
 
-  USR4 e30(.RESET(CROBAR),
+  USR4 e30(.RESET('0),
            .S0('0),
            .D({PAG.PF_EBOX_HANDLE,
                CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN,
@@ -462,7 +462,7 @@ module clk(input clk,
   assign burstCounter = {burstMSB, burstLSB};
   assign burstCounterEQ0 = burstCounter == '0;
 
-  UCR4 e15(.RESET(CROBAR),
+  UCR4 e15(.RESET('0),
            .CIN(burstLSBCarry),
            .SEL({CLK.BURST | CLK.FUNC_043, CLK.FUNC_043}),
            .D(EBUS.data[32:35]),
@@ -470,7 +470,7 @@ module clk(input clk,
            .Q(burstMSB),
            .CLK(CLK.MAIN_SOURCE));
 
-  UCR4 e21(.RESET(CROBAR),
+  UCR4 e21(.RESET('0),
            .CIN(~burstCounterEQ0),
            .SEL({CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
            .COUT(burstLSBcarry),
