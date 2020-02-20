@@ -1,5 +1,7 @@
 # Faithful-to-the-Original KL10PV CPU in SystemVerilog for Xilinx FPGA
 
+![MIT licensed](https://img.shields.io/github/license/alanmimms/kl10?style=flat-square)
+
 I'm doing this while I learn Verilog. The idea is to build an FPGA
 implementation pretty clearly identical to the original schematics
 from the [`MP00301_KL10PV_Jun80` schematic PDFs from the scans on
