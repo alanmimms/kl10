@@ -2,11 +2,31 @@
 `include "mbox.svh"
 
 module kl10pv_tb;
+  typedef enum logic [0:8] {
+                            clkfSTOP_CLOCK = 9'o000,
+                            clkfSTART_CLOCK = 9'o001,
+                            clkfCLR_CLK_SRC_RATE = 9'o044,
+
+                            clkfSET_RESET = 9'o007,
+                            clkfCLR_RESET = 9'o006,
+
+                            clkfRESET_PAR_REGS = 9'o046,
+                            clkfCLR_BURST_CTR_RH = 9'o042,
+                            clkfCLR_BURST_CTR_LH = 9'o043,
+                            clkfCLR_CRAM_DIAG_ADR_RH = 9'o051,
+                            clkfCLR_CRAM_DIAG_ADR_LH = 9'o052,
+
+                            clkfENABLE_KL = 9'o067,
+                            clkfEBUS_LOAD = 9'o076
+                            } tCLKFunction;
+
   logic CROBAR;
   logic masterClk;
   logic clk;
 
   top top0(.*);
+
+  var string indent = "";
 
   assign clk = masterClk;
 
@@ -120,68 +140,13 @@ module kl10pv_tb;
     top.ebox0.CRM.PAR_16 = '0;
   end
   
-  // Request the specified CLK diagnostic function as if we were the
-  // front-end setting up a KL10pv.
-  task doCLKFunction(input int func);
-    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
-      top0.ebox0.EBUS.ds[0:3] = 4'b0000;          // DIAG_CTL_FUNC_00x for CLK
-      top0.ebox0.EBUS.ds[4:6] = func;
-      top0.ebox0.EBUS.diagStrobe = '1;            // Strobe this
-    end
-
-//    #100;                       // How long should this really hold?
-
-    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
-    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
-
-    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
-      top0.ebox0.EBUS.diagStrobe = '0;
-      top0.ebox0.EBUS.ds[0:3] = 4'b0000;
-      top0.ebox0.EBUS.ds[4:6] = 3'b000;
-    end
-
-    repeat(4) @(posedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
-  endtask
-
-
-  // Patterned after PARSER .RESET function and table RESETT.
-  task KLMasterReset();
-    // Reset the DTE-20
-    // D2.RST (100)
-    // D3.RST (001)
-
-    // Set and then clear EBOX_RESET (XXX not in .RESET function)
-    doCLKFunction(3'b111);      // CLK.FUNC_SET_RESET
-    doCLKFunction(3'b110);      // CLK.FUNC_CLR_RESET
-
-    // (000) Stop the KL clock
-    doCLKFunction(0);
-    // (044) Clear the KL clock source and rate
-    doCLKFunction(9'b000_100_100);
-    // FW.IPE (046) Reset the parity registers
-    doCLKFunction(9'b000_100_110);
-    // Do contents of RESETT table:
-    // FW.LBR (042) Clear burst counter RIGHT
-    doCLKFunction(9'b000_100_010);
-    // FW.LBL (043) Clear burst counter LEFT
-    doCLKFunction(9'b000_100_011);
-    // FW.CA2 (052) Clear CRAM diag address LEFT
-    // FW.CA1 (051) Clear CRAM diag address RIGHT
-    doCLKFunction(9'b000_101_001);
-    // FW.KLO (067) Enable KL opcodes
-    doCLKFunction(9'b000_110_111);
-    // FW.EBL (076) EBUS load
-    doCLKFunction(9'b000_111_110);
-  endtask
-
-
   initial begin
     $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
     CROBAR = 1;               // CROBAR stays asserted for a long time
-    #500_000;                 // 500us CROBAR for the 21st century (and simulations)
+    #1000;                    // 1us CROBAR for the 21st century (and simulations)
     CROBAR = 0;
 
-    #1000 KLMasterReset();
+    #100 KLMasterReset();
 
     // Do (as a front-end would) the CLK diagnostic functions:
     //
@@ -191,8 +156,68 @@ module kl10pv_tb;
     //
     // // XXX this needs to change when we have channels. See
     // PARSER.LST .MRCLR function.
-    doCLKFunction(3'b001);      // CLK.FUNC_START
+    doCLKFunction(clkfSTART_CLOCK);
   end
   
+  ////////////////////////////////////////////////////////////////
+  // Request the specified CLK diagnostic function as if we were the
+  // front-end setting up a KL10pv.
+  task doCLKFunction(input tCLKFunction func);
+    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
+      $display($time, " %sdoCLKFunction(%s) START", indent, func.name);
+      top0.ebox0.EBUS.ds[0:3] = 4'b0000;          // DIAG_CTL_FUNC_00x for CLK
+      top0.ebox0.EBUS.ds[4:6] = func;
+      top0.ebox0.EBUS.diagStrobe = '1;            // Strobe this
+    end
+
+    repeat (8) @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
+
+    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
+      top0.ebox0.EBUS.diagStrobe = '0;
+      top0.ebox0.EBUS.ds[0:3] = 4'b0000;
+      top0.ebox0.EBUS.ds[4:6] = 3'b000;
+    end
+
+    repeat(4) @(posedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
+    $display($time, " %sDONE", indent);
+  endtask
+
+
+  ////////////////////////////////////////////////////////////////
+  // Patterned after PARSER .RESET function and table RESETT.
+  task KLMasterReset();
+    $display($time, " KLMasterReset() START");
+    indent = "    ";
+    // Reset the DTE-20
+    // D2.RST (100)
+    // D3.RST (001)
+
+    // Set and then clear EBOX_RESET (XXX not in .RESET function)
+    doCLKFunction(clkfSET_RESET);
+    doCLKFunction(clkfCLR_RESET);
+
+    // (000) Stop the KL clock
+    doCLKFunction(clkfSTOP_CLOCK);
+    // (044) Clear the KL clock source and rate
+    doCLKFunction(clkfCLR_CLK_SRC_RATE);
+    // FW.IPE (046) Reset the parity registers
+    doCLKFunction(clkfRESET_PAR_REGS);
+    // Do contents of RESETT table:
+    // FW.LBR (042) Clear burst counter RIGHT
+    doCLKFunction(clkfCLR_BURST_CTR_RH);
+    // FW.LBL (043) Clear burst counter LEFT
+    doCLKFunction(clkfCLR_BURST_CTR_LH);
+    // FW.CA2 (052) Clear CRAM diag address LEFT
+    doCLKFunction(clkfCLR_CRAM_DIAG_ADR_LH);
+    // FW.CA1 (051) Clear CRAM diag address RIGHT
+    doCLKFunction(clkfCLR_CRAM_DIAG_ADR_RH);
+    // FW.KLO (067) Enable KL opcodes
+    doCLKFunction(clkfENABLE_KL);
+    // FW.EBL (076) EBUS load
+    doCLKFunction(clkfEBUS_LOAD);
+    $display($time, " DONE");
+    indent = "";
+  endtask
+
 endmodule
 

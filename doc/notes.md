@@ -1,6 +1,10 @@
 # TODO
+* Find all UCR4/USR4 uses and look for active-low schematic symbol and
+  switch sense on .SEL signals. This has already been done in clk.sv.
+  
 * Convert cram-defs.svh to package
 * Convert ebus-defs.svh to package
+
 * Use associative array to build list of iEBUSdriver modules for top.v synthesis?
 * Define methods for EBUS access in iEBUS
 * Go through the rev 'F' CON and make sure that is what I implemented.

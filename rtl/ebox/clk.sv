@@ -141,6 +141,7 @@ module clk(input clk,
   end
 
   logic [0:3] gatedSR;
+  // NOTE: Active-low schematic symbol
   USR4 e42(.RESET('0),
            .S0('0),
            .D({CLK.FUNC_SINGLE_STEP,
@@ -149,7 +150,7 @@ module clk(input clk,
                CLK.FUNC_EBOX_SS}),
            .S3(CROBAR),
            .CLK(CLK.MAIN_SOURCE),
-           .SEL({CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED}),
+           .SEL({~CLK.FUNC_GATE, ~(CLK.FUNC_GATE | CLK.RATE_SELECTED)}),
            .Q(gatedSR));
 
   assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
@@ -162,10 +163,13 @@ module clk(input clk,
   logic [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
+  // This chip has active-low for its D and Q domains. These end as
+  // usual at the schematic's slash marks on the lines going in and
+  // coming out.
   USR4 e64(.RESET('0),
            .S0('0),
            .D({e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1}),
-           .S3(1'b0),
+           .S3(SYNCHRONIZE_CLK),
            .SEL({CLK.MHZ16_FREE, 1'b0}),
            .CLK(CLK.MAIN_SOURCE),
            .Q(e64SR));
@@ -174,7 +178,8 @@ module clk(input clk,
   assign CLK.FUNC_GATE = ~|e60FF[0:2];
   assign CLK.TENELEVEN_CLK = e60FF[3];
   always_ff @(posedge CLK.MAIN_SOURCE) begin
-    // XXX slashed wire
+    // XXX slashed wire moves us from active-low to acitve-high
+    // discipline.
     e60FF <= {~e64SR[0], e64SR[1:3]};
   end
 
@@ -228,11 +233,12 @@ module clk(input clk,
            .Q(e52Count));
 
   logic ignoredE37;
+  // NOTE: Active-low schematic symbol
   USR4 e37(.RESET('0),
            .S0('0),
            .D({CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS, 1'b0}),
            .S3('0),
-           .SEL({2{CLK.FUNC_GATE | CROBAR}}),
+           .SEL(~{2{CLK.FUNC_GATE | CROBAR}}),
            .CLK(CLK.MAIN_SOURCE),
            .Q({CLK.GO, CLK.BURST, CLK.EBOX_SS, ignoredE37}));
   
@@ -281,9 +287,10 @@ module clk(input clk,
 
   logic [0:3] e25Count;
   logic e25COUT;
+  // NOTE: Active-low schematic symbol
   UCR4 e25(.RESET('0),
            .CIN('1),
-           .SEL({CLK.EBOX_CLK_EN, 1'b0}),
+           .SEL({~CLK.EBOX_CLK_EN, 1'b0}),
            .CLK(CLK.MBOX_CLK),
            .D(4'b0000),
            .COUT(e25COUT),
@@ -361,6 +368,7 @@ module clk(input clk,
     CLK.EBOX_CLK <= CLK.EBOX_CLK_EN;
   end
 
+  // NOTE: Active-low schematic symbol
   USR4 e30(.RESET('0),
            .S0('0),
            .D({PAG.PF_EBOX_HANDLE,
@@ -368,7 +376,7 @@ module clk(input clk,
                ~SHM.AR_PAR_ODD & CON.AR_LOADED,
                ~SHM.ARX_PAR_ODD & CON.ARX_LOADED}),
            .S3('0),
-           .SEL({2{CLK.PAGE_FAIL}}),
+           .SEL(~{2{CLK.PAGE_FAIL}}),
            .CLK(CLK.ODD),
            .Q(CLK.PF_DISP[7:10]));
 
@@ -466,17 +474,19 @@ module clk(input clk,
   assign burstCounter = {burstMSB, burstLSB};
   assign burstCounterEQ0 = burstCounter == '0;
 
+  // NOTE: Active-low schematic symbol
   UCR4 e15(.RESET('0),
            .CIN(burstLSBCarry),
-           .SEL({CLK.BURST | CLK.FUNC_043, CLK.FUNC_043}),
+           .SEL(~{CLK.BURST | CLK.FUNC_043, CLK.FUNC_043}),
            .D(EBUS.data[32:35]),
            .COUT(),
            .Q(burstMSB),
            .CLK(CLK.MAIN_SOURCE));
 
+  // NOTE: Active-low schematic symbol
   UCR4 e21(.RESET('0),
            .CIN(~burstCounterEQ0),
-           .SEL({CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
+           .SEL(~{CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
            .COUT(burstLSBcarry),
            .D(EBUS.data[32:35]),
            .Q(burstLSB),
