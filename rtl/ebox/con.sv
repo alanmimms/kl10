@@ -8,6 +8,7 @@ module con(iAPR APR,
            iCON CON,
            iCRAM CRAM,
            iCRM CRM,
+           iCSH CSH,
            iCTL CTL,
            iIR IR,
            iMBZ MBZ,
@@ -17,10 +18,7 @@ module con(iAPR APR,
            iSCD SCD,
            iVMA VMA,
 
-           iEBUS EBUS,
-
-           input CSH_PAR_BIT_A,
-           input CSH_PAR_BIT_B);
+           iEBUS EBUS);
 
   logic conCLK;
   logic DIAG_READ;
@@ -71,6 +69,11 @@ module con(iAPR APR,
   initial begin
     CON.AR_LOADED = '0;
     CON.ARX_LOADED = '0;
+
+    CON.START = '0;
+    CON.RUN = '0;
+
+    CON.AR_FROM_EBUS = '0;
   end
 
   // COND decoder CON1 p.158
@@ -327,10 +330,17 @@ module con(iAPR APR,
     CON.CONO_200000 <= CON.CONO_APR & EBUS.data[19];
   end
 
-  always_ff @(posedge conCLK iff CON.CONO_PI) begin
-    CON.WR_EVEN_PAR_ADR <= EBUS.data[18];
-    WR_EVEN_PAR_DATA <= EBUS.data[19];
-    WR_EVEN_PAR_DIR <= EBUS.data[20];
+  always_ff @(posedge conCLK, posedge CLK.CROBAR) begin
+
+    if (CON.CONO_PI) begin
+      CON.WR_EVEN_PAR_ADR <= EBUS.data[18];
+      WR_EVEN_PAR_DATA <= EBUS.data[19];
+      WR_EVEN_PAR_DIR <= EBUS.data[20];
+    end else if (CLK.CROBAR) begin
+      CON.WR_EVEN_PAR_ADR <= '0;
+      WR_EVEN_PAR_DATA <= '0;
+      WR_EVEN_PAR_DIR <= '0;
+    end
   end
 
   always_ff @(posedge conCLK iff CON.CONO_PAG) begin
@@ -406,15 +416,15 @@ module con(iAPR APR,
                (CRAM.MAGIC[4] | CRAM.MAGIC[8]) & (CRAM.MAGIC[3] | CRAM.MAGIC[7])};
   end
 
-  // CTL4 p.161.
+  // CON4 p.161.
   always_comb begin
     CON.PI_DISABLE = ~CON.RUN | CON.EBOX_HALTED;
-    CON.AR_36 = (WR_EVEN_PAR_DATA | CON.AR_LOADED) &
-                (MBOX_DATA | CSH_BIT_36 | AR_FROM_MEM) &
-                (FM_DATA | FM_BIT_36 | AR_FROM_MEM) &
-                (CON.AR_FROM_EBUS | EBUS_BIT_36);
-    CON.ARX_36 = (MBOX_DATA | CSH_BIT_36) &
-                 (FM_DATA | FM_BIT_36);
+    CON.AR_36 = (~WR_EVEN_PAR_DATA | CON.AR_LOADED) &
+                (~MBOX_DATA | CSH_BIT_36 | ~AR_FROM_MEM) &
+                (~FM_DATA | FM_BIT_36 | ~AR_FROM_MEM) &
+                (~CON.AR_FROM_EBUS | EBUS_BIT_36);
+    CON.ARX_36 = (~MBOX_DATA | CSH_BIT_36) &
+                 (~FM_DATA | FM_BIT_36);
   end
 
   always_ff @(posedge conCLK iff CON.LOAD_SPEC_INSTR) begin
@@ -436,11 +446,11 @@ module con(iAPR APR,
   end
 
   always_ff @(posedge conCLK) begin
-    CSH_BIT_36 <= CSH_PAR_BIT_A | CSH_PAR_BIT_B;
+    CSH_BIT_36 <= CSH.PAR_BIT_A | CSH.PAR_BIT_B;
     FM_BIT_36 <= APR.FM_BIT_36;
     EBUS_BIT_36 <= EBUS.parity;
     MBOX_DATA <= CON.FM_XFER;
-    FM_DATA <= CON.MB_XFER;
+    FM_DATA <= CLK.MB_XFER;
   end
 
   always_comb begin

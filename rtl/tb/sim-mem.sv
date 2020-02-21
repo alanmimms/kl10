@@ -5,13 +5,13 @@ module sim_mem
     parameter NBYTES=0)
   (input clk,
    input [0:WIDTH-1] din,
-   output [0:WIDTH-1] dout,
+   output bit [0:WIDTH-1] dout,
    input [0:$clog2(SIZE)-1] addr,
    input [0:NBYTES-1] wea);
 
   localparam BYTE_WIDTH = WIDTH / NBYTES;
 
-  typedef logic [0:NBYTES-1] [0:BYTE_WIDTH-1] tByteWord;
+  typedef bit [0:NBYTES-1] [0:BYTE_WIDTH-1] tByteWord;
   tByteWord mem [SIZE];
   tByteWord lanes;
 

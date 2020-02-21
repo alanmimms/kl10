@@ -8,6 +8,9 @@ module csh(iCSH CSH);
     CSH.MBOX_RESP_IN = '0;
     CSH.PAGE_FAIL_HOLD = '0;
     CSH.GATE_VMA_27_33 = '0;
+
+    CSH.PAR_BIT_A = '0;
+    CSH.PAR_BIT_B = '0;
   end
   
 endmodule // csh

@@ -17,6 +17,8 @@ interface iCSH;
   logic EBOX_T0_IN;
   logic PAGE_FAIL_HOLD;
   logic GATE_VMA_27_33;
+  logic PAR_BIT_A;
+  logic PAR_BIT_B;
 endinterface
 
 

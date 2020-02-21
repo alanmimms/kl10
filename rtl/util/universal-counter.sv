@@ -17,26 +17,30 @@ module UCR4(input RESET,
     end else begin
 
       case (SEL)
-      2'b00: begin                // LOAD
+      2'b00: begin              // LOAD
         Q <= D;
         COUT <= '1;
       end
       
-      2'b01: begin                // DEC
+      2'b01: begin              // DEC
+
         if (CIN) begin
           Q <= Q - 4'b0001;
           COUT <= Q == 4'b0000;
-        end
+        end else
+          COUT <= '0;
       end
 
-      2'b10: begin                // INC
+      2'b10: begin              // INC
+
         if (CIN) begin
           Q <= Q + 4'b0001;
           COUT <= Q == 4'b1111;
-        end
+        end else
+          COUT <= '0;
       end
 
-      2'b11: COUT <= '0;          // HOLD
+      2'b11: ;                  // HOLD
       endcase
     end
   end

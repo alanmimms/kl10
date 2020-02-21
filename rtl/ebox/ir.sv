@@ -28,6 +28,13 @@ module ir(iIR IR,
   logic IR_CLK;
   assign IR_CLK = CLK.IR;
 
+
+  initial begin
+    IR.IR <= '0;
+    IR.AC <= '0;
+  end
+  
+
 `ifdef KL10PV_TB
   sim_mem
     #(.SIZE(DRAM_SIZE), .WIDTH(DRAM_WIDTH), .NBYTES(1))
@@ -114,7 +121,7 @@ module ir(iIR IR,
   // Latch-mux
   always_ff @(posedge CON.LOAD_IR) begin
     IR.IR <= CON.MB_XFER ? EDP.AD[0:12] : cacheDataRead[0:12];
-    IR.IRAC <= enableAC ? IR.IR[9:12] : 4'b0;
+    IR.AC <= enableAC ? IR.IR[9:12] : 4'b0;
   end
 
   assign magic7eq8 = CRAM.MAGIC[7] ^ CRAM.MAGIC[8];
@@ -188,7 +195,7 @@ module ir(iIR IR,
       case (DIAG_FUNC[4:6])
       3'b000: IR.EBUSdriver.data[0:5] = {IR.NORM, DRADR[0:2]};
       3'b001: IR.EBUSdriver.data[0:5] = DRADR[3:8];
-      3'b010: IR.EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.IRAC};
+      3'b010: IR.EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.AC};
       3'b011: IR.EBUSdriver.data[0:5] = {IR.DRAM_A, IR.DRAM_B};
       3'b100: IR.EBUSdriver.data[0:5] = {IR.TEST_SATISFIED, IR.JRST0, IR.DRAM_J[1:4]};
       3'b101: IR.EBUSdriver.data[0:5] = {DRAM_PAR, IR.DRAM_ODD_PARITY, IR.DRAM_J[7:10]};
