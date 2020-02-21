@@ -11,3 +11,4 @@ kl10.sim/*/behav/xsim/elaborate.sh
 kl10.sim/*/behav/xsim/xvlog.log
 kl10.sim/*/behav/xsim/xvlog.pb
 kl10.sim/*/behav/xsim/*.wdb
+kl10.sim/*/behav/xsim/simulate.sh
