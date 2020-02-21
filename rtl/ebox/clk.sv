@@ -150,7 +150,7 @@ module clk(input clk,
                CLK.FUNC_EBOX_SS}),
            .S3(CROBAR),
            .CLK(CLK.MAIN_SOURCE),
-           .SEL({~CLK.FUNC_GATE, ~(CLK.FUNC_GATE | CLK.RATE_SELECTED)}),
+           .SEL(~{CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED}),
            .Q(gatedSR));
 
   assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
@@ -376,7 +376,7 @@ module clk(input clk,
                ~SHM.AR_PAR_ODD & CON.AR_LOADED,
                ~SHM.ARX_PAR_ODD & CON.ARX_LOADED}),
            .S3('0),
-           .SEL(~{2{CLK.PAGE_FAIL}}),
+           .SEL({2{~CLK.PAGE_FAIL}}),
            .CLK(CLK.ODD),
            .Q(CLK.PF_DISP[7:10]));
 
@@ -394,7 +394,7 @@ module clk(input clk,
   assign CLK._1777_EN = CLK.FORCE_1777 & CLK.SBR_CALL;
   always @(posedge CLK.MBOX_CLK) begin
     CLK.PAGE_FAIL_EN <= ~CLK.INSTR_1777 &
-                        (CSH.PAGE_FAIL_HOLD | (CLK.PAGE_FAIL_EN & ~CLK.MR_RESET));
+                        (CSH.PAGE_FAIL_HOLD | (CLK.PAGE_FAIL_EN & ~CLK.RESET));
     CLK.INSTR_1777 <= CLK._1777_EN | (~CLK.EBOX_CLK_EN & CLK.INSTR_1777);
     CLK.FORCE_1777 <= CLK.PF_DLYD_A;
     CLK.SBR_CALL <= CLK.PF_DLYD_B;
