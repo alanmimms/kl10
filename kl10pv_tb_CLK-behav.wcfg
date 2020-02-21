@@ -12,15 +12,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="40682410fs"></ZoomStartTime>
-      <ZoomEndTime time="40919022fs"></ZoomEndTime>
-      <Cursor1Time time="6632500fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="10000001fs"></ZoomEndTime>
+      <Cursor1Time time="6970000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="147"></NameColumnWidth>
-      <ValueColumnWidth column_width="63"></ValueColumnWidth>
+      <NameColumnWidth column_width="142"></NameColumnWidth>
+      <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="37" />
+   <WVObjectSize size="43" />
+   <wave_markers>
+      <marker label="" time="4393021" />
+   </wave_markers>
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -44,6 +47,14 @@
       <obj_property name="ObjectShortName">EBOX_CLK</obj_property>
       <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
+      <obj_property name="ElementShortName">EBUS_CLK</obj_property>
+      <obj_property name="ObjectShortName">EBUS_CLK</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
+      <obj_property name="ElementShortName">GO</obj_property>
+      <obj_property name="ObjectShortName">GO</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/crm0/CLK/CRM">
       <obj_property name="ElementShortName">CRM</obj_property>
@@ -79,9 +90,219 @@
       <obj_property name="ElementShortName">INSTR_1777</obj_property>
       <obj_property name="ObjectShortName">INSTR_1777</obj_property>
    </wvobject>
+   <wvobject type="group" fp_name="group135">
+      <obj_property name="label">CRAM</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/J">
+         <obj_property name="ElementShortName">J[0:10]</obj_property>
+         <obj_property name="ObjectShortName">J[0:10]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/AD">
+         <obj_property name="ElementShortName">AD[0:5]</obj_property>
+         <obj_property name="ObjectShortName">AD[0:5]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/ADA">
+         <obj_property name="ElementShortName">ADA[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ADA[0:2]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/ADB">
+         <obj_property name="ElementShortName">ADB[0:1]</obj_property>
+         <obj_property name="ObjectShortName">ADB[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/AR">
+         <obj_property name="ElementShortName">AR[0:2]</obj_property>
+         <obj_property name="ObjectShortName">AR[0:2]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/ARX">
+         <obj_property name="ElementShortName">ARX[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ARX[0:2]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/kl10pv_tb/top0/CRAM/BR">
+         <obj_property name="ElementShortName">BR</obj_property>
+         <obj_property name="ObjectShortName">BR</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/kl10pv_tb/top0/CRAM/BRX">
+         <obj_property name="ElementShortName">BRX</obj_property>
+         <obj_property name="ObjectShortName">BRX</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/kl10pv_tb/top0/CRAM/MQ">
+         <obj_property name="ElementShortName">MQ</obj_property>
+         <obj_property name="ObjectShortName">MQ</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/FMADR">
+         <obj_property name="ElementShortName">FMADR[0:2]</obj_property>
+         <obj_property name="ObjectShortName">FMADR[0:2]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/SCAD">
+         <obj_property name="ElementShortName">SCAD[0:2]</obj_property>
+         <obj_property name="ObjectShortName">SCAD[0:2]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/SCADA">
+         <obj_property name="ElementShortName">SCADA[0:2]</obj_property>
+         <obj_property name="ObjectShortName">SCADA[0:2]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/SCADB">
+         <obj_property name="ElementShortName">SCADB[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SCADB[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/kl10pv_tb/top0/CRAM/SC">
+         <obj_property name="ElementShortName">SC</obj_property>
+         <obj_property name="ObjectShortName">SC</obj_property>
+      </wvobject>
+      <wvobject type="other" fp_name="/kl10pv_tb/top0/CRAM/FE">
+         <obj_property name="ElementShortName">FE</obj_property>
+         <obj_property name="ObjectShortName">FE</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/SH">
+         <obj_property name="ElementShortName">SH[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SH[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/VMA">
+         <obj_property name="ElementShortName">VMA[0:1]</obj_property>
+         <obj_property name="ObjectShortName">VMA[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/_TIME">
+         <obj_property name="ElementShortName">_TIME[0:1]</obj_property>
+         <obj_property name="ObjectShortName">_TIME[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/MEM">
+         <obj_property name="ElementShortName">MEM[0:3]</obj_property>
+         <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/COND">
+         <obj_property name="ElementShortName">COND[0:5]</obj_property>
+         <obj_property name="ObjectShortName">COND[0:5]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CRAM/CALL">
+         <obj_property name="ElementShortName">CALL</obj_property>
+         <obj_property name="ObjectShortName">CALL</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/DISP">
+         <obj_property name="ElementShortName">DISP[0:4]</obj_property>
+         <obj_property name="ObjectShortName">DISP[0:4]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CRAM/MARK">
+         <obj_property name="ElementShortName">MARK</obj_property>
+         <obj_property name="ObjectShortName">MARK</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/MAGIC">
+         <obj_property name="ElementShortName">MAGIC[0:8]</obj_property>
+         <obj_property name="ObjectShortName">MAGIC[0:8]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e38out7">
+      <obj_property name="ElementShortName">e38out7</obj_property>
+      <obj_property name="ObjectShortName">e38out7</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e7out7">
       <obj_property name="ElementShortName">e7out7</obj_property>
       <obj_property name="ObjectShortName">e7out7</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/APR/SET_PAGE_FAIL">
+      <obj_property name="ElementShortName">SET_PAGE_FAIL</obj_property>
+      <obj_property name="ObjectShortName">SET_PAGE_FAIL</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group168">
+      <obj_property name="label">AR-par</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/EDP/AR">
+         <obj_property name="ElementShortName">AR[0:35]</obj_property>
+         <obj_property name="ObjectShortName">AR[0:35]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/SHM/AR_PAR_ODD">
+         <obj_property name="ElementShortName">AR_PAR_ODD</obj_property>
+         <obj_property name="ObjectShortName">AR_PAR_ODD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/AR_36">
+         <obj_property name="ElementShortName">AR_36</obj_property>
+         <obj_property name="ObjectShortName">AR_36</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/WR_EVEN_PAR_DATA">
+         <obj_property name="ElementShortName">WR_EVEN_PAR_DATA</obj_property>
+         <obj_property name="ObjectShortName">WR_EVEN_PAR_DATA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/AR_LOADED">
+         <obj_property name="ElementShortName">AR_LOADED</obj_property>
+         <obj_property name="ObjectShortName">AR_LOADED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/AR_FROM_EBUS">
+         <obj_property name="ElementShortName">AR_FROM_EBUS</obj_property>
+         <obj_property name="ObjectShortName">AR_FROM_EBUS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/AR_FROM_MEM">
+         <obj_property name="ElementShortName">AR_FROM_MEM</obj_property>
+         <obj_property name="ObjectShortName">AR_FROM_MEM</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/MBOX_DATA">
+         <obj_property name="ElementShortName">MBOX_DATA</obj_property>
+         <obj_property name="ObjectShortName">MBOX_DATA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/CSH_BIT_36">
+         <obj_property name="ElementShortName">CSH_BIT_36</obj_property>
+         <obj_property name="ObjectShortName">CSH_BIT_36</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/FM_DATA">
+         <obj_property name="ElementShortName">FM_DATA</obj_property>
+         <obj_property name="ObjectShortName">FM_DATA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/FM_BIT_36">
+         <obj_property name="ElementShortName">FM_BIT_36</obj_property>
+         <obj_property name="ObjectShortName">FM_BIT_36</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/EBUS_BIT_36">
+         <obj_property name="ElementShortName">EBUS_BIT_36</obj_property>
+         <obj_property name="ObjectShortName">EBUS_BIT_36</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/APR/FM_BIT_36">
+         <obj_property name="DisplayName">FullPathName</obj_property>
+         <obj_property name="ElementShortName">FM_BIT_36</obj_property>
+         <obj_property name="ObjectShortName">FM_BIT_36</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/APR/FM_ADR">
+         <obj_property name="ElementShortName">FM_ADR[0:3]</obj_property>
+         <obj_property name="ObjectShortName">FM_ADR[0:3]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/APR/FM_BLOCK">
+         <obj_property name="ElementShortName">FM_BLOCK[0:2]</obj_property>
+         <obj_property name="ObjectShortName">FM_BLOCK[0:2]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/apr0/fm36XORin">
+         <obj_property name="ElementShortName">fm36XORin</obj_property>
+         <obj_property name="ObjectShortName">fm36XORin</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/APR/FM_EXTENDED">
+         <obj_property name="ElementShortName">FM_EXTENDED</obj_property>
+         <obj_property name="ObjectShortName">FM_EXTENDED</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group143">
+      <obj_property name="label">ARX-par</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/EDP/ARX">
+         <obj_property name="ElementShortName">ARX[0:35]</obj_property>
+         <obj_property name="ObjectShortName">ARX[0:35]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/SHM/ARX_PAR_ODD">
+         <obj_property name="ElementShortName">ARX_PAR_ODD</obj_property>
+         <obj_property name="ObjectShortName">ARX_PAR_ODD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/ARX_36">
+         <obj_property name="ElementShortName">ARX_36</obj_property>
+         <obj_property name="ObjectShortName">ARX_36</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e32Q3">
+         <obj_property name="ElementShortName">e32Q3</obj_property>
+         <obj_property name="ObjectShortName">e32Q3</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e32Q13">
+         <obj_property name="ElementShortName">e32Q13</obj_property>
+         <obj_property name="ObjectShortName">e32Q13</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MB_XFER">
+      <obj_property name="ElementShortName">MB_XFER</obj_property>
+      <obj_property name="ObjectShortName">MB_XFER</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL">
       <obj_property name="ElementShortName">PAGE_FAIL</obj_property>
@@ -384,13 +605,5 @@
       <obj_property name="ObjectShortName">SYNC_HOLD</obj_property>
       <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
-      <obj_property name="ElementShortName">EBUS_CLK</obj_property>
-      <obj_property name="ObjectShortName">EBUS_CLK</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
-      <obj_property name="ElementShortName">GO</obj_property>
-      <obj_property name="ObjectShortName">GO</obj_property>
    </wvobject>
 </wave_config>

@@ -42,9 +42,7 @@ module edp(iAPR APR,
 `include "cram-aliases.svh"
   
   // Miscellaneous reset (XXX)
-  always_ff @(posedge CLK.CROBAR) begin
-    cacheDataWrite <= '0;
-  end
+  initial cacheDataWrite <= '0;
   
   // XXX wrong?
   assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
@@ -75,12 +73,21 @@ module edp(iAPR APR,
 
   assign EDP.FM_PARITY = ^EDP.FM;
 
+  // Initial states for our registers
+  initial begin
+    EDP.AR = '0;
+    EDP.ARX = '0;
+    EDP.BR = '0;
+    EDP.BRX = '0;
+    EDP.MQ = '0;
+  end
+
 
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
   always_comb begin
     unique case (CTL.ARL_SEL)
-    default: ARL = 'x;
+    default: ARL = '0;
     3'b000: ARL = {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER};
     3'b001: ARL = cacheDataRead[0:17];
     3'b010: ARL = EDP.AD[0:17];
@@ -93,38 +100,33 @@ module edp(iAPR APR,
   end
   
   // EDP.AR
-  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
+  always_ff @(posedge CLK.EDP) begin
 
-    if (CLK.CROBAR) begin
-      EDP.AR <= '0;
-    end else begin
+    if (CTL.AR00to11_CLR) begin
+      EDP.AR[0:11] <= '0;
+    end else if (CTL.AR00to08_LOAD) begin
+      EDP.AR[0:8] <= ARL[0:8];
+    end
 
-      if (CTL.AR00to11_CLR) begin
-        EDP.AR[0:11] <= '0;
-      end else if (CTL.AR00to08_LOAD) begin
-        EDP.AR[0:8] <= ARL[0:8];
-      end
+    if (CTL.AR12to17_CLR) begin
+      EDP.AR[12:17] <= '0;
+    end else if (CTL.AR09to17_LOAD) begin
+      EDP.AR[9:17] <= ARL[9:17];
+    end
 
-      if (CTL.AR12to17_CLR) begin
-        EDP.AR[12:17] <= '0;
-      end else if (CTL.AR09to17_LOAD) begin
-        EDP.AR[9:17] <= ARL[9:17];
-      end
-
-      if (CTL.ARR_CLR) begin
-        EDP.AR[18:35] <= '0;
-      end else if (CTL.ARR_LOAD) begin
-        unique case (CRAM.AR)
-        3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
-        3'b001: EDP.AR[18:35] <= cacheDataRead[18:35];
-        3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
-        3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
-        3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
-        3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
-        3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
-        3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
-        endcase
-      end
+    if (CTL.ARR_CLR) begin
+      EDP.AR[18:35] <= '0;
+    end else if (CTL.ARR_LOAD) begin
+      unique case (CRAM.AR)
+      3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
+      3'b001: EDP.AR[18:35] <= cacheDataRead[18:35];
+      3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
+      3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
+      3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
+      3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
+      3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
+      3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
+      endcase
     end
   end
 
@@ -132,7 +134,7 @@ module edp(iAPR APR,
   always_comb begin
 
     unique case (CTL.ARXL_SEL)
-    default: ARXL = 'x;
+    default: ARXL = '0;
     3'b000: ARXL = '0;
     3'b001: ARXL = cacheDataRead[0:17];
     3'b010: ARXL = EDP.AD[0:17];
@@ -144,7 +146,7 @@ module edp(iAPR APR,
     endcase
 
     unique case (CTL.ARXR_SEL)
-    default: ARXR = 'x;
+    default: ARXR = '0;
     3'b000: ARXR = '0;
     3'b001: ARXR = cacheDataRead[18:35];
     3'b010: ARXR = EDP.AD[18:35];
@@ -157,12 +159,8 @@ module edp(iAPR APR,
   end
 
   // ARX
-  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
-
-    if (CLK.CROBAR) begin
-      EDP.ARX <= '0;
-    end else if (CTL.ARX_LOAD)
-      EDP.ARX <= {ARXL, ARXR};
+  always_ff @(posedge CLK.EDP) begin
+    if (CTL.ARX_LOAD) EDP.ARX <= {ARXL, ARXR};
   end
 
   // MQM mux p16.
@@ -182,21 +180,16 @@ module edp(iAPR APR,
   end
 
   // MQ mux and register
-  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
+  always_ff @(posedge CLK.EDP) begin
 
-    if (CLK.CROBAR) begin
-      EDP.MQ <= '0;
-    end else begin
-      
-      // MQ: 36-bit MC10141-ish universal shift register
-      unique case (CTL.MQ_SEL)
-      default: EDP.MQ <= 'x;
-      usrLOAD: EDP.MQ <= MQM;
-      usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
-      usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
-      usrHOLD: EDP.MQ <= EDP.MQ;
-      endcase
-    end
+    // MQ: 36-bit MC10141-ish universal shift register
+    unique case (CTL.MQ_SEL)
+    default: EDP.MQ <= '0;
+    usrLOAD: EDP.MQ <= MQM;
+    usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
+    usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
+    usrHOLD: EDP.MQ <= EDP.MQ;
+    endcase
   end
 
   // Look-ahead carry network moved here from IR4 M8522 board.
@@ -348,7 +341,7 @@ module edp(iAPR APR,
         // N=0.
         if (n == 0) begin
           unique case(CRAM.ADB)
-          default: ADB[n-2:n-1] = 'x;
+          default: ADB[n-2:n-1] = '0;
           adbFM:   ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
           adbBRx2: ADB[n-2:n-1] = {2{n == 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
           adbBR:   ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
@@ -359,7 +352,7 @@ module edp(iAPR APR,
 
         // The regular part of ADB mux: E23, E26, and E19.
         unique case(CRAM.ADB)
-        default: ADB[n:n+5] = 'x;
+        default: ADB[n:n+5] = '0;
         adbFM:   ADB[n:n+5] = EDP.FM[n+0:n+5];
         adbBRx2: ADB[n:n+5] = {EDP.BR[n+1:n+5], n < 30 ? EDP.BR[n+6] : EDP.BRX[0]};
         adbBR:   ADB[n:n+5] = EDP.BR[n+0:n+5];
@@ -374,7 +367,7 @@ module edp(iAPR APR,
     for (n = '0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
         unique case(CRAM.ADB)
-        default: ADXB[n+0:n+5] = 'x;
+        default: ADXB[n+0:n+5] = '0;
         adbFM:   ADXB[n+0:n+5] = n < 6 ? CRAM.MAGIC[n+0:n+5] : 6'b0;
         adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0};
         adbBR:   ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
@@ -397,7 +390,7 @@ module edp(iAPR APR,
       always_comb
         if (~ADA_EN)
           unique case(CRAM.ADA)
-          default: ADA[n+0:n+5] = 'x;
+          default: ADA[n+0:n+5] = '0;
           adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
           adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
           adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
@@ -410,22 +403,14 @@ module edp(iAPR APR,
 
 
   // BRX
-  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR)
-
-    if (CLK.CROBAR)
-      EDP.BRX <= '0;
-    else if (CRAM.BRX == brxARX)
-      EDP.BRX <= EDP.ARX;
-
+  always_ff @(posedge CLK.EDP) begin
+    if (CRAM.BRX == brxARX) EDP.BRX <= EDP.ARX;
+  end
 
   // BR
-  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR)
-
-    if (CLK.CROBAR)
-      EDP.BR <= '0;
-    else if (CRAM.BR == brAR)
-      EDP.BR <= EDP.AR;
-
+  always_ff @(posedge CLK.EDP) begin
+    if (CRAM.BR == brAR) EDP.BR <= EDP.AR;
+  end
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
@@ -438,14 +423,12 @@ module edp(iAPR APR,
   assign EDP.EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ?
                                       ebusR[18:35] : '0;
 
-  always_ff @(posedge CLK.EDP, posedge CLK.CROBAR) begin
+  always_ff @(posedge CLK.EDP) begin
 
-    if (CLK.CROBAR) begin
-      EDP.EBUSdriver.driving <= '0;
-    end else if (EDP.EBUSdriver.driving) begin
+    if (EDP.EBUSdriver.driving) begin
 
       unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
-      default: ebusR <= 'x;
+      default: ebusR <= '0;
       3'b000: ebusR <= EDP.AR;
       3'b001: ebusR <= EDP.BR;
       3'b010: ebusR <= EDP.MQ;

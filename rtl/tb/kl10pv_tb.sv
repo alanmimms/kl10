@@ -140,8 +140,12 @@ module kl10pv_tb;
     top.ebox0.CRM.PAR_16 = '0;
   end
   
+  logic uninitLogic;
+  bit uninitBit;
+
   initial begin
     $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
+    $display($time, " uninitLogic=%01b uninitBit=%01b", uninitLogic, uninitBit);
     CROBAR = 1;               // CROBAR stays asserted for a long time
     #1000;                    // 1us CROBAR for the 21st century (and simulations)
     CROBAR = 0;

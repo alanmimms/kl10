@@ -1115,7 +1115,7 @@ interface iIR;
 
   logic [8:10] NORM;
   logic [0:12] IR;
-  logic [9:12] IRAC;
+  logic [9:12] AC;
   logic [0:2] DRAM_A;
   logic [0:2] DRAM_B;
   logic [0:10] DRAM_J;
