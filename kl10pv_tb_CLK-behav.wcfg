@@ -12,18 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="499755969fs"></ZoomStartTime>
-      <ZoomEndTime time="501088970fs"></ZoomEndTime>
-      <Cursor1Time time="499978135fs"></Cursor1Time>
+      <ZoomStartTime time="40682410fs"></ZoomStartTime>
+      <ZoomEndTime time="40919022fs"></ZoomEndTime>
+      <Cursor1Time time="6632500fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="147"></NameColumnWidth>
-      <ValueColumnWidth column_width="71"></ValueColumnWidth>
+      <ValueColumnWidth column_width="63"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="31" />
-   <wave_markers>
-      <marker label="" time="499978135" />
-   </wave_markers>
+   <WVObjectSize size="37" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -104,10 +101,101 @@
       <obj_property name="CustomSignalColor">#FFFF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
+   <wvobject type="group" fp_name="group86">
+      <obj_property name="label">FUNCs</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_CTL_FUNC_00x">
+         <obj_property name="ElementShortName">DIAG_CTL_FUNC_00x</obj_property>
+         <obj_property name="ObjectShortName">DIAG_CTL_FUNC_00x</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_042">
+         <obj_property name="ElementShortName">FUNC_042</obj_property>
+         <obj_property name="ObjectShortName">FUNC_042</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_043">
+         <obj_property name="ElementShortName">FUNC_043</obj_property>
+         <obj_property name="ObjectShortName">FUNC_043</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_044">
+         <obj_property name="ElementShortName">FUNC_044</obj_property>
+         <obj_property name="ObjectShortName">FUNC_044</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_045">
+         <obj_property name="ElementShortName">FUNC_045</obj_property>
+         <obj_property name="ObjectShortName">FUNC_045</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_046">
+         <obj_property name="ElementShortName">FUNC_046</obj_property>
+         <obj_property name="ObjectShortName">FUNC_046</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_047">
+         <obj_property name="ElementShortName">FUNC_047</obj_property>
+         <obj_property name="ObjectShortName">FUNC_047</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_START">
+         <obj_property name="ElementShortName">FUNC_START</obj_property>
+         <obj_property name="ObjectShortName">FUNC_START</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_SET_RESET">
+         <obj_property name="ElementShortName">FUNC_SET_RESET</obj_property>
+         <obj_property name="ObjectShortName">FUNC_SET_RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_CLR_RESET">
+         <obj_property name="ElementShortName">FUNC_CLR_RESET</obj_property>
+         <obj_property name="ObjectShortName">FUNC_CLR_RESET</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group94">
+      <obj_property name="label">e64</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/RESET">
+         <obj_property name="ElementShortName">RESET</obj_property>
+         <obj_property name="ObjectShortName">RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/S0">
+         <obj_property name="ElementShortName">S0</obj_property>
+         <obj_property name="ObjectShortName">S0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/D">
+         <obj_property name="ElementShortName">D[0:3]</obj_property>
+         <obj_property name="ObjectShortName">D[0:3]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/S3">
+         <obj_property name="ElementShortName">S3</obj_property>
+         <obj_property name="ObjectShortName">S3</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/SEL">
+         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/CLK">
+         <obj_property name="ElementShortName">CLK</obj_property>
+         <obj_property name="ObjectShortName">CLK</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e64/Q">
+         <obj_property name="ElementShortName">Q[0:3]</obj_property>
+         <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e60FF">
+      <obj_property name="ElementShortName">e60FF[0:3]</obj_property>
+      <obj_property name="ObjectShortName">e60FF[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_RESET">
+      <obj_property name="ElementShortName">EBUS_RESET</obj_property>
+      <obj_property name="ObjectShortName">EBUS_RESET</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GATED_EN">
+      <obj_property name="ElementShortName">GATED_EN</obj_property>
+      <obj_property name="ObjectShortName">GATED_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GATED">
+      <obj_property name="ElementShortName">GATED</obj_property>
+      <obj_property name="ObjectShortName">GATED</obj_property>
+   </wvobject>
    <wvobject type="group" fp_name="group141">
       <obj_property name="label">e42</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e42/RESET">
          <obj_property name="ElementShortName">RESET</obj_property>
          <obj_property name="ObjectShortName">RESET</obj_property>
