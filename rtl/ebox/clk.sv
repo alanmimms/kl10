@@ -76,13 +76,21 @@ module clk(input clk,
   end
 
   assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
+
+  kl_delays delays0(.clk_in1(CLK.GATED),
+                    .ph5(CLK.ODD),
+                    .ph10(CLK.MBOX),
+                    .ph20(CLK.SOURCE_DELAYED),
+                    .ph40(CLK.EBUS_CLK_SOURCE));
+  
+/*
   assign CLK.EBUS_CLK_SOURCE = CLK.GATED;           // 20ns delayed in KL
   assign CLK.SOURCE_DELAYED = CLK.EBUS_CLK_SOURCE;  // 20+{10,20,30,40,50}+{10,20,30,40,50}+2.5ns
-  assign CLK.CLK_ON = (~CLK.ERROR_STOP | DESKEW_CLK) &
-                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
-
   assign CLK.MBOX = CLK.CLK_ON;
   assign CLK.ODD = CLK.CLK_ON;
+*/
+  assign CLK.CLK_ON = (~CLK.ERROR_STOP | DESKEW_CLK) &
+                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
 
   assign CLK.CCL = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CRC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
@@ -297,10 +305,13 @@ module clk(input clk,
            .Q(e25Count));
 
   logic e31B;
+  // Note CLK3 has active LOW symbol for E25 and E31. I am treating
+  // the .D() inputs to E31 as active HIGH and configuring them so
+  // they work that way.
   mux e31(.en(~CLK.SYNC_HOLD),
-          .sel({|e25Count[0:1], e25Count[2:3]}),
-          .d({CRAM._TIME[0] | CRAM._TIME[1], // DeMorgan E26 pin 7
-              ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{~e25COUT}}}),
+          .sel({e25Count[0] | e25Count[1], e25Count[2:3]}),
+          .d({CRAM._TIME[0] & CRAM._TIME[1],
+              CRAM._TIME[0], CRAM._TIME[1], CON.DELAY_REQ, {4{e25COUT}}}),
           .q(e31B));
 
   always_comb begin
@@ -485,7 +496,11 @@ module clk(input clk,
 
   // NOTE: Active-low schematic symbol
   UCR4 e21(.RESET('0),
-           .CIN(~burstCounterEQ0),
+           .CIN(~burstCounterEQ0), // Double invert CLK5 BURST CNT=0 L
+                                   // since .CIN() is active high and
+                                   // so is our burstCounterEQ0.
+                                   // Desird effect is "carry-in when
+                                   // burstCounter != 0".
            .SEL(~{CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
            .COUT(burstLSBcarry),
            .D(EBUS.data[32:35]),

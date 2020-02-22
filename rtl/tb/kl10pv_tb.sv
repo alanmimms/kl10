@@ -215,13 +215,16 @@ module kl10pv_tb;
     doCLKFunction(clkfCLR_CRAM_DIAG_ADR_LH);
     // FW.CA1 (051) Clear CRAM diag address RIGHT
     doCLKFunction(clkfCLR_CRAM_DIAG_ADR_RH);
+
+`ifdef notdef
     // FW.KLO (067) Enable KL opcodes
     doCLKFunction(clkfENABLE_KL);
     // FW.EBL (076) EBUS load
     doCLKFunction(clkfEBUS_LOAD);
+`endif
+
     $display($time, " DONE");
     indent = "";
   endtask
 
 endmodule
-
