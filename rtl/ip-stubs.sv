@@ -130,7 +130,7 @@ endmodule
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
-// Date        : Fri Feb 21 17:47:03 2020
+// Date        : Sun Feb 23 11:22:30 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode synth_stub /home/alan/kl10/kl10.runs/kl_delays_synth_1/kl_delays_stub.v
 // Design      : kl_delays
@@ -141,8 +141,8 @@ endmodule
 // This empty module with port declaration file causes synthesis tools to infer a black box for IP.
 // The synthesis directives are for Synopsys Synplify support to prevent IO buffer insertion.
 // Please paste the declaration into a Verilog source file or add the file as an additional source.
-module kl_delays(ph5, ph10, ph20, ph30, ph40, ph50, ph60, clk_in1)
-/* synthesis syn_black_box black_box_pad_pin="ph5,ph10,ph20,ph30,ph40,ph50,ph60,clk_in1" */;
+module kl_delays(ph5, ph10, ph20, ph30, ph40, ph50, ph60, locked, clk_in1)
+/* synthesis syn_black_box black_box_pad_pin="ph5,ph10,ph20,ph30,ph40,ph50,ph60,locked,clk_in1" */;
   output ph5;
   output ph10;
   output ph20;
@@ -150,5 +150,6 @@ module kl_delays(ph5, ph10, ph20, ph30, ph40, ph50, ph60, clk_in1)
   output ph40;
   output ph50;
   output ph60;
+  output locked;
   input clk_in1;
 endmodule
