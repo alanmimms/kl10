@@ -12,20 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4329834fs"></ZoomStartTime>
-      <ZoomEndTime time="4570835fs"></ZoomEndTime>
-      <Cursor1Time time="4370000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="10000001fs"></ZoomEndTime>
+      <Cursor1Time time="10000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="138"></NameColumnWidth>
+      <NameColumnWidth column_width="130"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="31" />
-   <wave_markers>
-      <marker label="" time="4370000" />
-      <marker label="" time="4430000" />
-      <marker label="" time="4390000" />
-   </wave_markers>
+   <WVObjectSize size="38" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -37,6 +32,30 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MR_RESET">
       <obj_property name="ElementShortName">MR_RESET</obj_property>
       <obj_property name="ObjectShortName">MR_RESET</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MAIN_SOURCE">
+      <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GATED">
+      <obj_property name="ElementShortName">GATED</obj_property>
+      <obj_property name="ObjectShortName">GATED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/ODD">
+      <obj_property name="ElementShortName">ODD</obj_property>
+      <obj_property name="ObjectShortName">ODD</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/MBOX_CLK">
+      <obj_property name="ElementShortName">MBOX_CLK</obj_property>
+      <obj_property name="ObjectShortName">MBOX_CLK</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/SOURCE_DELAYED">
+      <obj_property name="ElementShortName">SOURCE_DELAYED</obj_property>
+      <obj_property name="ObjectShortName">SOURCE_DELAYED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/EBUS_CLK_SOURCE">
+      <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
       <obj_property name="ElementShortName">EBUS_CLK</obj_property>
@@ -59,6 +78,10 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SOURCE">
       <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
       <obj_property name="ObjectShortName">EBOX_SOURCE</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK_SOURCE">
+      <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SYNC">
       <obj_property name="ElementShortName">EBOX_SYNC</obj_property>

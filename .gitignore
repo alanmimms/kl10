@@ -13,3 +13,6 @@ kl10.sim/*/behav/xsim/xvlog.pb
 kl10.sim/*/behav/xsim/*.wdb
 kl10.sim/*/behav/xsim/simulate.sh
 kl10.ip_user_files/
+kl10.srcs/sources_1/ip/.Xil/.kl_delays.xcix.lock
+kl10.sim/kl10pv/behav/xsim/simulate.log
+kl10.sim/kl10pv/behav/xsim/xelab.pb

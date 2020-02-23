@@ -52,7 +52,8 @@ module clk(input clk,
   logic fastMemClk;
   assign fastMemClk = CLK.EDP;
 
-  assign CLK.CROBAR = CROBAR;
+  logic delaysLocked;           // Watch for our clock delay mechanism to achieve lock
+  assign CLK.CROBAR = CROBAR & ~delaysLocked;
 
   logic [4:6] DIAG;
   assign DIAG[4:6] = EBUS.ds[4:6];
@@ -77,11 +78,21 @@ module clk(input clk,
 
   assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
 
+`ifdef KL10PV_TB
+  assign delaysLocked = '1;
+  always @(posedge CLK.GATED, negedge CLK.GATED)        #5 CLK.ODD <= CLK.GATED;
+  always @(posedge CLK.ODD, negedge CLK.ODD)            #5 CLK.MBOX <= CLK.GATED;
+  always @(posedge CLK.MBOX, negedge CLK.MBOX)          #5 CLK.SOURCE_DELAYED <= CLK.GATED;
+  always @(posedge CLK.SOURCE_DELAYED,
+           negedge CLK.SOURCE_DELAYED)                  #5 CLK.EBUS_CLK_SOURCE <= CLK.GATED;
+`else
   kl_delays delays0(.clk_in1(CLK.GATED),
+                    .locked(delaysLocked),
                     .ph5(CLK.ODD),
                     .ph10(CLK.MBOX),
                     .ph20(CLK.SOURCE_DELAYED),
                     .ph40(CLK.EBUS_CLK_SOURCE));
+`endif
   
 /*
   assign CLK.EBUS_CLK_SOURCE = CLK.GATED;           // 20ns delayed in KL
