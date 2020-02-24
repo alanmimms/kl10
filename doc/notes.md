@@ -12,6 +12,25 @@
   * Elsewhere too?
   * This should just be done in one place.
 
+## Modules to do
+* CCL channel control logic
+* CCW channel control word
+* CHA cache directory
+* CHC channel control
+* CHD cache data (or substitute M8549-YH)
+* CHX cache extension (or substitute M8549-YH)
+* CRC channel RAM control
+* CSH cache control
+* DTE20 (CNT 10/11 interface)
+* MTR meter board
+* MB memory buffer
+* MBC MBOX control
+* MBX MBOX control logic
+* MBZ MBOX control
+* PAG paging board
+* PIC priority interrupt
+* PMA physical memory address
+
 # System Organization
 * EBOX implementation in FPGA running KL10pv final microcode
   * EBUS
