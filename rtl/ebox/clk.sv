@@ -76,7 +76,6 @@ module clk(input clk,
     latchedGatedEn <= CLK.GATED_EN;
   end
 
-  assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
 `ifdef KL10PV_TB
   assign delaysLocked = '1;
   initial begin                 // Start all generated clocks in same state
@@ -129,35 +128,60 @@ module clk(input clk,
                                         +--- MTR, CLK.CLK, PI, PMA, CHX, CSH
    */
 
+  always @(posedge CLK.MAIN_SOURCE,
+           negedge CLK.MAIN_SOURCE)     #5 CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
+
   always @(posedge CLK.GATED,
-           negedge CLK.GATED)           #25 CLK.ODD <= ~CLK.ODD;
+           negedge CLK.GATED)           #10 CLK.EBUS_CLK_SOURCE <= ~CLK.EBUS_CLK_SOURCE;
+
+  always @(posedge CLK.EBUS_CLK_SOURCE,
+           negedge CLK.EBUS_CLK_SOURCE) #57 CLK.SOURCE_DELAYED <= ~CLK.SOURCE_DELAYED;
+
+  always @(posedge CLK.SOURCE_DELAYED, negedge CLK.SOURCE_DELAYED) begin
+    #3 CLK.CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) &
+                     (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
+  end
+
+  always @(posedge CLK.CLK_ON,
+           negedge CLK.CLK_ON)        #2.25 CLK.ODD <= ~CLK.ODD;
 
   always @(posedge CLK.ODD,
-           negedge CLK.ODD)             #25 CLK.MBOX <= ~CLK.MBOX;
+           negedge CLK.ODD)            #5.9 CLK.MBOX <= ~CLK.MBOX;
 
   always @(posedge CLK.MBOX,
-           negedge CLK.MBOX)            #25 CLK.SOURCE_DELAYED <= ~CLK.SOURCE_DELAYED;
+           negedge CLK.MBOX)            #25 CLK.CLK <= ~CLK.CLK;
 
-  always @(posedge CLK.SOURCE_DELAYED,
-           negedge CLK.SOURCE_DELAYED)  #5 CLK.EBUS_CLK_SOURCE <= ~CLK.EBUS_CLK_SOURCE;
+  always_comb begin
+    CLK.CCL = CLK.CLK | DIAG_CHANNEL_CLK_STOP;
+    CLK.CRC = CLK.CLK | DIAG_CHANNEL_CLK_STOP;
+    CLK.CHC = CLK.CLK | DIAG_CHANNEL_CLK_STOP;
+
+    CLK.MB_06 = CLK.CLK | DIAG_CHANNEL_CLK_STOP;
+    CLK.MB_12 = CLK.CLK | DIAG_CHANNEL_CLK_STOP;
+    CLK.CCW = CLK.CLK | DIAG_CHANNEL_CLK_STOP;
+
+    CLK.MBC = CLK.CLK;
+    CLK.MBX = CLK.CLK;
+    CLK.MBZ = CLK.CLK;
+
+    CLK.MBOX_13 = CLK.CLK;
+    CLK.MBOX_14 = CLK.CLK;
+    CLK.MB_00 = CLK.CLK;
+
+    CLK.MTR = CLK.CLK;
+    CLK.PI = CLK.CLK;
+    CLK.PMA = CLK.CLK;
+    CLK.CHX = CLK.CLK;
+    CLK.CSH = CLK.CLK;
+  end
 `else
+  assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
   kl_delays delays0(.clk_in1(CLK.GATED),
                     .locked(delaysLocked),
                     .ph5(CLK.ODD),
                     .ph10(CLK.MBOX),
                     .ph20(CLK.SOURCE_DELAYED),
                     .ph40(CLK.EBUS_CLK_SOURCE));
-`endif
-  
-/*
-  assign CLK.EBUS_CLK_SOURCE = CLK.GATED;           // 20ns delayed in KL
-  assign CLK.SOURCE_DELAYED = CLK.EBUS_CLK_SOURCE;  // 20+{10,20,30,40,50}+{10,20,30,40,50}+2.5ns
-  assign CLK.MBOX = CLK.CLK_ON;
-  assign CLK.ODD = CLK.CLK_ON;
-*/
-  assign CLK.CLK_ON = (~CLK.ERROR_STOP | DESKEW_CLK) &
-                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
-
   assign CLK.CCL = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CRC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CHC = CLK.MBOX | DIAG_CHANNEL_CLK_STOP;
@@ -177,7 +201,8 @@ module clk(input clk,
   assign CLK.PMA = CLK.MBOX;
   assign CLK.CHX = CLK.MBOX;
   assign CLK.CSH = CLK.MBOX;
-
+`endif
+  
   logic [0:3] rateSelSR;
   assign CLK.RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
   
