@@ -77,14 +77,56 @@ module clk(input clk,
   end
 
   assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
-
 `ifdef KL10PV_TB
   assign delaysLocked = '1;
-  always @(posedge CLK.GATED, negedge CLK.GATED)        #5 CLK.ODD <= CLK.GATED;
-  always @(posedge CLK.ODD, negedge CLK.ODD)            #5 CLK.MBOX <= CLK.GATED;
-  always @(posedge CLK.MBOX, negedge CLK.MBOX)          #5 CLK.SOURCE_DELAYED <= CLK.GATED;
+  initial begin
+    CLK.ODD = '0;
+    CLK.MBOX = '0;
+    CLK.SOURCE_DELAYED = '0;
+    CLK.EBUS_CLK_SOURCE = '0;
+  end
+  
+  /*
+   Motorola 10k ECL gate delay (25C):
+   * 10101: ~2.6ns
+   * 10117: ~3ns
+   * 10131: ~4.5ns (clock to output)
+   * 10210: ~2.25ns
+
+   MAIN_SOURCE
+     | [5ns]
+     +--- GATED
+            | [2ns-20ns]
+            +--- EBUS_CLK_SOURCE
+                   | [10ns-50ns + 2.6ns + 10ns-50ns + 2.6ns + 0ns-2.5ns]
+                   +--- SOURCE_DELAYED
+                          | [~3ns]
+                          +--- CLK_ON
+                                 | [~2.25ns]
+                                 +--- ODD
+                                 | [2.65ns+~2.25ns]
+                                 +--- MBOX
+                                        | [3ns+~2.25ns]
+                                        +--- CCL, CRC, CHC
+                                        | [3ns+~2.25ns]
+                                        +--- MB 06, MB 12, CCW
+                                        | [3ns+~2.25ns]
+                                        +--- MBC, MBX, MBZ, MBOX 13, MBOX 14, MB 00
+                                        | [3ns+~2.25ns]
+                                        +--- MTR, CLK.CLK, PI, PMA, CHX, CSH
+   */
+
+  always @(posedge CLK.GATED,
+           negedge CLK.GATED)           #25 CLK.ODD <= ~CLK.ODD;
+
+  always @(posedge CLK.ODD,
+           negedge CLK.ODD)             #25 CLK.MBOX <= ~CLK.MBOX;
+
+  always @(posedge CLK.MBOX,
+           negedge CLK.MBOX)            #25 CLK.SOURCE_DELAYED <= ~CLK.SOURCE_DELAYED;
+
   always @(posedge CLK.SOURCE_DELAYED,
-           negedge CLK.SOURCE_DELAYED)                  #5 CLK.EBUS_CLK_SOURCE <= CLK.GATED;
+           negedge CLK.SOURCE_DELAYED)  #5 CLK.EBUS_CLK_SOURCE <= ~CLK.EBUS_CLK_SOURCE;
 `else
   kl_delays delays0(.clk_in1(CLK.GATED),
                     .locked(delaysLocked),
