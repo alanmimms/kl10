@@ -43,6 +43,10 @@
     * FPGA implemented pager and PMA
     * FPGA DMA interface to ARM Linux provided RAM
 
+# Recipes
+## To save bookmarks from Evince based PDF files
+
+* `gio info -a "metadata::evince::bookmarks" MP00301_KL10PV_Jun80-OCR.pdf`
 
 # KLINIT and PARSER functions in RSX-20F (klinit.l20 and parser.lst)
   * Zero AC blocks 0 through 6
