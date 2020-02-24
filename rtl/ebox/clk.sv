@@ -79,7 +79,7 @@ module clk(input clk,
   assign CLK.GATED = latchedGatedEn & CLK.MAIN_SOURCE;
 `ifdef KL10PV_TB
   assign delaysLocked = '1;
-  initial begin
+  initial begin                 // Start all generated clocks in same state
     CLK.ODD = '0;
     CLK.MBOX = '0;
     CLK.SOURCE_DELAYED = '0;
@@ -93,26 +93,39 @@ module clk(input clk,
    * 10131: ~4.5ns (clock to output)
    * 10210: ~2.25ns
 
+   (DL == Delay Line or PCB trace delay)
+   (GD == Gate Delay)
+
    MAIN_SOURCE
-     | [5ns]
+     | [DL 5ns]
      +--- GATED
-            | [2ns-20ns]
+            | [DL 2ns-20ns]
             +--- EBUS_CLK_SOURCE
-                   | [10ns-50ns + 2.6ns + 10ns-50ns + 2.6ns + 0ns-2.5ns]
+                   | [DL 10ns-50ns]
+                   | [GD 2.6ns]
+                   | [DL 10ns-50ns]
+                   | [DL 2.6ns]
+                   | [DL 0ns-2.5ns]
                    +--- SOURCE_DELAYED
-                          | [~3ns]
+                          | [GD ~3ns]
                           +--- CLK_ON
-                                 | [~2.25ns]
+                                 | [GD ~2.25ns]
                                  +--- ODD
-                                 | [2.65ns+~2.25ns]
+                                 | [DL 2.65ns DL]
+                                 | [GD ~2.25ns GD]
                                  +--- MBOX
-                                        | [3ns+~2.25ns]
+                                        | [DL 3ns]
+                                        | [GD ~2.25ns]
                                         +--- CCL, CRC, CHC
-                                        | [3ns+~2.25ns]
+                                        | [DL 3ns]
+                                        | [GD ~2.25ns]
                                         +--- MB 06, MB 12, CCW
-                                        | [3ns+~2.25ns]
-                                        +--- MBC, MBX, MBZ, MBOX 13, MBOX 14, MB 00
-                                        | [3ns+~2.25ns]
+                                        | [DL 3ns]
+                                        | [GD ~2.25ns]
+                                        +--- MBC, MBX, MBZ
+                                        +--- MBOX 13, MBOX 14, MB 00
+                                        | [DL 3ns]
+                                        | [GD ~2.25ns]
                                         +--- MTR, CLK.CLK, PI, PMA, CHX, CSH
    */
 
