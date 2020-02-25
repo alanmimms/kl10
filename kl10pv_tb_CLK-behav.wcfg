@@ -13,8 +13,8 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="10000001fs"></ZoomEndTime>
-      <Cursor1Time time="10000000fs"></Cursor1Time>
+      <ZoomEndTime time="422298fs"></ZoomEndTime>
+      <Cursor1Time time="0fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="130"></NameColumnWidth>
@@ -164,6 +164,7 @@
    <wvobject type="vbus" fp_name="vbus70">
       <obj_property name="label">e12</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e12/S0">
          <obj_property name="ElementShortName">S0</obj_property>
          <obj_property name="ObjectShortName">S0</obj_property>
@@ -203,30 +204,10 @@
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="group" fp_name="group74">
-      <obj_property name="label">e25</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/SEL">
-         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
-         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/CLK">
-         <obj_property name="ElementShortName">CLK</obj_property>
-         <obj_property name="ObjectShortName">CLK</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/Q">
-         <obj_property name="ElementShortName">Q[0:3]</obj_property>
-         <obj_property name="ObjectShortName">Q[0:3]</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/COUT">
-         <obj_property name="ElementShortName">COUT</obj_property>
-         <obj_property name="ObjectShortName">COUT</obj_property>
-      </wvobject>
-   </wvobject>
    <wvobject type="group" fp_name="group55">
       <obj_property name="label">e31</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e31/sel">
          <obj_property name="ElementShortName">sel[0:2]</obj_property>
          <obj_property name="ObjectShortName">sel[0:2]</obj_property>
@@ -243,6 +224,26 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e31/q">
          <obj_property name="ElementShortName">q</obj_property>
          <obj_property name="ObjectShortName">q</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group74">
+      <obj_property name="label">e25</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/SEL">
+         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/CLK">
+         <obj_property name="ElementShortName">CLK</obj_property>
+         <obj_property name="ObjectShortName">CLK</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/Q">
+         <obj_property name="ElementShortName">Q[0:3]</obj_property>
+         <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e25/COUT">
+         <obj_property name="ElementShortName">COUT</obj_property>
+         <obj_property name="ObjectShortName">COUT</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group141">
