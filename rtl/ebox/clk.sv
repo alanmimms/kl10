@@ -401,8 +401,8 @@ module clk(input clk,
   // they work that way.
   mux e31(.en(~CLK.SYNC_HOLD),
           .sel({e25Count[0] | e25Count[1], e25Count[2:3]}),
-          .d({CRAM._TIME[0] & CRAM._TIME[1],
-              CRAM._TIME[0], CRAM._TIME[1], CON.DELAY_REQ, {4{e25COUT}}}),
+          .d({~CRAM._TIME[0] & ~CRAM._TIME[1],
+              ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{e25COUT}}}),
           .q(e31B));
 
   always_comb begin
