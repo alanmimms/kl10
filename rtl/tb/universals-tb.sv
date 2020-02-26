@@ -1,10 +1,10 @@
 `timescale 1ns/1ns
 
 module universal_tb();
-  logic cin, cout, clk, s0, s3;
-  logic [0:1] sel;
-  logic [0:3] d, q;
-  logic reset;
+  bit cin, cout, clk, s0, s3;
+  bit [0:1] sel;
+  bit [0:3] d, q;
+  bit reset;
 
   USR4 sr4(.RESET(reset),
            .S0(s0),

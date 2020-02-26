@@ -33,32 +33,32 @@ module clk(input clk,
            iEBUS EBUS
            );
 
-  logic DESKEW_CLK = '0;
-  logic SYNCHRONIZE_CLK;
+  bit DESKEW_CLK = '0;
+  bit SYNCHRONIZE_CLK;
   assign SYNCHRONIZE_CLK = '0;
-  logic DIAG_READ;
-  logic MBOX_RESP_SIM;
-  logic AR_ARX_PAR_CHECK;
-  logic DIAG_CHANNEL_CLK_STOP = '0; // XXX used on CLK1. ??? where is this driven?
+  bit DIAG_READ;
+  bit MBOX_RESP_SIM;
+  bit AR_ARX_PAR_CHECK;
+  bit DIAG_CHANNEL_CLK_STOP = '0; // XXX used on CLK1. ??? where is this driven?
 
-  logic [0:7] burstCounter;
-  logic burstCounterEQ0;
+  bit [0:7] burstCounter;
+  bit burstCounterEQ0;
 
 `ifndef KL10PV_TB
   ebox_clocks ebox_clocks0(.clk_in1(clk));
 `endif
 
   // XXX this is for sim but probably won't work in hardware.
-  logic fastMemClk;
+  bit fastMemClk;
   assign fastMemClk = CLK.EDP;
 
-  logic delaysLocked;           // Watch for our clock delay mechanism to achieve lock
+  bit delaysLocked;           // Watch for our clock delay mechanism to achieve lock
   assign CLK.CROBAR = CROBAR & ~delaysLocked;
 
-  logic [4:6] DIAG;
+  bit [4:6] DIAG;
   assign DIAG[4:6] = EBUS.ds[4:6];
 
-  logic CLK_DIAG_READ;
+  bit CLK_DIAG_READ;
   assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
   // CLK1 p.168
@@ -71,7 +71,7 @@ module clk(input clk,
                           CLK.EBOX_CLK_ERROR & CLK.EBOX_SOURCE & ~CLK.CLK_ON & CLK.ERR_STOP_EN;
 
   // XXX ignoring the delay lines
-  logic latchedGatedEn;
+  bit latchedGatedEn;
   always_ff @(posedge CLK.MAIN_SOURCE) begin
     latchedGatedEn <= CLK.GATED_EN;
   end
@@ -203,7 +203,7 @@ module clk(input clk,
   assign CLK.CSH = CLK.MBOX;
 `endif
   
-  logic [0:3] rateSelSR;
+  bit [0:3] rateSelSR;
   assign CLK.RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
   
   USR4 e5(.RESET('0),
@@ -214,7 +214,7 @@ module clk(input clk,
           .CLK(CLK.MAIN_SOURCE),
           .Q(rateSelSR));
 
-  logic sbusClkFF1, sbusClkFF2;
+  bit sbusClkFF1, sbusClkFF2;
   assign CLK.SBUS_CLK = sbusClkFF2;
   always @(posedge CLK.GATED, posedge CLK.FUNC_CLR_RESET) begin
 
@@ -228,7 +228,7 @@ module clk(input clk,
     end
   end
 
-  logic ebusClkFF;
+  bit ebusClkFF;
   assign CLK.EBUS_CLK = ebusClkFF;
   always @(posedge CLK.EBUS_CLK_SOURCE, posedge CLK.FUNC_CLR_RESET) begin
 
@@ -239,7 +239,7 @@ module clk(input clk,
     end
   end
 
-  logic [0:3] gatedSR;
+  bit [0:3] gatedSR;
   // NOTE: Active-low schematic symbol
   USR4 e42(.RESET('0),
            .S0('0),
@@ -258,8 +258,8 @@ module clk(input clk,
                         CLK.FUNC_COND_SS & CLK.EBOX_CLK;
 
   // CLK2 p.169
-  logic [0:3] e64SR;
-  logic [0:3] e60FF;
+  bit [0:3] e64SR;
+  bit [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
   // This chip has active-low for its D and Q domains. These end as
@@ -282,7 +282,7 @@ module clk(input clk,
     e60FF <= {~e64SR[0], e64SR[1:3]};
   end
 
-  logic e66SRFF;
+  bit e66SRFF;
   always @(posedge ~CLK.FUNC_SET_RESET,
            posedge CLK.FUNC_CLR_RESET,
            posedge CROBAR)
@@ -308,7 +308,7 @@ module clk(input clk,
   assign CLK.DELAYED = CLK.CLK;
   assign CLK.MBOX_CLK = CLK.DELAYED;
 
-  logic eboxClkFF;
+  bit eboxClkFF;
   always_ff @(posedge CLK.MBOX_CLK) begin
     eboxClkFF <= CLK.EBOX_CLK;
   end
@@ -319,8 +319,8 @@ module clk(input clk,
   // (C-32). It counts down to zero over and over again while CROBAR
   // is asserted and then stops after reaching zero after CROBAR's
   // trailing edge.
-  logic [0:3] e52Count;
-  logic e52COUT;
+  bit [0:3] e52Count;
+  bit e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];
 
   UCR4 e52(.RESET('0),
@@ -331,7 +331,7 @@ module clk(input clk,
            .COUT(e52COUT),
            .Q(e52Count));
 
-  logic ignoredE37;
+  bit ignoredE37;
   // NOTE: Active-low schematic symbol
   USR4 e37(.RESET('0),
            .S0('0),
@@ -341,14 +341,14 @@ module clk(input clk,
            .CLK(CLK.MAIN_SOURCE),
            .Q({CLK.GO, CLK.BURST, CLK.EBOX_SS, ignoredE37}));
   
-  logic e47Ignore;
+  bit e47Ignore;
   decoder e47Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x),
                      .sel(DIAG[4:6]),
                      .q({e47Ignore, CLK.FUNC_START,
                          CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS,
                          CLK.FUNC_COND_SS, CLK.FUNC_BURST,
                          CLK.FUNC_CLR_RESET, CLK.FUNC_SET_RESET}));
-  logic [0:7] e50out;
+  bit [0:7] e50out;
   assign CLK.FUNC_042 = e50out[2];
   assign CLK.FUNC_043 = e50out[3];
   assign CLK.FUNC_044 = e50out[4] | CROBAR;
@@ -360,11 +360,11 @@ module clk(input clk,
                      .q(e50out));
 
   // CLK3 p.170
-  logic [0:5] e58FF;
+  bit [0:5] e58FF;
   assign {CLK.DRAM_PAR_ERR, CLK.CRAM_PAR_ERR, CLK.FM_PAR_ERR,
           CLK.EBOX_SOURCE, CLK.FS_ERROR, CLK.EBOX_CLK_ERROR} = e58FF;
 
-  logic e45FF4, e45FF13, e45FF14;
+  bit e45FF4, e45FF13, e45FF14;
   assign CLK.ERROR_HOLD_A = ~IR.DRAM_ODD_PARITY & ~CON.LOAD_DRAM & CLK.DRAM_PAR_CHECK;
   // XXX these CLK.FS_EN_xxx are only initialized in kl10pv_tb
   assign CLK.ERROR_HOLD_B = (CLK.FS_EN_A | CLK.FS_EN_B | CLK.FS_EN_C | CLK.FS_EN_D) &
@@ -391,8 +391,8 @@ module clk(input clk,
   //   compares with the bit combination in the time field (T00, T0i),
   //   CLK3 SYNC EN L is asserted and the next MBox clock sets CLK3 EBOX
   //   SYNC L.
-  logic [0:3] e25Count;
-  logic e25COUT;
+  bit [0:3] e25Count;
+  bit e25COUT;
   // NOTE: Active-low schematic symbol
   UCR4 e25(.RESET('0),
            .CIN('1),
@@ -402,7 +402,7 @@ module clk(input clk,
            .COUT(e25COUT),
            .Q(e25Count));
 
-  logic e31B;
+  bit e31B;
   // Note CLK3 has active LOW symbol for E25 and E31. I am treating
   // the .D() inputs to E31 and Q output of E31 as active HIGH.
   mux e31(.en(~CLK.SYNC_HOLD),
@@ -419,7 +419,7 @@ module clk(input clk,
     CLK.SYNC_EN = CLK.EBOX_SS & ~CLK.EBOX_CLK_EN | e31B & ~CLK.EBOX_CLK_EN;
   end
 
-  logic e10FF;                  // Merged into single FF
+  bit e10FF;                  // Merged into single FF
   assign CLK.EBOX_SYNC = e10FF;
   assign CLK.SYNC = e10FF;      // XXX slashed signals
 
@@ -427,9 +427,9 @@ module clk(input clk,
     e10FF <= CLK.SYNC_EN;       // XXX slashed signals
   end
 
-  logic notHoldAB;
-  logic [0:3] e12SR;
-  logic e17out;
+  bit notHoldAB;
+  bit [0:3] e12SR;
+  bit e17out;
   assign notHoldAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
   assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | CLK.EBOX_SS | CLK.RESET;
 
@@ -460,7 +460,7 @@ module clk(input clk,
   assign CLK.EBOX_SOURCE = e12SR[3];
 
   // CLK4 p.171
-  logic e32Q3, e32Q13;
+  bit e32Q3, e32Q13;
   assign CLK.MBOX_RESP = e32Q3 | e32Q13;
   assign CLK.MB_XFER = e32Q3 | e32Q13;
   assign CLK.RESP_SIM = CSH.MBOX_RESP_IN & CLK.SYNC_EN;
@@ -512,8 +512,8 @@ module clk(input clk,
     CLK.SBR_CALL <= CLK.PF_DLYD_B;
   end
 
-  logic e7out7;                 // XXX slashed
-  logic e38out7;                // XXX slashed
+  bit e7out7;                 // XXX slashed
+  bit e38out7;                // XXX slashed
   assign e7out7 = CLK.EBOX_SOURCE | CLK.PF_DLYD_B | CLK.INSTR_1777;
   assign e38out7 = ~APR.APR_PAR_CHK_EN | ~AR_ARX_PAR_CHECK | e7out7;
   assign CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |
@@ -579,9 +579,9 @@ module clk(input clk,
     end
   end
 
-  logic [0:3] burstLSB;       // E21
-  logic [0:3] burstMSB;       // E15
-  logic burstLSBcarry;
+  bit [0:3] burstLSB;       // E21
+  bit [0:3] burstMSB;       // E15
+  bit burstLSBcarry;
 
   assign burstCounter = {burstMSB, burstLSB};
   assign burstCounterEQ0 = burstCounter == '0;

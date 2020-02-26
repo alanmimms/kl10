@@ -13,7 +13,7 @@ module crm(iCLK CLK,
            iCRAM CRAM
            );
 
-  logic [0:83] CRAMdata;
+  bit [0:83] CRAMdata;
 
 `ifdef KL10PV_TB
   sim_mem

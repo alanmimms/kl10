@@ -15,32 +15,32 @@ module ctl(iAPR APR,
            iEBUS EBUS
 );
 
-  logic CTL_DISP_AREAD;
-  logic CTL_DISP_RETURN;
-  logic CTL_DISP_MUL;
-  logic CTL_DISP_DIV;
-  logic CTL_DISP_NORM;
-  logic CTL_DISP_EA_MOD;
+  bit CTL_DISP_AREAD;
+  bit CTL_DISP_RETURN;
+  bit CTL_DISP_MUL;
+  bit CTL_DISP_DIV;
+  bit CTL_DISP_NORM;
+  bit CTL_DISP_EA_MOD;
   
-  logic CTL_COND_ARL_IND;
-  logic CTL_COND_AR_EXP;
-  logic CTL_COND_REG_CTL;
+  bit CTL_COND_ARL_IND;
+  bit CTL_COND_AR_EXP;
+  bit CTL_COND_REG_CTL;
 
-  logic [0:6] CTL_DS;
+  bit [0:6] CTL_DS;
 
-  logic CTL_36_BIT_EA;
-  logic [0:1] CTL_DISP_EN;
-  logic CTL_RESET;
-  logic DIAG_MEM_RESET;
-  logic CTL_READ_STROBE;
+  bit CTL_36_BIT_EA;
+  bit [0:1] CTL_DISP_EN;
+  bit CTL_RESET;
+  bit DIAG_MEM_RESET;
+  bit CTL_READ_STROBE;
 
-  logic DIAG_LOAD_FUNC_05x;
-  logic DIAG_LOAD_FUNC_070;
-  logic DIAG_LOAD_FUNC_071;
+  bit DIAG_LOAD_FUNC_05x;
+  bit DIAG_LOAD_FUNC_070;
+  bit DIAG_LOAD_FUNC_071;
 
-  logic SPEC_MTR_CTL;
+  bit SPEC_MTR_CTL;
 
-  logic [4:6] DIAG;
+  bit [4:6] DIAG;
   assign DIAG[4:6] = CTL_DS[4:6];
 
 
@@ -124,7 +124,7 @@ module ctl(iAPR APR,
   end
   
   // Miscellaneous control signals CTL1
-  logic loadPC1 = 0;
+  bit loadPC1 = 0;
   always_comb begin
     CTL.PI_CYCLE_SAVE_FLAGS = CON.PCplus1_INH & CTL.SPEC_SAVE_FLAGS;
     // This is "CRAM.AD & adCARRY" term is actually shown on CTL1
@@ -163,16 +163,16 @@ module ctl(iAPR APR,
   end
 
   // CTL2 p.365
-  logic load1;
-  logic d2, d3;
-  logic shortEA;
-  logic FMandAR_LOAD;
-  logic FMandARX_LOAD;
-  logic diagLoadARorInd;
-  logic diagLoadARorARM;
-  logic respMBOXorSIM;
-  logic resetOrREG_CTLorMQ_CLR;
-  logic mathOrREG_CTLorMQ_CLR;
+  bit load1;
+  bit d2, d3;
+  bit shortEA;
+  bit FMandAR_LOAD;
+  bit FMandARX_LOAD;
+  bit diagLoadARorInd;
+  bit diagLoadARorARM;
+  bit respMBOXorSIM;
+  bit resetOrREG_CTLorMQ_CLR;
+  bit mathOrREG_CTLorMQ_CLR;
 
   always_comb begin
     CTL.ARR_LOAD = ~(CTL.REG_CTL[2] | |{CRAM.AR[2],
@@ -240,8 +240,8 @@ module ctl(iAPR APR,
   end
 
   // CTL3 p.366
-  logic NOTds00AndDiagStrobe;
-  logic en1xx;
+  bit NOTds00AndDiagStrobe;
+  bit en1xx;
   assign NOTds00AndDiagStrobe = ~EBUS.ds[0] & CTL.DIAG_STROBE;
   assign CTL.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
   assign CTL.DIAG_STROBE = EBUS.diagStrobe;

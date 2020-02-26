@@ -2,34 +2,34 @@
  `define _MBOX_SVH_
 
 interface iMBOX;
-  logic [27:35] MBOX_GATE_VMA;
-  logic [0:10] pfDisp;
-  logic CSH_ADR_PAR_ERR;
-  logic MB_PAR_ERR;
-  logic ADR_PAR_ERR;
-  logic NXM_ERR;
-  logic SBUS_ERR;
+  bit [27:35] MBOX_GATE_VMA;
+  bit [0:10] pfDisp;
+  bit CSH_ADR_PAR_ERR;
+  bit MB_PAR_ERR;
+  bit ADR_PAR_ERR;
+  bit NXM_ERR;
+  bit SBUS_ERR;
 endinterface
 
 interface iCSH;
-  logic MBOX_RESP_IN;
-  logic EBOX_RETRY_REQ;
-  logic EBOX_T0_IN;
-  logic PAGE_FAIL_HOLD;
-  logic GATE_VMA_27_33;
-  logic PAR_BIT_A;
-  logic PAR_BIT_B;
+  bit MBOX_RESP_IN;
+  bit EBOX_RETRY_REQ;
+  bit EBOX_T0_IN;
+  bit PAGE_FAIL_HOLD;
+  bit GATE_VMA_27_33;
+  bit PAR_BIT_A;
+  bit PAR_BIT_B;
 endinterface
 
 
 interface iPAG;
-  logic PF_EBOX_HANDLE;
-  logic PT_PUBLIC;
+  bit PF_EBOX_HANDLE;
+  bit PT_PUBLIC;
 endinterface
 
 
 interface iMBZ;
-  logic RD_PSE_WR;
+  bit RD_PSE_WR;
 endinterface
 
 `endif

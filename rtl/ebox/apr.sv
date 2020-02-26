@@ -19,11 +19,11 @@ module apr(iAPR APR,
 
            input PWR_WARN
            );
-  logic clk;
-  logic RESET;
-  logic [4:6] DIAG, DS;
-  logic READ_110_117;
-  logic [6:7] magic;
+  bit clk;
+  bit RESET;
+  bit [4:6] DIAG, DS;
+  bit READ_110_117;
+  bit [6:7] magic;
 
   assign clk = CLK.APR;
   assign RESET = CLK.MR_RESET;
@@ -31,23 +31,23 @@ module apr(iAPR APR,
   assign DS = ~DIAG & CTL.DIAG_READ_FUNC_11x;
   assign READ_110_117 = CTL.DIAG_READ_FUNC_11x;
 
-  logic SBUS_ERR_IN, SBUS_ERR_IN_EN;
-  logic NXM_ERR_INT_EN, NXM_ERR_EN_IN;
-  logic SBUS_ERR_INT_EN, SBUS_ERR_EN_IN, SBUS_ERR_EN;
-  logic IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN;
-  logic MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN;
-  logic MB_PAR_ERR, MB_PAR_ERR_IN;
-  logic IO_PF_ERR, IO_PF_ERR_IN, IO_PF_ERR_EN;
-  logic NXM_ERR, NXM_ERR_IN, NXM_ERR_EN;
-  logic SWEEP_BUSY_EN, SWEEP_BUSY;
-  logic C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN;
-  logic S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN;
-  logic S_ADR_P_ERR;
-  logic PWR_FAIL_INT_EN, PWR_FAIL_EN_IN;
-  logic PWR_FAIL, PWR_FAIL_IN;
-  logic SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN;
-  logic SWEEP_DONE, SWEEP_DONE_IN, SWEEP_DONE_EN;
-  logic F02_EN, REG_FUNC_EN;
+  bit SBUS_ERR_IN, SBUS_ERR_IN_EN;
+  bit NXM_ERR_INT_EN, NXM_ERR_EN_IN;
+  bit SBUS_ERR_INT_EN, SBUS_ERR_EN_IN, SBUS_ERR_EN;
+  bit IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN;
+  bit MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN;
+  bit MB_PAR_ERR, MB_PAR_ERR_IN;
+  bit IO_PF_ERR, IO_PF_ERR_IN, IO_PF_ERR_EN;
+  bit NXM_ERR, NXM_ERR_IN, NXM_ERR_EN;
+  bit SWEEP_BUSY_EN, SWEEP_BUSY;
+  bit C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN;
+  bit S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN;
+  bit S_ADR_P_ERR;
+  bit PWR_FAIL_INT_EN, PWR_FAIL_EN_IN;
+  bit PWR_FAIL, PWR_FAIL_IN;
+  bit SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN;
+  bit SWEEP_DONE, SWEEP_DONE_IN, SWEEP_DONE_EN;
+  bit F02_EN, REG_FUNC_EN;
 
 // I wanted to use nested modules for this but they broke xelab (SIGSEGV)
 `define APRInt(clk, m, e, i) \
@@ -105,7 +105,7 @@ module apr(iAPR APR,
   end
 
   // APR3 p.384
-  logic [0:3] e14SR;
+  bit [0:3] e14SR;
   always_ff @(posedge clk) begin
 
     if (CON.COND_EBUS_CTL | RESET) begin
@@ -113,7 +113,7 @@ module apr(iAPR APR,
     end
   end
 
-  logic [0:2] e2Latch;
+  bit [0:2] e2Latch;
   always_latch begin
 
     if (e14SR[3]) begin
@@ -131,7 +131,7 @@ module apr(iAPR APR,
     APR.CONO_OR_DATAO = e14SR[3] & ~APR.CONI_OR_DATAI;
   end
 
-  logic fm36XORin;
+  bit fm36XORin;
 
 `ifdef KL10PV_TB
   sim_mem
@@ -168,7 +168,7 @@ module apr(iAPR APR,
   // APR4 p.385
   assign APR.AC = IR.AC;
   
-  logic [9:12] ACplus1, ACplus2, ACplus3, ACplusMAGIC;
+  bit [9:12] ACplus1, ACplus2, ACplus3, ACplusMAGIC;
 
   mux e49(.en('1),
           .sel(CRAM.FMADR),
@@ -194,7 +194,7 @@ module apr(iAPR APR,
               ACplus2[12], ACplus3[12], ACplusMAGIC[12], CRAM.MAGIC[8]}),
           .q(APR.FM_ADR[3]));
 
-  logic AC7, AC67, AC37, AC567, AC01;
+  bit AC7, AC67, AC37, AC567, AC01;
   always_comb begin
     AC67 = APR.AC[10] ^ APR.AC[11];
     AC37 = APR.AC[11] ^ APR.AC[12];
@@ -230,7 +230,7 @@ module apr(iAPR APR,
 
 
   // APR5 p.386
-  logic ignoredE67;
+  bit ignoredE67;
   mux4x2 e67(.SEL(MCL.XR_PREVIOUS),
              .D0({1'bX, APR.CURRENT_BLOCK}),
              .D1({1'bX, APR.PREV_BLOCK}),
@@ -257,7 +257,7 @@ module apr(iAPR APR,
               APR.CURRENT_BLOCK[2], CRAM.MAGIC[4]}),
           .q(APR.FM_BLOCK[2]));
 
-  logic ignoreE68, ignoreE63;
+  bit ignoreE68, ignoreE63;
   USR4 e68(.RESET(CLK.MR_RESET),
            .S0(1'bX),
            .D({EBUS.data[6:8], 1'bX}),
@@ -283,13 +283,13 @@ module apr(iAPR APR,
                APR.WR_PT_SEL_0, APR.WR_PT_SEL_1}),
            .CLK(clk));
 
-  logic [0:3] e24out;
+  bit [0:3] e24out;
   mux4x2 e24(.SEL(MCL.VMA_PREV_EN),
              .D0({1'b0, APR.CURRENT_BLOCK}),
              .D1({1'b0, APR.PREV_BLOCK}),
              .B(e24out));
 
-  logic ignoreE29;
+  bit ignoreE29;
   USR4 e29(.RESET(CLK.MR_RESET),
            .S0(1'bX),
            .D(e24out),
@@ -377,8 +377,8 @@ module apr(iAPR APR,
              .B1(APR.EBUSdriver.data[17]));
 
   assign magic = CRAM.MAGIC[6:7] ^ {2{~RESET}};
-  logic [0:3] e4out, e7out;
-  logic ignoreE6a, ignoreE6b, ignoreE6c;
+  bit [0:3] e4out, e7out;
+  bit ignoreE6a, ignoreE6b, ignoreE6c;
   USR4  e4(.RESET(CLK.MR_RESET),
            .S0('0),
            .D({CRAM.MAGIC[1:2], {2{MCL.MEM_REG_FUNC}}}),

@@ -16,28 +16,28 @@ module edp(iAPR APR,
            iVMA VMA,
 
            input [0:35] cacheDataRead,
-           output logic [0:35] cacheDataWrite,
+           output bit [0:35] cacheDataWrite,
            iEBUS EBUS);
 
   // Universal shift register function selector values
-  enum logic [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
+  enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
   
-  logic [0:17] ARL;
-  logic [0:17] ARXL, ARXR;
+  bit [0:17] ARL;
+  bit [0:17] ARXL, ARXR;
   
-  logic [0:35] MQM;
+  bit [0:35] MQM;
 
-  logic [0:35] ADA;
-  logic [-2:35] ADB;
-  logic [0:35] ADXA, ADXB;
+  bit [0:35] ADA;
+  bit [-2:35] ADB;
+  bit [0:35] ADXA, ADXB;
 
-  logic [0:35] AD_CG, AD_CP;
-  logic [0:35] ADX_CG, ADX_CP;
+  bit [0:35] AD_CG, AD_CP;
+  bit [0:35] ADX_CG, ADX_CP;
 
-  logic AD_CG06_11, AD_CG12_35, AD_CP06_11, AD_CP12_35;
-  logic AD_CG18_23, AD_CG24_35, AD_CP18_23;
-  logic AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
-  logic ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
+  bit AD_CG06_11, AD_CG12_35, AD_CP06_11, AD_CP12_35;
+  bit AD_CG18_23, AD_CG24_35, AD_CP18_23;
+  bit AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
+  bit ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
 `include "cram-aliases.svh"
   
@@ -193,10 +193,10 @@ module edp(iAPR APR,
   end
 
   // Look-ahead carry network moved here from IR4 M8522 board.
-  logic [0:35] ADEXxortmp;
+  bit [0:35] ADEXxortmp;
 
   // Why is this necessary?
-  logic [0:3] S;
+  bit [0:3] S;
   always_comb S = CRAM.AD[2:5];
 
   // AD
@@ -234,7 +234,7 @@ module edp(iAPR APR,
   // ADX
   generate
     for (n = '0; n < 36; n = n + 6) begin : ADXaluE3E4
-      logic x1, x2;
+      bit x1, x2;
 
       mc10181 alu2(.M(AD_BOOL),
                    .S(S),
@@ -336,9 +336,8 @@ module edp(iAPR APR,
         // When N==0, D4..D7 inputs are selected else D0..D3.
         //
         // In the real KL10 EDP the ADB[-2],ADB[-1] are handled by
-        // this logic. But when N > 0, they wire-OR with other
-        // signals. I am resolving this by forcing this logic only for
-        // N=0.
+        // this bit. But when N > 0, they wire-OR with other signals.
+        // I am resolving this by forcing this logic only for N=0.
         if (n == 0) begin
           unique case(CRAM.ADB)
           default: ADB[n-2:n-1] = '0;
@@ -414,7 +413,7 @@ module edp(iAPR APR,
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
-  logic [0:35] ebusR;
+  bit [0:35] ebusR;
   assign EDP.EBUSdriver.driving = CTL.DIAG_READ_FUNC_12x ||
                                   CTL.AD_TO_EBUS_L ||
                                   CTL.AD_TO_EBUS_R;

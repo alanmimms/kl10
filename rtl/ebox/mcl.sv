@@ -16,36 +16,36 @@ module mcl(iAPR APR,
            iVMA VMA
 );
 
-  logic clk;
+  bit clk;
   assign clk = CLK.MCL;
 
   // MCL1 p.371
-  logic [4:6] DS;
-  logic DIAG_READ;
-  logic MEM_AREAD, MEM_WR_CYCLE, MEM_RPW_CYCLE, MEM_COND_FETCH;
-  logic MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR, MEM_LOAD_ARX;
-  logic MEM_RW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
-  logic VMA_READ, VMA_READ_OR_WRITE;
-  logic REQ_EN, LOAD_AD_FUNC, LOAD_VMA_HELD;
-  logic AREAD_EA, RW_OR_RPW_CYCLE, MEM_COND_JUMP;
-  logic USER_EN, PUBLIC_EN, VMA_EXT_EN;
-  logic VMA_AD, VMAslashAD, AD_FUNC_08, AD_FUNC_09;
-  logic AREAD_3_6_7, AREAD_001, AREAD_x11, Aeq0x0, Aeq001, AREAD_1xx;
-  logic EA_PREVIOUS, EA_EXTENDED, FETCH_EN, FETCH_EN_IN;
-  logic USER, USER_IOT, PUBLIC, KERNEL_CYCLE;
-  logic UPT_EN, EPT_EN, SPEC_EXEC;
-  logic PAGE_ADDRESS_COND, PAGE_ILL_ENTRY, USER_COMP, PAGE_TEST_PRIVATE;
-  logic BWRITE_01;
-  logic REG_FUNC, MAP_FUNC, SPEC_SP_MEM_CYCLE, AD_LONG_EN, VMA_LONG_EN;
-  logic AREAD_EN, XR_SHORT, PXCT, ADR_ERR, SP_MEM_CYCLE;
-  logic VMA_PREVIOUS, PC_SECTION_0, PCS_SECTION_0, VMA_SECTION_0;
-  logic EBOX_CACHE, EBOX_PAGING_EN, EBOX_MAY_BE_PAGED;
-  logic VMA_EPT, VMA_UPT, PAGED_FETCH, PHYS_REF;
-  logic MEM_ARL_IND, MEM_MB_WAIT, MEM_RESTORE_VMA, MEM_B_WRITE;
-  logic VMA_PAUSE, VMA_WRITE, XP_SHORT, EBOX_REG_FUNC;
-  logic PXCT_B09, PXCT_B10, PXCT_B11, PXCT_B12, MEM_REG_FUNC;
+  bit [4:6] DS;
+  bit DIAG_READ;
+  bit MEM_AREAD, MEM_WR_CYCLE, MEM_RPW_CYCLE, MEM_COND_FETCH;
+  bit MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR, MEM_LOAD_ARX;
+  bit MEM_RW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
+  bit VMA_READ, VMA_READ_OR_WRITE;
+  bit REQ_EN, LOAD_AD_FUNC, LOAD_VMA_HELD;
+  bit AREAD_EA, RW_OR_RPW_CYCLE, MEM_COND_JUMP;
+  bit USER_EN, PUBLIC_EN, VMA_EXT_EN;
+  bit VMA_AD, VMAslashAD, AD_FUNC_08, AD_FUNC_09;
+  bit AREAD_3_6_7, AREAD_001, AREAD_x11, Aeq0x0, Aeq001, AREAD_1xx;
+  bit EA_PREVIOUS, EA_EXTENDED, FETCH_EN, FETCH_EN_IN;
+  bit USER, USER_IOT, PUBLIC, KERNEL_CYCLE;
+  bit UPT_EN, EPT_EN, SPEC_EXEC;
+  bit PAGE_ADDRESS_COND, PAGE_ILL_ENTRY, USER_COMP, PAGE_TEST_PRIVATE;
+  bit BWRITE_01;
+  bit REG_FUNC, MAP_FUNC, SPEC_SP_MEM_CYCLE, AD_LONG_EN, VMA_LONG_EN;
+  bit AREAD_EN, XR_SHORT, PXCT, ADR_ERR, SP_MEM_CYCLE;
+  bit VMA_PREVIOUS, PC_SECTION_0, PCS_SECTION_0, VMA_SECTION_0;
+  bit EBOX_CACHE, EBOX_PAGING_EN, EBOX_MAY_BE_PAGED;
+  bit VMA_EPT, VMA_UPT, PAGED_FETCH, PHYS_REF;
+  bit MEM_ARL_IND, MEM_MB_WAIT, MEM_RESTORE_VMA, MEM_B_WRITE;
+  bit VMA_PAUSE, VMA_WRITE, XP_SHORT, EBOX_REG_FUNC;
+  bit PXCT_B09, PXCT_B10, PXCT_B11, PXCT_B12, MEM_REG_FUNC;
 
-  logic RESET;                  // XXX not yet initialized
+  bit RESET;                  // XXX not yet initialized
 
   assign DS = CTL.DIAG[4:6];
   assign DIAG_READ = EDP.DIAG_READ_FUNC_10x;
@@ -60,7 +60,7 @@ module mcl(iAPR APR,
     LOAD_VMA_HELD = CON.COND_LOAD_VMA_HELD | CRAM.MEM[2];
   end
 
-  logic ignoredE70;
+  bit ignoredE70;
   decoder e70(.en(~CRAM.MEM[0]),
               .sel(CRAM.MEM[1:3]),
               .q({ignoredE70, MEM_ARL_IND, MEM_MB_WAIT,
@@ -115,7 +115,7 @@ module mcl(iAPR APR,
           .q(MCL.EBUSdriver.data[23]));
 
   // MCL2 p.372
-  logic [0:3] gatedMagic, gatedAD, e13SR;
+  bit [0:3] gatedMagic, gatedAD, e13SR;
 
   always_comb begin
     gatedMagic = {4{MEM_EA_CALC}} & CRAM.MAGIC[0:3];
@@ -151,7 +151,7 @@ module mcl(iAPR APR,
                 LOAD_AD_FUNC & EDP.AD[6];
   end
 
-  logic [0:3] e14SR;
+  bit [0:3] e14SR;
   always_ff @(posedge clk) begin
 
     if (MCL.LOAD_VMA_CONTEXT) begin
@@ -168,7 +168,7 @@ module mcl(iAPR APR,
 
 
   // MCL3 p.373
-  logic e5pin3;
+  bit e5pin3;
 
   always_comb begin
     UPT_EN = SPEC_SP_MEM_CYCLE & USER_EN & CRAM.MAGIC[4];
@@ -192,7 +192,7 @@ module mcl(iAPR APR,
     PAGE_TEST_PRIVATE = MCL.VMA_PUBLIC & EBOX_PAGING_EN & ~MCL.VMA_FETCH;
   end
 
-  logic [1:12] heldSR;
+  bit [1:12] heldSR;
   always_ff @(posedge clk) begin
 
     if (LOAD_VMA_HELD) begin
@@ -218,7 +218,7 @@ module mcl(iAPR APR,
 
 
   // MCL4 p.374
-  logic [0:2] SR;
+  bit [0:2] SR;
   always_ff @(posedge clk) begin
 
     if (CON.LOAD_ACCESS_COND | MEM_AREAD | RESET) begin
@@ -226,8 +226,8 @@ module mcl(iAPR APR,
     end
   end
 
-  logic e46pin3;
-  logic e48B0, e48B1;
+  bit e46pin3;
+  bit e48B0, e48B1;
   mux2x4 e48(.EN('1),
              .SEL(SR[1:2]),
              .D0({RESET, PXCT_B10, PXCT_B11, PXCT_B12}),
@@ -286,7 +286,7 @@ module mcl(iAPR APR,
           .d({3'b000, PXCT_B11, PXCT_B09, PXCT_B11, PXCT_B12, PXCT_B11}),
           .q(MCL.XR_PREVIOUS));
 
-  logic e50SR;
+  bit e50SR;
   always_ff @(posedge clk) begin
 
     if (CON.LOAD_SPEC_INSTR) begin
@@ -302,7 +302,7 @@ module mcl(iAPR APR,
 
 
   // MCL5 p.375
-  logic adrErr;
+  bit adrErr;
   assign adrErr = ~LOAD_AD_FUNC &
                   ~MEM_REG_FUNC &
                   VMA_LONG_EN &
@@ -316,7 +316,7 @@ module mcl(iAPR APR,
     end
   end
 
-  logic syncNotReg;
+  bit syncNotReg;
   assign syncNotReg = ~REG_FUNC | CLK.EBOX_SYNC;
   always_comb begin
     BWRITE_01 = MEM_B_WRITE & IR.DRAM_B[2];
@@ -361,7 +361,7 @@ module mcl(iAPR APR,
 
 
   // MCL6 p.376
-  logic [0:3] e33SR;
+  bit [0:3] e33SR;
   always_comb begin
     AD_FUNC_08 = EDP.AD[8] & LOAD_AD_FUNC;
     AD_FUNC_09 = EDP.AD[9] & LOAD_AD_FUNC;

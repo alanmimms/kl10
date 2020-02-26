@@ -4,7 +4,7 @@ module decoder
   #(parameter N = 8)
   (input en,
    input [0:$clog2(N)-1] sel,
-   output logic [0:N-1] q);
+   output bit [0:N-1] q);
 
   always_comb begin
     q = '0;

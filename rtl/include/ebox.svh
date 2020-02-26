@@ -3,7 +3,7 @@
 
 ///////////////////////////////////////////////////////////////
 // EBUS
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           ebusfCONO = 3'b000,
                           ebusfCONI = 3'b001,
                           ebusfDATAO = 3'b010,
@@ -17,43 +17,43 @@ typedef enum logic [0:2] {
 // muxed onto the iEBUS.data member based on the one-hot
 // tEBUSdriver.driving indicator.
 typedef struct packed{
-  logic [0:35] data;
-  logic driving;
+  bit [0:35] data;
+  bit driving;
 } tEBUSdriver;
 
 interface iEBUS;
-  logic [0:35] data;            // Driven by EBUS mux
-  logic parity;                 // Parity for what exactly? XXX
-  logic [0:6] cs;               // EBOX -> dev Controller select
+  bit [0:35] data;            // Driven by EBUS mux
+  bit parity;                 // Parity for what exactly? XXX
+  bit [0:6] cs;               // EBOX -> dev Controller select
   tEBUSfunction func;           // EBOX -> dev Function
-  logic demand;                 // EBOX -> dev
-  logic [0:7] pi;               // Dev -> EBOX Priority Interrupt
-  logic ack;                    // Dev -> EBOX acknowledge
-  logic xfer;                   // Dev -> EBOX transfer done
-  logic reset;                  // EBOX -> dev
-  logic [0:7] ds;               // Dev -> EBOX??? Diagnostic Select
-  logic diagStrobe;             // Dev -> EBOX Diagnostic strobe
-  logic dfunc;                  // Dev -> EBOX Diagnostic function
+  bit demand;                 // EBOX -> dev
+  bit [0:7] pi;               // Dev -> EBOX Priority Interrupt
+  bit ack;                    // Dev -> EBOX acknowledge
+  bit xfer;                   // Dev -> EBOX transfer done
+  bit reset;                  // EBOX -> dev
+  bit [0:7] ds;               // Dev -> EBOX??? Diagnostic Select
+  bit diagStrobe;             // Dev -> EBOX Diagnostic strobe
+  bit dfunc;                  // Dev -> EBOX Diagnostic function
 endinterface
 
 
 ////////////////////////////////////////////////////////////////
 // CRAM
-typedef logic [0:10] tCRADR;
-typedef logic [0:10] tJ;
-typedef logic [0:8] tMAGIC;
-typedef logic [0:5] tMAJVER;
-typedef logic [0:2] tMINVER;
-typedef logic [0:2] tPXCT;
-typedef logic [0:3] tACmagic;
-typedef logic [0:83] tCRAM_ALL;
+typedef bit [0:10] tCRADR;
+typedef bit [0:10] tJ;
+typedef bit [0:8] tMAGIC;
+typedef bit [0:5] tMAJVER;
+typedef bit [0:2] tMINVER;
+typedef bit [0:2] tPXCT;
+typedef bit [0:3] tACmagic;
+typedef bit [0:83] tCRAM_ALL;
 
 // CRAM_AD flag bits
  `define adCARRY 6'b100_000
  `define adBOOLEAN 6'b010_000
 
 // CRAM_AD values
-typedef enum logic [0:5] {
+typedef enum bit [0:5] {
                           // ADDER LOGICAL FUNCTIONS
                           adSETCA =`adBOOLEAN | 6'b000_000,
                           adORC =`adBOOLEAN | 6'b000_001,      // NAND
@@ -98,7 +98,7 @@ typedef enum logic [0:5] {
                           adCRY_A_GE_B =`adCARRY |`adBOOLEAN | 6'b001_001
                           } tAD;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
 	                  adaAR = 3'b000,
 	                  adaARX = 3'b001,
 	                  adaMQ = 3'b010,
@@ -106,14 +106,14 @@ typedef enum logic [0:2] {
                           adaZEROS = 3'b100
                           } tADA;
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           adbFM = 2'b00,
                           adbBRx2 = 2'b01,
                           adbBR = 2'b10,
                           adbARx4 = 2'b11
                           } tADB;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           arAR = 3'b000, // also arARMM, arMEM
                           arCACHE = 3'b001,
                           arAD = 3'b010,
@@ -124,7 +124,7 @@ typedef enum logic [0:2] {
                           arADdiv4 = 3'b111
                           } tAR;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           arxARX = 3'b000, // Also MEM
                           arxCACHE = 3'b001,
                           arxAD = 3'b010,
@@ -135,22 +135,22 @@ typedef enum logic [0:2] {
                           arxADXdiv4 = 3'b111
                           } tARX;
 
-typedef enum logic {
+typedef enum bit {
                     brRECIRC = 1'b0,
                     brAR = 1'b1
                     } tBR;
 
-typedef enum logic {
+typedef enum bit {
                     brxRECIRC = 1'b0,
                     brxARX = 1'b1
                     } tBRX;
 
-typedef enum logic {
+typedef enum bit {
                     mqRECIRC = 1'b0,
                     mqSH = 1'b1
                     } tMQ;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           fmadrAC0 = 3'b000,
                           fmadrAC1 = 3'b001,
                           fmadrXR = 3'b010,
@@ -161,7 +161,7 @@ typedef enum logic [0:2] {
                           fmadrMAGIC = 3'b111
                           } tFMADR;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           scadA = 3'b000,
                           scadAminusBminus1 = 3'b001,
                           scadAplusB = 3'b010,
@@ -172,7 +172,7 @@ typedef enum logic [0:2] {
                           scadAND = 3'b111
                           } tSCAD;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           scadaFE = 3'b000,
                           scadaAR0_5 = 3'b001,
                           scadaAR_EXP = 3'b010,
@@ -180,39 +180,39 @@ typedef enum logic [0:2] {
                           scadaZEROS = 3'b100
                           } tSCADA;
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           scadbSC = 2'b00,
                           scadbAR6_11 = 2'b01,
                           scadbAR0_8 = 2'b10,
                           scadbMAGIC = 2'b11
                           } tSCADB;
 
-typedef enum logic {
+typedef enum bit {
                     scRECIRC = 1'b0,
                     scSCAD = 1'b1
                     } tSC;
 
-typedef enum logic {
+typedef enum bit {
                     feRECIRC = 1'b0,
                     feSCAD = 1'b1
                     } tFE;
 
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           shSHIFT_AR_ARX = 2'b00,
                           shAR = 2'b01,
                           shARX = 2'b10,
                           shAR_SWAP = 2'b11
                           } tSH;
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           armmMAGIC = 2'b00,
                           armmEXP_SIGN = 2'b01,
                           armmSCAD_EXP = 2'b10,
                           armmSCAD_POS = 2'b11
                           } tARMM;
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           vmaxVMAX = 2'b00,
                           vmaxPC_SEC = 2'b01,
                           vmaxPREV_SEC = 2'b10,
@@ -220,21 +220,21 @@ typedef enum logic [0:1] {
                           } tVMAX;
 
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           vmaVMA = 2'b00,
                           vmaPC = 2'b01,
                           vmaPCplus1 = 2'b10,
                           vmaAD = 2'b11
                           } tVMA;
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           time2T = 2'b00,
                           time3T = 2'b01,
                           time4T = 2'b10,
                           time5T = 2'b11
                           } tTIME;
 
-typedef enum logic [0:3] {
+typedef enum bit [0:3] {
                           memNOP = 4'b0000,
                           memARL_IND = 4'b0001,
                           memMB_WAIT = 4'b0010,
@@ -253,7 +253,7 @@ typedef enum logic [0:3] {
                           memIFET = 4'b1111
                           } tMEM;
 
-typedef enum logic [0:5] {
+typedef enum bit [0:5] {
                           skipNOP = 6'b000_000,
                           skipEVEN_PAR = 6'b100_001,
                           skipBR0 = 6'b100_010,
@@ -291,7 +291,7 @@ typedef enum logic [0:5] {
                           skipNotMTR_REQ = 6'b111_111
                           } tSKIP;
 
-typedef enum logic [0:5] {
+typedef enum bit [0:5] {
                           condNOP = 6'b000_000,
                           condLD_AR0_8 = 6'b000_001,
                           condLD_AR9_17 = 6'b000_010,
@@ -328,7 +328,7 @@ typedef enum logic [0:5] {
                           } tCOND;
 
 
-typedef enum logic [0:4] {
+typedef enum bit [0:4] {
                           dispDIAG = 5'b00_000,
                           dispDRAM_J = 5'b00_001,
                           dispDRAM_A_RD = 5'b00_010,
@@ -347,7 +347,7 @@ typedef enum logic [0:4] {
                           dispEA_MOD = 5'b11_110
                           } tDISP;
 
-typedef enum logic [0:4] {
+typedef enum bit [0:4] {
                           specNOP = 5'b01_000,
                           specINH_CRY18 = 5'b01_001,
                           specMQ_SHIFT = 5'b01_010,
@@ -367,19 +367,19 @@ typedef enum logic [0:4] {
                           } tSPEC;
 
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           acbPAGB = 3'b110,
                           acbMICROB = 3'b111
                           } tACB;
 
-typedef enum logic [0:5] {
+typedef enum bit [0:5] {
                           acopACplusMAGIC = 6'b000_110,
                           acopMAGIC = 6'b011_010,
                           acopOR_ACnumber = 6'b011_011
                           } tAC_OP;
 
 
-typedef enum logic [0:3] {
+typedef enum bit [0:3] {
                           clrNOP = 4'b0_000,
                           clrARR = 4'b0_001,
                           clrARL = 4'b0_010,
@@ -396,7 +396,7 @@ typedef enum logic [0:3] {
                           clrARplusARXplusMQ = 4'b1_111
                           } tCLR;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           arlARL = 3'b000,
                           arlCACHE = 3'b001,
                           arlAD = 3'b010,
@@ -407,7 +407,7 @@ typedef enum logic [0:2] {
                           arlADdiv4 = 3'b111
                           } tARL;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           arctlNOP = 3'b000,
                           arctlARR_LOAD = 3'b001,
                           arctlAR9_17 = 3'b010,
@@ -415,14 +415,14 @@ typedef enum logic [0:2] {
                           arctlARL_LOAD = 3'b110
                           } tAR_CTL;
 
-typedef enum logic [0:1] {
+typedef enum bit [0:1] {
                           mqctlMQ = 2'b00,
                           mqctlMQx2 = 2'b01,
                           mqctlMQdiv2 = 2'b10,
                           mqctlZEROS = 2'b11
                           } tMQ_CTL;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           pcflagsNONE = 9'b000_000_000,
                           pcflagsOVERF = 9'b100_000_000,
                           pcflagsFLOVERF = 9'b010_000_000,
@@ -438,7 +438,7 @@ typedef enum logic [0:8] {
                           pcflagsFDV_CHK = 9'b110_010_100
                           } tPC_FLAGS;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           flagctlNOP = 9'b000_000_000,
                           flagctlRSTR_FLAGS = 9'b100_010_000,
                           flagctlJFCL = 9'b110_000_010,
@@ -450,7 +450,7 @@ typedef enum logic [0:8] {
                           flagctlPORTAL = 9'b100_001_010
                           } tFLAG_CTL;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           specinstrSET_PI_CYCLE = 9'b111_001_100,
                           specinstrKERNEL_CYCLE = 9'b010_000_000,
                           specinstrINH_PCplus1 = 9'b001_000_000,
@@ -463,7 +463,7 @@ typedef enum logic [0:8] {
                           specinstrCONT = 9'b000_000_000
                           } tSPEC_INSTR;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           fetchUNCOND = 9'b100_000_000,
                           fetchCOMP = 9'b010_000_000,
                           fetchSKIP = 9'b010_000_010,
@@ -472,7 +472,7 @@ typedef enum logic [0:8] {
                           fetchJFCL = 9'b101_000_011
                           } tFETCH;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           eacalcLOAD_AR = 9'b100_000_000,
                           eacalcLOAD_ARX = 9'b010_000_000,
                           eacalcPAUSE = 9'b001_000_000,
@@ -498,7 +498,7 @@ typedef enum logic [0:8] {
                           } tEA_CALC;
 
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           spmemFETCH = 9'b100_000_000,
                           spmemUSER = 9'b010_000_000,
                           spmemEXEC = 9'b001_000_000,
@@ -517,7 +517,7 @@ typedef enum logic [0:8] {
                           spmemPT_FETCH = 9'b100_100_011
                           } tSP_MEM;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           mregfncSBUS_DIAG = 9'b100_000_111,
                           mregfncREAD_UBR = 9'b101_000_010,
                           mregfncREAD_EBR = 9'b101_000_011,
@@ -529,7 +529,7 @@ typedef enum logic [0:8] {
                           mregfncMAP = 9'b001_100_000
                           } tMREG_FNC;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           mboxctlSET_PAGE_FAIL = 9'b010_000_000,
                           mboxctlSET_IO_PF_ERR = 9'b001_000_000,
                           mboxctlCLR_PT_LINE_NK = 9'b000_110_001,
@@ -541,7 +541,7 @@ typedef enum logic [0:8] {
                           mboxctlNORMAL = 9'b000_000_000
                           } tMBOX_CTL;
 
-typedef enum logic [0:2] {
+typedef enum bit [0:2] {
                           mtrctlCLR_TIME = 3'b000,
                           mtrctlCLR_PERF = 3'b001,
                           mtrctlCLR_E_CNT = 3'b010,
@@ -554,7 +554,7 @@ typedef enum logic [0:2] {
 
 // ;I/O FUNCTIONS
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           ebusctlGRAB_EEBUS = 9'b100_000_000,
                           ebusctlREQ_EBUS = 9'b010_000_000,
                           ebusctlREL_EBUS = 9'b001_000_000,
@@ -570,7 +570,7 @@ typedef enum logic [0:8] {
                           ebusctlREL_EEBUS = 9'b000_000_000
                           } tEBUS_CTL;
 
-typedef enum logic [0:8] {
+typedef enum bit [0:8] {
                           diagfunc500_NS = 9'b100_000_000,
                           diagfuncLD_PA_LEFT = 9'b100_000_100,
                           diagfuncLD_PA_RIGHT = 9'b100_000_101,
@@ -599,11 +599,11 @@ typedef enum logic [0:8] {
                           } tDIAG_FUNC;
 
 typedef struct packed {
-  logic u0;
+  bit u0;
   tJ J;
   tAD AD;
   tADA ADA;
-  logic u21;
+  bit u21;
   tADB ADB;
   tAR AR;
   tARX ARX;
@@ -613,22 +613,22 @@ typedef struct packed {
   tFMADR FMADR;
   tSCAD SCAD;
   tSCADA SCADA;
-  logic u42;
+  bit u42;
   tSCADB SCADB;
-  logic u45;
+  bit u45;
   tSC SC;
   tFE FE;
-  logic u48;
+  bit u48;
   tSH SH;
-  logic u51;
+  bit u51;
   tVMA VMA;
   tTIME _TIME;
   tMEM MEM;
   tCOND COND;
-  logic CALL;
+  bit CALL;
   tDISP DISP;
-  logic [72:73] u73;
-  logic MARK;
+  bit [72:73] u73;
+  bit MARK;
   tMAGIC MAGIC;
 } tCRAM;
 
@@ -653,9 +653,9 @@ interface iCRAM;
   tTIME _TIME;
   tMEM MEM;
   tCOND COND;
-  logic CALL;
+  bit CALL;
   tDISP DISP;
-  logic MARK;
+  bit MARK;
   tMAGIC MAGIC;
 endinterface
 
@@ -663,595 +663,595 @@ endinterface
 ////////////////////////////////////////////////////////////////
 // Modules
 interface iAPR;
-  logic CLK;
-  logic CONO_OR_DATAO;
-  logic CONI_OR_DATAI;
-  logic EBUS_RETURN;
-  logic PT_DIR_WR;
-  logic PT_WR;
-  logic WR_PT_SEL_0;
-  logic WR_PT_SEL_1;
-  logic FM_ODD_PARITY;
-  logic APR_PAR_CHK_EN;
-  logic SET_PAGE_FAIL;
-  logic FM_BIT_36;
-  logic FETCH_COMP;
-  logic WRITE_COMP;
-  logic READ_COMP;
-  logic USER_COMP;
-  logic FM_EXTENDED;
-  logic APR_INTERRUPT;
-  logic NXM_ERR;
-  logic SBUS_ERR;
-  logic EBOX_CCA;
-  logic EBOX_ERA;
-  logic EBOX_EBR;
-  logic EBOX_UBR;
-  logic EN_REFILL_RAM_WR;
-  logic SWEEP_BUSY;
-  logic MB_PAR_ERR;
-  logic C_DIR_P_ERR;
-  logic SET_IO_PF_ERR;
-  logic WR_BAD_ADR_PAR;
-  logic ANY_EBOX_ERR_FLG;
-  logic EBOX_LOAD_REG;
-  logic EBOX_SBUS_DIAG;
-  logic EBOX_READ_REG;
-  logic EBOX_SPARE;
-  logic EBOX_SEND_F02;
+  bit CLK;
+  bit CONO_OR_DATAO;
+  bit CONI_OR_DATAI;
+  bit EBUS_RETURN;
+  bit PT_DIR_WR;
+  bit PT_WR;
+  bit WR_PT_SEL_0;
+  bit WR_PT_SEL_1;
+  bit FM_ODD_PARITY;
+  bit APR_PAR_CHK_EN;
+  bit SET_PAGE_FAIL;
+  bit FM_BIT_36;
+  bit FETCH_COMP;
+  bit WRITE_COMP;
+  bit READ_COMP;
+  bit USER_COMP;
+  bit FM_EXTENDED;
+  bit APR_INTERRUPT;
+  bit NXM_ERR;
+  bit SBUS_ERR;
+  bit EBOX_CCA;
+  bit EBOX_ERA;
+  bit EBOX_EBR;
+  bit EBOX_UBR;
+  bit EN_REFILL_RAM_WR;
+  bit SWEEP_BUSY;
+  bit MB_PAR_ERR;
+  bit C_DIR_P_ERR;
+  bit SET_IO_PF_ERR;
+  bit WR_BAD_ADR_PAR;
+  bit ANY_EBOX_ERR_FLG;
+  bit EBOX_LOAD_REG;
+  bit EBOX_SBUS_DIAG;
+  bit EBOX_READ_REG;
+  bit EBOX_SPARE;
+  bit EBOX_SEND_F02;
 
-  logic EBUS_F01;
-  logic EBUS_REQ;
-  logic EBUS_DEMAND;
-  logic EBUS_DISABLE_CS;
+  bit EBUS_F01;
+  bit EBUS_REQ;
+  bit EBUS_DEMAND;
+  bit EBUS_DISABLE_CS;
 
-  logic [3:6] MBOX_CTL;
-  logic SPARE;
-  logic [9:12] AC;
-  logic [0:2] FM_BLOCK;
-  logic [0:3] FM_ADR;
-  logic [0:2] XR_BLOCK;
-  logic [0:2] VMA_BLOCK;
-  logic [0:2] PREV_BLOCK;
-  logic [0:2] CURRENT_BLOCK;
+  bit [3:6] MBOX_CTL;
+  bit SPARE;
+  bit [9:12] AC;
+  bit [0:2] FM_BLOCK;
+  bit [0:3] FM_ADR;
+  bit [0:2] XR_BLOCK;
+  bit [0:2] VMA_BLOCK;
+  bit [0:2] PREV_BLOCK;
+  bit [0:2] CURRENT_BLOCK;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iCLK;
-  logic CROBAR;
-  logic RESET;
-  logic MR_RESET;
-  logic MAIN_SOURCE;
-  logic EBOX_SOURCE;
-  logic EBUS_CLK_SOURCE;
-  logic MHZ16_FREE;
+  bit CROBAR;
+  bit RESET;
+  bit MR_RESET;
+  bit MAIN_SOURCE;
+  bit EBOX_SOURCE;
+  bit EBUS_CLK_SOURCE;
+  bit MHZ16_FREE;
 
-  logic CRM;
-  logic CRA;
-  logic EDP;
-  logic APR;
-  logic CON;
-  logic VMA;
-  logic MCL;
-  logic IR;
-  logic SCD;
+  bit CRM;
+  bit CRA;
+  bit EDP;
+  bit APR;
+  bit CON;
+  bit VMA;
+  bit MCL;
+  bit IR;
+  bit SCD;
 
-  logic MBOX;
-  logic CCL;
-  logic CRC;
-  logic CHC;
-  logic MB_06;
-  logic MB_12;
-  logic CCW;
-  logic MB_00;
-  logic MBC;
-  logic MBX;
-  logic MBZ;
-  logic MBOX_13;
-  logic MBOX_14;
-  logic MTR;
-  logic CLK_OUT;
-  logic PI;
-  logic PMA;
-  logic CHX;
-  logic CSH;
+  bit MBOX;
+  bit CCL;
+  bit CRC;
+  bit CHC;
+  bit MB_06;
+  bit MB_12;
+  bit CCW;
+  bit MB_00;
+  bit MBC;
+  bit MBX;
+  bit MBZ;
+  bit MBOX_13;
+  bit MBOX_14;
+  bit MTR;
+  bit CLK_OUT;
+  bit PI;
+  bit PMA;
+  bit CHX;
+  bit CSH;
 
-  logic CLK;
-  logic DELAYED;
+  bit CLK;
+  bit DELAYED;
 
-  logic [0:1] SOURCE_SEL;
-  logic [0:1] RATE_SEL;
+  bit [0:1] SOURCE_SEL;
+  bit [0:1] RATE_SEL;
 
-  logic RATE_SELECTED;
+  bit RATE_SELECTED;
 
-  logic EBOX_CLK;
-  logic MBOX_CLK;
-  logic SBUS_CLK;
-  logic EBUS_CLK;
+  bit EBOX_CLK;
+  bit MBOX_CLK;
+  bit SBUS_CLK;
+  bit EBUS_CLK;
 
-  logic EBOX_SYNC;
-  logic MBOX_WAIT;
+  bit EBOX_SYNC;
+  bit MBOX_WAIT;
 
-  logic EBOX_REQ;
-  logic MB_XFER;
-  logic MBOX_RESP;
-  logic EBOX_CYC_ABORT;
+  bit EBOX_REQ;
+  bit MB_XFER;
+  bit MBOX_RESP;
+  bit EBOX_CYC_ABORT;
 
-  logic BURST_CNTeq0;
+  bit BURST_CNTeq0;
 
-  logic ODD;
-  logic GATED_EN;
-  logic GATED;
-  logic ERR_STOP_EN;
-  logic ERROR_STOP;
+  bit ODD;
+  bit GATED_EN;
+  bit GATED;
+  bit ERR_STOP_EN;
+  bit ERROR_STOP;
 
-  logic _1777_EN;
-  logic FORCE_1777;
-  logic INSTR_1777;
-  logic PAGE_FAIL;
-  logic PF_DLYD;
-  logic PF_DLYD_A;
-  logic PF_DLYD_B;
+  bit _1777_EN;
+  bit FORCE_1777;
+  bit INSTR_1777;
+  bit PAGE_FAIL;
+  bit PF_DLYD;
+  bit PF_DLYD_A;
+  bit PF_DLYD_B;
   
-  logic SYNC;
-  logic SYNC_EN;
-  logic EBOX_SRC_EN;
-  logic EBOX_CLK_EN;
+  bit SYNC;
+  bit SYNC_EN;
+  bit EBOX_SRC_EN;
+  bit EBOX_CLK_EN;
 
-  logic EBOX_CLK_ERROR;
+  bit EBOX_CLK_ERROR;
 
-  logic MBOX_CYCLE_DIS;
-  logic EBOX_CRM_DIS;
-  logic EBOX_EDP_DIS;
-  logic EBOX_CTL_DIS;
+  bit MBOX_CYCLE_DIS;
+  bit EBOX_CRM_DIS;
+  bit EBOX_EDP_DIS;
+  bit EBOX_CTL_DIS;
 
-  logic [7:10] PF_DISP;
+  bit [7:10] PF_DISP;
 
-  logic DRAM_PAR_ERR;
-  logic CRAM_PAR_ERR;
-  logic FM_PAR_ERR;
+  bit DRAM_PAR_ERR;
+  bit CRAM_PAR_ERR;
+  bit FM_PAR_ERR;
 
-  logic CRAM_PAR_CHECK;
-  logic DRAM_PAR_CHECK;
-  logic FM_PAR_CHECK;
+  bit CRAM_PAR_CHECK;
+  bit DRAM_PAR_CHECK;
+  bit FM_PAR_CHECK;
 
-  logic FM_ODD_PARITY;
+  bit FM_ODD_PARITY;
 
-  logic ERROR;
-  logic ERROR_HOLD_A;
-  logic ERROR_HOLD_B;
+  bit ERROR;
+  bit ERROR_HOLD_A;
+  bit ERROR_HOLD_B;
 
-  logic PAGE_FAIL_EN;
+  bit PAGE_FAIL_EN;
 
-  logic FS_ERROR;
-  logic FS_CHECK;
-  logic FS_EN_A;
-  logic FS_EN_B;
-  logic FS_EN_C;
-  logic FS_EN_D;
-  logic FS_EN_E;
-  logic FS_EN_F;
-  logic FS_EN_G;
+  bit FS_ERROR;
+  bit FS_CHECK;
+  bit FS_EN_A;
+  bit FS_EN_B;
+  bit FS_EN_C;
+  bit FS_EN_D;
+  bit FS_EN_E;
+  bit FS_EN_F;
+  bit FS_EN_G;
 
-  logic SYNC_HOLD;
-  logic FUNC_GATE;
-  logic FUNC_START;
-  logic FUNC_BURST;
-  logic FUNC_SET_RESET;
-  logic FUNC_EBOX_SS;
-  logic FUNC_SINGLE_STEP;
+  bit SYNC_HOLD;
+  bit FUNC_GATE;
+  bit FUNC_START;
+  bit FUNC_BURST;
+  bit FUNC_SET_RESET;
+  bit FUNC_EBOX_SS;
+  bit FUNC_SINGLE_STEP;
 
-  logic FUNC_042;
-  logic FUNC_043;
-  logic FUNC_044;
-  logic FUNC_045;
-  logic FUNC_046;
-  logic FUNC_047;
+  bit FUNC_042;
+  bit FUNC_043;
+  bit FUNC_044;
+  bit FUNC_045;
+  bit FUNC_046;
+  bit FUNC_047;
   
-  logic GO;
-  logic BURST;
-  logic EBOX_SS;
-  logic FUNC_COND_SS;
-  logic TENELEVEN_CLK;
+  bit GO;
+  bit BURST;
+  bit EBOX_SS;
+  bit FUNC_COND_SS;
+  bit TENELEVEN_CLK;
 
-  logic PT_DIR_WR;
-  logic PT_WR;
+  bit PT_DIR_WR;
+  bit PT_WR;
 
-  logic CLK_ON;
-  logic SOURCE_DELAYED;
-  logic FUNC_CLR_RESET;
-  logic EBUS_RESET;
-  logic PAGE_ERROR;
-  logic RESP_MBOX;
-  logic RESP_SIM;
-  logic SBR_CALL;
-  logic CLR_PRIVATE_INSTR;
+  bit CLK_ON;
+  bit SOURCE_DELAYED;
+  bit FUNC_CLR_RESET;
+  bit EBUS_RESET;
+  bit PAGE_ERROR;
+  bit RESP_MBOX;
+  bit RESP_SIM;
+  bit SBR_CALL;
+  bit CLR_PRIVATE_INSTR;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iCON;
   
-  logic START;
-  logic RUN;
-  logic RESET;
-  logic EBOX_HALTED;
+  bit START;
+  bit RUN;
+  bit RESET;
+  bit EBOX_HALTED;
 
-  logic KL10_PAGING_MODE;
-  logic KI10_PAGING_MODE;
+  bit KL10_PAGING_MODE;
+  bit KI10_PAGING_MODE;
 
-  logic COND_EN_00_07;
-  logic COND_EN_10_17;
-  logic COND_EN_20_27;
-  logic COND_EN_30_37;
-  logic SKIP_EN_40_47;
-  logic SKIP_EN_50_57;
-  logic SKIP_EN_60_67;
-  logic SKIP_EN_70_77;
+  bit COND_EN_00_07;
+  bit COND_EN_10_17;
+  bit COND_EN_20_27;
+  bit COND_EN_30_37;
+  bit SKIP_EN_40_47;
+  bit SKIP_EN_50_57;
+  bit SKIP_EN_60_67;
+  bit SKIP_EN_70_77;
 
-  logic DISP_EN_00_03;
-  logic DISP_EN_00_07;
-  logic DISP_EN_30_37;
+  bit DISP_EN_00_03;
+  bit DISP_EN_00_07;
+  bit DISP_EN_30_37;
 
-  logic COND_PCF_MAGIC;
-  logic COND_FE_SHRT;
-  logic COND_AD_FLAGS;
-  logic COND_SEL_VMA;
-  logic COND_SPEC_INSTR;
-  logic COND_DIAG_FUNC;
-  logic COND_EBUS_CTL;
-  logic COND_MBOX_CTL;
-  logic COND_024;
-  logic COND_026;
-  logic COND_027;
-  logic COND_FM_WRITE;
-  logic COND_EBOX_STATE;
-  logic COND_SR_MAGIC;
-  logic COND_VMA_MAGIC;
-  logic COND_VMA_INC;
-  logic COND_VMA_DEC;
-  logic COND_LONG_EN;
-  logic COND_LOAD_VMA_HELD;
-  logic COND_INSTR_ABORT;
-  logic COND_ADR_10;
-  logic COND_LOAD_IR;
-  logic COND_EBUS_STATE;
-  logic COND_VMAX_MAGIC;
+  bit COND_PCF_MAGIC;
+  bit COND_FE_SHRT;
+  bit COND_AD_FLAGS;
+  bit COND_SEL_VMA;
+  bit COND_SPEC_INSTR;
+  bit COND_DIAG_FUNC;
+  bit COND_EBUS_CTL;
+  bit COND_MBOX_CTL;
+  bit COND_024;
+  bit COND_026;
+  bit COND_027;
+  bit COND_FM_WRITE;
+  bit COND_EBOX_STATE;
+  bit COND_SR_MAGIC;
+  bit COND_VMA_MAGIC;
+  bit COND_VMA_INC;
+  bit COND_VMA_DEC;
+  bit COND_LONG_EN;
+  bit COND_LOAD_VMA_HELD;
+  bit COND_INSTR_ABORT;
+  bit COND_ADR_10;
+  bit COND_LOAD_IR;
+  bit COND_EBUS_STATE;
+  bit COND_VMAX_MAGIC;
 
-  logic LOAD_AC_BLOCKS;
-  logic LOAD_PREV_CONTEXT;
-  logic LONG_EN;
-  logic PI_CYCLE;
-  logic PCplus1_INH;
-  logic MB_XFER;
-  logic FM_XFER;
-  logic CACHE_LOOK_EN;
-  logic LOAD_ACCESS_COND;
-  logic LOAD_DRAM;
-  logic LOAD_IR;
+  bit LOAD_AC_BLOCKS;
+  bit LOAD_PREV_CONTEXT;
+  bit LONG_EN;
+  bit PI_CYCLE;
+  bit PCplus1_INH;
+  bit MB_XFER;
+  bit FM_XFER;
+  bit CACHE_LOOK_EN;
+  bit LOAD_ACCESS_COND;
+  bit LOAD_DRAM;
+  bit LOAD_IR;
 
-  logic AR_FROM_EBUS;
-  logic AR_LOADED;
-  logic ARX_LOADED;
+  bit AR_FROM_EBUS;
+  bit AR_LOADED;
+  bit ARX_LOADED;
 
-  logic FM_WRITE00_17;
-  logic FM_WRITE18_35;
-  logic FM_WRITE_PAR;
+  bit FM_WRITE00_17;
+  bit FM_WRITE18_35;
+  bit FM_WRITE_PAR;
 
-  logic IO_LEGAL;
-  logic EBUS_GRANT;
-  logic MBOX_WAIT;
+  bit IO_LEGAL;
+  bit EBUS_GRANT;
+  bit MBOX_WAIT;
 
-  logic CONO_PI;
-  logic CONO_PAG;
-  logic CONO_APR;
-  logic DATAO_APR;
-  logic CONO_200000;
+  bit CONO_PI;
+  bit CONO_PAG;
+  bit CONO_APR;
+  bit DATAO_APR;
+  bit CONO_200000;
 
-  logic SEL_EN;
-  logic SEL_DIS;
-  logic SEL_CLR;
-  logic SEL_SET;
+  bit SEL_EN;
+  bit SEL_DIS;
+  bit SEL_CLR;
+  bit SEL_SET;
 
-  logic UCODE_STATE1;
-  logic UCODE_STATE3;
-  logic UCODE_STATE5;
-  logic UCODE_STATE7;
+  bit UCODE_STATE1;
+  bit UCODE_STATE3;
+  bit UCODE_STATE5;
+  bit UCODE_STATE7;
 
-  logic PI_DISABLE;
-  logic CLR_PRIVATE_INSTR;
-  logic TRAP_EN;
-  logic NICOND_TRAP_EN;
-  logic [7:10] NICOND;
-  logic [0:3] SR;
-  logic LOAD_SPEC_INSTR;
-  logic [0:1] VMA_SEL;
+  bit PI_DISABLE;
+  bit CLR_PRIVATE_INSTR;
+  bit TRAP_EN;
+  bit NICOND_TRAP_EN;
+  bit [7:10] NICOND;
+  bit [0:3] SR;
+  bit LOAD_SPEC_INSTR;
+  bit [0:1] VMA_SEL;
 
-  logic WR_EVEN_PAR_ADR;
-  logic DELAY_REQ;
-  logic AR_36;
-  logic ARX_36;
-  logic CACHE_LOAD_EN;
-  logic EBUS_REL;
+  bit WR_EVEN_PAR_ADR;
+  bit DELAY_REQ;
+  bit AR_36;
+  bit ARX_36;
+  bit CACHE_LOAD_EN;
+  bit EBUS_REL;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iCRA;
   tCRADR CRADR;
-  logic [1:10] AREAD;
-  logic DISP_PARITY;
+  bit [1:10] AREAD;
+  bit DISP_PARITY;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iCRM;
-  logic PAR_16;
+  bit PAR_16;
 endinterface
 
 
 interface iCTL;
-  logic AR00to08_LOAD;
-  logic AR09to17_LOAD;
-  logic ARR_LOAD;
-  logic [0:2] ARL_SEL;
-  logic [0:2] ARR_SEL;
-  logic [0:2] ARXL_SEL;
-  logic [0:2] ARXR_SEL;
-  logic ARX_LOAD;
-  logic [0:8] REG_CTL;
-  logic [0:1] MQ_SEL;
-  logic [0:1] MQM_SEL;
-  logic MQM_EN;
-  logic adToEBUS_L;
-  logic adToEBUS_R;
-  logic DISP_NICOND;
-  logic DISP_RET;
-  logic SPEC_SCM_ALT;
-  logic SPEC_MTR_CTL;
-  logic SPEC_CLR_FPD;
-  logic SPEC_FLAG_CTL;
-  logic SPEC_SP_MEM_CYCLE;
-  logic SPEC_SAVE_FLAGS;
-  logic SPEC_INH_CRY_18;
-  logic SPEC_ADX_CRY_36;
-  logic SPEC_GEN_CRY_18;
-  logic SPEC_ARL_IND;
-  logic SPEC_CALL;
-  logic SPEC_SBR_CALL;
-  logic SPEC_XCRY_AR0;
-  logic SPEC_AD_LONG;
-  logic SPEC_MQ_SHIFT;
-  logic SPEC_LOAD_PC;
-  logic SPEC_STACK_UPDATE;
-  logic AD_LONG;
-  logic AD_CRY_36;
-  logic ADX_CRY_36;
-  logic INH_CRY_18;
-  logic GEN_CRY_18;
-  logic COND_REG_CTL;
-  logic COND_AR_EXP;
-  logic COND_ARR_LOAD;
-  logic COND_ARLR_LOAD;
-  logic COND_ARLL_LOAD;
-  logic COND_AR_CLR;
-  logic COND_ARX_CLR;
-  logic ARL_IND;
-  logic [0:1] ARL_IND_SEL;
-  logic MQ_CLR;
-  logic AR_CLR;
-  logic AR00to11_CLR;
-  logic AR12to17_CLR;
-  logic ARR_CLR;
-  logic ARX_CLR;
-  logic CONSOLE_CONTROL;
-  logic DIAG_CTL_FUNC_00x;
-  logic DIAG_CTL_FUNC_01x;
-  logic DIAG_LD_FUNC_04x;
-  logic DIAG_LOAD_FUNC_06x;
-  logic DIAG_LOAD_FUNC_07x;
-  logic DIAG_LOAD_FUNC_072;
-  logic DIAG_LD_FUNC_073;
-  logic DIAG_LD_FUNC_074;
-  logic DIAG_SYNC_FUNC_075;
-  logic DIAG_LD_FUNC_076;
-  logic DIAG_CLK_EDP;
-  logic DIAG_READ_FUNC_11x;
-  logic DIAG_READ_FUNC_12x;
-  logic DIAG_READ_FUNC_13x;
-  logic DIAG_READ_FUNC_14x;
-  logic DIAG_READ_FUNC_15x;
-  logic DIAG_READ_FUNC_16x;
-  logic DIAG_READ_FUNC_17x;
-  logic PI_CYCLE_SAVE_FLAGS;
-  logic LOAD_PC;
-  logic DIAG_STROBE;
-  logic DIAG_READ;
-  logic DIAG_AR_LOAD;
-  logic DIAG_LD_EBUS_REG;
-  logic EBUS_XFER;
-  logic AD_TO_EBUS_L;
-  logic AD_TO_EBUS_R;
-  logic EBUS_T_TO_E_EN;
-  logic EBUS_E_TO_T_EN;
-  logic EBUS_PARITY_OUT;
-  logic DIAG_FORCE_EXTEND;
-  logic diaFunc051;
-  logic diaFunc052;
-  logic DIAG_CHANNEL_CLK_STOP;
-  logic [0:6] DIAG;
+  bit AR00to08_LOAD;
+  bit AR09to17_LOAD;
+  bit ARR_LOAD;
+  bit [0:2] ARL_SEL;
+  bit [0:2] ARR_SEL;
+  bit [0:2] ARXL_SEL;
+  bit [0:2] ARXR_SEL;
+  bit ARX_LOAD;
+  bit [0:8] REG_CTL;
+  bit [0:1] MQ_SEL;
+  bit [0:1] MQM_SEL;
+  bit MQM_EN;
+  bit adToEBUS_L;
+  bit adToEBUS_R;
+  bit DISP_NICOND;
+  bit DISP_RET;
+  bit SPEC_SCM_ALT;
+  bit SPEC_MTR_CTL;
+  bit SPEC_CLR_FPD;
+  bit SPEC_FLAG_CTL;
+  bit SPEC_SP_MEM_CYCLE;
+  bit SPEC_SAVE_FLAGS;
+  bit SPEC_INH_CRY_18;
+  bit SPEC_ADX_CRY_36;
+  bit SPEC_GEN_CRY_18;
+  bit SPEC_ARL_IND;
+  bit SPEC_CALL;
+  bit SPEC_SBR_CALL;
+  bit SPEC_XCRY_AR0;
+  bit SPEC_AD_LONG;
+  bit SPEC_MQ_SHIFT;
+  bit SPEC_LOAD_PC;
+  bit SPEC_STACK_UPDATE;
+  bit AD_LONG;
+  bit AD_CRY_36;
+  bit ADX_CRY_36;
+  bit INH_CRY_18;
+  bit GEN_CRY_18;
+  bit COND_REG_CTL;
+  bit COND_AR_EXP;
+  bit COND_ARR_LOAD;
+  bit COND_ARLR_LOAD;
+  bit COND_ARLL_LOAD;
+  bit COND_AR_CLR;
+  bit COND_ARX_CLR;
+  bit ARL_IND;
+  bit [0:1] ARL_IND_SEL;
+  bit MQ_CLR;
+  bit AR_CLR;
+  bit AR00to11_CLR;
+  bit AR12to17_CLR;
+  bit ARR_CLR;
+  bit ARX_CLR;
+  bit CONSOLE_CONTROL;
+  bit DIAG_CTL_FUNC_00x;
+  bit DIAG_CTL_FUNC_01x;
+  bit DIAG_LD_FUNC_04x;
+  bit DIAG_LOAD_FUNC_06x;
+  bit DIAG_LOAD_FUNC_07x;
+  bit DIAG_LOAD_FUNC_072;
+  bit DIAG_LD_FUNC_073;
+  bit DIAG_LD_FUNC_074;
+  bit DIAG_SYNC_FUNC_075;
+  bit DIAG_LD_FUNC_076;
+  bit DIAG_CLK_EDP;
+  bit DIAG_READ_FUNC_11x;
+  bit DIAG_READ_FUNC_12x;
+  bit DIAG_READ_FUNC_13x;
+  bit DIAG_READ_FUNC_14x;
+  bit DIAG_READ_FUNC_15x;
+  bit DIAG_READ_FUNC_16x;
+  bit DIAG_READ_FUNC_17x;
+  bit PI_CYCLE_SAVE_FLAGS;
+  bit LOAD_PC;
+  bit DIAG_STROBE;
+  bit DIAG_READ;
+  bit DIAG_AR_LOAD;
+  bit DIAG_LD_EBUS_REG;
+  bit EBUS_XFER;
+  bit AD_TO_EBUS_L;
+  bit AD_TO_EBUS_R;
+  bit EBUS_T_TO_E_EN;
+  bit EBUS_E_TO_T_EN;
+  bit EBUS_PARITY_OUT;
+  bit DIAG_FORCE_EXTEND;
+  bit diaFunc051;
+  bit diaFunc052;
+  bit DIAG_CHANNEL_CLK_STOP;
+  bit [0:6] DIAG;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iEDP;
-  logic [-2:35] AD;
-  logic [0:35] ADX;
-  logic [0:35] BR;
-  logic [0:35] BRX;
-  logic [0:35] MQ;
-  logic [0:35] AR;
-  logic [0:35] ARX;
-  logic [-2:35] AD_EX;
-  logic [-2:36] AD_CRY;
-  logic [0:36] ADX_CRY;
-  logic [0:35] AD_OV;
-  logic GEN_CRY_36;
-  logic DIAG_READ_FUNC_10x;
-  logic [0:35] FM;
-  logic FM_PARITY;
-  logic FM_WRITE;
+  bit [-2:35] AD;
+  bit [0:35] ADX;
+  bit [0:35] BR;
+  bit [0:35] BRX;
+  bit [0:35] MQ;
+  bit [0:35] AR;
+  bit [0:35] ARX;
+  bit [-2:35] AD_EX;
+  bit [-2:36] AD_CRY;
+  bit [0:36] ADX_CRY;
+  bit [0:35] AD_OV;
+  bit GEN_CRY_36;
+  bit DIAG_READ_FUNC_10x;
+  bit [0:35] FM;
+  bit FM_PARITY;
+  bit FM_WRITE;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iIR;
-  logic IO_LEGAL;
-  logic ADeq0;
-  logic ACeq0;
-  logic JRST0;
-  logic TEST_SATISFIED;
+  bit IO_LEGAL;
+  bit ADeq0;
+  bit ACeq0;
+  bit JRST0;
+  bit TEST_SATISFIED;
 
-  logic [8:10] NORM;
-  logic [0:12] IR;
-  logic [9:12] AC;
-  logic [0:2] DRAM_A;
-  logic [0:2] DRAM_B;
-  logic [0:10] DRAM_J;
-  logic DRAM_ODD_PARITY;
+  bit [8:10] NORM;
+  bit [0:12] IR;
+  bit [9:12] AC;
+  bit [0:2] DRAM_A;
+  bit [0:2] DRAM_B;
+  bit [0:10] DRAM_J;
+  bit DRAM_ODD_PARITY;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iMCL;
-  logic _18_BIT_EA;
-  logic _23_BIT_EA;
-  logic LOAD_AR;
-  logic STORE_AR;
-  logic LOAD_ARX;
-  logic LOAD_VMA;
-  logic MBOX_CYC_REQ;
-  logic PAGED_FETCH;
-  logic MEM_ARL_IND;
-  logic SHORT_STACK;
-  logic SKIP_SATISFIED;
-  logic PC_SECTION_0;
-  logic EBOX_MAP;
-  logic EBOX_CACHE;
-  logic REQ_EN;
-  logic MEM_REG_FUNC;
-  logic VMA_AD;
-  logic VMA_ADR_ERR;
-  logic VMA_INC;
-  logic VMA_FETCH;
-  logic VMA_EXTENDED;
-  logic VMA_SECTION_0;
-  logic VMA_SECTION_01;
-  logic VMA_READ_OR_WRITE;
-  logic VMAX_EN;
-  logic VMA_PAUSE;
-  logic VMA_WRITE;
-  logic VMA_PREV_EN;
-  logic LOAD_VMA_CONTEXT;
-  logic VMA_USER;
-  logic VMA_PUBLIC;
-  logic VMA_PREVIOUS;
-  logic XR_PREVIOUS;
-  logic [0:1] VMAX_SEL;
-  logic LOAD_VMA_HELD;
-  logic PAGE_UEBR_REF;
-  logic PAGE_UEBR_REF_A;
-  logic [27:33] VMA_G;
-  logic ADR_ERR;
+  bit _18_BIT_EA;
+  bit _23_BIT_EA;
+  bit LOAD_AR;
+  bit STORE_AR;
+  bit LOAD_ARX;
+  bit LOAD_VMA;
+  bit MBOX_CYC_REQ;
+  bit PAGED_FETCH;
+  bit MEM_ARL_IND;
+  bit SHORT_STACK;
+  bit SKIP_SATISFIED;
+  bit PC_SECTION_0;
+  bit EBOX_MAP;
+  bit EBOX_CACHE;
+  bit REQ_EN;
+  bit MEM_REG_FUNC;
+  bit VMA_AD;
+  bit VMA_ADR_ERR;
+  bit VMA_INC;
+  bit VMA_FETCH;
+  bit VMA_EXTENDED;
+  bit VMA_SECTION_0;
+  bit VMA_SECTION_01;
+  bit VMA_READ_OR_WRITE;
+  bit VMAX_EN;
+  bit VMA_PAUSE;
+  bit VMA_WRITE;
+  bit VMA_PREV_EN;
+  bit LOAD_VMA_CONTEXT;
+  bit VMA_USER;
+  bit VMA_PUBLIC;
+  bit VMA_PREVIOUS;
+  bit XR_PREVIOUS;
+  bit [0:1] VMAX_SEL;
+  bit LOAD_VMA_HELD;
+  bit PAGE_UEBR_REF;
+  bit PAGE_UEBR_REF_A;
+  bit [27:33] VMA_G;
+  bit ADR_ERR;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iMTR;
-  logic INTERRUPT_REQ;
+  bit INTERRUPT_REQ;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iPI;
-  logic GATE_TTL_TO_ECL;
-  logic EBUS_CP_GRANT;
-  logic EXT_TRAN_REC;
-  logic READY;
-  logic [0:2] PI;
-  logic [0:2] APR_PIA;
+  bit GATE_TTL_TO_ECL;
+  bit EBUS_CP_GRANT;
+  bit EXT_TRAN_REC;
+  bit READY;
+  bit [0:2] PI;
+  bit [0:2] APR_PIA;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iSCD;
-  logic SC_GE_36;
-  logic SC_36_TO_63;
-  logic [0:8] ARMM_UPPER;
-  logic [13:17] ARMM_LOWER;
-  logic [0:9] FE;
-  logic [0:9] SC;
-  logic [0:35] SCADA;
-  logic [0:35] SCADB;
-  logic SCADeq0;
-  logic SCAD_SIGN;
-  logic SC_SIGN;
-  logic FE_SIGN;
-  logic OV;
-  logic CRY0;
-  logic CRY1;
-  logic FOV;
-  logic FXU;
-  logic FPD;
-  logic PCP;
-  logic DIV_CHK;
-  logic TRAP_REQ_1;
-  logic TRAP_REQ_2;
-  logic TRAP_CYC_1;
-  logic TRAP_CYC_2;
-  logic [32:35] TRAP_MIX;
-  logic KERNEL_MODE;
-  logic USER;
-  logic USER_IOT;
-  logic KERNEL_USER_IOT;
-  logic PUBLIC;
-  logic PUBLIC_EN;
-  logic PRIVATE;
-  logic PRIVATE_INSTR;
-  logic ADR_BRK_PREVENT;
-  logic ADR_BRK_INH;
-  logic ADR_BRK_CYC;
+  bit SC_GE_36;
+  bit SC_36_TO_63;
+  bit [0:8] ARMM_UPPER;
+  bit [13:17] ARMM_LOWER;
+  bit [0:9] FE;
+  bit [0:9] SC;
+  bit [0:35] SCADA;
+  bit [0:35] SCADB;
+  bit SCADeq0;
+  bit SCAD_SIGN;
+  bit SC_SIGN;
+  bit FE_SIGN;
+  bit OV;
+  bit CRY0;
+  bit CRY1;
+  bit FOV;
+  bit FXU;
+  bit FPD;
+  bit PCP;
+  bit DIV_CHK;
+  bit TRAP_REQ_1;
+  bit TRAP_REQ_2;
+  bit TRAP_CYC_1;
+  bit TRAP_CYC_2;
+  bit [32:35] TRAP_MIX;
+  bit KERNEL_MODE;
+  bit USER;
+  bit USER_IOT;
+  bit KERNEL_USER_IOT;
+  bit PUBLIC;
+  bit PUBLIC_EN;
+  bit PRIVATE;
+  bit PRIVATE_INSTR;
+  bit ADR_BRK_PREVENT;
+  bit ADR_BRK_INH;
+  bit ADR_BRK_CYC;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iSHM;
-  logic [0:35] SH;
-  logic [0:35] XR;
-  logic AR_PAR_ODD;
-  logic INDEXED;
-  logic AR_EXTENDED;
-  logic ARX_PAR_ODD;
+  bit [0:35] SH;
+  bit [0:35] XR;
+  bit AR_PAR_ODD;
+  bit INDEXED;
+  bit AR_EXTENDED;
+  bit ARX_PAR_ODD;
   tEBUSdriver EBUSdriver;
 endinterface
 
 
 interface iVMA;
-  logic LOCAL_AC_ADDRESS;
-  logic AC_REF;
-  logic [12:35] PC;
-  logic [12:35] VMA;
-  logic [12:35] ADR_BRK;
-  logic [12:17] PREV_SEC;
-  logic [12:35] HELD;
-  logic [0:35] HELD_OR_PC;
-  logic PC_SECTION_0;
-  logic PCS_SECTION_0;
-  logic VMA_SECTION_0;
-  logic LOAD_PC;
-  logic LOAD_VMA_HELD;
-  logic MATCH_13_35;
+  bit LOCAL_AC_ADDRESS;
+  bit AC_REF;
+  bit [12:35] PC;
+  bit [12:35] VMA;
+  bit [12:35] ADR_BRK;
+  bit [12:17] PREV_SEC;
+  bit [12:35] HELD;
+  bit [0:35] HELD_OR_PC;
+  bit PC_SECTION_0;
+  bit PCS_SECTION_0;
+  bit VMA_SECTION_0;
+  bit LOAD_PC;
+  bit LOAD_VMA_HELD;
+  bit MATCH_13_35;
   tEBUSdriver EBUSdriver;
 endinterface
 

@@ -2,7 +2,7 @@
 `include "mbox.svh"
 
 module kl10pv_tb;
-  typedef enum logic [0:8] {
+  typedef enum bit [0:8] {
                             clkfSTOP_CLOCK = 9'o000,
                             clkfSTART_CLOCK = 9'o001,
                             clkfCLR_CLK_SRC_RATE = 9'o044,
@@ -20,9 +20,9 @@ module kl10pv_tb;
                             clkfEBUS_LOAD = 9'o076
                             } tCLKFunction;
 
-  logic CROBAR;
-  logic masterClk;
-  logic clk;
+  bit CROBAR;
+  bit masterClk;
+  bit clk;
 
   top top0(.*);
 
@@ -140,7 +140,7 @@ module kl10pv_tb;
     top.ebox0.CRM.PAR_16 = '0;
   end
   
-  logic uninitLogic;
+  bit uninitLogic;
   bit uninitBit;
 
   initial begin
