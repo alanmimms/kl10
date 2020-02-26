@@ -288,12 +288,12 @@ module clk(input clk,
            posedge CROBAR)
   begin
 
-    if (CROBAR) begin                       // CLEAR
-      e66SRFF <= '0;
-    end else if (CLK.FUNC_CLR_RESET) begin  // PRESET
+    if (CROBAR) begin                           // CLEAR
       e66SRFF <= '1;
-    end else if (!CLK.FUNC_SET_RESET) begin // LOAD (0)
+    end else if (CLK.FUNC_CLR_RESET) begin      // PRESET
       e66SRFF <= '0;
+    end else if (CLK.FUNC_SET_RESET) begin      // LOAD
+      e66SRFF <= '1;
     end
   end
   assign CLK.MR_RESET = CLK.RESET;
