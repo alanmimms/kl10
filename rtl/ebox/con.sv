@@ -330,6 +330,14 @@ module con(iAPR APR,
     CON.CONO_200000 <= CON.CONO_APR & EBUS.data[19];
   end
 
+  initial begin
+    CON.WR_EVEN_PAR_ADR = '0;
+/*
+    WR_EVEN_PAR_DATA = '0;
+    WR_EVEN_PAR_DIR = '0;
+*/
+  end
+
   always_ff @(posedge conCLK, posedge CLK.CROBAR) begin
 
     if (CON.CONO_PI) begin

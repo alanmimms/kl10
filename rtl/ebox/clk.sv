@@ -384,6 +384,13 @@ module clk(input clk,
     e45FF14 <= ~CLK.ERROR_HOLD_B;
   end
 
+  // From EK-EBOX-UD-006-OCR.pdf on PDF p.233:
+  //   The clock phase sync detector compares the MBox clock counter
+  //   output with the CRAM time field (loaded at EBox clock time)
+  //   whenever CLK3 EBOX CLOCK EN L is false. If the counter output
+  //   compares with the bit combination in the time field (T00, T0i),
+  //   CLK3 SYNC EN L is asserted and the next MBox clock sets CLK3 EBOX
+  //   SYNC L.
   logic [0:3] e25Count;
   logic e25COUT;
   // NOTE: Active-low schematic symbol
@@ -397,12 +404,15 @@ module clk(input clk,
 
   logic e31B;
   // Note CLK3 has active LOW symbol for E25 and E31. I am treating
-  // the .D() inputs to E31 as active HIGH and configuring them so
-  // they work that way.
+  // the .D() inputs to E31 and Q output of E31 as active HIGH.
   mux e31(.en(~CLK.SYNC_HOLD),
-          .sel({e25Count[0] | e25Count[1], e25Count[2:3]}),
+          .sel({e25Count[0] | e25Count[1],
+                e25Count[2:3]}),
           .d({~CRAM._TIME[0] & ~CRAM._TIME[1],
-              ~CRAM._TIME[0], ~CRAM._TIME[1], ~CON.DELAY_REQ, {4{e25COUT}}}),
+              ~CRAM._TIME[0],
+              ~CRAM._TIME[1],
+              ~CON.DELAY_REQ,
+              {4{e25COUT}}}),
           .q(e31B));
 
   always_comb begin
