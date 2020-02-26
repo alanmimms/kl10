@@ -2,8 +2,8 @@
 `include "ebox.svh"
 
 module edptb;
-  logic masterClk;
-  logic [0:35] cacheDataRead;
+  bit masterClk;
+  bit [0:35] cacheDataRead;
   
   tCRADR CRADR;
 

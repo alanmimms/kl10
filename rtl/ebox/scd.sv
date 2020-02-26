@@ -31,22 +31,22 @@ module scd(iAPR APR,
   //  1  1  0       OR      0     0   1   0   0   0
   //  1  1  1      AND      0     1   1   1   0   1
 
-  logic SET_AD_FLAGS, LOAD_FLAGS, PUBLIC_PAGE, PCF_MAGIC, INSTR_FETCH;
-  logic USER_EN, USER_IOT_EN, CLR_PUBLIC, LEAVE_USER, PUBLIC_EN, PRIVATE_INSTR_EN;
-  logic JFCL, DISP_FLAG_CTL, SPEC_PORTAL, TRAP_REQ_1, TRAP_REQ_2;
+  bit SET_AD_FLAGS, LOAD_FLAGS, PUBLIC_PAGE, PCF_MAGIC, INSTR_FETCH;
+  bit USER_EN, USER_IOT_EN, CLR_PUBLIC, LEAVE_USER, PUBLIC_EN, PRIVATE_INSTR_EN;
+  bit JFCL, DISP_FLAG_CTL, SPEC_PORTAL, TRAP_REQ_1, TRAP_REQ_2;
 
   // SCD1 p. 138
-  logic SCAD_S1, SCAD_S0, SCAD_CRY_IN;
-  logic SCAD_CRY_02_OUT, SCAD_CRY_06_OUT;
-  logic EXP_TEST;
-  logic TRAP_CYC_1_OR_2;
-  logic [0:9] SCAD;
+  bit SCAD_S1, SCAD_S0, SCAD_CRY_IN;
+  bit SCAD_CRY_02_OUT, SCAD_CRY_06_OUT;
+  bit EXP_TEST;
+  bit TRAP_CYC_1_OR_2;
+  bit [0:9] SCAD;
   assign SCAD_S1 =     ~CRAM.SCAD[0] &  CRAM.SCAD[1] &  CRAM.SCAD[2];
   assign SCAD_S0 =     ~CRAM.SCAD[0] & ~CRAM.SCAD[1] &  CRAM.SCAD[2];
   assign SCAD_CRY_IN =  CRAM.SCAD[0] & ~CRAM.SCAD[1] &  CRAM.SCAD[2];
   assign SCD.SCADeq0 = SCAD == '0;  // E54, E37
 
-  logic ignoredE82;
+  bit ignoredE82;
   mc10181 e82(.S({CRAM.SCAD[2], CRAM.SCAD[1], SCAD_S1, SCAD_S0}),
               .M('0),
               .A({1'b0, SCD.SCADA[0], SCD.SCADA[0], SCD.SCADA[1]}),
@@ -73,7 +73,7 @@ module scd(iAPR APR,
               .COUT(SCAD_CRY_06_OUT),
               .F(SCAD[6:9]));
 
-  logic [2:9] SCADA_EXP;
+  bit [2:9] SCADA_EXP;
   // E53, E76, E51
   assign SCADA_EXP[2:9] = EDP.AR[1:8] ^ EDP.AR[0];
 
@@ -153,18 +153,18 @@ module scd(iAPR APR,
   assign SCD.SC_36_TO_63 = SCD.SC[4] & |SCD.SC[5:7];
   assign SCD.SC_GE_36 = |SCD.SC[0:3];
 
-  logic clk;
+  bit clk;
   assign clk = CLK.SCD;
 
-  logic [0:9] SCM;
+  bit [0:9] SCM;
   always_ff @(posedge clk) begin
     SCD.SC_SIGN <= SCM[0];
     SCD.SC <= SCM;
   end
 
   // FE shift register
-  logic RESET, ignoreE68;
-  logic [0:1] feSEL;
+  bit RESET, ignoreE68;
+  bit [0:1] feSEL;
   assign feSEL = {CRAM.FE | CON.COND_FE_SHRT, CRAM.FE | RESET};
   USR4 e68(.RESET(CLK.MR_RESET),
            .S0(SCD.FE_SIGN),
@@ -230,11 +230,11 @@ module scd(iAPR APR,
 
 
   // SCD3 p. 140
-  logic [4:6] DIAG;
+  bit [4:6] DIAG;
   assign DIAG = CTL.DIAG[4:6];
   assign SCD.EBUSdriver.driving  = CTL.DIAG_READ_FUNC_13x;
 
-  logic NICOND_10;
+  bit NICOND_10;
 
   mux e13(.en(SCD.EBUSdriver.driving),
           .sel(DIAG),
@@ -295,7 +295,7 @@ module scd(iAPR APR,
           .d({CRAM.MAGIC[7], SCD.TRAP_CYC_2, SCD.PUBLIC, EDP.AR[34], PI.PI[2], 3'b000}),
           .q(SCD.TRAP_MIX[34]));
 
-  logic mix35out;
+  bit mix35out;
   mux e43(.en(CON.COND_EN_30_37),
           .sel(CRAM.COND[3:5]),
           .d({CRAM.MAGIC[8], SCD.TRAP_CYC_1, TRAP_CYC_1_OR_2, EDP.AR[35],
@@ -304,7 +304,7 @@ module scd(iAPR APR,
   assign SCD.TRAP_MIX[35] = (CRAM.VMA[0] | mix35out) &
                             (~CON.PCplus1_INH | mix35out);
 
-  logic [0:8] ARMM;
+  bit [0:8] ARMM;
   mux2x4 e48(.EN('1),
              .SEL(CRAM.SH),
              .D0({CRAM.MAGIC[0], EDP.AR[0], CTL.COND_AR_EXP ? SCAD[1] : EDP.AR[0], SCAD[4]}),
@@ -342,9 +342,9 @@ module scd(iAPR APR,
 
 
   // SCD4 p.141
-  logic PIandSAVE_FLAGS;
-  logic TRAP_CLEAR, TRAP_REQ_1_EN, TRAP_REQ_2_EN;
-  logic e38OR;
+  bit PIandSAVE_FLAGS;
+  bit TRAP_CLEAR, TRAP_REQ_1_EN, TRAP_REQ_2_EN;
+  bit e38OR;
   assign e38OR = EDP.AR[10] & LOAD_FLAGS |
                  SCAD[1] & EXP_TEST |
                  CRAM.MAGIC[4] & PCF_MAGIC |
@@ -359,14 +359,14 @@ module scd(iAPR APR,
 
   assign TRAP_CLEAR = CON.COND_INSTR_ABORT | PIandSAVE_FLAGS |
                       CTL.DISP_NICOND | LOAD_FLAGS;
-  logic e22p15;
+  bit e22p15;
   assign e22p15 = CON.TRAP_EN & CTL.DISP_NICOND;
 
-  logic DISP_SAVE_FLAGS;
-  logic CLR_FPD;
+  bit DISP_SAVE_FLAGS;
+  bit CLR_FPD;
   assign CLR_FPD = LOAD_FLAGS | DISP_SAVE_FLAGS | CTL.SPEC_CLR_FPD;
 
-  logic LOAD_PCP;
+  bit LOAD_PCP;
   assign LOAD_PCP = LOAD_FLAGS & ~JFCL;
 
   assign NICOND_10 = (TRAP_REQ_1 | TRAP_REQ_2) & CON.TRAP_EN & CON.NICOND_TRAP_EN;
@@ -412,7 +412,7 @@ module scd(iAPR APR,
                (~LOAD_FLAGS | EDP.AR[0] | JFCL);
   end
 
-  logic e5out;
+  bit e5out;
   assign e5out = SCD.USER | JFCL;
   assign VMA.HELD_OR_PC[0] = (SCD.OV | ~e5out) &
                              (SCD.PCP | JFCL | e5out);
@@ -439,7 +439,7 @@ module scd(iAPR APR,
                      EDP.AR[7] & LOAD_FLAGS |
                      INSTR_FETCH & CLK.MB_XFER & PUBLIC_PAGE;
 
-  logic e6pin14;
+  bit e6pin14;
   assign e6pin14 = LOAD_FLAGS & EDP.AR[7] | RESET | SCD.PRIVATE_INSTR;
   assign PRIVATE_INSTR_EN = INSTR_FETCH & CON.FM_XFER | ~SCD.PUBLIC |
                             ~INSTR_FETCH & CON.CLR_PRIVATE_INSTR & e6pin14 |

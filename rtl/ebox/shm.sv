@@ -15,7 +15,7 @@ module shm(iCRAM CRAM,
   //   10     ARX      SHIFT_INH,SHIFT_36
   //   11   AR SWAP    SHIFT_INH,SHIFT_50
 
-  logic INSTR_FORMAT, SHIFT_INH, SHIFT_36, SHIFT_50;
+  bit INSTR_FORMAT, SHIFT_INH, SHIFT_36, SHIFT_50;
 
   // XXX temporary
   initial begin
@@ -35,7 +35,7 @@ module shm(iCRAM CRAM,
   assign SHIFT_50 = &CRAM.SH;
   assign SHIFT_36 = ~CRAM.SH[1] & SHIFT_INH;
 
-  logic [0:5] sc;
+  bit [0:5] sc;
   assign sc = SCD.SC[4:9] & {6{SHIFT_INH}} |
               {SHIFT_36 | SHIFT_50, SHIFT_50, 1'b0, SHIFT_36, SHIFT_50, 1'b0};
   

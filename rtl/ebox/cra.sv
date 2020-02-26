@@ -27,19 +27,19 @@ module cra(iAPR APR,
            iEBUS EBUS
 );
 
-  logic [0:11] dispMux;
-  logic [0:10] diagAdr;
+  bit [0:11] dispMux;
+  bit [0:10] diagAdr;
 
-  logic [0:10] stack[15:0];
-  logic [0:10] sbrRet;
+  bit [0:10] stack[15:0];
+  bit [0:10] sbrRet;
 
-  logic dispEn00_03, dispEn00_07, dispEn30_37;
-  logic shortIndirWord;
-  logic CALL_FORCE_1777;
-  logic retNotForce1777;
-  logic ret;
+  bit dispEn00_03, dispEn00_07, dispEn30_37;
+  bit shortIndirWord;
+  bit CALL_FORCE_1777;
+  bit retNotForce1777;
+  bit ret;
 
-  logic RESET;
+  bit RESET;
   assign RESET = CLK.MR_RESET;
 
   // Required to get CLK to run
@@ -50,7 +50,7 @@ module cra(iAPR APR,
   // TEMPORARY? This looks like it belongs to an incompletely
   // implemented feature that might have been called DISP/EA TYPE
   // (37). This dispatch is never used in microcode.
-  logic [7:10] eaType = 0;
+  bit [7:10] eaType = 0;
 
 `include "cram-aliases.svh"
 
@@ -164,24 +164,24 @@ module cra(iAPR APR,
   // 0  1111 0001  0  |   16    10
 
   // E56,E57
-  logic [0:7] stackAdrAD, stackAdrEH;
+  bit [0:7] stackAdrAD, stackAdrEH;
 
-  logic stackAdrA = stackAdrAD[0];
-  logic stackAdrB = stackAdrAD[1];
-  logic stackAdrC = stackAdrAD[2];
-  logic stackAdrD = stackAdrAD[3];
+  bit stackAdrA = stackAdrAD[0];
+  bit stackAdrB = stackAdrAD[1];
+  bit stackAdrC = stackAdrAD[2];
+  bit stackAdrD = stackAdrAD[3];
 
-  logic stackAdrE = stackAdrEH[0];
-  logic stackAdrF = stackAdrEH[1];
-  logic stackAdrG = stackAdrEH[2];
-  logic stackAdrH = stackAdrEH[3];
+  bit stackAdrE = stackAdrEH[0];
+  bit stackAdrF = stackAdrEH[1];
+  bit stackAdrG = stackAdrEH[2];
+  bit stackAdrH = stackAdrEH[3];
 
-  logic stackAdrY = stackAdrA ^ stackAdrD;
-  logic stackAdrZ = stackAdrF ^ stackAdrE;
+  bit stackAdrY = stackAdrA ^ stackAdrD;
+  bit stackAdrZ = stackAdrF ^ stackAdrE;
 
-  logic stackAdr = {stackAdrAD, stackAdrEH};
-  logic stackWrite = CLK.CRA & ~retNotForce1777;
-  logic selCall = stackWrite | ~retNotForce1777;
+  bit stackAdr = {stackAdrAD, stackAdrEH};
+  bit stackWrite = CLK.CRA & ~retNotForce1777;
+  bit selCall = stackWrite | ~retNotForce1777;
 
   always @(posedge CLK.CRA) begin
 

@@ -5,8 +5,8 @@ module mux2x4
    input EN,
    input [0:3] D0,
    input [0:3] D1,
-   output logic B0,
-   output logic B1);
+   output bit B0,
+   output bit B1);
 
   always_comb begin
 

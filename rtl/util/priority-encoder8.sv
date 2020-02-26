@@ -2,10 +2,10 @@
 
 module priority_encoder8
   (input [0:7] d,
-   output logic any,
-   output logic [0:2] q);
+   output bit any,
+   output bit [0:2] q);
 
-  logic found;
+  bit found;
   always_comb begin
 
     priority case (d)

@@ -19,22 +19,22 @@ module vma(iAPR APR,
            iVMA VMA
 );
 
-  logic clk;
+  bit clk;
   assign clk = CLK.VMA;
 
   // VMA1 p.354
-  logic MISCeq0;
+  bit MISCeq0;
   assign MISCeq0 = ~VMA.VMA[18] & ~VMA.VMA[19] & ~VMA.VMA[12] & ~MCL.ADR_ERR;
 
-  logic VMA20_27eq0;
+  bit VMA20_27eq0;
   assign VMA20_27eq0 = VMA.VMA[20:27] == '0;
 
-  logic VMA28_31eq0;
+  bit VMA28_31eq0;
   assign VMA28_31eq0 = VMA.VMA[28:31] == 0;
 
-  logic LOCAL;
-  logic VMA_SECTION_0, VMA_SECTION_01, LOCAL_AC_ADDRESS;
-  logic PC_SECTION_0;
+  bit LOCAL;
+  bit VMA_SECTION_0, VMA_SECTION_01, LOCAL_AC_ADDRESS;
+  bit PC_SECTION_0;
   assign VMA_SECTION_0 = VMA.VMA[13:16] == 0;
   assign VMA_SECTION_01 = VMA.VMA[13:16] == 0;
   assign LOCAL = ~MCL.VMA_EXTENDED | MCL.VMA_FETCH | VMA_SECTION_01;
@@ -47,19 +47,19 @@ module vma(iAPR APR,
                       LOCAL;
 
 
-  logic SPEC_VMA_MAGIC;
+  bit SPEC_VMA_MAGIC;
   assign SPEC_VMA_MAGIC = CON.COND_VMA_MAGIC;
 
-  logic VMA_G;
+  bit VMA_G;
   always_comb begin
     // XXX this goes nowhere. Why?
     VMA_G = CSH.GATE_VMA_27_33 ? VMA.VMA[27:33] : '0;
   end
 
-  logic AD_CRY_20, AD_CRY_24, AD_CRY_28, AD_CRY_32;
-  logic AD_CG_20_23, AD_CP_20_23, AD_CG_24_27, AD_CP_24_27, AD_CG_28_31, AD_CP_28_31;
-  logic [18:35] VMA_AD;
-  logic [0:1] ignored01;
+  bit AD_CRY_20, AD_CRY_24, AD_CRY_28, AD_CRY_32;
+  bit AD_CG_20_23, AD_CP_20_23, AD_CG_24_27, AD_CP_24_27, AD_CG_28_31, AD_CP_28_31;
+  bit [18:35] VMA_AD;
+  bit [0:1] ignored01;
   mc10181 e1 (.S({4{SPEC_VMA_MAGIC}}),
               .M(SPEC_VMA_MAGIC),
               .CIN(AD_CRY_20),
@@ -115,9 +115,9 @@ module vma(iAPR APR,
                  .GG(), .PG());
 
   // VMA2 p. 355
-  logic [12:17] VMA_IN;
-  logic CRY_16, CRY_20, CRY_24, CRY_28, CRY_32;
-  logic [18:35] vmaMux;
+  bit [12:17] VMA_IN;
+  bit CRY_16, CRY_20, CRY_24, CRY_28, CRY_32;
+  bit [18:35] vmaMux;
   always_comb begin
     vmaMux = MCL.VMA_AD ? EDP.AD[18:35] : VMA_AD[18:35];
   end
@@ -175,7 +175,7 @@ module vma(iAPR APR,
 
   genvar k;
   generate
-    logic ignored2;
+    bit ignored2;
 
     for (k = 12; k < 36; k += 6) begin: adrBrkR
       USR4 r(.RESET(CLK.MR_RESET),
@@ -211,7 +211,7 @@ module vma(iAPR APR,
 
 
   // VMA4 p.357
-  logic ignored3, ignored4;
+  bit ignored3, ignored4;
   generate
 
     // k = 12 case is persnickety enough that it's easier to just code it here.
@@ -244,7 +244,7 @@ module vma(iAPR APR,
     end
   endgenerate
 
-  logic VMAX_EN, ignored6;
+  bit VMAX_EN, ignored6;
   assign VMAX_EN = ~MCL.VMAX_EN | CON.COND_VMAX_MAGIC;
 
   // E12 top half
@@ -271,7 +271,7 @@ module vma(iAPR APR,
     end
   endgenerate
 
-  logic ignored5;
+  bit ignored5;
   USR4 e32(.RESET(CLK.MR_RESET),
            .S0('0),
            .D({1'b0, EDP.AD[13:15]}),
@@ -280,7 +280,7 @@ module vma(iAPR APR,
            .CLK(clk),
            .Q({ignored5, VMA.PREV_SEC[13:15]}));
 
-  logic [16:17] ps;
+  bit [16:17] ps;
   
   USR4 e24(.RESET(CLK.MR_RESET),
            .S0('0),
@@ -289,25 +289,25 @@ module vma(iAPR APR,
            .SEL({2{~CON.LOAD_PREV_CONTEXT}}),
            .CLK(clk),
            .Q({VMA.PREV_SEC[16:17], ps}));
-  logic PCS_SECTION_0;
+  bit PCS_SECTION_0;
   assign PCS_SECTION_0 = VMA.PREV_SEC[13:15] == '0 && ps == '0;
 
   // VMA5 p. 358
 
-  function logic [2:0] rev3(input [0:2] pdp);
+  function bit [2:0] rev3(input [0:2] pdp);
     rev3[2] = pdp[0];
     rev3[1] = pdp[1];
     rev3[0] = pdp[2];
   endfunction
 
-  function logic [3:0] rev4(input [0:3] pdp);
+  function bit [3:0] rev4(input [0:3] pdp);
     rev4[3] = pdp[0];
     rev4[2] = pdp[1];
     rev4[1] = pdp[2];
     rev4[0] = pdp[3];
   endfunction
 
-  function logic [4:0] rev5(input [0:4] pdp);
+  function bit [4:0] rev5(input [0:4] pdp);
     rev5[4] = pdp[0];
     rev5[3] = pdp[1];
     rev5[2] = pdp[2];
@@ -315,8 +315,8 @@ module vma(iAPR APR,
     rev5[0] = pdp[4];
   endfunction
 
-  logic [4:6] diag;
-  logic READ_VMA;
+  bit [4:6] diag;
+  bit READ_VMA;
   assign diag = CTL.DIAG[4:6];
   assign READ_VMA = CTL.DIAG_READ_FUNC_15x;
   mux e33(.en(READ_VMA),

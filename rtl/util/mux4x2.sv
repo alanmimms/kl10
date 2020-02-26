@@ -4,7 +4,7 @@ module mux4x2
   (input SEL,
    input [0:3] D0,
    input [0:3] D1,
-   output logic [0:3] B);
+   output bit [0:3] B);
 
   always_comb B = SEL ? D1 : D0;
 endmodule

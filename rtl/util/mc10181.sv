@@ -30,8 +30,8 @@ module mc10181(input [3:0] S,
                output COUT
                );
 
-  logic [3:0] G, P;
-  logic notGG;
+  bit [3:0] G, P;
+  bit notGG;
 
   assign G = ~(~({4{S[3]}} | B | A) | ~({4{S[2]}} | A  | ~B));
   assign P = ~(~({4{S[1]}} | ~B   ) | ~({4{S[0]}} | B) | ~A);
@@ -62,13 +62,13 @@ endmodule // mc10181
 `ifdef TESTBENCH
 module mc10181_tb;
 
-  logic clk;
-  logic [3:0] S, A, B;
-  logic [3:0] F;
-  logic M, CIN;
-  logic CG, CP, COUT;
-  logic [31:0] s, a, b;
-  logic [31:0] m, cin;
+  bit clk;
+  bit [3:0] S, A, B;
+  bit [3:0] F;
+  bit M, CIN;
+  bit CG, CP, COUT;
+  bit [31:0] s, a, b;
+  bit [31:0] m, cin;
 
   mc10181 mc10181(.S(S), .M(M), .A(A), .B(B), .CIN(CIN), .F(F), .CG(CG), .CP(CP), .COUT(COUT));
 

@@ -5,77 +5,77 @@ module top(input clk,
            input CROBAR
 );
 
-  logic eboxCCA;
-  logic eboxCache;
-  logic eboxERA;
-  logic eboxEnRefillRAMWr;
-  logic eboxLoadReg;
-  logic eboxLookEn;
-  logic eboxMap;
-  logic eboxMayBePaged;
-  logic eboxPSE;
-  logic eboxRead;
-  logic eboxReadReg;
-  logic EBOX_REQ;
-  logic eboxSBUSDiag;
-  logic eboxUBR;
-  logic eboxUser;
-  logic eboxWrite;
-  logic ept;
-  logic mboxCtl03;
-  logic mboxCtl06;
-  logic pageAdrCond;
-  logic pageIllEntry;
-  logic pageTestPriv;
-  logic [0:10] pfDisp;
-  logic ptDirWrite;
-  logic ptWr;
-  logic upt;
-  logic userRef;
-  logic wrPtSel0;
-  logic wrPtSel1;
+  bit eboxCCA;
+  bit eboxCache;
+  bit eboxERA;
+  bit eboxEnRefillRAMWr;
+  bit eboxLoadReg;
+  bit eboxLookEn;
+  bit eboxMap;
+  bit eboxMayBePaged;
+  bit eboxPSE;
+  bit eboxRead;
+  bit eboxReadReg;
+  bit EBOX_REQ;
+  bit eboxSBUSDiag;
+  bit eboxUBR;
+  bit eboxUser;
+  bit eboxWrite;
+  bit ept;
+  bit mboxCtl03;
+  bit mboxCtl06;
+  bit pageAdrCond;
+  bit pageIllEntry;
+  bit pageTestPriv;
+  bit [0:10] pfDisp;
+  bit ptDirWrite;
+  bit ptWr;
+  bit upt;
+  bit userRef;
+  bit wrPtSel0;
+  bit wrPtSel1;
 
-  logic mboxClk;
+  bit mboxClk;
 
-  logic vmaACRef;
-  logic [27:35] MBOX_GATE_VMA;
-  logic [0:35] cacheDataRead;
-  logic [0:35] cacheDataWrite;
-  logic [10:12] CACHE_CLEARER;
-  logic [13:35] eboxVMA;
+  bit vmaACRef;
+  bit [27:35] MBOX_GATE_VMA;
+  bit [0:35] cacheDataRead;
+  bit [0:35] cacheDataWrite;
+  bit [10:12] CACHE_CLEARER;
+  bit [13:35] eboxVMA;
 
-  logic ANY_EBOX_ERR_FLG;
+  bit ANY_EBOX_ERR_FLG;
 
-  logic [13:35] EBOX_VMA;
-  logic req;
-  logic PSE;
-  logic read;
-  logic write;
+  bit [13:35] EBOX_VMA;
+  bit req;
+  bit PSE;
+  bit read;
+  bit write;
 
-  logic CSH_PAR_BIT_A;
-  logic CSH_PAR_BIT_B;
+  bit CSH_PAR_BIT_A;
+  bit CSH_PAR_BIT_B;
 
-  logic EXTERNAL_CLK;
+  bit EXTERNAL_CLK;
   assign EXTERNAL_CLK = clk;
-  logic clk30;
+  bit clk30;
   assign clk30 = clk;
-  logic clk31;                  // XXX
+  bit clk31;                  // XXX
 
   // TEMPORARY
-  logic PWR_WARN = 0;
-  logic cshEBOXT0 = 0;
-  logic cshEBOXRetry = 0;
-  logic mboxRespIn = 0;
+  bit PWR_WARN = 0;
+  bit cshEBOXT0 = 0;
+  bit cshEBOXRetry = 0;
+  bit mboxRespIn = 0;
 
-  logic pfHold = 0;
-  logic pfEBOXHandle = 0;
-  logic pfPublic = 0;
+  bit pfHold = 0;
+  bit pfEBOXHandle = 0;
+  bit pfPublic = 0;
 
-  logic cshAdrParErr = 0;
-  logic mbParErr = 0;
-  logic sbusErr = 0;
-  logic nxmErr = 0;
-  logic mboxCDirParErr = 0;
+  bit cshAdrParErr = 0;
+  bit mbParErr = 0;
+  bit sbusErr = 0;
+  bit nxmErr = 0;
+  bit mboxCDirParErr = 0;
 
   // While it might appear with an EBOX-centric viewpoint that EBUS is
   // entirely contained within the EBOX and should therefore be muxed

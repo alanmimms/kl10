@@ -9,7 +9,7 @@ module mbox(input mboxClk,
             input PSE,
             input write,
 
-            output logic [0:35] cacheDataRead,
+            output bit [0:35] cacheDataRead,
 
             iCSH CSH,
             iMBZ MBZ,

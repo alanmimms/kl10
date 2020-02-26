@@ -20,12 +20,12 @@ module ir(iIR IR,
 
 `include "cram-aliases.svh"
 
-  logic [0:DRAM_WIDTH-1] DRAMdata;
-  logic [0:DRAM_ADDR_BITS - 1] DRADR;
+  bit [0:DRAM_WIDTH-1] DRAMdata;
+  bit [0:DRAM_ADDR_BITS - 1] DRADR;
 
-  logic [8:10] DRAM_J_X, DRAM_J_Y;
+  bit [8:10] DRAM_J_X, DRAM_J_Y;
 
-  logic IR_CLK;
+  bit IR_CLK;
   assign IR_CLK = CLK.IR;
 
 
@@ -56,7 +56,7 @@ module ir(iIR IR,
   // p.210 shows older KL10 DRAM addressing.
 
   // JRST is 0o254,F
-  logic JRST;
+  bit JRST;
   assign JRST = IR.IR[0:8] == 13'b010_101_100;
   assign IR.JRST0 = IR.IR[0:12] == 13'b010_101_100_0000;
 
@@ -66,20 +66,20 @@ module ir(iIR IR,
   assign IR.IO_LEGAL = &IR.IR[3:6];
   assign IR.ACeq0 = IR.IR[9:12] == 4'b0;
 
-  logic enIO_JRST;
-  logic enAC;
+  bit enIO_JRST;
+  bit enAC;
 
-  logic instr7XX;
-  logic instr3thru6;
-  logic enableAC;
-  logic magic7eq8;
-  logic AgtB;
+  bit instr7XX;
+  bit instr3thru6;
+  bit enableAC;
+  bit magic7eq8;
+  bit AgtB;
 
   // This mess is p.128 E55,E70,E71,E75,E76
   assign instr7XX = IR.IR[0] & IR.IR[1] & IR.IR[2] & enIO_JRST;
   assign instr3thru6 = &IR.IR[3:6];
 
-  logic [3:8] ioDRADR;
+  bit [3:8] ioDRADR;
   assign ioDRADR[3:5] = instr7XX ? (IR.IR[7:9] | {3{instr3thru6}}) : IR.IR[3:5];
   assign ioDRADR[6:8] = instr7XX ? IR.IR[6:8] : IR.IR[10:12];
 
@@ -87,9 +87,9 @@ module ir(iIR IR,
     DRADR <= {IR.IR[0:2], instr7XX ? IR.IR[3:8] : ioDRADR};
   end
 
-  logic [0:2] DRAM_A_X, DRAM_A_Y, DRAM_B_X, DRAM_B_Y;
-  logic [7:10] DRAM_PAR_J;
-  logic DRAM_PAR;
+  bit [0:2] DRAM_A_X, DRAM_A_Y, DRAM_B_X, DRAM_B_Y;
+  bit [7:10] DRAM_PAR_J;
+  bit DRAM_PAR;
 
   // XXX this is to allow CLK to start up
   initial begin
@@ -134,9 +134,9 @@ module ir(iIR IR,
                                } ^ IR.DRAM_B[0];
 
   // p.130 E57 and friends
-  logic dramLoadXYeven, dramLoadXYodd;
-  logic dramLoadJcommon, dramLoadJeven, dramLoadJodd;
-  logic enJRST5, enJRST6, enJRST7;
+  bit dramLoadXYeven, dramLoadXYodd;
+  bit dramLoadJcommon, dramLoadJeven, dramLoadJodd;
+  bit enJRST5, enJRST6, enJRST7;
 
   // Inferred latch initialization
   initial begin

@@ -2,11 +2,11 @@
 module sim_mem_tb;
   localparam SIZE3=100, WIDTH3=36, NBYTES3=3;
   localparam ADDR_WIDTH3 = $clog2(SIZE3-1);
-  logic clk;
-  logic [0:WIDTH3-1] din3;
-  logic [0:WIDTH3-1] dout3;
-  logic [0:NBYTES3-1] wea3;
-  logic [0:ADDR_WIDTH3] addr3;
+  bit clk;
+  bit [0:WIDTH3-1] din3;
+  bit [0:WIDTH3-1] dout3;
+  bit [0:NBYTES3-1] wea3;
+  bit [0:ADDR_WIDTH3] addr3;
 
   sim_mem
     #(.SIZE(SIZE3), .WIDTH(WIDTH3), .NBYTES(NBYTES3))
