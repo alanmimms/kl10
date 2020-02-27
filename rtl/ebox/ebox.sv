@@ -9,19 +9,23 @@ module ebox(input clk,
             input CROBAR,
 
             iAPR APR,
+            iCCL CCL,
             iCLK CLK,
             iCON CON,
             iCRA CRA,
             iCRAM CRAM,         // CR0 TODO
             iCRM CRM,
-            iCSH CSH,           // TODO
+            iCSH CSH,
             iCTL CTL,
             iEDP EDP,
             iIR IR,
+            iMBC MBC,
+            iMBX MBX,
             iMCL MCL,
             iMTR MTR,           // TODO
             iPAG PAG,           // TODO
             iPI PI,
+            iPMA PMA,
             iSCD SCD,
             iSHM SHM,           // TODO
             iVMA VMA,
@@ -101,6 +105,7 @@ module ebox(input clk,
   con con0(.*);
   cra cra0(.*);
   crm crm0(.*);
+  csh csh0(.*);
   ctl ctl0(.*);
   edp edp0(.*);
   ir  ir0 (.*);
