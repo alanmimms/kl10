@@ -25,7 +25,6 @@ module mcl(iAPR APR,
   bit MEM_AREAD, MEM_WR_CYCLE, MEM_RPW_CYCLE, MEM_COND_FETCH;
   bit MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR, MEM_LOAD_ARX;
   bit MEM_RW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
-  bit VMA_READ, VMA_READ_OR_WRITE;
   bit REQ_EN, LOAD_AD_FUNC, LOAD_VMA_HELD;
   bit AREAD_EA, RW_OR_RPW_CYCLE, MEM_COND_JUMP;
   bit USER_EN, PUBLIC_EN, VMA_EXT_EN;
@@ -78,7 +77,7 @@ module mcl(iAPR APR,
 
   mux  e6(.en(DIAG_READ),
           .sel(DS),
-          .d({VMA.HELD_OR_PC[1], VMA.HELD_OR_PC[7], VMA_READ, VMA_PAUSE,
+          .d({VMA.HELD_OR_PC[1], VMA.HELD_OR_PC[7], MCL.VMA_READ, VMA_PAUSE,
               VMA_WRITE, MCL.LOAD_AR, MCL.LOAD_ARX, MCL.STORE_AR}),
           .q(MCL.EBUSdriver.data[18]));
 
@@ -120,8 +119,8 @@ module mcl(iAPR APR,
   always_comb begin
     gatedMagic = {4{MEM_EA_CALC}} & CRAM.MAGIC[0:3];
     gatedAD = {4{MEM_AD_FUNC}} & EDP.AD[1:4];
-    VMA_READ = |e13SR[0:1];
-    VMA_READ_OR_WRITE = e13SR[0] | e13SR[1] | e13SR[3];
+    MCL.VMA_READ = |e13SR[0:1];
+    MCL.VMA_READ_OR_WRITE = e13SR[0] | e13SR[1] | e13SR[3];
     MCL.LOAD_AR = e13SR[0];
     MCL.LOAD_ARX = e13SR[1];
     MCL.VMA_PAUSE = e13SR[2];
@@ -177,7 +176,7 @@ module mcl(iAPR APR,
 
     e5pin3 = (APR.FETCH_COMP & MCL.VMA_FETCH |
               APR.WRITE_COMP & VMA_WRITE |
-              APR.READ_COMP & ~MCL.VMA_FETCH & VMA_READ) &
+              APR.READ_COMP & ~MCL.VMA_FETCH & MCL.VMA_READ) &
              (~MCL.VMA_USER | USER_COMP) &
              (MCL.VMA_USER | ~USER_COMP) &
              ~SCD.ADR_BRK_PREVENT & ~MAP_FUNC & ~REG_FUNC;

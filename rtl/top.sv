@@ -1,5 +1,6 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
+`include "mbox.svh"
 
 module top(input clk,
            input CROBAR
@@ -88,6 +89,7 @@ module top(input clk,
   iEBUS EBUS();
 
   iAPR APR();
+  iCCL CCL();
   iCLK CLK();
   iCON CON();
   iCRA CRA();
@@ -97,10 +99,13 @@ module top(input clk,
   iCTL CTL();
   iEDP EDP();
   iIR IR();
+  iMBC MBC();
+  iMBX MBX();
   iMCL MCL();
   iMTR MTR();
   iPAG PAG();
   iPI PI();
+  iPMA PMA();
   iSCD SCD();
   iSHM SHM();
   iVMA VMA();

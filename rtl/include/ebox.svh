@@ -1148,6 +1148,7 @@ interface iMCL;
   bit VMA_EXTENDED;
   bit VMA_SECTION_0;
   bit VMA_SECTION_01;
+  bit VMA_READ;
   bit VMA_READ_OR_WRITE;
   bit VMAX_EN;
   bit VMA_PAUSE;

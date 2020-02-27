@@ -54,7 +54,6 @@ module mbox(input mboxClk,
   chd chd0(.*);
   chx chx0(.*);
   crc crc0(.*);
-  csh csh0(.*);
   mbc mbc0(.*);
   mbz mbz0(.*);
   pag pag0(.*);
