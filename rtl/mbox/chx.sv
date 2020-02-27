@@ -1,3 +1,6 @@
 `timescale 1ns/1ns
-module chx();
+`include "mbox.svh"
+module chx(iCHS CHS,
+           iMBOX MBOX);
+
 endmodule // chx

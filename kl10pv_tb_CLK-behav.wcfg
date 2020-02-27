@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="10000001fs"></ZoomEndTime>
-      <Cursor1Time time="10000000fs"></Cursor1Time>
+      <ZoomStartTime time="6408000fs"></ZoomStartTime>
+      <ZoomEndTime time="7500001fs"></ZoomEndTime>
+      <Cursor1Time time="6890000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="200"></NameColumnWidth>
       <ValueColumnWidth column_width="109"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="55" />
+   <WVObjectSize size="29" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -37,26 +37,6 @@
       <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
       <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GATED">
-      <obj_property name="ElementShortName">GATED</obj_property>
-      <obj_property name="ObjectShortName">GATED</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CROBAR">
-      <obj_property name="ElementShortName">CROBAR</obj_property>
-      <obj_property name="ObjectShortName">CROBAR</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RESET">
-      <obj_property name="ElementShortName">RESET</obj_property>
-      <obj_property name="ObjectShortName">RESET</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MR_RESET">
-      <obj_property name="ElementShortName">MR_RESET</obj_property>
-      <obj_property name="ObjectShortName">MR_RESET</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MAIN_SOURCE">
-      <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
-      <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SOURCE">
       <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
       <obj_property name="ObjectShortName">EBOX_SOURCE</obj_property>
@@ -64,105 +44,10 @@
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK_SOURCE">
       <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
       <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MHZ16_FREE">
-      <obj_property name="ElementShortName">MHZ16_FREE</obj_property>
-      <obj_property name="ObjectShortName">MHZ16_FREE</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CRM">
       <obj_property name="ElementShortName">CRM</obj_property>
       <obj_property name="ObjectShortName">CRM</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/kl10pv_tb/top0/CLK/EBUSdriver">
-      <obj_property name="ElementShortName">EBUSdriver</obj_property>
-      <obj_property name="ObjectShortName">EBUSdriver</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/ODD">
-      <obj_property name="ElementShortName">ODD</obj_property>
-      <obj_property name="ObjectShortName">ODD</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/MBOX_CLK">
-      <obj_property name="ElementShortName">MBOX_CLK</obj_property>
-      <obj_property name="ObjectShortName">MBOX_CLK</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/SOURCE_DELAYED">
-      <obj_property name="ElementShortName">SOURCE_DELAYED</obj_property>
-      <obj_property name="ObjectShortName">SOURCE_DELAYED</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/CLK/EBUS_CLK_SOURCE">
-      <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
-      <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
-      <obj_property name="ElementShortName">EBUS_CLK</obj_property>
-      <obj_property name="ObjectShortName">EBUS_CLK</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
-      <obj_property name="ElementShortName">GO</obj_property>
-      <obj_property name="ObjectShortName">GO</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SS">
-      <obj_property name="ElementShortName">EBOX_SS</obj_property>
-      <obj_property name="ObjectShortName">EBOX_SS</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_CLK">
-      <obj_property name="ElementShortName">MBOX_CLK</obj_property>
-      <obj_property name="ObjectShortName">MBOX_CLK</obj_property>
-      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SOURCE">
-      <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
-      <obj_property name="ObjectShortName">EBOX_SOURCE</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK_SOURCE">
-      <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
-      <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SYNC">
-      <obj_property name="ElementShortName">EBOX_SYNC</obj_property>
-      <obj_property name="ObjectShortName">EBOX_SYNC</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SRC_EN">
-      <obj_property name="ElementShortName">EBOX_SRC_EN</obj_property>
-      <obj_property name="ObjectShortName">EBOX_SRC_EN</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK_EN">
-      <obj_property name="ElementShortName">EBOX_CLK_EN</obj_property>
-      <obj_property name="ObjectShortName">EBOX_CLK_EN</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/_1777_EN">
-      <obj_property name="ElementShortName">_1777_EN</obj_property>
-      <obj_property name="ObjectShortName">_1777_EN</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FORCE_1777">
-      <obj_property name="ElementShortName">FORCE_1777</obj_property>
-      <obj_property name="ObjectShortName">FORCE_1777</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/INSTR_1777">
-      <obj_property name="ElementShortName">INSTR_1777</obj_property>
-      <obj_property name="ObjectShortName">INSTR_1777</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL">
-      <obj_property name="ElementShortName">PAGE_FAIL</obj_property>
-      <obj_property name="ObjectShortName">PAGE_FAIL</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/CLK/PAGE_FAIL_EN">
-      <obj_property name="ElementShortName">PAGE_FAIL_EN</obj_property>
-      <obj_property name="ObjectShortName">PAGE_FAIL_EN</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e7out7">
-      <obj_property name="ElementShortName">e7out7</obj_property>
-      <obj_property name="ObjectShortName">e7out7</obj_property>
-   </wvobject>
-   <wvobject fp_name="divider157" type="divider">
-      <obj_property name="label">x</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="BkColor">#808080</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK">
       <obj_property name="ElementShortName">EBOX_CLK</obj_property>
@@ -757,7 +642,6 @@
    <wvobject type="group" fp_name="group426">
       <obj_property name="label">CON</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/ARX_36">
          <obj_property name="ElementShortName">ARX_36</obj_property>
          <obj_property name="ObjectShortName">ARX_36</obj_property>
@@ -1118,6 +1002,7 @@
    <wvobject type="group" fp_name="group135">
       <obj_property name="label">CRAM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/J">
          <obj_property name="ElementShortName">J[0:10]</obj_property>
          <obj_property name="ObjectShortName">J[0:10]</obj_property>
@@ -1211,5 +1096,9 @@
          <obj_property name="ElementShortName">MAGIC[0:8]</obj_property>
          <obj_property name="ObjectShortName">MAGIC[0:8]</obj_property>
       </wvobject>
+   </wvobject>
+   <wvobject type="array" fp_name="/kl10pv_tb/top0/CLK/EBUSdriver">
+      <obj_property name="ElementShortName">EBUSdriver</obj_property>
+      <obj_property name="ObjectShortName">EBUSdriver</obj_property>
    </wvobject>
 </wave_config>

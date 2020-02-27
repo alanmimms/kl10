@@ -13,14 +13,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="10000001fs"></ZoomEndTime>
-      <Cursor1Time time="6000000fs"></Cursor1Time>
+      <ZoomEndTime time="10244499fs"></ZoomEndTime>
+      <Cursor1Time time="10000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="118"></NameColumnWidth>
+      <NameColumnWidth column_width="114"></NameColumnWidth>
       <ValueColumnWidth column_width="60"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="7" />
+   <WVObjectSize size="10" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -49,5 +49,17 @@
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
       <obj_property name="Radix">OCTALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/MEM_CYCLE_IN">
+      <obj_property name="ElementShortName">MEM_CYCLE_IN</obj_property>
+      <obj_property name="ObjectShortName">MEM_CYCLE_IN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/MEM_CYCLE">
+      <obj_property name="ElementShortName">MEM_CYCLE</obj_property>
+      <obj_property name="ObjectShortName">MEM_CYCLE</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/MBOX_WAIT">
+      <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
+      <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
    </wvobject>
 </wave_config>
