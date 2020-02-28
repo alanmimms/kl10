@@ -11,10 +11,25 @@ interface iMBOX;
   bit SBUS_ERR;
 endinterface
 
+
+interface iCHA;
+endinterface
+
+
 interface iCCL;
   bit CHAN_REQ;
   bit CHAN_TO_MEM;
+  bit CHAN_EPT;
 endinterface
+
+
+interface iCCW;
+endinterface
+
+
+interface iCRC;
+endinterface
+
 
 interface iCSH;
   tEBUSdriver EBUSdriver;
@@ -85,6 +100,7 @@ interface iCSH;
   bit MB_WR_RQ_CLR_NXT;
   bit ONE_WORD_RD;
   bit RD_PAUSE_2ND_HALF;
+  bit READY_TO_GO;
 endinterface
 
 
@@ -104,12 +120,15 @@ interface iMBX;
   bit SBUS_DIAG_3;
   bit MB_REQ_IN;
   bit CACHE_BIT;
+  bit [34:35] CACHE_TO_MB;
   bit CACHE_TO_MB_DONE;
   bit REFILL_ADR_EN_NXT;
   bit CSH_CCA_VAL_CORE;
   bit MB_SEL_HOLD_FF;
   bit CSH_CCA_INVAL_CSH;
   bit CCA_ALL_PAGES_CYC;
+  bit EBOX_LOAD_REG;
+  bit WRITEBACK_T2;
 endinterface
 
 
@@ -124,12 +143,22 @@ interface iPAG;
   bit PAGE_FAIL;
   bit PAGE_REFILL;
   bit PAGE_REFILL_CYC;
+  bit [14:35] PT;
 endinterface
 
 
 interface iPMA;
   bit CSH_WRITEBACK_CYC;
   bit PAGE_REFILL_CYC;
+  bit CCA_CRY_OUT;
+  bit ADR_PAR;
+  bit _14_26_PAR;
+  bit CSH_EBOX_CYC;
+  bit CYC_TYPE_HOLD;
+  bit [14:35] CCW_CHA;
+  bit EBOX_PAGED;
+  bit [14:35] PMA;
+  bit [14:35] PA;
 endinterface
 
 `endif

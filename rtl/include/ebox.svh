@@ -1165,6 +1165,9 @@ interface iMCL;
   bit PAGE_UEBR_REF_A;
   bit [27:33] VMA_G;
   bit ADR_ERR;
+  bit VMA_EPT;
+  bit VMA_UPT;
+  bit EBOX_MAY_BE_PAGED;
   tEBUSdriver EBUSdriver;
 endinterface
 
