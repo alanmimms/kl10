@@ -90,10 +90,13 @@ module top(input clk,
 
   iAPR APR();
   iCCL CCL();
+  iCCW CCW();
+  iCHA CHA();
   iCLK CLK();
   iCON CON();
   iCRA CRA();
   iCRAM CRAM();
+  iCRC CRC();
   iCRM CRM();
   iCSH CSH();
   iCTL CTL();

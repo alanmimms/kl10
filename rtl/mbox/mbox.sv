@@ -11,9 +11,20 @@ module mbox(input mboxClk,
 
             output bit [0:35] cacheDataRead,
 
+            iAPR APR,
+            iCCL CCL,
+            iCCW CCW,
+            iCHA CHA,
+            iCRC CRC,
+            iCLK CLK,
             iCSH CSH,
+            iMBC MBC,
+            iMBX MBX,
             iMBZ MBZ,
+            iMCL MCL,
             iPAG PAG,
+            iPMA PMA,
+            iVMA VMA,
             iMBOX MBOX
 );
 
