@@ -1,5 +1,4 @@
 `include "ebox.svh"
-`include "mbox.svh"
 
 module kl10pv_tb;
   typedef enum bit [0:8] {

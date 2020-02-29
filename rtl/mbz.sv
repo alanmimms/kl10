@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-`include "mbox.svh"
+`include "ebox.svh"
 
 // M8537 MBZ
 module mbz(iMBZ MBZ);

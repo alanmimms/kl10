@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
-`include "mbox.svh"
 
 // M8542 VMA
 module vma(iAPR APR,

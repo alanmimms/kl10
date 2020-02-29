@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-`include "mbox.svh"
+`include "ebox.svh"
 module mbox(input mboxClk,
             input [13:35] EBOX_VMA,
             input vmaACRef,

@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
-`include "mbox.svh"
 
 module top(input clk,
            input CROBAR
