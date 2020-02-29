@@ -1,7 +1,10 @@
 `timescale 1ns/1ns
 // M8520 PAG
-module pag(iPAG PAG,
+module pag(iAPR APR,
+           iCSH CSH,
+           iPAG PAG,
            iPMA PMA,
+           iSHM SHM,
            iMBOX MB
 );
 
@@ -36,7 +39,7 @@ module pag(iPAG PAG,
   (.clk(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
    .din(PAG.PT_IN),
    .dout(ptOut),
-   .addr(PAG.PT_ADR),
+   .addr(PAG.PT_ADR[18:25]),
    .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 
   sim_mem
@@ -54,8 +57,8 @@ module pag(iPAG PAG,
     #(.SIZE(128), .WIDTH(1), .NBYTES(1))
   ptDirB
     (.clk(~PAG.PT_ADR[24] | PT_DIR_CLR),
-    .din({2{PT_DIR_CLR}}),
-    .dout(ptDirOut[18:19]),
+    .din(PT_DIR_CLR),
+    .dout(ptDirOut[18]),
     .addr({PAG.PT_ADR[18:23], 1'b0}),
     .wea(ptDirWEA));
 
@@ -63,8 +66,8 @@ module pag(iPAG PAG,
     #(.SIZE(128), .WIDTH(1), .NBYTES(1))
   ptDirC
     (.clk(PAG.PT_ADR[24] | PT_DIR_CLR),
-    .din({2{PT_DIR_CLR}}),
-    .dout(ptDirOut[18:19]),
+    .din(PT_DIR_CLR),
+    .dout(ptDirOut[19]),
     .addr({PAG.PT_ADR[18:23], 1'b0}),
     .wea(ptDirWEA));
 
@@ -73,9 +76,9 @@ module pag(iPAG PAG,
   ptParity
     (.clk(PT_WR),
     .din({(PAG.MB_00to17_PAR | ~CON.KI10_PAGING_MODE) &
-          (SH.AR_PAR_ODD | CON.KI10_PAGING_MODE),
+          (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE),
           (PAG.MB_18to35_PAR | ~CON.KI10_PAGING_MODE) &
-          (SH.AR_PAR_ODD | CON.KI10_PAGING_MODE)}),
+          (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE)}),
     .dout({PT_PAR_LEFT, PT_PAR_RIGHT}),
     .addr(PAG.PT_ADR[18:25]),
     .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
@@ -129,18 +132,18 @@ module pag(iPAG PAG,
 
   // PAG3 p.108
   always_comb begin
-    PAG.PAG.PT_ADR[18] = VMA.VMA[18];
-    PAG.PAG.PT_ADR[19] = MCL.VMA_EXEC ^ VMA.VMA[19];
-    PAG.PAG.PT_ADR[20] = VMA.VMA[17] ^ VMA.VMA[20];
-    PAG.PAG.PT_ADR[21:23] = VMA.VMA[21:23];
+    PAG.PT_ADR[18] = VMA.VMA[18];
+    PAG.PT_ADR[19] = MCL.VMA_EXEC ^ VMA.VMA[19];
+    PAG.PT_ADR[20] = VMA.VMA[17] ^ VMA.VMA[20];
+    PAG.PT_ADR[21:23] = VMA.VMA[21:23];
 
     PAG.PT_ADR[24] = (MB.SEL_2 | ~CSH.PGRF_CYC) & (VMA.VMA[24] | CSH.PGRF_CYC);
 
     PT_ADR_25_A_IN = VMA.VMA[25] & ~PT_WR_BOTH_HALVES;
     PT_ADR_25_B_IN = MB.SEL_1 & CSH.PGRF_CYC;
-    PT_ADR_25_C_IN = &APR.WR_PT_SEL;
+    PT_ADR_25_C_IN = APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1;
 
-    PAG.PAG.PT_ADR[26] = VMA.VMA[26];
+    PAG.PT_ADR[26] = VMA.VMA[26];
     PT_WR_BOTH_HALVES = CSH.PGRF_CYC | APR.WR_PT_SEL_0;
     PT_DIR_CLR = ~APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1 |
                  CSH.PAGE_FAIL_HOLD & CON.KI10_PAGING_MODE;

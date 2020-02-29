@@ -73,6 +73,7 @@ interface iCSH;
   bit WRITEBACK_T1;
   bit DATA_CLR_DONE;
   bit PAGE_REFILL_T9;
+  bit EBOX_CYC;
   bit CCA_CYC;
   bit ANY_VAL_HOLD;
   bit ANY_VAL_HOLD_IN;
@@ -141,20 +142,20 @@ endinterface
 
 interface iPAG;
   bit PF_EBOX_HANDLE;
-  bit PT_PUBLIC;
   bit PAGE_OK;
   bit PAGE_FAIL;
   bit PAGE_REFILL;
   bit PAGE_REFILL_CYC;
   bit [14:35] PT;
-  bit PT_CACHE;
   bit [0:35] PT_IN;
   bit PT_ACCESS;
   bit PT_PUBLIC;
   bit PT_WRITABLE;
   bit PT_SOFTWARE;
   bit PT_CACHE;
-  bit [18:25] PT_ADR;
+  bit [18:26] PT_ADR;
+  bit MB_00to17_PAR;
+  bit MB_18to35_PAR;
 endinterface
 
 

@@ -11,7 +11,7 @@ module csh(iAPR APR,
            );
 
   bit clk;
-  bit MB_REQ, CHAN_REQ_EN, EBOX_CYC, CYC_TYPE_HOLD, WRITEBACK_T2;
+  bit MB_REQ, CHAN_REQ_EN, CYC_TYPE_HOLD, WRITEBACK_T2;
   bit EBOX_REQ_GRANT, EBOX_REQ_EN, NON_EBOX_REQ_GRANT;
   bit CACHE_IDLE_IN_A, CACHE_IDLE_IN_B, CACHE_IDLE_IN_C, CACHE_IDLE_IN_D, CACHE_IDLE_IN_H;
   bit PHASE_CHANGE_COMING, CHAN_RD_T5, E_CACHE_WR_CYC, CACHE_TO_MB_T4;
@@ -71,7 +71,7 @@ module csh(iAPR APR,
 
     CSH.READY_TO_GO = e52q13 & PAGE_REFILL_T10 |
                       CLK.EBOX_SYNC & CACHE_IDLE |
-                      (~EBOX_CYC | PAGE_REFILL_T4 | RESET) & CACHE_IDLE |
+                      (~CSH.EBOX_CYC | PAGE_REFILL_T4 | RESET) & CACHE_IDLE |
                       ~MCL.VMA_PAUSE & MBOX_RESP & ONE_WORD_RD;
 
     RESET = CLK.MR_RESET;
@@ -97,7 +97,7 @@ module csh(iAPR APR,
            .D({CSH.EBOX_REQ_GRANT, CSH.MB_REQ_GRANT, CSH.CHAN_REQ_GRANT, CSH.CCA_REQ_GRANT}),
            .S3('0),
            .SEL({2{CYC_TYPE_HOLD}}),
-           .Q({EBOX_CYC, CSH.MB_CYC, CSH.CHAN_CYC, CSH.CCA_CYC}),
+           .Q({CSH.EBOX_CYC, CSH.MB_CYC, CSH.CHAN_CYC, CSH.CCA_CYC}),
            .CLK(clk));
 
 
@@ -109,13 +109,13 @@ module csh(iAPR APR,
                                  ~EBOX_SYNC_HOLD & DATA_DLY_1 |
                                  MBC.CORE_DATA_VALminus1 & E_CORE_RD_RQ |
                                  ~E_CORE_RD_COMP & MBOX_RESP & ~EBOX_RESTART) |
-                       CACHE_IDLE_IN & EBOX_CYC;
+                       CACHE_IDLE_IN & CSH.EBOX_CYC;
 
     EBOX_RESTART = MBOX_RESP & CLK.EBOX_SYNC;
     SBUS_DIAG_3 = MBX.SBUS_DIAG_3;
 
-    E_CACHE_WR_CYC = MCL.VMA_WRITE & EBOX_CYC & ~EBOX_READ;
-    CSH.EBOX_RETRY_REQ = EBOX_CYC & WRITEBACK_T1 |
+    E_CACHE_WR_CYC = MCL.VMA_WRITE & CSH.EBOX_CYC & ~EBOX_READ;
+    CSH.EBOX_RETRY_REQ = CSH.EBOX_CYC & WRITEBACK_T1 |
                          EBOX_RETRY_NEXT & ~RESET;
 
     E_REQ_EN_CLR = WRITEBACK_T1 | (E_WRITEBACK & MCL.VMA_READ & PMA.CSH_WRITEBACK_CYC);
@@ -125,8 +125,8 @@ module csh(iAPR APR,
                          (CSH.ADR_READY &
                           (CORE_BUSY & APR.EBOX_SBUS_DIAG |
                            EBOX_REFILL_OK & PAG.PAGE_REFILL & ~RESET) &
-                          EBOX_CYC) |
-                         ~MBC.WRITE_OK & WR_TEST & EBOX_CYC |
+                          CSH.EBOX_CYC) |
+                         ~MBC.WRITE_OK & WR_TEST & CSH.EBOX_CYC |
                          ~RD_FOUND & E_RD_T2_OK & CORE_BUSY;
     WR_TEST = CSH.CLEAR_WR_T0 | EBOX_WR_T3;
   end
@@ -185,8 +185,8 @@ module csh(iAPR APR,
 
   always_ff @(posedge clk) begin
     CSH.ANY_VAL_HOLD <= CSH.ANY_VAL_HOLD_IN;
-    CSH.GATE_VMA_27_33 <= EBOX_T0_IN | (EBOX_CYC & ~MBX.REFILL_ADR_EN_NXT);
-    CSH.ADR_PMA_EN <= ~EBOX_CYC & ~EBOX_T0_IN & ~MBX.REFILL_ADR_EN_NXT;
+    CSH.GATE_VMA_27_33 <= EBOX_T0_IN | (CSH.EBOX_CYC & ~MBX.REFILL_ADR_EN_NXT);
+    CSH.ADR_PMA_EN <= ~CSH.EBOX_CYC & ~EBOX_T0_IN & ~MBX.REFILL_ADR_EN_NXT;
   end
 
   mux2x4 e26(.EN('1),
@@ -365,7 +365,7 @@ module csh(iAPR APR,
   mux e73(.en(CTL.DIAG_READ_FUNC_17x),
           .sel(CTL.DIAG[4:6]),
           .d({~CSH.REFILL_RAM_WR, ~CSH.MB_WR_RQ_CLR_NXT, ~CSH.CCA_CYC, ~CSH.CCA_WRITEBACK,
-              ~EBOX_CYC, ~CSH.MB_CYC, ~CSH.E_WRITEBACK, ~CSH.RD_PAUSE_2ND_HALF}),
+              ~CSH.EBOX_CYC, ~CSH.MB_CYC, ~CSH.E_WRITEBACK, ~CSH.RD_PAUSE_2ND_HALF}),
           .q(CSH.EBUSdriver.data[28]));
 
   mux e57(.en(CTL.DIAG_READ_FUNC_17x),
@@ -382,7 +382,7 @@ module csh(iAPR APR,
                          ~EBOX_RESTART & CSH.FILL_CACHE_RD & ~RESET;
     CSH.CCA_WRITEBACK <= WRITEBACK_T1 & CSH.CCA_CYC |
                          ~CACHE_IDLE & CSH.CCA_WRITEBACK;
-    CSH.E_WRITEBACK <= WRITEBACK_T1 & EBOX_CYC |
+    CSH.E_WRITEBACK <= WRITEBACK_T1 & CSH.EBOX_CYC |
                        ~E_CORE_RD_T3 & CSH.E_WRITEBACK & ~RESET;
   end
 endmodule // csh
