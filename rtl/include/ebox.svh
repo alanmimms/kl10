@@ -1155,6 +1155,7 @@ interface iMCL;
   bit VMA_WRITE;
   bit VMA_PREV_EN;
   bit LOAD_VMA_CONTEXT;
+  bit VMA_EXEC;
   bit VMA_USER;
   bit VMA_PUBLIC;
   bit VMA_PREVIOUS;
@@ -1170,6 +1171,7 @@ interface iMCL;
   bit EBOX_MAY_BE_PAGED;
   bit PAGE_ILL_ENTRY;
   bit PAGE_TEST_PRIVATE;
+  bit PAGE_ADDRESS_COND;
   tEBUSdriver EBUSdriver;
 endinterface
 

@@ -24,6 +24,7 @@ module mbox(input mboxClk,
             iMCL MCL,
             iPAG PAG,
             iPMA PMA,
+            iSHM SHM,
             iVMA VMA,
             iMBOX MB
 );
