@@ -1,6 +1,5 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
-`include "mbox.svh"
 
 // M8524 SCD
 module scd(iAPR APR,
