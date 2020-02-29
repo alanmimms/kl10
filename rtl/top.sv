@@ -113,7 +113,7 @@ module top(input clk,
   iSHM SHM();
   iVMA VMA();
 
-  iMBOX MBOX();
+  iMBOX MB();
   iMBZ MBZ();
 
   ebox ebox0(.*);

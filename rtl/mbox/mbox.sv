@@ -25,18 +25,18 @@ module mbox(input mboxClk,
             iPAG PAG,
             iPMA PMA,
             iVMA VMA,
-            iMBOX MBOX
+            iMBOX MB
 );
 
   // XXX temporary
   initial begin
-    MBOX.MBOX_GATE_VMA = '0;
-    MBOX.pfDisp = '0;
-    MBOX.CSH_ADR_PAR_ERR = '0;
-    MBOX.MB_PAR_ERR = '0;
-    MBOX.ADR_PAR_ERR = '0;
-    MBOX.NXM_ERR = '0;
-    MBOX.SBUS_ERR = '0;
+    MB.MBOX_GATE_VMA = '0;
+    MB.pfDisp = '0;
+    MB.CSH_ADR_PAR_ERR = '0;
+    MB.MB_PAR_ERR = '0;
+    MB.ADR_PAR_ERR = '0;
+    MB.NXM_ERR = '0;
+    MB.SBUS_ERR = '0;
   end
   
 
