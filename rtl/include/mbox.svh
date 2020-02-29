@@ -9,6 +9,8 @@ interface iMBOX;
   bit ADR_PAR_ERR;
   bit NXM_ERR;
   bit SBUS_ERR;
+  bit SEL_1;
+  bit SEL_2;
 endinterface
 
 
@@ -101,6 +103,7 @@ interface iCSH;
   bit ONE_WORD_RD;
   bit RD_PAUSE_2ND_HALF;
   bit READY_TO_GO;
+  bit PGRF_CYC;
 endinterface
 
 
@@ -144,6 +147,14 @@ interface iPAG;
   bit PAGE_REFILL;
   bit PAGE_REFILL_CYC;
   bit [14:35] PT;
+  bit PT_CACHE;
+  bit [0:35] PT_IN;
+  bit PT_ACCESS;
+  bit PT_PUBLIC;
+  bit PT_WRITABLE;
+  bit PT_SOFTWARE;
+  bit PT_CACHE;
+  bit [18:25] PT_ADR;
 endinterface
 
 

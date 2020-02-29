@@ -23,14 +23,14 @@ module ebox(input clk,
             iMBX MBX,
             iMCL MCL,
             iMTR MTR,           // TODO
-            iPAG PAG,           // TODO
+            iPAG PAG,
             iPI PI,
             iPMA PMA,
             iSCD SCD,
-            iSHM SHM,           // TODO
+            iSHM SHM,
             iVMA VMA,
 
-            iMBOX MBOX,         // TODO?
+            iMBOX MB,
             iMBZ MBZ,           // TODO
 
             input CSH_PAR_BIT_A,

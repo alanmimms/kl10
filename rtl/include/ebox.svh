@@ -1168,6 +1168,8 @@ interface iMCL;
   bit VMA_EPT;
   bit VMA_UPT;
   bit EBOX_MAY_BE_PAGED;
+  bit PAGE_ILL_ENTRY;
+  bit PAGE_TEST_PRIVATE;
   tEBUSdriver EBUSdriver;
 endinterface
 
