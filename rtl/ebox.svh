@@ -741,10 +741,8 @@ interface iCLK;
   bit CCL;
   bit CRC;
   bit CHC;
-  bit MB_06;
-  bit MB_12;
+  bit MB;
   bit CCW;
-  bit MB_00;
   bit MBC;
   bit MBX;
   bit MBZ;
@@ -1276,6 +1274,9 @@ interface iMBOX;
   bit SBUS_ERR;
   bit SEL_1;
   bit SEL_2;
+  bit CCW_BUF_WR;
+  bit CBUS_OUT_HOLD;
+  bit [0:6] CCW_BUF_ADR;
 endinterface
 
 
