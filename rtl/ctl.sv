@@ -34,10 +34,6 @@ module ctl(iAPR APR,
   bit DIAG_MEM_RESET;
   bit CTL_READ_STROBE;
 
-  bit DIAG_LOAD_FUNC_05x;
-  bit DIAG_LOAD_FUNC_070;
-  bit DIAG_LOAD_FUNC_071;
-
   bit SPEC_MTR_CTL;
 
   bit [4:6] DIAG;
@@ -249,12 +245,12 @@ module ctl(iAPR APR,
     CTL.DIAG_CTL_FUNC_00x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b000;
     CTL.DIAG_CTL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b010;
     CTL.DIAG_LD_FUNC_04x   = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b100;
-    DIAG_LOAD_FUNC_05x     = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b101;
+    CTL.DIAG_LOAD_FUNC_05x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b101;
     CTL.DIAG_LOAD_FUNC_06x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b110;
     CTL.DIAG_LOAD_FUNC_07x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b111;
 
-    DIAG_LOAD_FUNC_070     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b000;
-    DIAG_LOAD_FUNC_071     = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b001;
+    CTL.DIAG_LOAD_FUNC_070 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b000;
+    CTL.DIAG_LOAD_FUNC_071 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b001;
     CTL.DIAG_LOAD_FUNC_072 = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b010;
     CTL.DIAG_LD_FUNC_073   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b011;
     CTL.DIAG_LD_FUNC_074   = CTL.DIAG_LOAD_FUNC_07x && EBUS.ds[4:6] == 3'b100;

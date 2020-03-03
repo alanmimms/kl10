@@ -213,9 +213,9 @@ module cra(iAPR APR,
 
   always_comb begin
 
-    if (CTL.diaFunc051)
+    if (CTL.DIAG_FUNC_051)
       diagAdr[5:10] = EBUS.data[0:5];
-    else if (CTL.diaFunc052)
+    else if (CTL.DIAG_FUNC_052)
       diagAdr[0:4] = EBUS.data[1:5];
 
     CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : 0;
