@@ -15,8 +15,8 @@ module mbx(iCLK CLK,
   bit E_CORE_RD_RQ, EBOX_DIAG_CYC, C_DIR_PAR_ERR, ANY_VAL_HOLD, READY_TO_GO;
   bit CSH_WD_0_VAL, CSH_WD_1_VAL, CSH_WD_2_VAL, CSH_WD_3_VAL;
   bit EBOX_PAGED, CCA_CYC_DONE, RESET, CSH_CCA_CYC, CSH_CCA_ONE_PAGE;
-  bit CCA_HOLD_ADR, MB_WR_RQ_ANY, MB_WR_RQ_P1, MB_WR_RQ_P2;
-  bit ANY_VAL_HOLD, MB_WR_RQ_CLR_FF, MB_SEL_HOLD_FF_IN, MB_WR_REQ_ANY;
+  bit CCA_HOLD_ADR, MB_WR_RQ_ANY, MB_WR_RQ_P1, MB_WR_RQ_P2, CTOMB_LOAD;
+  bit MB_WR_RQ_CLR, MB_WR_RQ_CLR_FF, MB_SEL_HOLD_FF_IN, MB_WR_REQ_ANY;
   bit MB_SEL_2_EN, MB_SEL_1_EN, MB_REQ_ALLOW, MB_REQ_ALLOW_FF, CORE_BUSY;
   bit [0:1] MB_SEL;
   bit [0:3] MB_WR_RQ, CTOMB_WD_RQ, CSH_TO_MB_WD, WD_NEEDED, CSH_WD_VAL;
@@ -25,9 +25,16 @@ module mbx(iCLK CLK,
   bit e85q2, e85q15;
   bit SBUS_DIAG_0, SBUS_DIAG_1, SBUS_DIAG_2, SBUS_DIAG_3, SBUS_DIAG_CYC;
   bit CSH_CHAN_CYC, CACHE_TO_MB_T1, CACHE_TO_MB_T3, CACHE_TO_MB_CONT;
-  bit RD_NON_VAL_WDS, DIAG_EN;
+  bit RD_NON_VAL_WDS, DIAG_EN, CACHE_TO_MB_DONE, MB_SEL_HOLD_FF;
   bit [4:6] DIAG;
-  bit CORE_DATA_VALIDminus1, CORE_DATA_VALID;
+  bit [34:35] SBUS_ADR;
+  bit [0:2] MB_IN_SEL;
+  bit CORE_DATA_VALIDminus1, CORE_DATA_VALID, EBOX_LOAD_REG, CHAN_READ;
+  bit MB0_PAR, MB0_DATA_CODE_1, MB0_DATA_CODE_2;
+  bit MB1_PAR, MB1_DATA_CODE_1, MB1_DATA_CODE_2;
+  bit MB2_PAR, MB2_DATA_CODE_1, MB2_DATA_CODE_2;
+  bit MB3_PAR, MB3_DATA_CODE_1, MB3_DATA_CODE_2;
+  bit DIAG_CYC_DONE, WR_WDS_IN_MB;
 
 
   // MBX1 p.178
@@ -64,7 +71,7 @@ module mbx(iCLK CLK,
     MBX.REFILL_ADR_EN <= MBX.REFILL_ADR_EN_NXT;
     MBX.EBOX_LOAD_REG <= CSH.EBOX_LOAD_REG;
     e85q2 <= ~CCA_CYC_DONE;
-    e85q15 <= (MBX.CCA_REQ | ~CCA_SEL[1]) &
+    e85q15 <= (MBX.CCA_REQ | ~MBX.CCA_SEL[1]) &
               (~CCA_CYC_DONE | ~PMA.CCA_CRY_OUT);
     CCA_HOLD_ADR <= ~READY_TO_GO & (CSH.CCA_INVAL_T4 | CCA_HOLD_ADR);
   end
@@ -87,15 +94,15 @@ module mbx(iCLK CLK,
 
   // MBX2 p.179
   bit [0:2] e33Q;
-  bit e57q7 e45q6;
+  bit e57q7, e45q6;
 
   always_comb begin
-    CACHE_TO_MB_CONT = |CTOMB_WD_REQ;
+    CACHE_TO_MB_CONT = |CTOMB_WD_RQ;
     SBUS_ADR[34] = (PMA.PA[34] | e57q7) &
                    (e33Q[1] | e45q6 | ~e57q7) &
-                   (CCW.CHA[34] | ~e57q7 | ~e46q6);
+                   (CCW.CHA[34] | ~e57q7 | ~e45q6);
     SBUS_ADR[35] = (PMA.PA[35] | e57q7) &
-                   (e33Q[2] | e46q6 | ~e57q7) &
+                   (e33Q[2] | e45q6 | ~e57q7) &
                    (CCW.CHA[35] | ~e45q6 | ~e57q7);
     MBX.CHAN_WR_CYC = CSH.CHAN_CYC & CCL.CHAN_TO_MEM;
     CTOMB_LOAD = MBX.CHAN_WR_CYC & CSH.T2 |
@@ -134,7 +141,7 @@ module mbx(iCLK CLK,
   
   bit [2:3] unusedE12;
   USR4 e12(.S0('0),
-           .D({2{MB_SEL_2_EN}}, {2{MB_SEL_1_EN}}),
+           .D({{2{MB_SEL_2_EN}}, {2{MB_SEL_1_EN}}}),
            .S3('0),
            .SEL({2{MBX.MB_SEL_HOLD}}),
            .Q({MB_SEL, unusedE12}),
@@ -151,7 +158,7 @@ module mbx(iCLK CLK,
                (~MB_SEL[0] | ~MB_SEL[1] | ~MB_WR_RQ_CLR)}),
               .S3('0),
               .SEL({1'b0, RESET}),
-              .Q(MB_WR_REQ),
+              .Q(MB_WR_RQ),
               .CLK(clk));
                
 
@@ -225,8 +232,8 @@ module mbx(iCLK CLK,
     2'b11: MBOX.MB_DATA_CODE_1 = MB3_DATA_CODE_1;
     endcase
 
-    REFILL_HOLD = CCA_HOLD_ADR | PMA.CSH_WRITEBACK_CYC | MB_REQ_ALLOW;
-    MB_REQ_ALLOW = CSH.E_CORE_RD_RQ & ~MBX.ONE_WORD_RD |
+    MBX.REFILL_HOLD = CCA_HOLD_ADR | PMA.CSH_WRITEBACK_CYC | MB_REQ_ALLOW;
+    MB_REQ_ALLOW = CSH.E_CORE_RD_RQ & ~CSH.ONE_WORD_RD |
                    (MBOX.MB_REQ_HOLD | MBOX.CORE_RD_IN_PROG) & ~RESET & MB_REQ_ALLOW_FF;
     CORE_BUSY = MBOX.CORE_BUSY;
     EBOX_DIAG_CYC = PMA.CSH_EBOX_CYC & APR.EBOX_SBUS_DIAG;
@@ -236,15 +243,17 @@ module mbx(iCLK CLK,
     e70q14 = MBX.CACHE_TO_MB_DONE & EBOX_DIAG_CYC |
              ~DIAG_CYC_DONE & SBUS_DIAG_CYC & ~RESET;
     MBOX.MEM_DIAG = SBUS_DIAG_0 & ~SBUS_DIAG_1;
+    DIAG_CYC_DONE = SBUS_DIAG_3 & MBC.A_CHANGE_COMING;
 
     MBOX.MEM_TO_C_SEL_2 = e48SR[0] & e48SR[2] |
                           (E_CORE_RD_RQ | EBOX_DIAG_CYC) & e48SR[3];
     MBOX.MEM_TO_C_SEL_1 = e48SR[1] & e48SR[2] |
                           (E_CORE_RD_RQ | EBOX_DIAG_CYC) & e48SR[3] & ~CSH.E_CACHE_WR_CYC;
+
   end
 
   always_ff @(posedge clk) begin
-    MB_REQ_ALLOW_FF <= MR_REQ_ALLOW;
+    MB_REQ_ALLOW_FF <= MB_REQ_ALLOW;
     SBUS_DIAG_CYC <= e70q14;
   end
 
@@ -294,7 +303,7 @@ module mbx(iCLK CLK,
 
   always_ff @(posedge clk) begin
     MBOX.CSH_WR_OUT_EN <= CSH.WRITEBACK_T1;
-    CACHE_TO_MB_T1 <= MBOX.CACHE_TO_MB_T4 | MBOX.CSH_WR_OUT_EN;
+    CACHE_TO_MB_T1 <= MBX.CACHE_TO_MB_T4 | MBOX.CSH_WR_OUT_EN;
     MBX.CACHE_TO_MB_T2 <= CACHE_TO_MB_T1 & ~CACHE_TO_MB_DONE & ~RESET |
                           CTOMB_LOAD & ~MBX.CHAN_WR_CYC |
                           MBOX.PHASE_CHANGE_COMING & MBX.CACHE_TO_MB_T2 |
@@ -307,33 +316,34 @@ module mbx(iCLK CLK,
   // MBX5 p.182
   bit e71q13, e75q14, e75q15;
   always_comb begin
-    RD_NON_VAL_WDS = E_CORE_RD_RQ & ~MBX.ONE_WORD_RD |
+    RD_NON_VAL_WDS = E_CORE_RD_RQ & ~CSH.ONE_WORD_RD |
                      CSH.PGRF_CYC |
                      CSH.CHAN_CYC & ~MBX.CHAN_WR_CYC;
-    WR_WDS_IN_MB = CSH.E_CACHE_WR_CYC | CHAN_WR_CYC | PMA.CSH_WRITEBACK;
+    WR_WDS_IN_MB = CSH.E_CACHE_WR_CYC | MBX.CHAN_WR_CYC | PMA.CSH_WRITEBACK;
 
-    MBX.RQ_IN[0] = ~PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
-                   WR_WDS_IN_MB & MB_0_WR_RQ |
+    MBX.RQ_IN[0] = ~PMA.PA[34] & ~PMA.PA[35] & CSH.ONE_WORD_RD |
+                   WR_WDS_IN_MB & MB_WR_RQ[0] |
                    ~CSH_WD_0_VAL & WD_NEEDED[0] & RD_NON_VAL_WDS;
-    MBX.RQ_IN[1] = ~PMA.PA[34] & PMA.PA[35] & ONE_WORD_RD |
-                   WR_WDS_IN_MB & MB_1_WR_RQ |
+    MBX.RQ_IN[1] = ~PMA.PA[34] & PMA.PA[35] & CSH.ONE_WORD_RD |
+                   WR_WDS_IN_MB & MB_WR_RQ[1] |
                    ~CSH_WD_1_VAL & WD_NEEDED[1] & RD_NON_VAL_WDS;
-    MBX.RQ_IN[2] = PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
-                   WR_WDS_IN_MB & MB_2_WR_RQ |
+    MBX.RQ_IN[2] = PMA.PA[34] & ~PMA.PA[35] & CSH.ONE_WORD_RD |
+                   WR_WDS_IN_MB & MB_WR_RQ[2] |
                    ~CSH_WD_2_VAL & WD_NEEDED[2] & RD_NON_VAL_WDS;
-    MBX.RQ_IN[3] = PMA.PA[34] & PMA.PA[35] & ONE_WORD_RD |
-                   WR_WDS_IN_MB & MB_3_WR_RQ |
+    MBX.RQ_IN[3] = PMA.PA[34] & PMA.PA[35] & CSH.ONE_WORD_RD |
+                   WR_WDS_IN_MB & MB_WR_RQ[3] |
                    ~CSH_WD_3_VAL & WD_NEEDED[3] & RD_NON_VAL_WDS;
     C_DIR_PAR_ERR = APR.C_DIR_P_ERR | e75q15;
 
-    MBX.MEM_RD_RQ_IN = E_CORE_RD_RQ | ONE_WORD_RD | RD_NON_VAL_WDS;
-    MBX.MEM_WR_RQ_IN = CACHE_TO_MB_T4 | CHAR_WR_CYC | CSH.ONE_WORD_RD & MCL.VMA_PAUSE;
+    MBX.MEM_RD_RQ_IN = E_CORE_RD_RQ | CSH.ONE_WORD_RD | RD_NON_VAL_WDS;
+    MBX.MEM_WR_RQ_IN = MBX.CACHE_TO_MB_T4 | MBX.CHAN_WR_CYC |
+                       CSH.ONE_WORD_RD & MCL.VMA_PAUSE;
     MBX.MB_REQ_IN = MBOX.MB_REQ_HOLD & ~CSH.MB_CYC & MB_REQ_ALLOW & ~MBC.INH_1ST_MB_REQ;
     MBX.MEM_TO_C_EN = CSH.MB_CYC | MBOX.MEM_TO_C_DIAG_EN;
   end
 
   always_ff @(posedge clk) begin
-    e71q31 <= CONC.CACHE_LOOK_EN & ~CSH_CCA_CYC & CSH.ADR_READY & CSH.ADR_PAR_BAD |
+    e71q13 <= CONC.CACHE_LOOK_EN & ~CSH_CCA_CYC & CSH.ADR_READY & CSH.ADR_PAR_BAD |
               CSH.WRITEBACK_T1 & CSH.ADR_PAR_BAD |
               ~READY_TO_GO & ~RESET & e71q13;
     e75q14 <= e71q13 & READY_TO_GO |
@@ -385,8 +395,8 @@ module mbx(iCLK CLK,
 
   mux e16(.en(DIAG_EN),
           .sel(DIAG),
-          .d({MBX.RQ_IN[1:3], MBOX.SBUS_ADR[34:35},
-              ~MBX.SUBS_DIAG_3, ~MBX.SBUS_DIAG_CYC, ~MBX_WRITEBACK_T2}),
+          .d({MBX.RQ_IN[1:3], MBOX.SBUS_ADR[34:35],
+              ~MBX.SUBS_DIAG_3, ~MBX.SBUS_DIAG_CYC, ~MBX.WRITEBACK_T2}),
           .q(EBUSdriver.data[35]));
 
   always_ff @(posedge clk) begin
@@ -418,7 +428,8 @@ module mbx(iCLK CLK,
   ////////////////////////////////////////////////////////////////
 
   bit [4:7] e36Ignored;
-  decoder e36(.en(~MBX.CACHE_TO_MB_CONT & CSH.CHAN_CYC & e61Q),
+  decoder e36(.en(~MBX.CACHE_TO_MB_CONT & CSH.CHAN_CYC & e61q14),
               .sel({1'b0, e32Q, e56Q}),
-              .q({MB0_HOLD_IN, MB3_HOLD_IN, MB3_HOLD_IN, MB3_HOLD_IN, e36Ignored}));
+              .q({MBOX.MB0_HOLD_IN, MBOX.MB1_HOLD_IN, 
+                  MBOX.MB2_HOLD_IN, MBOX.MB3_HOLD_IN, e36Ignored}));
 endmodule
