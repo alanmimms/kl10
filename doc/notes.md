@@ -42,7 +42,8 @@
 # Notes About This Implementation
 
 ## Coding Conventions
-* Use Verilog Auto Mode where possible.
+* [DEAD] Use Verilog Auto Mode where possible.
+  * Tried but failed on SystemVerilog, so no longer doing this.
 * Use ALL UPPERCASE for CRAM field names.
 * In ebox.v or top.v `CRAM_XXX` should be name for CRAM field XXX.
 * Use ALL UPPERCASE for EDP, SHM, and other global register names.
@@ -54,6 +55,16 @@
 * Each module for an IP instance is called `xxx_type`
   * Where "xxx" is module's use case (e.g., "cram" or "fm")
   * Where "type" is module's use type (e.g., "mem")
+* If a symbol has a module _and a page number_ then it should be
+  globally visible in that module's interface.
+  * E.g., `CSH VAL WR PULSE` in the schematic is _not_ part of `iCSH`
+    interface. Instead, since this is found in the MBOX MBC module, it
+    is part of the `iMBOX` interface as `MBOX.CSH_VAL_WR_PULSE`.
+  * E.g., `CSH3 ANY VAL HOLD A L` is treated in `iCSH` as
+    `CSH.ANY_VAL_HOLD`.
+  * [TODO] fixup all references that do not use this convention.
+    
+  
 
 ## Differences from KL10PV
 * Multiple drivers on a single bus are not the FPGA Way.

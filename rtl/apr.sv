@@ -10,7 +10,7 @@ module apr(iAPR APR,
            iEBUS EBUS,
            iEDP EDP,
            iIR IR,
-           iMBOX MB,
+           iMBOX MBOX,
            iMCL MCL,
            iPI PI,
            iSCD SCD,
@@ -62,23 +62,23 @@ module apr(iAPR APR,
 
    // APR1 p.382
   `APRInt(clk, 6, SBUS_ERR_INT_EN, SBUS_ERR_EN_IN);
-  `APREvent(clk, 6, MB.SBUS_ERR, SBUS_ERR_EN, SBUS_ERR_IN);
+  `APREvent(clk, 6, MBOX.SBUS_ERR, SBUS_ERR_EN, SBUS_ERR_IN);
 
   `APRInt(clk, 7, NXM_ERR_INT_EN, NXM_ERR_EN_IN);
-  `APREvent(clk, 7, MB.NXM_ERR, NXM_ERR_EN, NXM_ERR_IN);
+  `APREvent(clk, 7, MBOX.NXM_ERR, NXM_ERR_EN, NXM_ERR_IN);
 
   `APRInt(clk, 8, IO_PF_ERR_INT_EN, IO_PF_ERR_EN_IN);
   `APREvent(clk, 8, APR.SET_IO_PF_ERR, IO_PF_ERR_EN, IO_PF_ERR_IN);
 
   `APRInt(clk, 9, MB_PAR_ERR_INT_EN, MB_PAR_ERR_EN_IN);
-  `APREvent(clk, 9, MB.MB_PAR_ERR, MB_PAR_ERR, MB_PAR_ERR_IN);
+  `APREvent(clk, 9, MBOX.MB_PAR_ERR, MB_PAR_ERR, MB_PAR_ERR_IN);
 
   // APR2 p.383
   `APRInt(clk, 10, C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN);
-  `APREvent(clk, 10, MB.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
+  `APREvent(clk, 10, MBOX.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
 
   `APRInt(clk, 11, S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN);
-  `APREvent(clk, 11, MB.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
+  `APREvent(clk, 11, MBOX.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
 
   `APRInt(clk, 12, PWR_FAIL_INT_EN, PWR_FAIL_EN_IN);
   `APREvent(clk, 12, PWR_WARN, PWR_FAIL, PWR_FAIL_IN);
@@ -98,7 +98,7 @@ module apr(iAPR APR,
                              SWEEP_DONE & SWEEP_DONE_INT_EN;
   assign APR.WR_BAD_ADR_PAR = ~S_ADR_P_ERR &
                               CON.WR_EVEN_PAR_ADR &
-                              ~MB.ADR_PAR_ERR;
+                              ~MBOX.ADR_PAR_ERR;
 
   always_ff @(posedge clk) begin
     APR.ANY_EBOX_ERR_FLG <= NXM_ERR_IN | MB_PAR_ERR_IN | S_ADR_P_ERR_IN;
