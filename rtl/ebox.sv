@@ -29,7 +29,7 @@ module ebox(input clk,
             iSHM SHM,
             iVMA VMA,
 
-            iMBOX MB,
+            iMBOX MBOX,
             iMBZ MBZ,           // TODO
 
             input CSH_PAR_BIT_A,

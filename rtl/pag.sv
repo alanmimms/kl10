@@ -5,7 +5,7 @@ module pag(iAPR APR,
            iPAG PAG,
            iPMA PMA,
            iSHM SHM,
-           iMBOX MB
+           iMBOX MBOX
 );
 
   bit PT_WR, PT_LEFT_EN, PT_RIGHT_EN;
@@ -137,10 +137,10 @@ module pag(iAPR APR,
     PAG.PT_ADR[20] = VMA.VMA[17] ^ VMA.VMA[20];
     PAG.PT_ADR[21:23] = VMA.VMA[21:23];
 
-    PAG.PT_ADR[24] = (MB.SEL_2 | ~CSH.PGRF_CYC) & (VMA.VMA[24] | CSH.PGRF_CYC);
+    PAG.PT_ADR[24] = (MBOX.SEL_2 | ~CSH.PGRF_CYC) & (VMA.VMA[24] | CSH.PGRF_CYC);
 
     PT_ADR_25_A_IN = VMA.VMA[25] & ~PT_WR_BOTH_HALVES;
-    PT_ADR_25_B_IN = MB.SEL_1 & CSH.PGRF_CYC;
+    PT_ADR_25_B_IN = MBOX.SEL_1 & CSH.PGRF_CYC;
     PT_ADR_25_C_IN = APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1;
 
     PAG.PT_ADR[26] = VMA.VMA[26];

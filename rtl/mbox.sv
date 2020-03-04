@@ -17,6 +17,7 @@ module mbox(input mboxClk,
             iCHA CHA,
             iCRC CRC,
             iCLK CLK,
+            iCON CON,
             iCSH CSH,
             iMBC MBC,
             iMBX MBX,
@@ -26,18 +27,18 @@ module mbox(input mboxClk,
             iPMA PMA,
             iSHM SHM,
             iVMA VMA,
-            iMBOX MB
+            iMBOX MBOX
 );
 
   // XXX temporary
   initial begin
-    MB.MBOX_GATE_VMA = '0;
-    MB.pfDisp = '0;
-    MB.CSH_ADR_PAR_ERR = '0;
-    MB.MB_PAR_ERR = '0;
-    MB.ADR_PAR_ERR = '0;
-    MB.NXM_ERR = '0;
-    MB.SBUS_ERR = '0;
+    MBOX.MBOX_GATE_VMA = '0;
+    MBOX.pfDisp = '0;
+    MBOX.CSH_ADR_PAR_ERR = '0;
+    MBOX.MB_PAR_ERR = '0;
+    MBOX.ADR_PAR_ERR = '0;
+    MBOX.NXM_ERR = '0;
+    MBOX.SBUS_ERR = '0;
   end
   
 

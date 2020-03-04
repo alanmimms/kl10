@@ -10,7 +10,7 @@ module mb0(iCLK CLK,
 );
 
   bit clk;
-  bit MEM_TO_C_EN, PT_IN_SEL_AR, CH_BUF_MB_SEL;
+  bit PT_IN_SEL_AR, CH_BUF_MB_SEL;
   bit [0:1] MEM_TO_C_SEL, MB_SEL;
   bit [0:35] CH_BUF, CH_BUF_IN, MB_IN_A, MB_IN, MB_CH_BUF, CH_REG;
   bit MB_CH_BUF_LOAD, CH_REG_HOLD, MB_IN_EN, CH_BUF_EN, MB_CH_LOAD;
@@ -26,7 +26,7 @@ module mb0(iCLK CLK,
   always_comb begin
 
     // e61, e55, e27, e50, e41, e22, e21, e16
-    if (MEM_TO_C_EN) begin
+    if (MBOX.MEM_TO_C_EN) begin
       case (MEM_TO_C_SEL)
       2'b00: MBOX.MEM_TO_CACHE = EDP.AR;
       2'b01: MBOX.MEM_TO_CACHE = MBOX.MB;
@@ -65,7 +65,7 @@ module mb0(iCLK CLK,
 
       for (k = 0; k < 36; k += 4) begin: mbMux
         USR4 m(.S0('0),
-               .D(MB.MB[k+0:k+3]),
+               .D(MBOX.MB[k+0:k+3]),
                .S3('0),
                .CLK(clk),
                .Q(MBN[mbNum][k+0:k+3]),
