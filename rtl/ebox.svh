@@ -979,6 +979,10 @@ interface iCRA;
   tCRADR CRADR;
   bit [1:10] AREAD;
   bit DISP_PARITY;
+  bit DIA_FUNC_050;
+  bit DIA_FUNC_051;
+  bit DIA_FUNC_052;
+  bit DIA_FUNC_053;
   tEBUSdriver EBUSdriver;
 endinterface
 

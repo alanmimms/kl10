@@ -38,6 +38,7 @@ module cra(iAPR APR,
   bit CALL_FORCE_1777;
   bit retNotForce1777;
   bit ret;
+  bit WRITE_00_19, WRITE_20_39, WRITE_40_59, WRITE_60_79;
 
   bit RESET;
   assign RESET = CLK.MR_RESET;
@@ -213,13 +214,18 @@ module cra(iAPR APR,
 
   always_comb begin
 
-    if (CTL.DIAG_FUNC_051)
+    if (CRA.DIA_FUNC_051)
       diagAdr[5:10] = EBUS.data[0:5];
-    else if (CTL.DIAG_FUNC_052)
+    else if (CRA.DIA_FUNC_052)
       diagAdr[0:4] = EBUS.data[1:5];
 
     CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : 0;
   end
+
+  decoder e1(.en(CTL.DIAG_LOAD_FUNC_05x),
+             .sel(CTL.DIAG[4:6]),
+             .q({CRA.DIA_FUNC_050, CRA.DIA_FUNC_051, CRA.DIA_FUNC_052, CRA.DIA_FUNC_053,
+                 WRITE_60_79, WRITE_40_59, WRITE_20_39, WRITE_00_19}));
 
   // Diagnostics driving EBUS
   assign CRA.EBUSdriver.driving = CTL.DIAG_READ_FUNC_14x;
@@ -228,7 +234,7 @@ module cra(iAPR APR,
 
     if (CRA.EBUSdriver.driving) begin
 
-      case (DIAG_FUNC[4:6])
+      case (CTL.DIAG[4:6])
       3'b000: CRA.EBUSdriver.data = {dispEn00_07, dispEn00_03, stackAdr};
       3'b001: CRA.EBUSdriver.data = {CRAM.CALL, CRAM.DISP[0:4], stackAdr};
       3'b010: CRA.EBUSdriver.data = sbrRet[5:10];

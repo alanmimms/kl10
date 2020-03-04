@@ -143,7 +143,7 @@ module csh(iAPR APR,
     CSH.E_CORE_RD_RQ <= E_RD_T2_CORE_OK & ~RD_FOUND & ANY_VALID_MATCH |
                         ~LRU_ANY_WR & ~ANY_VALID_MATCH | E_RD_T2_CORE_OK |
                         ANY_VALID_MATCH & ~MBX.CACHE_BIT & E_RD_T2_CORE_OK |
-                        ~MBC.CORE_DATA_VALID & ~RESET & E_CORE_RD_RQ;
+                        ~MBC.CORE_DATA_VALID & ~RESET & CSH.E_CORE_RD_RQ;
     EBOX_RETRY_NEXT <= EBOX_RETRY_NEXT_IN;
     EBOX_REQ_EN <= ~CORE_BUSY & ~E_REQ_EN_CLR & ~PAGE_REFILL_T4_IN |
                    MB_CYC & MCL.VMA_READ |
