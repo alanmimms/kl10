@@ -9,28 +9,28 @@ module ebox(input clk,
 
             iAPR APR,
             iCCL CCL,
+            iCHC CHC,
             iCLK CLK,
             iCON CON,
             iCRA CRA,
-            iCRAM CRAM,         // CR0 TODO
+            iCRAM CRAM,
             iCRM CRM,
             iCSH CSH,
             iCTL CTL,
             iEDP EDP,
             iIR IR,
             iMBC MBC,
+            iMBOX MBOX,
             iMBX MBX,
+            iMBZ MBZ,
             iMCL MCL,
-            iMTR MTR,           // TODO
+            iMTR MTR,
             iPAG PAG,
             iPI PI,
             iPMA PMA,
             iSCD SCD,
             iSHM SHM,
             iVMA VMA,
-
-            iMBOX MBOX,
-            iMBZ MBZ,           // TODO
 
             input CSH_PAR_BIT_A,
             input CSH_PAR_BIT_B,
