@@ -19,14 +19,18 @@ module mbox(input mboxClk,
             iCLK CLK,
             iCON CON,
             iCSH CSH,
+            iCTL CTL,
+            iEDP EDP,
             iMBC MBC,
             iMBX MBX,
             iMBZ MBZ,
             iMCL MCL,
+            iMTR MTR,
             iPAG PAG,
             iPMA PMA,
             iSHM SHM,
             iVMA VMA,
+            iEBUS EBUS,
             iMBOX MBOX
 );
 
@@ -67,7 +71,9 @@ module mbox(input mboxClk,
   chd chd0(.*);
   chx chx0(.*);
   crc crc0(.*);
+  mb0 mb00(.*);
   mbc mbc0(.*);
+  mbx mbx0(.*);
   mbz mbz0(.*);
   pag pag0(.*);
   pma pma0(.*);

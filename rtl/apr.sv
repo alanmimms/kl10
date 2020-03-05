@@ -42,7 +42,6 @@ module apr(iAPR APR,
   bit SWEEP_BUSY_EN, SWEEP_BUSY;
   bit C_DIR_P_ERR_INT_EN, C_DIR_P_ERR_EN_IN, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN;
   bit S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN;
-  bit S_ADR_P_ERR;
   bit PWR_FAIL_INT_EN, PWR_FAIL_EN_IN;
   bit PWR_FAIL, PWR_FAIL_IN;
   bit SWEEP_DONE_INT_EN, SWEEP_DONE_EN_IN;
@@ -93,10 +92,10 @@ module apr(iAPR APR,
                              IO_PF_ERR & IO_PF_ERR_INT_EN |
                              APR.MB_PAR_ERR & MB_PAR_ERR_INT_EN |
                              APR.C_DIR_P_ERR & C_DIR_P_ERR_INT_EN |
-                             S_ADR_P_ERR & S_ADR_P_ERR_INT_EN |
+                             APR.S_ADR_P_ERR & S_ADR_P_ERR_INT_EN |
                              PWR_FAIL & PWR_FAIL_INT_EN |
                              SWEEP_DONE & SWEEP_DONE_INT_EN;
-  assign APR.WR_BAD_ADR_PAR = ~S_ADR_P_ERR &
+  assign APR.WR_BAD_ADR_PAR = ~APR.S_ADR_P_ERR &
                               CON.WR_EVEN_PAR_ADR &
                               ~MBOX.ADR_PAR_ERR;
 
@@ -343,7 +342,7 @@ module apr(iAPR APR,
 
   mux e22(.en(READ_110_117),
           .sel(DS),
-          .d({S_ADR_P_ERR, APR.PREV_BLOCK[2], S_ADR_P_ERR_EN_IN,
+          .d({APR.S_ADR_P_ERR, APR.PREV_BLOCK[2], S_ADR_P_ERR_EN_IN,
               APR.WRITE_COMP, APR.FM_ADR[0], ~APR.WR_BAD_ADR_PAR,
               APR.ANY_EBOX_ERR_FLG, ~CON.FM_WRITE_PAR}),
           .q(APR.EBUSdriver.data[11]));
