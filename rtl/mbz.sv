@@ -17,7 +17,7 @@ module mbz(iCCL CCL,
   bit MEM_BUSY, MEM_RD_RQ, MEM_WR_RQ, CORE_BUSY_IN, CORE_RD_IN_PROG;
   bit CHAN_STATUS_TO_MB, CHAN_BUF_TO_MB, CHAN_EPT, AR_TO_MB_SEL, MEM_START_C;
   bit NXM_FLG, NXM_CLR_T0, NXM_CLR_DONE, A_CHANGE_COMING, MBOX_NXM_ERR_CLR;
-  bit SEQUENTIAL_RQ, RQ_HLD_DLY, NXM_CRY_A, NXM_CRY_B, CORE_BUSY;
+  bit SEQUENTIAL_RQ, RQ_HOLD_DLY, NXM_CRY_A, NXM_CRY_B, CORE_BUSY;
   bit [0:1] MB_DATA_SOURCE, MB_WD_SEL;
   bit LOAD_MB_MAGIC, MB_TEST_PAR_A_IN, MB_TEST_PAR_B_IN, HOLD_ERR_REG;
   bit ERR_HOLD, NXM_T6comma7, SBUS_ERR_FLG, MB_PAR_ERR, ADR_PAR_ERR_FLG;
@@ -25,7 +25,11 @@ module mbz(iCCL CCL,
   bit CH_BUF_MB_SEL, CH_BUF_IN_00to17_PAR, CH_BUF_IN_18to35_PAR;
   bit CH_REG_00to17_PAR, CH_REG_18to35_PAR, CSH_PAR_BIT, CH_BUF_PAR_BIT, CCW_PAR_BIT;
   bit [0:6] CH_BUF_ADR;
+  bit [0:7] EBUS_REG_IN;
   bit [0:1] chBufParRAM[0:127];
+  bit [0:35] EBUS_REG;
+  bit NXM_T2, NXM_T3, NXM_T4, NXM_T5, NXM_T6, MEM_WRITE, CHAN_REF, CCA_REF, CHAN_WR_MEM;
+  bit CHAN_MEM_REF, ERA_SEL, CH_REG_HOLD;
 
   // MBZ1 p.303
   always_comb begin
@@ -74,46 +78,46 @@ module mbz(iCCL CCL,
   USR4 e22(.S0('0),
            .D(EBUS_REG_IN[0:3]),
            .S3('0),
-           .SEL({2{LOAD_EBUS_REG}}),
+           .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[0:3]));
 
   USR4 e15(.S0('0),
            .D(EBUS_REG_IN[4:7]),
            .S3('0),
-           .SEL({2{LOAD_EBUS_REG}}),
+           .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[4:7]));
 
   USR4 e16(.S0('0),
            .D({MBOX.PAGED_REF, MBOX.PMA[14:16]}),
            .S3('0),
-           .SEL({2{LOAD_EBUS_REG}}),
+           .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q({EBUS_REG[8], EBUS_REG[14:16]}));
 
   USR4 e26(.S0('0),
            .D(MBOX.PMA[17:20]),
            .S3('0),
-           .SEL({2{LOAD_EBUS_REG}}),
+           .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[17:20]));
 
   USR4 e13(.S0('0),
            .D(MBOX.PMA[21:24]),
            .S3('0),
-           .SEL({2{LOAD_EBUS_REG}}),
+           .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[21:24]));
 
   USR4 e11(.S0('0),
            .D({MBOX.PMA[25:26], MBOX.PMA[34:35]}),
            .S3('0),
-           .SEL({2{LOAD_EBUS_REG}}),
-           .CLK(clk),xxx
+           .SEL({2{MBOX.LOAD_EBUS_REG}}),
+           .CLK(clk),
            .Q({EBUS_REG[25:26], EBUS_REG[34:35]}));
 
-  mxx2x4 e31(.EN(CTL.DIAG_READ_FUNC_16x),
+  mux2x4 e31(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
              .D0({MBOX.CORE_BUSY, ~MBOX.ADR_PAR_ERR,
                   ~MBOX.CHAN_ADR_PAR_ERR, EBUS_REG[15]}),
@@ -122,14 +126,14 @@ module mbz(iCCL CCL,
              .B0(EBUS.data[15]),
              .B1(EBUS.data[16]));
 
-  mxx2x4 e39(.EN(CTL.DIAG_READ_FUNC_16x),
+  mux2x4 e39(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
              .D0({SHM.AR_PAR_ODD, MBOX.MEM_PAR_IN, MBOX.CSH_PAR_BIT_IN, EBUS_REG[17]}),
              .D1({MBOX.MB_PAR_BIT_IN, CSH_PAR_BIT, 1'b0, EBUS_REG[18]}),
              .B0(EBUS.data[17]),
              .B1(EBUS.data[18]));
 
-  mxx2x4 e34(.EN(CTL.DIAG_READ_FUNC_16x),
+  mux2x4 e34(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
              .D0({~MBOX.CSH_EN_CSH_DATA, ~MBOX.MEM_TO_C_DIAG_EN,
                   ~MBOX.CHAN_READ, EBUS_REG[19]}),
@@ -137,31 +141,32 @@ module mbz(iCCL CCL,
              .B0(EBUS.data[19]),
              .B1(EBUS.data[20]));
 
-  mxx2x4 e35(.EN(CTL.DIAG_READ_FUNC_16x),
+  mux2x4 e35(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
-             .D0({MBOX.NXM_ACK, ~RD_PSE_WR_REF, MEM_BUSY, EBUS_REG[21]}),
+             .D0({MBOX.NXM_ACK, ~MBZ.RD_PSE_WR_REF, MEM_BUSY, EBUS_REG[21]}),
              .D1({CHAN_CORE_BUSY, ~MBOX.NXM_ERR, ~MBOX.HOLD_ERA, EBUS_REG[22]}),
              .B0(EBUS.data[21]),
              .B1(EBUS.data[22]));
 
-  mxx2x4 e32(.EN(CTL.DIAG_READ_FUNC_16x),
+  mux2x4 e32(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
-             .D0({MBOX.NXM_ANY, ~RD_PSE_WR_REF, NXM_T2, EBUS_REG[23]}),
-             .D1({~NXM_T7comma7, ~MBOX.SBUS_ERR, ~MBOX.MB_PAR_ERR, EBUS_REG[24]}),
+             .D0({MBOX.NXM_ANY, ~MBZ.RD_PSE_WR_REF, NXM_T2, EBUS_REG[23]}),
+             .D1({~NXM_T6comma7, ~MBOX.SBUS_ERR, ~MBOX.MB_PAR_ERR, EBUS_REG[24]}),
              .B0(EBUS.data[23]),
              .B1(EBUS.data[24]));
 
-  mxx2x4 e44(.EN(CTL.DIAG_READ_FUNC_16x),
+  mux2x4 e44(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
-             .D0({~CHAN_NXM_ERR, ~NXM_DATA_VAL, PAG.MB_00to17_PAR, EBUS_REG[25]}),
+             .D0({~MBOX.CHAN_NXM_ERR, ~MBOX.NXM_DATA_VAL,
+                  PAG.MB_00to17_PAR, EBUS_REG[25]}),
              .D1({PAG.MB_18to35_PAR, CSH.PAR_BIT_A, CSH.PAR_BIT_B, EBUS_REG[26]}),
              .B0(EBUS.data[25]),
              .B1(EBUS.data[26]));
 
   always_comb begin
-    EBUS.data[0:8]   = DIAG_READ_FUNC_16x ? EBUS_REG[0:8]   : '0;
-    EBUS.data[14]    = DIAG_READ_FUNC_16x ? EBUS_REG[14]    : '0;
-    EBUS.data[34:35] = DIAG_READ_FUNC_16x ? EBUS_REG[34:35] : '0;
+    EBUS.data[0:8]   = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[0:8]   : '0;
+    EBUS.data[14]    = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[14]    : '0;
+    EBUS.data[34:35] = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[34:35] : '0;
   end
 
 
@@ -184,7 +189,7 @@ module mbz(iCCL CCL,
     MEM_START_C = MBOX.MEM_START_A | MBOX.MEM_START_B;
     RESET = CLK.MR_RESET;
     MBOX.CHAN_NXM_ERR = CHAN_MEM_REF & ~e51q2 & MBOX.NXM_ERR;
-    e71q7 = MBOX.MEM_START_A | MBOX.MEM_START_B | RQ_HOLD_FF;
+    e71q7 = MBOX.MEM_START_A | MBOX.MEM_START_B | MBOX.RQ_HOLD_FF;
     SEQUENTIAL_RQ = e71q7 & CHAN_CORE_BUSY |
                     SEQUENTIAL_RQ & ~RESET & CHAN_CORE_BUSY;
     MBOX.HOLD_ERA = ~e71q7 | ERR_HOLD | RQ_HOLD_DLY | NXM_FLG;
@@ -247,7 +252,6 @@ module mbz(iCCL CCL,
   always_comb begin
     NXM_T6comma7 = NXM_T6 | e25q15;
     CORE_BUSY_IN = NXM_T2 | NXM_T3 | NXM_T4 | NXM_T5 | MBOX.CORE_BUSY;
-    CORE_BUSY = MBOX.CORE_BUSY;
     LOAD_MB_MAGIC = ~ERR_HOLD & NXM_T6comma7 & NXM_FLG |
                     MB_TEST_PAR_A_IN & ~HOLD_ERR_REG |
                     MB_TEST_PAR_B_IN & ~HOLD_ERR_REG |
@@ -308,9 +312,9 @@ module mbz(iCCL CCL,
   end
 
   // e60,e55
-  always_ff @(CH_BUF_WR_06, CH_BUF_ADR) begin
+  always_ff @(MBOX.CH_BUF_WR, CH_BUF_ADR) begin
 
-    if (CH_BUF_WR_06) begin
+    if (MBOX.CH_BUF_WR) begin
       chBufParRAM[CH_BUF_ADR] <= {CH_BUF_00to17_PAR, CH_BUF_18to35_PAR};
     end else begin
       {CH_BUF_00to17_PAR, CH_BUF_18to35_PAR} <= chBufParRAM[CH_BUF_ADR];
@@ -320,26 +324,31 @@ module mbz(iCCL CCL,
   mux2x4 e50(.EN(MBOX.MEM_TO_C_EN),
              .SEL(MBOX.MEM_TO_C_SEL),
              .D0({SHM.AR_PAR_ODD, MBOX.MB_PAR, MBOX.MEM_PAR_IN, 1'b0}),
-             .B0(CSH.PAR_BIT_IN),
+             .B0(MBOX.CSH_PAR_BIT_IN),
              .D1(), .B1());
 
   mux e40(.en('1),
-          .SEL(MBOX.MB_IN_SEL),
-          .D({CSH_PAR_BIT, 1'b0, SHM.AR_PAR_ODD, CH_BUF_PAR_BIT,
+          .sel(MBOX.MB_IN_SEL),
+          .d({CSH_PAR_BIT, 1'b0, SHM.AR_PAR_ODD, CH_BUF_PAR_BIT,
               MBOX.MEM_PAR_IN, 1'b0, CCW_PAR_BIT, 1'b0}),
-          .B(MB_PAR_BIT_IN));
+          .q(MBOX.MB_PAR_BIT_IN));
 
   // MBZ6 p.308
   always_comb begin
-    CSH.PAR_BIT_A = CSH.PAR_BIT_IN | (|MBOX.CSH_PAR_BIT_A);
+    CSH.PAR_BIT_A = MBOX.CSH_PAR_BIT_IN | (|MBOX.CSH_PAR_BIT_A);
     CSH.PAR_BIT_B = |MBOX.CSH_PAR_BIT_B;
     CSH_PAR_BIT =   |MBOX.CSH_PAR_BIT_A | CSH.PAR_BIT_B;
 
-    EBUS_REG[0:6] = ERA_SEL ?
-                    {MB_WD_SEL, CCA_REF, CHAN_REF, MB_DATA_SOURCE, MEM_WRITE} :
-                    {MCL.VMA_USER, PAG.PF_HOLD_01, PAG.PF_HOLD_02,
-                     PAG.PF_HOLD_03, PAG.PF_HOLD_04, PAG.PF_HOLD_05, PAG.PT_PUBLIC};
     ERA_SEL = APR.EBOX_ERA & CSH.EBOX_CYC;
+    EBUS_REG_IN = ERA_SEL ?
+                  {MB_WD_SEL, CCA_REF, CHAN_REF, MB_DATA_SOURCE, MEM_WRITE} :
+                  {MCL.VMA_USER,
+                   PAG.PF_HOLD_01_IN,
+                   PAG.PF_HOLD_02_IN,
+                   PAG.PF_HOLD_03_IN,
+                   PAG.PF_HOLD_04_IN,
+                   PAG.PF_HOLD_05_IN,
+                   PAG.PT_PUBLIC};
     MB_TEST_PAR_B_IN = CCL.CH_TEST_MB_PAR |
                        MBX.CACHE_TO_MB_T4 & CORE_BUSY & ~RESET;
   end
@@ -350,5 +359,5 @@ module mbz(iCCL CCL,
            .S3('0),
            .SEL({2{MBOX.HOLD_ERA}}),
            .CLK(clk),
-           .Q({MEM_WRITE, CHAN_REF, CCA_REF, ignroedE18}));
+           .Q({MEM_WRITE, CHAN_REF, CCA_REF, ignoredE18}));
 endmodule

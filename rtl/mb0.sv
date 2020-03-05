@@ -40,7 +40,7 @@ module mb0(iCLK CLK,
 
     // e65, e40, e26
     PT_IN_SEL_AR = ~CON.KI10_PAGING_MODE;
-    MBOX.PT_IN = PT_IN_SEL_AR ? EDP.AR : MBOX.MB;
+    PAG.PT_IN = PT_IN_SEL_AR ? EDP.AR : MBOX.MB;
   end
 
   genvar k;
@@ -75,7 +75,7 @@ module mb0(iCLK CLK,
   endgenerate
 
   always_ff @(posedge clk) begin
-    if (MBOX.MB_SEL_HOLD) MB_SEL <= {MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN};
+    if (MBX.MB_SEL_HOLD) MB_SEL <= {MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN};
   end
 
   always_comb begin
