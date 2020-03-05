@@ -1179,6 +1179,7 @@ endinterface
 
 
 interface iMTR;
+  bit CCA_WRITEBACK;
   bit INTERRUPT_REQ;
   tEBUSdriver EBUSdriver;
 endinterface
@@ -1279,12 +1280,18 @@ interface iMBOX;
   bit CACHE_WR_18;
   bit CACHE_WR_27;
   bit CBUS_OUT_HOLD;
+  bit CBUS_PAR_LEFT_TE;
+  bit CBUS_PAR_RIGHT_TE;
   bit CCW_BUF_WR;
+  bit CHAN_NXM_ERR;
   bit CHAN_READ;
+  bit CH_T0;
+  bit CH_T2;
   bit CORE_BUSY;
   bit CORE_RD_IN_PROG;
   bit CSH_ADR_PAR_ERR;
   bit CSH_ADR_WR_PULSE;
+  bit CSH_EN_CSH_DATA;
   bit CSH_SEL_LRU;
   bit CSH_VAL_SEL_ALL;
   bit CSH_VAL_WR_DATA;
@@ -1296,12 +1303,14 @@ interface iMBOX;
   bit DATA_VALID_A_OUT;
   bit DATA_VALID_B_OUT;
   bit E_CACHE_WR_CYC;
+  bit HOLD_ERA;
   bit LOAD_EBUS_REG;
   bit MB0_HOLD_IN;
   bit MB1_HOLD_IN;
   bit MB2_HOLD_IN;
   bit MB3_HOLD_IN;
   bit MB_PAR_ERR;
+  bit MB_PAR_ODD;
   bit MB_REQ_HOLD;
   bit MEM_ACKN_A;
   bit MEM_ACKN_B;
@@ -1315,6 +1324,7 @@ interface iMBOX;
   bit MEM_TO_C_DIAG_EN;
   bit MEM_TO_C_EN;
   bit NXM_ACKN;
+  bit NXM_ANY;
   bit NXM_DATA_VAL;
   bit NXM_ERR;
   bit PHASE_CHANGE_COMING;
@@ -1323,17 +1333,19 @@ interface iMBOX;
   bit SBUS_ERR;
   bit SEL_1;
   bit SEL_2;
-  bit [0:3] FORCE_VALID_MATCH;
   bit [0:10] pfDisp;
   bit [0:1] CAM_SEL;
   bit [0:1] MB_SEL;
+  bit [0:2] MB_IN_SEL;
+  bit [0:3] CSH_PAR_BIT_A;
+  bit [0:3] CSH_PAR_BIT_B;
   bit [0:3] CSH_WR_EN;
-  bit [0:3] MB_IN_SEL;
+  bit [0:3] FORCE_VALID_MATCH;
   bit [0:3] MEM_RQ;
   bit [0:6] CCW_BUF_ADR;
+  bit [14:35] PMA;
   bit [27:35] CACHE_ADR;
   bit [27:35] MBOX_GATE_VMA;
-  bit [34:35] PMA;
   bit [34:35] SBUS_ADR;
 endinterface
 
@@ -1349,6 +1361,7 @@ interface iCCL;
   bit CHAN_TO_MEM;
   bit CHAN_EPT;
   bit START_MEM;
+  bit ODD_WC_PAR;
   bit [0:1] CH_MB_SEL;
 endinterface
 
@@ -1358,6 +1371,7 @@ interface iCCW;
   bit WD1_REQ;
   bit WD2_REQ;
   bit WD3_REQ;
+  ODD_ADR_PAR;
   bit [34:35] CHA;
 endinterface
 
@@ -1502,6 +1516,8 @@ endinterface
 
 interface iMBZ;
   bit RD_PSE_WR;
+  bit RD_PSE_WR_REF;
+  bit CORE_BUSY;
 endinterface
 
 interface iPAG;
@@ -1510,6 +1526,11 @@ interface iPAG;
   bit PAGE_FAIL;
   bit PAGE_REFILL;
   bit PAGE_REFILL_CYC;
+  bit PF_HOLD_01_IN;
+  bit PF_HOLD_02_IN;
+  bit PF_HOLD_03_IN;
+  bit PF_HOLD_04_IN;
+  bit PF_HOLD_05_IN;
   bit [14:35] PT;
   bit [0:35] PT_IN;
   bit PT_ACCESS;
