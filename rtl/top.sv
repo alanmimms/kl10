@@ -91,6 +91,7 @@ module top(input clk,
   iCCL CCL();
   iCCW CCW();
   iCHA CHA();
+  iCHC CHC();
   iCLK CLK();
   iCON CON();
   iCRA CRA();

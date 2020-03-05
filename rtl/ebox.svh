@@ -1180,6 +1180,8 @@ endinterface
 interface iMTR;
   bit CCA_WRITEBACK;
   bit INTERRUPT_REQ;
+  bit CONO_MTR;
+  bit VECTOR_INTERRUPT;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1189,6 +1191,9 @@ interface iPI;
   bit EBUS_CP_GRANT;
   bit EXT_TRAN_REC;
   bit READY;
+  bit MTR_HONOR;
+  bit HOLD;
+  bit [0:2] MTR_PIA;
   bit [0:2] PI;
   bit [0:2] APR_PIA;
   tEBUSdriver EBUSdriver;
@@ -1287,8 +1292,10 @@ interface iMBOX;
   bit CHAN_READ;
   bit CH_BUF_WR;
   bit CH_T0;
+  bit CH_T1;
   bit CH_T2;
   bit CCL_HOLD_MEM;
+  bit CNT_MB_XFER;
   bit MB_DATA_CODE_1;
   bit MB_DATA_CODE_2;
   bit FORCE_NO_MATCH;
@@ -1348,6 +1355,7 @@ interface iMBOX;
   bit NXM_DATA_VAL;
   bit NXM_ERR;
   bit PHASE_CHANGE_COMING;
+  bit PROBE;
   bit RQ_HOLD_FF;
   bit SBUS_ADR_HOLD;
   bit S_ADR_P_ERR;
@@ -1413,10 +1421,16 @@ interface iCHA;
 endinterface
 
 
+interface iCHC;
+  bit CBUS_READY;
+endinterface
+
+
 interface iCRC;
   bit CBUS_OUT_HOLD;
   bit BUF_MB_SEL;
   bit CH_BUF_ADR;
+  bit [0:2] SEL;
 endinterface
 
 
