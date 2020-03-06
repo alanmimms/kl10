@@ -10,7 +10,7 @@ module mcl(iAPR APR,
            iEBUS EBUS,
            iEDP EDP,
            iIR IR,
-           iPI PI,
+           iPI PIC,
            iMCL MCL,
            iSCD SCD,
            iVMA VMA

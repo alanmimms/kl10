@@ -13,7 +13,7 @@ module con(iAPR APR,
            iMBZ MBZ,
            iMCL MCL,
            iMTR MTR,
-           iPI PI,
+           iPI PIC,
            iSCD SCD,
            iVMA VMA,
 
@@ -47,7 +47,6 @@ module con(iAPR APR,
   bit EBUS_BIT_36;
   bit AR_FROM_MEM;
   bit LOAD_AR_EN;
-  bit PI_DISMISS;
 
   bit DIAG_CLR_RUN;
   bit DIAG_SET_RUN;
@@ -203,7 +202,7 @@ module con(iAPR APR,
                     ~CON.FM_WRITE_PAR,
                     ~CON.MBOX_WAIT,
                     ~CON.FM_XFER,
-                    ~PI_DISMISS}));
+                    ~CON.PI_DISMISS}));
 
   // CON1 miscellaneous controls
   always_comb begin
@@ -218,7 +217,7 @@ module con(iAPR APR,
   bit legalReg;
   always_ff @(posedge conCLK) begin
     MTR_INT_REQ <= MTR.INTERRUPT_REQ;
-    piReadyReg <= PI.READY;
+    piReadyReg <= PIC.READY;
     CON.LONG_EN <= (~MCL.VMA_SECTION_0 & CON.COND_LONG_EN) |
                    (~MCL.MBOX_CYC_REQ & CON.LONG_EN & ~CON.RESET);
     legalReg <= CRAM.MAGIC[3] & CON.IO_LEGAL & CTL.SPEC_FLAG_CTL;
@@ -308,8 +307,8 @@ module con(iAPR APR,
   always_ff @(posedge conCLK) begin
     CON.NICOND_TRAP_EN <= nicondPriority[0];
     CON.NICOND[7:9] = nicondPriority;
-    CON.EBUS_GRANT <= PI.EBUS_CP_GRANT;
-    PI_XFER <= PI.EXT_TRAN_REC;
+    CON.EBUS_GRANT <= PIC.EBUS_CP_GRANT;
+    PI_XFER <= PIC.EXT_TRAN_REC;
   end
   // XXX This is a guess
   assign CON.NICOND[10] = CON.NICOND_TRAP_EN;
@@ -446,10 +445,14 @@ module con(iAPR APR,
   end
 
   always_ff @(posedge conCLK iff CON.COND_EBUS_STATE | CON.RESET) begin
-    CON.UCODE_STATE1 <= (CRAM.MAGIC[2] | CRAM.MAGIC[1]) & (CON.UCODE_STATE1 | CRAM.MAGIC[1]);
-    CON.UCODE_STATE3 <= (CRAM.MAGIC[4] | CRAM.MAGIC[3]) & (CON.UCODE_STATE3 | CRAM.MAGIC[3]);
-    CON.UCODE_STATE5 <= (CRAM.MAGIC[6] | CRAM.MAGIC[5]) & (CON.UCODE_STATE5 | CRAM.MAGIC[5]);
-    CON.UCODE_STATE7 <= (CRAM.MAGIC[8] | CRAM.MAGIC[7]) & (CON.UCODE_STATE7 | CRAM.MAGIC[7]);
+    CON.UCODE_STATE1 <= (CRAM.MAGIC[2] | CRAM.MAGIC[1]) &
+                        (CON.UCODE_STATE1 | CRAM.MAGIC[1]);
+    CON.UCODE_STATE3 <= (CRAM.MAGIC[4] | CRAM.MAGIC[3]) &
+                        (CON.UCODE_STATE3 | CRAM.MAGIC[3]);
+    CON.UCODE_STATE5 <= (CRAM.MAGIC[6] | CRAM.MAGIC[5]) &
+                        (CON.UCODE_STATE5 | CRAM.MAGIC[5]);
+    CON.UCODE_STATE7 <= (CRAM.MAGIC[8] | CRAM.MAGIC[7]) &
+                        (CON.UCODE_STATE7 | CRAM.MAGIC[7]);
   end
 
   always_ff @(posedge conCLK) begin
@@ -488,7 +491,8 @@ module con(iAPR APR,
     specFlagMagic2 = (CTL.SPEC_FLAG_CTL & CRAM.MAGIC[2]);
     CLR_PI_CYCLE = (CTL.SPEC_SAVE_FLAGS & CON.PI_CYCLE & CLK.EBOX_SYNC) |
                        specFlagMagic2;
-    PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
+    CON.SET_PIH = CLR_PI_CYCLE;
+    CON.PI_DISMISS = specFlagMagic2 & ~CON.PI_CYCLE & ~CLK.EBOX_SYNC;
 
     waitingACStore = MCL.STORE_AR & CON.MBOX_WAIT & VMA.AC_REF;
     cond345_1s = CRAM.COND[3:5] == 3'b111;

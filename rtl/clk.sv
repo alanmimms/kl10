@@ -125,7 +125,7 @@ module clk(input clk,
                                         +--- MBOX 13, MBOX 14, MB 00
                                         | [DL 3ns]
                                         | [GD ~2.25ns]
-                                        +--- MTR, CLK.CLK, PI, PMA, CHX, CSH
+                                        +--- MTR, CLK.CLK, PIC, PMA, CHX, CSH
    */
 
   always @(posedge CLK.MAIN_SOURCE,
@@ -166,7 +166,7 @@ module clk(input clk,
     CLK.MBOX_14 = CLK.CLK;
 
     CLK.MTR = CLK.CLK;
-    CLK.PI = CLK.CLK;
+    CLK.PIC = CLK.CLK;
     CLK.PMA = CLK.CLK;
     CLK.CHX = CLK.CLK;
     CLK.CSH = CLK.CLK;
@@ -192,7 +192,7 @@ module clk(input clk,
   assign CLK.MBOX_14 = CLK.MBOX;
   assign CLK.MTR = CLK.MBOX;
   assign CLK.CLK_OUT = CLK.MBOX;
-  assign CLK.PI = CLK.MBOX;
+  assign CLK.PIC = CLK.MBOX;
   assign CLK.PMA = CLK.MBOX;
   assign CLK.CHX = CLK.MBOX;
   assign CLK.CSH = CLK.MBOX;

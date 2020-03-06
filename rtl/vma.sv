@@ -12,7 +12,7 @@ module vma(iAPR APR,
            iIR IR,
            iMCL MCL,
            iPAG PAG,
-           iPI PI,
+           iPI PIC,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA

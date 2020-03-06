@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
 
-// M8532 PI
+// M8532 PIC
 module pi(iCLK CLK,
           iEBUS EBUS,
           iEDP EDP,
@@ -17,10 +17,10 @@ module pi(iCLK CLK,
   bit [0:3] SEL_PHY;
   bit [0:15] PHY_NO;
   bit [11:17] IOB;
-  bit [0:2] PI;
+  bit [0:7] PI;
   bit [1:7] TIM;
   bit PI_REQ, APR_PHY_NO, DK20_PHY_NO, XFER_FORCE, INHIBIT_REQ, CYC_START;
-  bit TRAN_REC, EBUS_DEMAND, EBUS_RETURN, STATE_HOLD, TIMER_DONE;
+  bit TRAN_REC, EBUS_RETURN, STATE_HOLD, TIMER_DONE;
   bit OK_ON_HALT, DISABLE_RDY_ON_HALT, READY, CONO_DLY;
   bit TIM1_L;           // PIC2 TIM1 L is different from PIC2 TIM1 H!
   bit [0:7] e88Q;
@@ -69,7 +69,7 @@ module pi(iCLK CLK,
            .Q(PIR[1:4]));
   
   USR4 e76(.S0('0),
-           .D({PIR_EN[5:7], EBUS.pi[0]}), // EBUS PI00 E H (should be a PI enable?)
+           .D({PIR_EN[5:7], EBUS.pi[0]}), // EBUS PI00 E H (should be a PIC enable?)
            .S3('0),
            .SEL('0),
            .CLK(LOAD),
@@ -81,7 +81,7 @@ module pi(iCLK CLK,
   bit e35ANY;
   bit [0:3] e2Q, e12Q, e15Q;
   always_comb begin
-    clk = CLK.PI;
+    clk = CLK.PIC;
     PI_ON[0] = ~RESET & ~PI[0] & ~PI[1] & ~PI[2];
     PI[1] = e78Q[0] | e77Q[0];
     PI[2] = e78Q[1] | e77Q[1];
@@ -102,7 +102,7 @@ module pi(iCLK CLK,
     DISABLE_RDY_ON_HALT = PI_DISABLE & ~OK_ON_HALT;
 
     TIM_5comma6 = TIM[5] | TIM[6];
-    EBUS_DEMAND = (~HONOR_INTERNAL | TIM[2]) & (TIM_5comma6 | TIM[2] | TIM[6]) |
+    EBUS.demand = (~HONOR_INTERNAL | TIM[2]) & (TIM_5comma6 | TIM[2] | TIM[6]) |
                   APR.EBUS_DEMAND;
     HONOR_INTERNAL = APR_REQUESTING | DK20_REQUESTING | GEN_INT;
     TIMER_DONE = TIM[6] | e15Q[2];
@@ -132,12 +132,13 @@ module pi(iCLK CLK,
 
   priority_encoder8 e82(
     .d({1'b0, PIH[1:7]}),
-    .q(HOLD));
+    .q(PIC.HOLD));
 
+  bit ignoredE81;
   decoder e81(
-    .sel(HOLD),
+    .sel(PIC.HOLD),
     .en(CON.PI_DISMISS),
-    .q(PI_CLR));
+    .q({ignoredE81, PI_CLR}));
 
   decoder e88(
     .sel(PI),
@@ -194,8 +195,8 @@ module pi(iCLK CLK,
   // PIC3 p.211
   bit [0:7] e53Q, e52Q;
   always_comb begin
-    DK20_PHY_NO = ~e53Q[0] | ~((PIC.MTR_PIA == PI) & MTR.VECTOR_INTERRUPT);
-    APR_PHY_NO = ~e52Q[0] | ~(PI.APR_PIA == PI) & APR.APR_INTERRUPT;
+    DK20_PHY_NO = ~e53Q[0] | ~((PIC.MTR_PIA == PIC) & MTR.VECTOR_INTERRUPT);
+    APR_PHY_NO = ~e52Q[0] | ~(PIC.APR_PIA == PIC) & APR.APR_INTERRUPT;
     PI[1:7] = e53Q[1:7] | e52Q[1:7];
     PIC.MTR_HONOR = DK20_REQUESTING & TIM[6];
   end
@@ -219,9 +220,9 @@ module pi(iCLK CLK,
   USR4 e51(.S0('0),
     .D({IOB[15:17], 1'b0}),
     .S3('0),
-    .SEL({~CON.CONO_MTR, ~CON.CONO_MTR & ~MR_RESET}),
+    .SEL({~MTR.CONO_MTR, ~MTR.CONO_MTR & ~MR_RESET}),
     .CLK(clk),
-    .Q({PIC.MTR_PIA, ignoredE56}));
+    .Q({PIC.MTR_PIA, ignoredE51}));
 
 
   // PIC4 p.212
@@ -237,9 +238,9 @@ module pi(iCLK CLK,
     _ON = EBUS.data[10] & e4q3;
 
     SYS_CLR = EBUS.data[5] & ~CTL.CONSOLE_CONTROL & CON.CONO_PI | RESET;
-    EBUSdriver.data[3:9] = PIH[1:7];
-    EBUSdriver.data[10] = ACTIVE;
-    EBUSdriver.driving = BUS_EN;
+    PIC.EBUSdriver.data[3:9] = PIH[1:7];
+    PIC.EBUSdriver.data[10] = ACTIVE;
+    PIC.EBUSdriver.driving = BUS_EN;
     BUS_EN = EDP.DIAG_READ_FUNC_10x & ~CTL.DIAG[4];
     DIAG = CTL.DIAG[5:6];
     PIC.XOR_ON_BUS = BUS_EN | BUS_EN_5;
@@ -260,28 +261,28 @@ module pi(iCLK CLK,
     .D0({BUS_EN, 3'b000}),
     .D1({ON[1], GEN[1], EBUS.cs[5], TIMER_DONE}),
     .B0(DIAG_10),
-    .B1(EBUSdriver.data[11]));
+    .B1(PIC.EBUSdriver.data[11]));
 
   mux2x4 e27(.EN(BUS_EN),
     .SEL(DIAG),
     .D0({ON[2], GEN[2], EBUS.cs[6], EBUS_PI_GRANT}),
     .D1({ON[3], GEN[3], EBUS.demand, STATE_HOLD}),
-    .B0(EBUSdriver.data[12]),
-    .B1(EBUSdriver.data[13]));
+    .B0(PIC.EBUSdriver.data[12]),
+    .B1(PIC.EBUSdriver.data[13]));
 
   mux2x4 e33(.EN(BUS_EN),
     .SEL(DIAG),
     .D0({ON[4], GEN[4], EBUS.cs[0], EBUS.cs[4]}),
     .D1({ON[5], GEN[5], EBUS.cs[1], HONOR_INTERNAL}),
-    .B0(EBUSdriver.data[14]),
-    .B1(EBUSdriver.data[16]));
+    .B0(PIC.EBUSdriver.data[14]),
+    .B1(PIC.EBUSdriver.data[16]));
 
   mux2x4 e28(.EN(BUS_EN),
     .SEL(DIAG),
     .D0({ON[6], GEN[6], EBUS.cs[2], PIC.READY}),
     .D1({ON[7], GEN[7], EBUS.cs[3], EBUS_REQ}),
-    .B0(EBUSdriver.data[16]),
-    .B1(EBUSdriver.data[17]));
+    .B0(PIC.EBUSdriver.data[16]),
+    .B1(PIC.EBUSdriver.data[17]));
 
   decoder e29(.en(~EBUS_RETURN & TIM[6]),
     .sel(EBUS.data[3:5]),
@@ -302,9 +303,9 @@ module pi(iCLK CLK,
     e6SET = ~EBUS_CP_GRANT & ~TIM_5comma6;
 
     if (~EBUS_RETURN & TIM[6])  // e25
-      EBUSdriver.data[7:10] = SEL_PHY;
+      PIC.EBUSdriver.data[7:10] = SEL_PHY;
     else
-      EBUSdriver.data[7:10] = '0;
+      PIC.EBUSdriver.data[7:10] = '0;
 
     GEN_INT = {PIC5_GEN ^ PI, ~GEN_ON} != 4'b0000;
     PIC.GATE_TTL_TO_ECL = EBUS_PI_GRANT & ~EBUS_RETURN;
@@ -315,7 +316,7 @@ module pi(iCLK CLK,
   end
 
   UCR4  e1(.CIN(~TIM[2]),
-    .SEL({EBUS.DEMAND & ~TRAN_REC, 1'b0}),
+    .SEL({EBUS.demand & ~TRAN_REC, 1'b0}),
     .D(4'b0000),
     .CLK(~MTR._1_MHZ),
     .COUT(),
