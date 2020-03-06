@@ -15,7 +15,7 @@ module mtr(iCHC CHC,
   bit CLR_EBOX_CNT, CLR_CACHE_CNT, CLR_TIME, CLR_PERF_CNT, CLR_INTERVAL;
   bit INTERVAL_CRY, EBOX_HALF_COUNT, TIME_ON, CONO_MTR, CONO_TIM;
   bit TEN_USEC, COUNT_TEN_USEC;
-  bit EBOX_CNT_EN, CACHE_CNT_EN, PI_ACCT_EN, EXEC_ACCT_EN, ACCT_ON, _1_MHZ;
+  bit EBOX_CNT_EN, CACHE_CNT_EN, PI_ACCT_EN, EXEC_ACCT_EN, ACCT_ON;
   bit [0:2] PI_LEVEL;
   bit [6:17] PERIOD;
   bit NO_MATCH_06to09, NO_MATCH_10to13, NO_MATCH_14to17, INTERVAL_MATCH;
@@ -84,9 +84,9 @@ module mtr(iCHC CHC,
                    (~PI_IN_PROG | EXEC_ACCT_EN | SCD.USER) &
                    ~CON.UCODE_STATE3 & ~CON.PI_CYCLE;
     e5q2 = e5q2 & ~TIME_CLK |
-           (CLR_TIME | TIME_ON) & _1_MHZ;
+           (CLR_TIME | TIME_ON) & MTR._1_MHZ;
     e5q15 = e5q15 & ~INTERVAL_CLK |
-            (INTERVAL_ON | RESET_INTERVAL) & _1_MHZ;
+            (INTERVAL_ON | RESET_INTERVAL) & MTR._1_MHZ;
     COUNT_TEN_USEC = e88Q[0] | e88Q[3];
   end
 
@@ -99,7 +99,7 @@ module mtr(iCHC CHC,
                     EBOX_HALF_COUNT & EBOX_CNT_EN;
 
     TIME_CLK <= ~READ_TIME & e5q2;
-    INTERVAL_CLK <= _1_MHZ & RESET |
+    INTERVAL_CLK <= MTR._1_MHZ & RESET |
                     ~READ_INTERVAL & e5q15;
 
     if ((CONO_MTR | RESET_PLSD) &
@@ -127,7 +127,7 @@ module mtr(iCHC CHC,
 
   bit e60COUT;
   UCR4 e60(.CIN('1),
-           .SEL({RESET | _1_MHZ, 1'b0}),
+           .SEL({RESET | MTR._1_MHZ, 1'b0}),
            .D(4'b0000),         // Note assumes MBOX_CLK of 33MHz
            .Q(),
            .COUT(e60COUT));
@@ -135,7 +135,7 @@ module mtr(iCHC CHC,
   UCR4 e59(.CIN(e60COUT),
            .D({1'b0, ~RESET, ~RESET_PLSD, 1'b0}),
            .COUT(),
-           .Q({_1_MHZ, e59Unused}));
+           .Q({MTR._1_MHZ, e59Unused}));
 
 
   // MTR3 p.326

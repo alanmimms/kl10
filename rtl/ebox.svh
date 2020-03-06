@@ -1182,6 +1182,7 @@ interface iMTR;
   bit INTERRUPT_REQ;
   bit CONO_MTR;
   bit VECTOR_INTERRUPT;
+  bit _1_MHZ;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1193,6 +1194,8 @@ interface iPI;
   bit READY;
   bit MTR_HONOR;
   bit HOLD;
+  bit XOR_ON_BUS;
+  bit SEND_2H;
   bit [0:2] MTR_PIA;
   bit [0:2] PI;
   bit [0:2] APR_PIA;
