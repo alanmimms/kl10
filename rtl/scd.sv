@@ -11,7 +11,7 @@ module scd(iAPR APR,
            iIR IR,
            iMCL MCL,
            iPAG PAG,
-           iPI PI,
+           iPI PIC,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA
@@ -281,17 +281,17 @@ module scd(iAPR APR,
   
   mux e47(.en(CON.COND_EN_30_37),
           .sel(CRAM.COND[3:5]),
-          .d({{3{CRAM.MAGIC[5]}}, EDP.AR[32], PI.PI[0], 3'b000}),
+          .d({{3{CRAM.MAGIC[5]}}, EDP.AR[32], PIC.PIC[0], 3'b000}),
           .q(SCD.TRAP_MIX[32]));
   
   mux e44(.en(CON.COND_EN_30_37),
           .sel(CRAM.COND[3:5]),
-          .d({{2{CRAM.MAGIC[6]}}, SCD.USER, EDP.AR[33], PI.PI[1], 3'b000}),
+          .d({{2{CRAM.MAGIC[6]}}, SCD.USER, EDP.AR[33], PIC.PIC[1], 3'b000}),
           .q(SCD.TRAP_MIX[33]));
   
   mux e42(.en(CON.COND_EN_30_37),
           .sel(CRAM.COND[3:5]),
-          .d({CRAM.MAGIC[7], SCD.TRAP_CYC_2, SCD.PUBLIC, EDP.AR[34], PI.PI[2], 3'b000}),
+          .d({CRAM.MAGIC[7], SCD.TRAP_CYC_2, SCD.PUBLIC, EDP.AR[34], PIC.PIC[2], 3'b000}),
           .q(SCD.TRAP_MIX[34]));
 
   bit mix35out;

@@ -28,9 +28,10 @@ module mtr(iCHC CHC,
   bit CACHE_PA_DONT_CARE, EBOX_WAITING, READ_MTR;
   bit FILL_CACHE_RD, E_WRITEBACK, CCA_WRITEBACK, READ_INTERVAL, HOLD_INTERRUPT_SEL;
   bit READ_TIME, READ_PERF_CNT, VECTOR_REQ, PI_IN_PROG;
-  bit CHAN_PA_EN, CHAN_PA_DONT_CARE, UCODE_PA_DONT_CARE;
+  bit CHAN_PA_DONT_CARE, UCODE_PA_DONT_CARE;
   bit PROBE_LOW_PA_EN, PROBE_PA_DONT_CARE;
   bit [0:1] CHAN_BUSY;
+  bit [0:7] CHAN_PA_EN;
 
   bit [18:35] mtrEBUS;
   bit [20:35] mtrEBUS_IN;
@@ -238,8 +239,8 @@ module mtr(iCHC CHC,
           .q(CURRENT_PI_PA_EN));
 
   mux4x2 e36(.SEL(CON.PI_CYCLE),
-             .D0({NO_PI_PA_EN, PI.HOLD}),
-             .D1({PI_PA_EN[0], PI.PI}));
+             .D0({NO_PI_PA_EN, PIC.HOLD}),
+             .D1({PI_PA_EN[0], PIC.PIC}));
 
   bit e54q3;
   always_ff @(posedge MBOX_CLK) begin
@@ -318,7 +319,7 @@ module mtr(iCHC CHC,
 
     if (HOLD_INTERRUPT_SEL)
       e18D = {_TIME[2], PERF_COUNT[2], EBOX_COUNT[2], CACHE_COUNT[2],
-              PI.MTR_HONOR, 3'b000};
+              PIC.MTR_HONOR, 3'b000};
   end
 
   bit [1:2] unusedE37a;
@@ -413,19 +414,19 @@ module mtr(iCHC CHC,
   mux e83(.en(READ_MTR),
           .sel(DS),
           .d({_TIME[15], PERF_COUNT[15], EBOX_COUNT[15], CACHE_COUNT[15],
-              INTERVAL[15], PERIOD[15], PI.MTR_PIA[0], 1'b0}),
+              INTERVAL[15], PERIOD[15], PIC.MTR_PIA[0], 1'b0}),
           .q(mtrEBUS_IN[33]));
 
   mux e79(.en(READ_MTR),
           .sel(DS),
           .d({_TIME[16], PERF_COUNT[16], EBOX_COUNT[16], CACHE_COUNT[16],
-              INTERVAL[16], PERIOD[16], PI.MTR_PIA[1], 1'b0}),
+              INTERVAL[16], PERIOD[16], PIC.MTR_PIA[1], 1'b0}),
           .q(mtrEBUS_IN[34]));
 
   mux e78(.en(READ_MTR),
           .sel(DS),
           .d({_TIME[17], PERF_COUNT[17], EBOX_COUNT[17], CACHE_COUNT[17],
-              INTERVAL[17], PERIOD[17], PI.MTR_PIA[2], 1'b0}),
+              INTERVAL[17], PERIOD[17], PIC.MTR_PIA[2], 1'b0}),
           .q(mtrEBUS_IN[35]));
 endmodule
 

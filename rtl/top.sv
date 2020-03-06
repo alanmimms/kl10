@@ -107,7 +107,7 @@ module top(input clk,
   iMCL MCL();
   iMTR MTR();
   iPAG PAG();
-  iPI PI();
+  iPI PIC();
   iPMA PMA();
   iSCD SCD();
   iSHM SHM();
@@ -127,7 +127,7 @@ module top(input clk,
     else if (EDP.EBUSdriver.driving)  EBUS.data = EDP.EBUSdriver.data;
     else if (IR.EBUSdriver.driving)   EBUS.data = IR.EBUSdriver.data;
     else if (MTR.EBUSdriver.driving)  EBUS.data = MTR.EBUSdriver.data;
-    else if (PI.EBUSdriver.driving)   EBUS.data = PI.EBUSdriver.data;
+    else if (PIC.EBUSdriver.driving)   EBUS.data = PIC.EBUSdriver.data;
     else if (SCD.EBUSdriver.driving)  EBUS.data = SCD.EBUSdriver.data;
     else if (SHM.EBUSdriver.driving)  EBUS.data = SHM.EBUSdriver.data;
     else if (VMA.EBUSdriver.driving)  EBUS.data = VMA.EBUSdriver.data;
