@@ -11,15 +11,15 @@ module pi(iCLK CLK,
   bit clk, RESET, MR_RESET;
   bit [1:7] ON, GEN, PIR_EN, PIH, PIREN, PI_CLR, PI_REQ_SET, IO_REQ;
   bit [0:7] PIR, PI_ON;
-  bit SYS_CLR, OFF, ACTIVE, LOAD, APR_REQUESTING, DK20_REQUESTING, HONOR_INTERNAL;
+  bit SYS_CLR, OFF, ACTIVE, APR_REQUESTING, DK20_REQUESTING, HONOR_INTERNAL;
   bit GEN_INT, TIM_5comma6, TIM1, TIM2, TIM3, TIM4, TIM5, TIM6, TIM7, COMP;
-  bit _ON, PHY_FORCE, ON_CLR;
+  bit _ON, PHY_FORCE, ON_SET, ON_CLR, GEN_SET, GEN_CLR, REQ;
   bit [0:3] SEL_PHY;
   bit [0:15] PHY_NO;
   bit [11:17] IOB;
   bit [0:2] PI;
   bit [1:7] TIM;
-  bit PI_REQ, APR_PHY_NO, DK20_PHY_NO, APR_REQUESTING, DK20_REQUESTING, XFER_FORCE;
+  bit PI_REQ, APR_PHY_NO, DK20_PHY_NO, XFER_FORCE, INHIBIT_REQ, CYC_START;
   bit TRAN_REC, EBUS_DEMAND, EBUS_RETURN, STATE_HOLD, TIMER_DONE;
   bit OK_ON_HALT, DISABLE_RDY_ON_HALT, READY, CONO_DLY;
   bit TIM1_L;           // PIC2 TIM1 L is different from PIC2 TIM1 H!
@@ -79,10 +79,10 @@ module pi(iCLK CLK,
   // PIC2 p.210
   bit [0:2] e77Q, e78Q, e35Q, e40Q;
   bit e35ANY;
-  bit [0:3] e2Q, e12Q, e15Q
+  bit [0:3] e2Q, e12Q, e15Q;
   always_comb begin
     clk = CLK.PI;
-    PI_ON[0] = ~MR_RESET & ~PI0] & ~PI[1] & ~PI[2];
+    PI_ON[0] = ~RESET & ~PI[0] & ~PI[1] & ~PI[2];
     PI[1] = e78Q[0] | e77Q[0];
     PI[2] = e78Q[1] | e77Q[1];
     REQ = e78Q[2] | e77Q[2];
@@ -160,7 +160,7 @@ module pi(iCLK CLK,
 
   always_ff @(posedge TIM[3]) begin
     // e31, e44, e34
-    PH_NO <= EBUS.data[0:15];
+    PHY_NO <= EBUS.data[0:15];
     DK20_REQUESTING <= DK20_PHY_NO;
     APR_REQUESTING <= APR_PHY_NO;
   end
@@ -311,7 +311,7 @@ module pi(iCLK CLK,
   end
 
   always_ff @(posedge e1Q[0], e6SET) begin
-    e6Q <= e6SET;
+    e6q14 <= e6SET;
   end
 
   UCR4  e1(.CIN(~TIM[2]),
