@@ -6,6 +6,10 @@ module ebox(input clk,
             input clk31,
             input EXTERNAL_CLK,
             input CROBAR,
+            input PWR_WARN,
+
+            input [0:35] cacheDataRead,
+            output bit [0:35] cacheDataWrite,
 
             iAPR APR,
             iCCL CCL,
@@ -31,74 +35,11 @@ module ebox(input clk,
             iSCD SCD,
             iSHM SHM,
             iVMA VMA,
-
-            input CSH_PAR_BIT_A,
-            input CSH_PAR_BIT_B,
-            input cshEBOXT0,
-            input cshEBOXRetry,
-            input mboxRespIn,
-
-            input pfHold,
-            input pfEBOXHandle,
-            input pfPublic,
-
-            input [0:10] pfDisp,
-            input cshAdrParErr,
-            input mbParErr,
-            input sbusErr,
-            input nxmErr,
-            input mboxCDirParErr,
-
-            input PWR_WARN,
-
-            input [27:35] MBOX_GATE_VMA,
-            input [0:35] cacheDataRead,
-
-            output [0:35] cacheDataWrite,
-
-            output bit pageTestPriv,
-            output bit pageIllEntry,
-            output bit eboxUser,
-
-            output bit eboxMayBePaged,
-            output bit eboxCache,
-            output bit eboxLookEn,
-            output bit pageAdrCond,
-
-            output bit eboxMap,
-
-            output bit eboxRead,
-            output bit eboxPSE,
-            output bit eboxWrite,
-
-            output bit upt,
-            output bit ept,
-            output bit userRef,
-
-            output bit eboxCCA,
-            output bit eboxUBR,
-            output bit eboxERA,
-            output bit eboxEnRefillRAMWr,
-            output bit eboxSBUSDiag,
-            output bit eboxLoadReg,
-            output bit eboxReadReg,
-
-            output bit ptDirWrite,
-            output bit ptWr,
-            output bit mboxCtl03,
-            output bit mboxCtl06,
-            output bit wrPtSel0,
-            output bit wrPtSel1,
-
-            output bit ANY_EBOX_ERR_FLG,
-
-            output bit [13:35] EBOX_VMA,
-            output bit [10:12] CACHE_CLEARER,
-            output bit EBOX_REQ,
-            output bit mboxClk,
-
             iEBUS EBUS);
 
+  bit mboxClk;
+  bit req, read, write;
+  
   apr apr0(.*);
   clk clk0(.*);
   con con0(.*);
