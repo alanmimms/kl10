@@ -1296,6 +1296,7 @@ interface iMBOX;
   bit CNT_MB_XFER;
   bit MB_DATA_CODE_1;
   bit MB_DATA_CODE_2;
+  bit MEM_BUSY;
   bit FORCE_NO_MATCH;
   bit PAGED_REF;
   bit CHAN_PAR_ERR;
