@@ -8,10 +8,8 @@ module ir(iIR IR,
           iCON CON,
           iCTL CTL,
           iEDP EDP,
-
-          input [0:35] cacheDataRead,
-
-          iEBUS EBUS
+          iEBUS EBUS,
+          iMBOX MBOX
           );
 
   localparam DRAM_WIDTH=15;
@@ -120,7 +118,7 @@ module ir(iIR IR,
 
   // Latch-mux
   always_ff @(posedge CON.LOAD_IR) begin
-    IR.IR <= CLK.MB_XFER ? EDP.AD[0:12] : cacheDataRead[0:12];
+    IR.IR <= CLK.MB_XFER ? EDP.AD[0:12] : MBOX.CACHE_DATA[0:12];
     IR.AC <= enableAC ? IR.IR[9:12] : 4'b0;
   end
 

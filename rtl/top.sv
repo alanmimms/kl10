@@ -6,14 +6,7 @@ module top(input clk,
 );
 
   bit [27:35] MBOX_GATE_VMA;
-  bit [0:35] cacheDataRead;
-  bit [0:35] cacheDataWrite;
   bit [10:12] CACHE_CLEARER;
-
-  bit ANY_EBOX_ERR_FLG;
-  bit req;
-  bit read;
-  bit write;
 
   bit mboxClk;
   bit EXTERNAL_CLK;
@@ -52,6 +45,7 @@ module top(input clk,
   iIR IR();
   iMBC MBC();
   iMBX MBX();
+  iMBZ MBZ();
   iMCL MCL();
   iMTR MTR();
   iPAG PAG();
@@ -62,10 +56,11 @@ module top(input clk,
   iVMA VMA();
 
   iMBOX MBOX();
-  iMBZ MBZ();
+  iSBUS SBUS();
 
   ebox ebox0(.*);
   mbox mbox0(.*);
+  memory memory0(.*);
 
   always_comb begin
     if (APR.EBUSdriver.driving)       EBUS.data = APR.EBUSdriver.data;

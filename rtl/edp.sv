@@ -14,10 +14,9 @@ module edp(iAPR APR,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA,
-
-           input [0:35] cacheDataRead,
-           output bit [0:35] cacheDataWrite,
-           iEBUS EBUS);
+           iEBUS EBUS,
+           iMBOX MBOX
+);
 
   // Universal shift register function selector values
   enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
@@ -40,9 +39,6 @@ module edp(iAPR APR,
   bit ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
 `include "cram-aliases.svh"
-  
-  // Miscellaneous reset (XXX)
-  initial cacheDataWrite <= '0;
   
   // XXX wrong?
   assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
@@ -89,7 +85,7 @@ module edp(iAPR APR,
     unique case (CTL.ARL_SEL)
     default: ARL = '0;
     3'b000: ARL = {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER};
-    3'b001: ARL = cacheDataRead[0:17];
+    3'b001: ARL = MBOX.CACHE_DATA[0:17];
     3'b010: ARL = EDP.AD[0:17];
     3'b011: ARL = EBUS.data[0:17];
     3'b100: ARL = SHM.SH[0:17];
@@ -119,7 +115,7 @@ module edp(iAPR APR,
     end else if (CTL.ARR_LOAD) begin
       unique case (CRAM.AR)
       3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
-      3'b001: EDP.AR[18:35] <= cacheDataRead[18:35];
+      3'b001: EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
       3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
       3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
       3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
@@ -136,7 +132,7 @@ module edp(iAPR APR,
     unique case (CTL.ARXL_SEL)
     default: ARXL = '0;
     3'b000: ARXL = '0;
-    3'b001: ARXL = cacheDataRead[0:17];
+    3'b001: ARXL = MBOX.CACHE_DATA[0:17];
     3'b010: ARXL = EDP.AD[0:17];
     3'b011: ARXL = EDP.MQ[0:17];
     3'b100: ARXL = SHM.SH[0:17];
@@ -148,7 +144,7 @@ module edp(iAPR APR,
     unique case (CTL.ARXR_SEL)
     default: ARXR = '0;
     3'b000: ARXR = '0;
-    3'b001: ARXR = cacheDataRead[18:35];
+    3'b001: ARXR = MBOX.CACHE_DATA[18:35];
     3'b010: ARXR = EDP.AD[18:35];
     3'b011: ARXR = EDP.MQ[18:35];
     3'b100: ARXR = SHM.SH[18:35];

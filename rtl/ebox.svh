@@ -719,110 +719,53 @@ endinterface
 
 
 interface iCLK;
-  bit CROBAR;
-  bit RESET;
-  bit MR_RESET;
-  bit MAIN_SOURCE;
-  bit EBOX_SOURCE;
-  bit EBUS_CLK_SOURCE;
-  bit MHZ16_FREE;
-
-  bit CRM;
-  bit CRA;
-  bit EDP;
   bit APR;
-  bit CON;
-  bit VMA;
-  bit MCL;
-  bit IR;
-  bit SCD;
-
-  bit MBOX;
-  bit CCL;
-  bit CRC;
-  bit CHC;
-  bit MB;
-  bit CCW;
-  bit MBC;
-  bit MBX;
-  bit MBZ;
-  bit MBOX_13;
-  bit MBOX_14;
-  bit MTR;
-  bit CLK_OUT;
-  bit PIC;
-  bit PMA;
-  bit CHX;
-  bit CSH;
-
-  bit CLK;
-  bit DELAYED;
-
-  bit [0:1] SOURCE_SEL;
-  bit [0:1] RATE_SEL;
-
-  bit RATE_SELECTED;
-
-  bit EBOX_CLK;
-  bit MBOX_CLK;
-  bit SBUS_CLK;
-  bit EBUS_CLK;
-
-  bit EBOX_SYNC;
-  bit MBOX_WAIT;
-
-  bit EBOX_REQ;
-  bit MB_XFER;
-  bit MBOX_RESP;
-  bit EBOX_CYC_ABORT;
-
+  bit BURST;
   bit BURST_CNTeq0;
-
-  bit ODD;
-  bit GATED_EN;
-  bit GATED;
-  bit ERR_STOP_EN;
-  bit ERROR_STOP;
-
-  bit _1777_EN;
-  bit FORCE_1777;
-  bit INSTR_1777;
-  bit PAGE_FAIL;
-  bit PF_DLYD;
-  bit PF_DLYD_A;
-  bit PF_DLYD_B;
-  
-  bit SYNC;
-  bit SYNC_EN;
-  bit EBOX_SRC_EN;
-  bit EBOX_CLK_EN;
-
-  bit EBOX_CLK_ERROR;
-
-  bit MBOX_CYCLE_DIS;
-  bit EBOX_CRM_DIS;
-  bit EBOX_EDP_DIS;
-  bit EBOX_CTL_DIS;
-
-  bit [7:10] PF_DISP;
-
-  bit DRAM_PAR_ERR;
-  bit CRAM_PAR_ERR;
-  bit FM_PAR_ERR;
-
+  bit CCL;
+  bit CCW;
+  bit CHC;
+  bit CHX;
+  bit CLK;
+  bit CLK_ON;
+  bit CLK_OUT;
+  bit CLR_PRIVATE_INSTR;
+  bit CON;
+  bit CRA;
   bit CRAM_PAR_CHECK;
+  bit CRAM_PAR_ERR;
+  bit CRC;
+  bit CRM;
+  bit CROBAR;
+  bit CSH;
+  bit DELAYED;
   bit DRAM_PAR_CHECK;
-  bit FM_PAR_CHECK;
-
-  bit FM_ODD_PARITY;
-
+  bit DRAM_PAR_ERR;
+  bit EBOX_CLK;
+  bit EBOX_CLK_EN;
+  bit EBOX_CLK_ERROR;
+  bit EBOX_CRM_DIS;
+  bit EBOX_CTL_DIS;
+  bit EBOX_CYC_ABORT;
+  bit EBOX_EDP_DIS;
+  bit EBOX_REQ;
+  bit EBOX_SOURCE;
+  bit EBOX_SRC_EN;
+  bit EBOX_SS;
+  bit EBOX_SYNC;
+  bit EBUS_CLK;
+  bit EBUS_CLK_SOURCE;
+  bit EBUS_RESET;
+  bit EDP;
   bit ERROR;
   bit ERROR_HOLD_A;
   bit ERROR_HOLD_B;
-
-  bit PAGE_FAIL_EN;
-
-  bit FS_ERROR;
+  bit ERROR_STOP;
+  bit ERR_STOP_EN;
+  bit FM_ODD_PARITY;
+  bit FM_PAR_CHECK;
+  bit FM_PAR_ERR;
+  bit FORCE_1777;
   bit FS_CHECK;
   bit FS_EN_A;
   bit FS_EN_B;
@@ -831,40 +774,71 @@ interface iCLK;
   bit FS_EN_E;
   bit FS_EN_F;
   bit FS_EN_G;
-
-  bit SYNC_HOLD;
-  bit FUNC_GATE;
-  bit FUNC_START;
-  bit FUNC_BURST;
-  bit FUNC_SET_RESET;
-  bit FUNC_EBOX_SS;
-  bit FUNC_SINGLE_STEP;
-
+  bit FS_ERROR;
   bit FUNC_042;
   bit FUNC_043;
   bit FUNC_044;
   bit FUNC_045;
   bit FUNC_046;
   bit FUNC_047;
-  
-  bit GO;
-  bit BURST;
-  bit EBOX_SS;
+  bit FUNC_BURST;
+  bit FUNC_CLR_RESET;
   bit FUNC_COND_SS;
-  bit TENELEVEN_CLK;
-
+  bit FUNC_EBOX_SS;
+  bit FUNC_GATE;
+  bit FUNC_SET_RESET;
+  bit FUNC_SINGLE_STEP;
+  bit FUNC_START;
+  bit GATED;
+  bit GATED_EN;
+  bit GO;
+  bit INSTR_1777;
+  bit IR;
+  bit MAIN_SOURCE;
+  bit MB;
+  bit MBC;
+  bit MBOX;
+  bit MBOX_13;
+  bit MBOX_14;
+  bit MBOX_CLK;
+  bit MBOX_CYCLE_DIS;
+  bit MBOX_RESP;
+  bit MBOX_WAIT;
+  bit MBX;
+  bit MBZ;
+  bit MB_XFER;
+  bit MCL;
+  bit MHZ16_FREE;
+  bit MR_RESET;
+  bit MTR;
+  bit ODD;
+  bit PAGE_ERROR;
+  bit PAGE_FAIL;
+  bit PAGE_FAIL_EN;
+  bit PF_DLYD;
+  bit PF_DLYD_A;
+  bit PF_DLYD_B;
+  bit PIC;
+  bit PMA;
   bit PT_DIR_WR;
   bit PT_WR;
-
-  bit CLK_ON;
-  bit SOURCE_DELAYED;
-  bit FUNC_CLR_RESET;
-  bit EBUS_RESET;
-  bit PAGE_ERROR;
+  bit RATE_SELECTED;
+  bit RESET;
   bit RESP_MBOX;
   bit RESP_SIM;
   bit SBR_CALL;
-  bit CLR_PRIVATE_INSTR;
+  bit SBUS_CLK;
+  bit SCD;
+  bit SOURCE_DELAYED;
+  bit SYNC;
+  bit SYNC_EN;
+  bit SYNC_HOLD;
+  bit TENELEVEN_CLK;
+  bit VMA;
+  bit [0:1] RATE_SEL;
+  bit [0:1] SOURCE_SEL;
+  bit [7:10] PF_DISP;
+  bit _1777_EN;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1199,6 +1173,28 @@ interface iPI;
   bit [0:2] PIC;
   bit [0:2] APR_PIA;
   tEBUSdriver EBUSdriver;
+endinterface
+
+
+interface iSBUS;
+  bit ACKN_A;
+  bit ACKN_B;
+  bit ADR_HOLD;
+  bit ADR_PAR_ERR;
+  bit CLK_EXT;
+  bit CLK_INT;
+  bit DATA_PAR;
+  bit DATA_VALID;
+  bit DIAG;
+  bit ERROR;
+  bit MEM_RESET;
+  bit START_A;
+  bit START_B;
+  bit [0:35] D;
+  bit [0:3] RD_RQ;
+  bit [0:3] RQ;
+  bit [0:3] WR_RQ;
+  bit [14:35] ADR;
 endinterface
 
 

@@ -17,7 +17,8 @@ module pi(iCLK CLK,
   bit [0:3] SEL_PHY;
   bit [0:15] PHY_NO;
   bit [11:17] IOB;
-  bit [0:7] PI;
+  bit [0:2] PIC2_PI;
+  bit [0:7] PIC3_PI;
   bit [1:7] TIM;
   bit PI_REQ, APR_PHY_NO, DK20_PHY_NO, XFER_FORCE, INHIBIT_REQ, CYC_START;
   bit TRAN_REC, EBUS_RETURN, STATE_HOLD, TIMER_DONE;
@@ -82,9 +83,9 @@ module pi(iCLK CLK,
   bit [0:3] e2Q, e12Q, e15Q;
   always_comb begin
     clk = CLK.PIC;
-    PI_ON[0] = ~RESET & ~PI[0] & ~PI[1] & ~PI[2];
-    PI[1] = e78Q[0] | e77Q[0];
-    PI[2] = e78Q[1] | e77Q[1];
+    PI_ON[0] = ~RESET & ~PIC2_PI[0] & ~PIC2_PI[1] & ~PIC2_PI[2];
+    PIC2_PI[1] = e78Q[0] | e77Q[0];
+    PIC2_PI[2] = e78Q[1] | e77Q[1];
     REQ = e78Q[2] | e77Q[2];
 
     PHY_FORCE = PHY_NO[0] | e35ANY;
@@ -111,11 +112,11 @@ module pi(iCLK CLK,
   priority_encoder8 e78(
     .d({APR.EBOX_DISABLE_CS, PIR[0], PIH[1], PIR[1],
         PIH[2], PIR[2], PIH[3], PIR[3]}),
-    .any(PI[0]),
+    .any(PIC2_PI[0]),
     .q(e78Q));
   
   priority_encoder8 e77(
-    .d({PIH[4] | PI[0], PIR[4], PIH[5], PIR[5],
+    .d({PIH[4] | PIC2_PI[0], PIR[4], PIH[5], PIR[5],
         PIH[6], PIR[6], PIH[7], PIR[7]}),
     .any(),
     .q(e77Q));
@@ -141,7 +142,7 @@ module pi(iCLK CLK,
     .q({ignoredE81, PI_CLR}));
 
   decoder e88(
-    .sel(PI),
+    .sel(PIC2_PI),
     .en(CON.SET_PIH),
     .q(e88Q));
 
@@ -197,7 +198,7 @@ module pi(iCLK CLK,
   always_comb begin
     DK20_PHY_NO = ~e53Q[0] | ~((PIC.MTR_PIA == PIC) & MTR.VECTOR_INTERRUPT);
     APR_PHY_NO = ~e52Q[0] | ~(PIC.APR_PIA == PIC) & APR.APR_INTERRUPT;
-    PI[1:7] = e53Q[1:7] | e52Q[1:7];
+    PIC3_PI[1:7] = e53Q[1:7] | e52Q[1:7];
     PIC.MTR_HONOR = DK20_REQUESTING & TIM[6];
   end
 
@@ -249,7 +250,7 @@ module pi(iCLK CLK,
     OK_ON_HALT = |e29Q[3:6];
 
     IOB = EBUS.data[11:17];
-    IO_REQ = EBUS.pi[1:7] | PI[1:7];
+    IO_REQ = EBUS.pi[1:7] | PIC3_PI[1:7];
   end
 
   always_ff @(posedge clk) begin
@@ -307,7 +308,7 @@ module pi(iCLK CLK,
     else
       PIC.EBUSdriver.data[7:10] = '0;
 
-    GEN_INT = {PIC5_GEN ^ PI, ~GEN_ON} != 4'b0000;
+    GEN_INT = {PIC5_GEN ^ PIC2_PI, ~GEN_ON} != 4'b0000;
     PIC.GATE_TTL_TO_ECL = EBUS_PI_GRANT & ~EBUS_RETURN;
   end
 

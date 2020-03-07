@@ -8,9 +8,6 @@ module ebox(input clk,
             input CROBAR,
             input PWR_WARN,
 
-            input [0:35] cacheDataRead,
-            output bit [0:35] cacheDataWrite,
-
             iAPR APR,
             iCCL CCL,
             iCHC CHC,
@@ -38,8 +35,7 @@ module ebox(input clk,
             iEBUS EBUS);
 
   bit mboxClk;
-  bit req, read, write;
-  
+
   apr apr0(.*);
   clk clk0(.*);
   con con0(.*);

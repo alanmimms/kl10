@@ -43,6 +43,8 @@ sv xil_defaultlib  -i "../../../../rtl/include" --include "../../../../rtl" --in
 "../../../../rtl/scd.sv" \
 "../../../../rtl/mb0.sv" \
 "../../../../rtl/mbx.sv" \
+"../../../../rtl/mt0.sv" \
+"../../../../rtl/memory.sv" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"
