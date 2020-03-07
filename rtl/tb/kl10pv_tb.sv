@@ -40,8 +40,8 @@ module kl10pv_tb;
   end
 
   initial begin                 // For now, MBOX memory is zero too
-    for (int a = 0; a < $size(top0.mbox0.fake_mem.mem); ++a)
-      top0.mbox0.fake_mem.mem[a] = '0;
+    for (int a = 0; a < $size(top0.memory0.mem0.mem); ++a)
+      top0.memory0.mem0.mem[a] = '0;
   end
 
   initial $readmemh("../../../../images/DRAM.mem", top0.ebox0.ir0.dram.mem);
