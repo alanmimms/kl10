@@ -10,7 +10,7 @@ module USR4(input RESET,
 
   always_ff @(posedge CLK, posedge RESET) begin
 
-    if (RESET)
+    if (RESET == 1'b1)
       Q <= '0;
     else
       case (SEL)
