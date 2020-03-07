@@ -79,7 +79,7 @@ module csh(iAPR APR,
 
   always_ff @(posedge clk) begin
     e52q3 <= CACHE_IDLE_IN_D;
-    e52q13 <= ~MBOX.MEM_BUSY;
+    e52q13 <= ~MBOX.MEM_BUSY ;
     e52q14 <= CACHE_IDLE_IN_A | CHAN_WR_T5 | CACHE_WR_FROM_MEM |
               RESET | CACHE_IDLE_IN_B | EBOX_RETRY_NEXT;
     e52q15 <= CSH.READY_TO_GO & ~CSH.EBOX_REQ_GRANT & ~NON_EBOX_REQ_GRANT |
