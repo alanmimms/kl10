@@ -13,14 +13,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="9063005fs"></ZoomEndTime>
-      <Cursor1Time time="5872375fs"></Cursor1Time>
+      <ZoomEndTime time="10000001fs"></ZoomEndTime>
+      <Cursor1Time time="10000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="192"></NameColumnWidth>
       <ValueColumnWidth column_width="118"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="13" />
+   <WVObjectSize size="17" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -70,7 +70,6 @@
    <wvobject type="group" fp_name="group966">
       <obj_property name="label">MBOX</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBOX/ACKN_PULSE">
          <obj_property name="ElementShortName">ACKN_PULSE</obj_property>
          <obj_property name="ObjectShortName">ACKN_PULSE</obj_property>
@@ -411,13 +410,13 @@
          <obj_property name="ElementShortName">SBUS_ERR</obj_property>
          <obj_property name="ObjectShortName">SBUS_ERR</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBOX/SEL_1">
-         <obj_property name="ElementShortName">SEL_1</obj_property>
-         <obj_property name="ObjectShortName">SEL_1</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBOX/CH_REVERSE">
          <obj_property name="ElementShortName">CH_REVERSE</obj_property>
          <obj_property name="ObjectShortName">CH_REVERSE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBOX/SEL_1">
+         <obj_property name="ElementShortName">SEL_1</obj_property>
+         <obj_property name="ObjectShortName">SEL_1</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBOX/SEL_2">
          <obj_property name="ElementShortName">SEL_2</obj_property>
@@ -547,7 +546,6 @@
    <wvobject type="group" fp_name="group853">
       <obj_property name="label">SBUS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/SBUS/ACKN_A">
          <obj_property name="ElementShortName">ACKN_A</obj_property>
          <obj_property name="ObjectShortName">ACKN_A</obj_property>
@@ -624,6 +622,883 @@
          <obj_property name="ElementShortName">ADR[14:35]</obj_property>
          <obj_property name="ObjectShortName">ADR[14:35]</obj_property>
          <obj_property name="Radix">OCTALRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1189">
+      <obj_property name="label">CLK</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/APR">
+         <obj_property name="ElementShortName">APR</obj_property>
+         <obj_property name="ObjectShortName">APR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/BURST">
+         <obj_property name="ElementShortName">BURST</obj_property>
+         <obj_property name="ObjectShortName">BURST</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/BURST_CNTeq0">
+         <obj_property name="ElementShortName">BURST_CNTeq0</obj_property>
+         <obj_property name="ObjectShortName">BURST_CNTeq0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CCL">
+         <obj_property name="ElementShortName">CCL</obj_property>
+         <obj_property name="ObjectShortName">CCL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CCW">
+         <obj_property name="ElementShortName">CCW</obj_property>
+         <obj_property name="ObjectShortName">CCW</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CHC">
+         <obj_property name="ElementShortName">CHC</obj_property>
+         <obj_property name="ObjectShortName">CHC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CHX">
+         <obj_property name="ElementShortName">CHX</obj_property>
+         <obj_property name="ObjectShortName">CHX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CLK">
+         <obj_property name="ElementShortName">CLK</obj_property>
+         <obj_property name="ObjectShortName">CLK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CLK_ON">
+         <obj_property name="ElementShortName">CLK_ON</obj_property>
+         <obj_property name="ObjectShortName">CLK_ON</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CLK_OUT">
+         <obj_property name="ElementShortName">CLK_OUT</obj_property>
+         <obj_property name="ObjectShortName">CLK_OUT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CLR_PRIVATE_INSTR">
+         <obj_property name="ElementShortName">CLR_PRIVATE_INSTR</obj_property>
+         <obj_property name="ObjectShortName">CLR_PRIVATE_INSTR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CON">
+         <obj_property name="ElementShortName">CON</obj_property>
+         <obj_property name="ObjectShortName">CON</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CRA">
+         <obj_property name="ElementShortName">CRA</obj_property>
+         <obj_property name="ObjectShortName">CRA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CRAM_PAR_CHECK">
+         <obj_property name="ElementShortName">CRAM_PAR_CHECK</obj_property>
+         <obj_property name="ObjectShortName">CRAM_PAR_CHECK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CRAM_PAR_ERR">
+         <obj_property name="ElementShortName">CRAM_PAR_ERR</obj_property>
+         <obj_property name="ObjectShortName">CRAM_PAR_ERR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CRC">
+         <obj_property name="ElementShortName">CRC</obj_property>
+         <obj_property name="ObjectShortName">CRC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CRM">
+         <obj_property name="ElementShortName">CRM</obj_property>
+         <obj_property name="ObjectShortName">CRM</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CROBAR">
+         <obj_property name="ElementShortName">CROBAR</obj_property>
+         <obj_property name="ObjectShortName">CROBAR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/CSH">
+         <obj_property name="ElementShortName">CSH</obj_property>
+         <obj_property name="ObjectShortName">CSH</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/DELAYED">
+         <obj_property name="ElementShortName">DELAYED</obj_property>
+         <obj_property name="ObjectShortName">DELAYED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/DRAM_PAR_CHECK">
+         <obj_property name="ElementShortName">DRAM_PAR_CHECK</obj_property>
+         <obj_property name="ObjectShortName">DRAM_PAR_CHECK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/DRAM_PAR_ERR">
+         <obj_property name="ElementShortName">DRAM_PAR_ERR</obj_property>
+         <obj_property name="ObjectShortName">DRAM_PAR_ERR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK">
+         <obj_property name="ElementShortName">EBOX_CLK</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CLK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK_EN">
+         <obj_property name="ElementShortName">EBOX_CLK_EN</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CLK_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CLK_ERROR">
+         <obj_property name="ElementShortName">EBOX_CLK_ERROR</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CLK_ERROR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CRM_DIS">
+         <obj_property name="ElementShortName">EBOX_CRM_DIS</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CRM_DIS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CTL_DIS">
+         <obj_property name="ElementShortName">EBOX_CTL_DIS</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CTL_DIS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_CYC_ABORT">
+         <obj_property name="ElementShortName">EBOX_CYC_ABORT</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CYC_ABORT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_EDP_DIS">
+         <obj_property name="ElementShortName">EBOX_EDP_DIS</obj_property>
+         <obj_property name="ObjectShortName">EBOX_EDP_DIS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_REQ">
+         <obj_property name="ElementShortName">EBOX_REQ</obj_property>
+         <obj_property name="ObjectShortName">EBOX_REQ</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SOURCE">
+         <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
+         <obj_property name="ObjectShortName">EBOX_SOURCE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SRC_EN">
+         <obj_property name="ElementShortName">EBOX_SRC_EN</obj_property>
+         <obj_property name="ObjectShortName">EBOX_SRC_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SS">
+         <obj_property name="ElementShortName">EBOX_SS</obj_property>
+         <obj_property name="ObjectShortName">EBOX_SS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SYNC">
+         <obj_property name="ElementShortName">EBOX_SYNC</obj_property>
+         <obj_property name="ObjectShortName">EBOX_SYNC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK">
+         <obj_property name="ElementShortName">EBUS_CLK</obj_property>
+         <obj_property name="ObjectShortName">EBUS_CLK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_CLK_SOURCE">
+         <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
+         <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBUS_RESET">
+         <obj_property name="ElementShortName">EBUS_RESET</obj_property>
+         <obj_property name="ObjectShortName">EBUS_RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EDP">
+         <obj_property name="ElementShortName">EDP</obj_property>
+         <obj_property name="ObjectShortName">EDP</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ERROR">
+         <obj_property name="ElementShortName">ERROR</obj_property>
+         <obj_property name="ObjectShortName">ERROR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ERROR_HOLD_A">
+         <obj_property name="ElementShortName">ERROR_HOLD_A</obj_property>
+         <obj_property name="ObjectShortName">ERROR_HOLD_A</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ERROR_HOLD_B">
+         <obj_property name="ElementShortName">ERROR_HOLD_B</obj_property>
+         <obj_property name="ObjectShortName">ERROR_HOLD_B</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ERROR_STOP">
+         <obj_property name="ElementShortName">ERROR_STOP</obj_property>
+         <obj_property name="ObjectShortName">ERROR_STOP</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ERR_STOP_EN">
+         <obj_property name="ElementShortName">ERR_STOP_EN</obj_property>
+         <obj_property name="ObjectShortName">ERR_STOP_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FM_ODD_PARITY">
+         <obj_property name="ElementShortName">FM_ODD_PARITY</obj_property>
+         <obj_property name="ObjectShortName">FM_ODD_PARITY</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FM_PAR_CHECK">
+         <obj_property name="ElementShortName">FM_PAR_CHECK</obj_property>
+         <obj_property name="ObjectShortName">FM_PAR_CHECK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FM_PAR_ERR">
+         <obj_property name="ElementShortName">FM_PAR_ERR</obj_property>
+         <obj_property name="ObjectShortName">FM_PAR_ERR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FORCE_1777">
+         <obj_property name="ElementShortName">FORCE_1777</obj_property>
+         <obj_property name="ObjectShortName">FORCE_1777</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_CHECK">
+         <obj_property name="ElementShortName">FS_CHECK</obj_property>
+         <obj_property name="ObjectShortName">FS_CHECK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_A">
+         <obj_property name="ElementShortName">FS_EN_A</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_A</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_B">
+         <obj_property name="ElementShortName">FS_EN_B</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_B</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_C">
+         <obj_property name="ElementShortName">FS_EN_C</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_C</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_D">
+         <obj_property name="ElementShortName">FS_EN_D</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_D</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_E">
+         <obj_property name="ElementShortName">FS_EN_E</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_E</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_F">
+         <obj_property name="ElementShortName">FS_EN_F</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_F</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_EN_G">
+         <obj_property name="ElementShortName">FS_EN_G</obj_property>
+         <obj_property name="ObjectShortName">FS_EN_G</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FS_ERROR">
+         <obj_property name="ElementShortName">FS_ERROR</obj_property>
+         <obj_property name="ObjectShortName">FS_ERROR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_042">
+         <obj_property name="ElementShortName">FUNC_042</obj_property>
+         <obj_property name="ObjectShortName">FUNC_042</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_043">
+         <obj_property name="ElementShortName">FUNC_043</obj_property>
+         <obj_property name="ObjectShortName">FUNC_043</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_044">
+         <obj_property name="ElementShortName">FUNC_044</obj_property>
+         <obj_property name="ObjectShortName">FUNC_044</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_045">
+         <obj_property name="ElementShortName">FUNC_045</obj_property>
+         <obj_property name="ObjectShortName">FUNC_045</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_046">
+         <obj_property name="ElementShortName">FUNC_046</obj_property>
+         <obj_property name="ObjectShortName">FUNC_046</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_047">
+         <obj_property name="ElementShortName">FUNC_047</obj_property>
+         <obj_property name="ObjectShortName">FUNC_047</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_BURST">
+         <obj_property name="ElementShortName">FUNC_BURST</obj_property>
+         <obj_property name="ObjectShortName">FUNC_BURST</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_CLR_RESET">
+         <obj_property name="ElementShortName">FUNC_CLR_RESET</obj_property>
+         <obj_property name="ObjectShortName">FUNC_CLR_RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_COND_SS">
+         <obj_property name="ElementShortName">FUNC_COND_SS</obj_property>
+         <obj_property name="ObjectShortName">FUNC_COND_SS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_EBOX_SS">
+         <obj_property name="ElementShortName">FUNC_EBOX_SS</obj_property>
+         <obj_property name="ObjectShortName">FUNC_EBOX_SS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_GATE">
+         <obj_property name="ElementShortName">FUNC_GATE</obj_property>
+         <obj_property name="ObjectShortName">FUNC_GATE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_SET_RESET">
+         <obj_property name="ElementShortName">FUNC_SET_RESET</obj_property>
+         <obj_property name="ObjectShortName">FUNC_SET_RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_SINGLE_STEP">
+         <obj_property name="ElementShortName">FUNC_SINGLE_STEP</obj_property>
+         <obj_property name="ObjectShortName">FUNC_SINGLE_STEP</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_START">
+         <obj_property name="ElementShortName">FUNC_START</obj_property>
+         <obj_property name="ObjectShortName">FUNC_START</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GATED">
+         <obj_property name="ElementShortName">GATED</obj_property>
+         <obj_property name="ObjectShortName">GATED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GATED_EN">
+         <obj_property name="ElementShortName">GATED_EN</obj_property>
+         <obj_property name="ObjectShortName">GATED_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
+         <obj_property name="ElementShortName">GO</obj_property>
+         <obj_property name="ObjectShortName">GO</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/INSTR_1777">
+         <obj_property name="ElementShortName">INSTR_1777</obj_property>
+         <obj_property name="ObjectShortName">INSTR_1777</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/IR">
+         <obj_property name="ElementShortName">IR</obj_property>
+         <obj_property name="ObjectShortName">IR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MAIN_SOURCE">
+         <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
+         <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MB">
+         <obj_property name="ElementShortName">MB</obj_property>
+         <obj_property name="ObjectShortName">MB</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBC">
+         <obj_property name="ElementShortName">MBC</obj_property>
+         <obj_property name="ObjectShortName">MBC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX">
+         <obj_property name="ElementShortName">MBOX</obj_property>
+         <obj_property name="ObjectShortName">MBOX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_13">
+         <obj_property name="ElementShortName">MBOX_13</obj_property>
+         <obj_property name="ObjectShortName">MBOX_13</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_14">
+         <obj_property name="ElementShortName">MBOX_14</obj_property>
+         <obj_property name="ObjectShortName">MBOX_14</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_CLK">
+         <obj_property name="ElementShortName">MBOX_CLK</obj_property>
+         <obj_property name="ObjectShortName">MBOX_CLK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_CYCLE_DIS">
+         <obj_property name="ElementShortName">MBOX_CYCLE_DIS</obj_property>
+         <obj_property name="ObjectShortName">MBOX_CYCLE_DIS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_RESP">
+         <obj_property name="ElementShortName">MBOX_RESP</obj_property>
+         <obj_property name="ObjectShortName">MBOX_RESP</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_WAIT">
+         <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
+         <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBX">
+         <obj_property name="ElementShortName">MBX</obj_property>
+         <obj_property name="ObjectShortName">MBX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBZ">
+         <obj_property name="ElementShortName">MBZ</obj_property>
+         <obj_property name="ObjectShortName">MBZ</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MB_XFER">
+         <obj_property name="ElementShortName">MB_XFER</obj_property>
+         <obj_property name="ObjectShortName">MB_XFER</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MCL">
+         <obj_property name="ElementShortName">MCL</obj_property>
+         <obj_property name="ObjectShortName">MCL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MHZ16_FREE">
+         <obj_property name="ElementShortName">MHZ16_FREE</obj_property>
+         <obj_property name="ObjectShortName">MHZ16_FREE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MR_RESET">
+         <obj_property name="ElementShortName">MR_RESET</obj_property>
+         <obj_property name="ObjectShortName">MR_RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MTR">
+         <obj_property name="ElementShortName">MTR</obj_property>
+         <obj_property name="ObjectShortName">MTR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/ODD">
+         <obj_property name="ElementShortName">ODD</obj_property>
+         <obj_property name="ObjectShortName">ODD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_ERROR">
+         <obj_property name="ElementShortName">PAGE_ERROR</obj_property>
+         <obj_property name="ObjectShortName">PAGE_ERROR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL">
+         <obj_property name="ElementShortName">PAGE_FAIL</obj_property>
+         <obj_property name="ObjectShortName">PAGE_FAIL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PAGE_FAIL_EN">
+         <obj_property name="ElementShortName">PAGE_FAIL_EN</obj_property>
+         <obj_property name="ObjectShortName">PAGE_FAIL_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PF_DLYD">
+         <obj_property name="ElementShortName">PF_DLYD</obj_property>
+         <obj_property name="ObjectShortName">PF_DLYD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PF_DLYD_A">
+         <obj_property name="ElementShortName">PF_DLYD_A</obj_property>
+         <obj_property name="ObjectShortName">PF_DLYD_A</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PF_DLYD_B">
+         <obj_property name="ElementShortName">PF_DLYD_B</obj_property>
+         <obj_property name="ObjectShortName">PF_DLYD_B</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PIC">
+         <obj_property name="ElementShortName">PIC</obj_property>
+         <obj_property name="ObjectShortName">PIC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PMA">
+         <obj_property name="ElementShortName">PMA</obj_property>
+         <obj_property name="ObjectShortName">PMA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PT_DIR_WR">
+         <obj_property name="ElementShortName">PT_DIR_WR</obj_property>
+         <obj_property name="ObjectShortName">PT_DIR_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/PT_WR">
+         <obj_property name="ElementShortName">PT_WR</obj_property>
+         <obj_property name="ObjectShortName">PT_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RATE_SELECTED">
+         <obj_property name="ElementShortName">RATE_SELECTED</obj_property>
+         <obj_property name="ObjectShortName">RATE_SELECTED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RESET">
+         <obj_property name="ElementShortName">RESET</obj_property>
+         <obj_property name="ObjectShortName">RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RESP_MBOX">
+         <obj_property name="ElementShortName">RESP_MBOX</obj_property>
+         <obj_property name="ObjectShortName">RESP_MBOX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/RESP_SIM">
+         <obj_property name="ElementShortName">RESP_SIM</obj_property>
+         <obj_property name="ObjectShortName">RESP_SIM</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SBR_CALL">
+         <obj_property name="ElementShortName">SBR_CALL</obj_property>
+         <obj_property name="ObjectShortName">SBR_CALL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SBUS_CLK">
+         <obj_property name="ElementShortName">SBUS_CLK</obj_property>
+         <obj_property name="ObjectShortName">SBUS_CLK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SCD">
+         <obj_property name="ElementShortName">SCD</obj_property>
+         <obj_property name="ObjectShortName">SCD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SOURCE_DELAYED">
+         <obj_property name="ElementShortName">SOURCE_DELAYED</obj_property>
+         <obj_property name="ObjectShortName">SOURCE_DELAYED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SYNC">
+         <obj_property name="ElementShortName">SYNC</obj_property>
+         <obj_property name="ObjectShortName">SYNC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SYNC_EN">
+         <obj_property name="ElementShortName">SYNC_EN</obj_property>
+         <obj_property name="ObjectShortName">SYNC_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/SYNC_HOLD">
+         <obj_property name="ElementShortName">SYNC_HOLD</obj_property>
+         <obj_property name="ObjectShortName">SYNC_HOLD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/TENELEVEN_CLK">
+         <obj_property name="ElementShortName">TENELEVEN_CLK</obj_property>
+         <obj_property name="ObjectShortName">TENELEVEN_CLK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/VMA">
+         <obj_property name="ElementShortName">VMA</obj_property>
+         <obj_property name="ObjectShortName">VMA</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CLK/RATE_SEL">
+         <obj_property name="ElementShortName">RATE_SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">RATE_SEL[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CLK/SOURCE_SEL">
+         <obj_property name="ElementShortName">SOURCE_SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SOURCE_SEL[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CLK/PF_DISP">
+         <obj_property name="ElementShortName">PF_DISP[7:10]</obj_property>
+         <obj_property name="ObjectShortName">PF_DISP[7:10]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/_1777_EN">
+         <obj_property name="ElementShortName">_1777_EN</obj_property>
+         <obj_property name="ObjectShortName">_1777_EN</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CLK/EBUSdriver">
+         <obj_property name="ElementShortName">EBUSdriver</obj_property>
+         <obj_property name="ObjectShortName">EBUSdriver</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1270">
+      <obj_property name="label">CSH</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ADR_PAR_BAD">
+         <obj_property name="ElementShortName">ADR_PAR_BAD</obj_property>
+         <obj_property name="ObjectShortName">ADR_PAR_BAD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ADR_PMA_EN">
+         <obj_property name="ElementShortName">ADR_PMA_EN</obj_property>
+         <obj_property name="ObjectShortName">ADR_PMA_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ADR_READY">
+         <obj_property name="ElementShortName">ADR_READY</obj_property>
+         <obj_property name="ObjectShortName">ADR_READY</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ANY_VAL_HOLD">
+         <obj_property name="ElementShortName">ANY_VAL_HOLD</obj_property>
+         <obj_property name="ObjectShortName">ANY_VAL_HOLD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ANY_VAL_HOLD_IN">
+         <obj_property name="ElementShortName">ANY_VAL_HOLD_IN</obj_property>
+         <obj_property name="ObjectShortName">ANY_VAL_HOLD_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CACHE_WR_IN">
+         <obj_property name="ElementShortName">CACHE_WR_IN</obj_property>
+         <obj_property name="ObjectShortName">CACHE_WR_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CCA_CYC">
+         <obj_property name="ElementShortName">CCA_CYC</obj_property>
+         <obj_property name="ObjectShortName">CCA_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CCA_CYC_DONE">
+         <obj_property name="ElementShortName">CCA_CYC_DONE</obj_property>
+         <obj_property name="ObjectShortName">CCA_CYC_DONE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CCA_INVAL_T4">
+         <obj_property name="ElementShortName">CCA_INVAL_T4</obj_property>
+         <obj_property name="ObjectShortName">CCA_INVAL_T4</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CCA_REQ_GRANT">
+         <obj_property name="ElementShortName">CCA_REQ_GRANT</obj_property>
+         <obj_property name="ObjectShortName">CCA_REQ_GRANT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CCA_WRITEBACK">
+         <obj_property name="ElementShortName">CCA_WRITEBACK</obj_property>
+         <obj_property name="ObjectShortName">CCA_WRITEBACK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_CYC">
+         <obj_property name="ElementShortName">CHAN_CYC</obj_property>
+         <obj_property name="ObjectShortName">CHAN_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_RD_T5">
+         <obj_property name="ElementShortName">CHAN_RD_T5</obj_property>
+         <obj_property name="ObjectShortName">CHAN_RD_T5</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_REQ_GRANT">
+         <obj_property name="ElementShortName">CHAN_REQ_GRANT</obj_property>
+         <obj_property name="ObjectShortName">CHAN_REQ_GRANT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_T3">
+         <obj_property name="ElementShortName">CHAN_T3</obj_property>
+         <obj_property name="ObjectShortName">CHAN_T3</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_T4">
+         <obj_property name="ElementShortName">CHAN_T4</obj_property>
+         <obj_property name="ObjectShortName">CHAN_T4</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_WR_CACHE">
+         <obj_property name="ElementShortName">CHAN_WR_CACHE</obj_property>
+         <obj_property name="ObjectShortName">CHAN_WR_CACHE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CHAN_WR_T5_IN">
+         <obj_property name="ElementShortName">CHAN_WR_T5_IN</obj_property>
+         <obj_property name="ObjectShortName">CHAN_WR_T5_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/CLEAR_WR_T0">
+         <obj_property name="ElementShortName">CLEAR_WR_T0</obj_property>
+         <obj_property name="ObjectShortName">CLEAR_WR_T0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/DATA_CLR_DONE">
+         <obj_property name="ElementShortName">DATA_CLR_DONE</obj_property>
+         <obj_property name="ObjectShortName">DATA_CLR_DONE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_CCA_GRANT">
+         <obj_property name="ElementShortName">EBOX_CCA_GRANT</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CCA_GRANT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_CYC">
+         <obj_property name="ElementShortName">EBOX_CYC</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_ERA_GRANT">
+         <obj_property name="ElementShortName">EBOX_ERA_GRANT</obj_property>
+         <obj_property name="ObjectShortName">EBOX_ERA_GRANT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_LOAD_REG">
+         <obj_property name="ElementShortName">EBOX_LOAD_REG</obj_property>
+         <obj_property name="ObjectShortName">EBOX_LOAD_REG</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_REQ_GRANT">
+         <obj_property name="ElementShortName">EBOX_REQ_GRANT</obj_property>
+         <obj_property name="ObjectShortName">EBOX_REQ_GRANT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_RETRY_REQ">
+         <obj_property name="ElementShortName">EBOX_RETRY_REQ</obj_property>
+         <obj_property name="ObjectShortName">EBOX_RETRY_REQ</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_T0_IN">
+         <obj_property name="ElementShortName">EBOX_T0_IN</obj_property>
+         <obj_property name="ObjectShortName">EBOX_T0_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_T3">
+         <obj_property name="ElementShortName">EBOX_T3</obj_property>
+         <obj_property name="ObjectShortName">EBOX_T3</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_WR_T4_IN">
+         <obj_property name="ElementShortName">EBOX_WR_T4_IN</obj_property>
+         <obj_property name="ObjectShortName">EBOX_WR_T4_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/E_CACHE_WR_CYC">
+         <obj_property name="ElementShortName">E_CACHE_WR_CYC</obj_property>
+         <obj_property name="ObjectShortName">E_CACHE_WR_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/E_CORE_RD_RQ">
+         <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
+         <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/E_WRITEBACK">
+         <obj_property name="ElementShortName">E_WRITEBACK</obj_property>
+         <obj_property name="ObjectShortName">E_WRITEBACK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/FILL_CACHE_RD">
+         <obj_property name="ElementShortName">FILL_CACHE_RD</obj_property>
+         <obj_property name="ObjectShortName">FILL_CACHE_RD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/GATE_VMA_27_33">
+         <obj_property name="ElementShortName">GATE_VMA_27_33</obj_property>
+         <obj_property name="ObjectShortName">GATE_VMA_27_33</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/LRU_1">
+         <obj_property name="ElementShortName">LRU_1</obj_property>
+         <obj_property name="ObjectShortName">LRU_1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/LRU_2">
+         <obj_property name="ElementShortName">LRU_2</obj_property>
+         <obj_property name="ObjectShortName">LRU_2</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MBOX_PT_DIR_WR">
+         <obj_property name="ElementShortName">MBOX_PT_DIR_WR</obj_property>
+         <obj_property name="ObjectShortName">MBOX_PT_DIR_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MBOX_RESP_IN">
+         <obj_property name="ElementShortName">MBOX_RESP_IN</obj_property>
+         <obj_property name="ObjectShortName">MBOX_RESP_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MB_CYC">
+         <obj_property name="ElementShortName">MB_CYC</obj_property>
+         <obj_property name="ObjectShortName">MB_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MB_REQ_GRANT">
+         <obj_property name="ElementShortName">MB_REQ_GRANT</obj_property>
+         <obj_property name="ObjectShortName">MB_REQ_GRANT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MB_WR_RQ_CLR_NXT">
+         <obj_property name="ElementShortName">MB_WR_RQ_CLR_NXT</obj_property>
+         <obj_property name="ObjectShortName">MB_WR_RQ_CLR_NXT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ONE_WORD_RD">
+         <obj_property name="ElementShortName">ONE_WORD_RD</obj_property>
+         <obj_property name="ObjectShortName">ONE_WORD_RD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ONE_WORD_WR_T0">
+         <obj_property name="ElementShortName">ONE_WORD_WR_T0</obj_property>
+         <obj_property name="ObjectShortName">ONE_WORD_WR_T0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_FAIL_HOLD">
+         <obj_property name="ElementShortName">PAGE_FAIL_HOLD</obj_property>
+         <obj_property name="ObjectShortName">PAGE_FAIL_HOLD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_ERROR">
+         <obj_property name="ElementShortName">PAGE_REFILL_ERROR</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_ERROR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_T0">
+         <obj_property name="ElementShortName">PAGE_REFILL_T0</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_T12">
+         <obj_property name="ElementShortName">PAGE_REFILL_T12</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T12</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_T13">
+         <obj_property name="ElementShortName">PAGE_REFILL_T13</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T13</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_T4">
+         <obj_property name="ElementShortName">PAGE_REFILL_T4</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T4</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_T8">
+         <obj_property name="ElementShortName">PAGE_REFILL_T8</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T8</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAGE_REFILL_T9">
+         <obj_property name="ElementShortName">PAGE_REFILL_T9</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T9</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAR_BIT_A">
+         <obj_property name="ElementShortName">PAR_BIT_A</obj_property>
+         <obj_property name="ObjectShortName">PAR_BIT_A</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PAR_BIT_B">
+         <obj_property name="ElementShortName">PAR_BIT_B</obj_property>
+         <obj_property name="ObjectShortName">PAR_BIT_B</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/PGRF_CYC">
+         <obj_property name="ElementShortName">PGRF_CYC</obj_property>
+         <obj_property name="ObjectShortName">PGRF_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/RD_PAUSE_2ND_HALF">
+         <obj_property name="ElementShortName">RD_PAUSE_2ND_HALF</obj_property>
+         <obj_property name="ObjectShortName">RD_PAUSE_2ND_HALF</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/READY_TO_GO">
+         <obj_property name="ElementShortName">READY_TO_GO</obj_property>
+         <obj_property name="ObjectShortName">READY_TO_GO</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/REFILL_RAM_WR">
+         <obj_property name="ElementShortName">REFILL_RAM_WR</obj_property>
+         <obj_property name="ObjectShortName">REFILL_RAM_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/T2">
+         <obj_property name="ElementShortName">T2</obj_property>
+         <obj_property name="ObjectShortName">T2</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/USE_HOLD">
+         <obj_property name="ElementShortName">USE_HOLD</obj_property>
+         <obj_property name="ObjectShortName">USE_HOLD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/USE_WR_EN">
+         <obj_property name="ElementShortName">USE_WR_EN</obj_property>
+         <obj_property name="ObjectShortName">USE_WR_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/VAL_WR_PULSE">
+         <obj_property name="ElementShortName">VAL_WR_PULSE</obj_property>
+         <obj_property name="ObjectShortName">VAL_WR_PULSE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/WR_WR_PULSE">
+         <obj_property name="ElementShortName">WR_WR_PULSE</obj_property>
+         <obj_property name="ObjectShortName">WR_WR_PULSE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ADR_WR_PULSE">
+         <obj_property name="ElementShortName">ADR_WR_PULSE</obj_property>
+         <obj_property name="ObjectShortName">ADR_WR_PULSE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/WRITEBACK_T1">
+         <obj_property name="ElementShortName">WRITEBACK_T1</obj_property>
+         <obj_property name="ObjectShortName">WRITEBACK_T1</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/WR_FROM_MEM_NXT">
+         <obj_property name="ElementShortName">WR_FROM_MEM_NXT</obj_property>
+         <obj_property name="ObjectShortName">WR_FROM_MEM_NXT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_0_WD_VAL">
+         <obj_property name="ElementShortName">_0_WD_VAL</obj_property>
+         <obj_property name="ObjectShortName">_0_WD_VAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_1_WD_VAL">
+         <obj_property name="ElementShortName">_1_WD_VAL</obj_property>
+         <obj_property name="ObjectShortName">_1_WD_VAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_2_WD_VAL">
+         <obj_property name="ElementShortName">_2_WD_VAL</obj_property>
+         <obj_property name="ObjectShortName">_2_WD_VAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_3_WD_VAL">
+         <obj_property name="ElementShortName">_3_WD_VAL</obj_property>
+         <obj_property name="ObjectShortName">_3_WD_VAL</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_0_ANY_WR">
+         <obj_property name="ElementShortName">_0_ANY_WR</obj_property>
+         <obj_property name="ObjectShortName">_0_ANY_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_0_VALID_MATCH">
+         <obj_property name="ElementShortName">_0_VALID_MATCH</obj_property>
+         <obj_property name="ObjectShortName">_0_VALID_MATCH</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_1_ANY_WR">
+         <obj_property name="ElementShortName">_1_ANY_WR</obj_property>
+         <obj_property name="ObjectShortName">_1_ANY_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_1_VALID_MATCH">
+         <obj_property name="ElementShortName">_1_VALID_MATCH</obj_property>
+         <obj_property name="ObjectShortName">_1_VALID_MATCH</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_2_ANY_WR">
+         <obj_property name="ElementShortName">_2_ANY_WR</obj_property>
+         <obj_property name="ObjectShortName">_2_ANY_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_2_VALID_MATCH">
+         <obj_property name="ElementShortName">_2_VALID_MATCH</obj_property>
+         <obj_property name="ObjectShortName">_2_VALID_MATCH</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_3_ANY_WR">
+         <obj_property name="ElementShortName">_3_ANY_WR</obj_property>
+         <obj_property name="ObjectShortName">_3_ANY_WR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/_3_VALID_MATCH">
+         <obj_property name="ElementShortName">_3_VALID_MATCH</obj_property>
+         <obj_property name="ObjectShortName">_3_VALID_MATCH</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CSH/MATCH_HOLD_IN">
+         <obj_property name="ElementShortName">MATCH_HOLD_IN[0:1]</obj_property>
+         <obj_property name="ObjectShortName">MATCH_HOLD_IN[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CSH/WD_WR">
+         <obj_property name="ElementShortName">WD_WR[0:3]</obj_property>
+         <obj_property name="ObjectShortName">WD_WR[0:3]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/CSH/EBUSdriver">
+         <obj_property name="ElementShortName">EBUSdriver</obj_property>
+         <obj_property name="ObjectShortName">EBUSdriver</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1286">
+      <obj_property name="label">CSH e72</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/RESET">
+         <obj_property name="ElementShortName">RESET</obj_property>
+         <obj_property name="ObjectShortName">RESET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/S0">
+         <obj_property name="ElementShortName">S0</obj_property>
+         <obj_property name="ObjectShortName">S0</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/D">
+         <obj_property name="ElementShortName">D[0:3]</obj_property>
+         <obj_property name="ObjectShortName">D[0:3]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/S3">
+         <obj_property name="ElementShortName">S3</obj_property>
+         <obj_property name="ObjectShortName">S3</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/SEL">
+         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/CLK">
+         <obj_property name="ElementShortName">CLK</obj_property>
+         <obj_property name="ObjectShortName">CLK</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/Q">
+         <obj_property name="ElementShortName">Q[0:3]</obj_property>
+         <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1278">
+      <obj_property name="label">CSHinternal</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/CSH_T0">
+         <obj_property name="ElementShortName">CSH_T0</obj_property>
+         <obj_property name="ObjectShortName">CSH_T0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/EBOX_REQ_EN">
+         <obj_property name="ElementShortName">EBOX_REQ_EN</obj_property>
+         <obj_property name="ObjectShortName">EBOX_REQ_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/EBOX_T0">
+         <obj_property name="ElementShortName">EBOX_T0</obj_property>
+         <obj_property name="ObjectShortName">EBOX_T0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/EBOX_T0_IN">
+         <obj_property name="ElementShortName">EBOX_T0_IN</obj_property>
+         <obj_property name="ObjectShortName">EBOX_T0_IN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/MB_CYC">
+         <obj_property name="ElementShortName">MB_CYC</obj_property>
+         <obj_property name="ObjectShortName">MB_CYC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/MB_REQ">
+         <obj_property name="ElementShortName">MB_REQ</obj_property>
+         <obj_property name="ObjectShortName">MB_REQ</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
