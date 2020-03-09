@@ -79,5 +79,3 @@ module mt0(iCLK CLK,
   end
 
 endmodule
-
-

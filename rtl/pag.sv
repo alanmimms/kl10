@@ -90,9 +90,10 @@ module pag(iAPR APR,
 
   // XXX FIXME
 
-  "this is not complete since we need to split the separate CE bits off
+/*  "this is not complete since we need to split the separate CE bits off
   from the main block of RAM."
-    
+  */
+
   ptDir_mem ptDirA(.addra(PAG.PT_ADR),
     .clka(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
     .dina(PAG.PT_IN),
