@@ -25,7 +25,7 @@ module mcl(iAPR APR,
   bit MEM_AREAD, MEM_WR_CYCLE, MEM_RPW_CYCLE, MEM_COND_FETCH;
   bit MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR, MEM_LOAD_ARX;
   bit MEM_RW_CYCLE, MEM_WRITE, MEM_UNCOND_FETCH;
-  bit REQ_EN, LOAD_AD_FUNC, LOAD_VMA_HELD;
+  bit LOAD_AD_FUNC, LOAD_VMA_HELD;
   bit AREAD_EA, RW_OR_RPW_CYCLE, MEM_COND_JUMP;
   bit USER_EN, PUBLIC_EN, VMA_EXT_EN;
   bit VMA_AD, VMAslashAD, AD_FUNC_08, AD_FUNC_09;
@@ -53,8 +53,8 @@ module mcl(iAPR APR,
     AREAD_EA = MEM_AREAD & ~Aeq001;
     RW_OR_RPW_CYCLE = MEM_RW_CYCLE | MEM_RPW_CYCLE;
     MEM_COND_JUMP = CRAM.MAGIC[5] & MEM_COND_FETCH;
-    REQ_EN = (BWRITE_01 | ~MEM_B_WRITE) &
-             (CRAM.MEM[0] & CRAM.MEM[1] & RESET);
+    MCL.REQ_EN = (BWRITE_01 | ~MEM_B_WRITE) &
+                 (CRAM.MEM[0] | CRAM.MEM[1] | RESET);
     LOAD_AD_FUNC = MEM_RESTORE_VMA | MEM_AD_FUNC;
     LOAD_VMA_HELD = CON.COND_LOAD_VMA_HELD | CRAM.MEM[2];
   end
@@ -67,9 +67,9 @@ module mcl(iAPR APR,
                   MEM_COND_FETCH, MEM_REG_FUNC}));
 
   // E64 is redundant acive low drive of mostly the same signals.
-  // It is elided.
+  // It is elided here.
 
-  decoder e72(.en(~CRAM.MEM[0]),
+  decoder e72(.en(CRAM.MEM[0]),
               .sel(CRAM.MEM[1:3]),
               .q({MEM_AD_FUNC, MEM_EA_CALC, MEM_LOAD_AR,
                   MEM_LOAD_ARX, MEM_RW_CYCLE, MEM_RPW_CYCLE,
@@ -83,7 +83,7 @@ module mcl(iAPR APR,
 
   mux e11(.en(DIAG_READ),
           .sel(DS),
-          .d({VMA.HELD_OR_PC[2], VMA.HELD_OR_PC[8], MEM_ARL_IND, ~REQ_EN,
+          .d({VMA.HELD_OR_PC[2], VMA.HELD_OR_PC[8], MEM_ARL_IND, ~MCL.REQ_EN,
               MCL.VMA_USER, MCL.VMA_PUBLIC, ~MCL.VMA_PREVIOUS, ~MCL.VMA_EXTENDED}),
           .q(MCL.EBUSdriver.data[19]));
 
@@ -130,7 +130,7 @@ module mcl(iAPR APR,
 
   always_ff @(posedge clk) begin
 
-    if (REQ_EN) begin
+    if (MCL.REQ_EN) begin
       e13SR[0] <= gatedMagic | gatedAD | AREAD_1xx | MEM_LOAD_AR | RW_OR_RPW_CYCLE;
       e13SR[1] <= gatedMagic | gatedAD | FETCH_EN | MEM_LOAD_ARX;
       e13SR[2] <= gatedMagic | gatedAD | AREAD_x11 | MEM_RPW_CYCLE;
@@ -399,7 +399,7 @@ module mcl(iAPR APR,
       MCL.PAGE_UEBR_REF_A <= PHYS_REF | EPT_EN | UPT_EN; // XXX find wrong references
     end
 
-    if (REQ_EN) begin
+    if (MCL.REQ_EN) begin
       MAP_FUNC <= MEM_REG_FUNC & CRAM.MAGIC[3] | LOAD_AD_FUNC & EDP.AD[12];
       REG_FUNC <= MEM_REG_FUNC & CRAM.MAGIC[0];
       MCL.VMA_FETCH <= FETCH_EN;
