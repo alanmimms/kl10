@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="10000001fs"></ZoomEndTime>
-      <Cursor1Time time="10000000fs"></Cursor1Time>
+      <ZoomStartTime time="3333333fs"></ZoomStartTime>
+      <ZoomEndTime time="23333334fs"></ZoomEndTime>
+      <Cursor1Time time="20000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="192"></NameColumnWidth>
-      <ValueColumnWidth column_width="118"></ValueColumnWidth>
+      <ValueColumnWidth column_width="110"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="17" />
+   <WVObjectSize size="45" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -58,9 +58,172 @@
       <obj_property name="ElementShortName">MEM_CYCLE</obj_property>
       <obj_property name="ObjectShortName">MEM_CYCLE</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/kl10pv_tb/top0/CRAM/MEM">
+      <obj_property name="ElementShortName">MEM[0:3]</obj_property>
+      <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_REQ">
+      <obj_property name="ElementShortName">EBOX_REQ</obj_property>
+      <obj_property name="ObjectShortName">EBOX_REQ</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/EBOX_REQ_EN">
+      <obj_property name="ElementShortName">EBOX_REQ_EN</obj_property>
+      <obj_property name="ObjectShortName">EBOX_REQ_EN</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/CSH/EBOX_REQ_GRANT">
+      <obj_property name="ElementShortName">EBOX_REQ_GRANT</obj_property>
+      <obj_property name="ObjectShortName">EBOX_REQ_GRANT</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_T0_IN">
+      <obj_property name="ElementShortName">EBOX_T0_IN</obj_property>
+      <obj_property name="ObjectShortName">EBOX_T0_IN</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/GATE_VMA_27_33">
+      <obj_property name="ElementShortName">GATE_VMA_27_33</obj_property>
+      <obj_property name="ObjectShortName">GATE_VMA_27_33</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/mcl0/MEM_UNCOND_FETCH">
+      <obj_property name="ElementShortName">MEM_UNCOND_FETCH</obj_property>
+      <obj_property name="ObjectShortName">MEM_UNCOND_FETCH</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/mcl0/MEM_AD_FUNC">
+      <obj_property name="ElementShortName">MEM_AD_FUNC</obj_property>
+      <obj_property name="ObjectShortName">MEM_AD_FUNC</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/mcl0/MEM_EA_CALC">
+      <obj_property name="ElementShortName">MEM_EA_CALC</obj_property>
+      <obj_property name="ObjectShortName">MEM_EA_CALC</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/MCL/REQ_EN">
+      <obj_property name="ElementShortName">REQ_EN</obj_property>
+      <obj_property name="ObjectShortName">REQ_EN</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/mcl0/e13SR">
+      <obj_property name="ElementShortName">e13SR[0:3]</obj_property>
+      <obj_property name="ObjectShortName">e13SR[0:3]</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_READ">
+      <obj_property name="ElementShortName">VMA_READ</obj_property>
+      <obj_property name="ObjectShortName">VMA_READ</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_READ_OR_WRITE">
+      <obj_property name="ElementShortName">VMA_READ_OR_WRITE</obj_property>
+      <obj_property name="ObjectShortName">VMA_READ_OR_WRITE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_WRITE">
+      <obj_property name="ElementShortName">VMA_WRITE</obj_property>
+      <obj_property name="ObjectShortName">VMA_WRITE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_PAUSE">
+      <obj_property name="ElementShortName">VMA_PAUSE</obj_property>
+      <obj_property name="ObjectShortName">VMA_PAUSE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/MCL/EBOX_CACHE">
+      <obj_property name="ElementShortName">EBOX_CACHE</obj_property>
+      <obj_property name="ObjectShortName">EBOX_CACHE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/KI10_PAGING_MODE">
+      <obj_property name="ElementShortName">KI10_PAGING_MODE</obj_property>
+      <obj_property name="ObjectShortName">KI10_PAGING_MODE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/KL10_PAGING_MODE">
+      <obj_property name="ElementShortName">KL10_PAGING_MODE</obj_property>
+      <obj_property name="ObjectShortName">KL10_PAGING_MODE</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/kl10pv_tb/top0/PMA/PMA">
+      <obj_property name="ElementShortName">PMA[14:35]</obj_property>
+      <obj_property name="ObjectShortName">PMA[14:35]</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/mbox0/mbc0/MEM_START_CLR">
+      <obj_property name="ElementShortName">MEM_START_CLR</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_CLR</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/mbox0/mbc0/MEM_START_SET">
+      <obj_property name="ElementShortName">MEM_START_SET</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_SET</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBC/MEM_START_A">
+      <obj_property name="ElementShortName">MEM_START_A</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_A</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBC/MEM_START_B">
+      <obj_property name="ElementShortName">MEM_START_B</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_B</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBC/A_CHANGE_COMING">
+      <obj_property name="ElementShortName">A_CHANGE_COMING</obj_property>
+      <obj_property name="ObjectShortName">A_CHANGE_COMING</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/MBC/B_CHANGE_COMING">
+      <obj_property name="ElementShortName">B_CHANGE_COMING</obj_property>
+      <obj_property name="ObjectShortName">B_CHANGE_COMING</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MBOX_RESP_IN">
+      <obj_property name="ElementShortName">MBOX_RESP_IN</obj_property>
+      <obj_property name="ObjectShortName">MBOX_RESP_IN</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_RESP">
+      <obj_property name="ElementShortName">MBOX_RESP</obj_property>
+      <obj_property name="ObjectShortName">MBOX_RESP</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CON/MBOX_WAIT">
       <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
       <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
+      <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/top0/VMA/VMA">
       <obj_property name="ElementShortName">VMA[12:35]</obj_property>
@@ -746,6 +909,8 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_REQ">
          <obj_property name="ElementShortName">EBOX_REQ</obj_property>
          <obj_property name="ObjectShortName">EBOX_REQ</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SOURCE">
          <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
@@ -962,6 +1127,8 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_RESP">
          <obj_property name="ElementShortName">MBOX_RESP</obj_property>
          <obj_property name="ObjectShortName">MBOX_RESP</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/MBOX_WAIT">
          <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
@@ -1115,6 +1282,22 @@
    <wvobject type="group" fp_name="group1270">
       <obj_property name="label">CSH</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/e52q13">
+         <obj_property name="ElementShortName">e52q13</obj_property>
+         <obj_property name="ObjectShortName">e52q13</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/PAGE_REFILL_T10">
+         <obj_property name="ElementShortName">PAGE_REFILL_T10</obj_property>
+         <obj_property name="ObjectShortName">PAGE_REFILL_T10</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/EBOX_SYNC">
+         <obj_property name="ElementShortName">EBOX_SYNC</obj_property>
+         <obj_property name="ObjectShortName">EBOX_SYNC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/CACHE_IDLE">
+         <obj_property name="ElementShortName">CACHE_IDLE</obj_property>
+         <obj_property name="ObjectShortName">CACHE_IDLE</obj_property>
+      </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/ADR_PAR_BAD">
          <obj_property name="ElementShortName">ADR_PAR_BAD</obj_property>
          <obj_property name="ObjectShortName">ADR_PAR_BAD</obj_property>
@@ -1222,6 +1405,8 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_T0_IN">
          <obj_property name="ElementShortName">EBOX_T0_IN</obj_property>
          <obj_property name="ObjectShortName">EBOX_T0_IN</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/EBOX_T3">
          <obj_property name="ElementShortName">EBOX_T3</obj_property>
@@ -1250,6 +1435,8 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/GATE_VMA_27_33">
          <obj_property name="ElementShortName">GATE_VMA_27_33</obj_property>
          <obj_property name="ObjectShortName">GATE_VMA_27_33</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/LRU_1">
          <obj_property name="ElementShortName">LRU_1</obj_property>
@@ -1266,6 +1453,8 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MBOX_RESP_IN">
          <obj_property name="ElementShortName">MBOX_RESP_IN</obj_property>
          <obj_property name="ObjectShortName">MBOX_RESP_IN</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/CSH/MB_CYC">
          <obj_property name="ElementShortName">MB_CYC</obj_property>
@@ -1439,7 +1628,6 @@
    <wvobject type="group" fp_name="group1286">
       <obj_property name="label">CSH e72</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/e72/RESET">
          <obj_property name="ElementShortName">RESET</obj_property>
          <obj_property name="ObjectShortName">RESET</obj_property>
@@ -1475,7 +1663,6 @@
    <wvobject type="group" fp_name="group1278">
       <obj_property name="label">CSHinternal</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/CSH_T0">
          <obj_property name="ElementShortName">CSH_T0</obj_property>
          <obj_property name="ObjectShortName">CSH_T0</obj_property>
@@ -1488,10 +1675,6 @@
          <obj_property name="ElementShortName">EBOX_T0</obj_property>
          <obj_property name="ObjectShortName">EBOX_T0</obj_property>
       </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/EBOX_T0_IN">
-         <obj_property name="ElementShortName">EBOX_T0_IN</obj_property>
-         <obj_property name="ObjectShortName">EBOX_T0_IN</obj_property>
-      </wvobject>
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/MB_CYC">
          <obj_property name="ElementShortName">MB_CYC</obj_property>
          <obj_property name="ObjectShortName">MB_CYC</obj_property>
@@ -1499,6 +1682,210 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/csh0/MB_REQ">
          <obj_property name="ElementShortName">MB_REQ</obj_property>
          <obj_property name="ObjectShortName">MB_REQ</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1311">
+      <obj_property name="label">MCL</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/_18_BIT_EA">
+         <obj_property name="ElementShortName">_18_BIT_EA</obj_property>
+         <obj_property name="ObjectShortName">_18_BIT_EA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/_23_BIT_EA">
+         <obj_property name="ElementShortName">_23_BIT_EA</obj_property>
+         <obj_property name="ObjectShortName">_23_BIT_EA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/LOAD_AR">
+         <obj_property name="ElementShortName">LOAD_AR</obj_property>
+         <obj_property name="ObjectShortName">LOAD_AR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/STORE_AR">
+         <obj_property name="ElementShortName">STORE_AR</obj_property>
+         <obj_property name="ObjectShortName">STORE_AR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/LOAD_ARX">
+         <obj_property name="ElementShortName">LOAD_ARX</obj_property>
+         <obj_property name="ObjectShortName">LOAD_ARX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/LOAD_VMA">
+         <obj_property name="ElementShortName">LOAD_VMA</obj_property>
+         <obj_property name="ObjectShortName">LOAD_VMA</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/MBOX_CYC_REQ">
+         <obj_property name="ElementShortName">MBOX_CYC_REQ</obj_property>
+         <obj_property name="ObjectShortName">MBOX_CYC_REQ</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PAGED_FETCH">
+         <obj_property name="ElementShortName">PAGED_FETCH</obj_property>
+         <obj_property name="ObjectShortName">PAGED_FETCH</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/MEM_ARL_IND">
+         <obj_property name="ElementShortName">MEM_ARL_IND</obj_property>
+         <obj_property name="ObjectShortName">MEM_ARL_IND</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/SHORT_STACK">
+         <obj_property name="ElementShortName">SHORT_STACK</obj_property>
+         <obj_property name="ObjectShortName">SHORT_STACK</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/SKIP_SATISFIED">
+         <obj_property name="ElementShortName">SKIP_SATISFIED</obj_property>
+         <obj_property name="ObjectShortName">SKIP_SATISFIED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PC_SECTION_0">
+         <obj_property name="ElementShortName">PC_SECTION_0</obj_property>
+         <obj_property name="ObjectShortName">PC_SECTION_0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/EBOX_MAP">
+         <obj_property name="ElementShortName">EBOX_MAP</obj_property>
+         <obj_property name="ObjectShortName">EBOX_MAP</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/EBOX_CACHE">
+         <obj_property name="ElementShortName">EBOX_CACHE</obj_property>
+         <obj_property name="ObjectShortName">EBOX_CACHE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/REQ_EN">
+         <obj_property name="ElementShortName">REQ_EN</obj_property>
+         <obj_property name="ObjectShortName">REQ_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/MEM_REG_FUNC">
+         <obj_property name="ElementShortName">MEM_REG_FUNC</obj_property>
+         <obj_property name="ObjectShortName">MEM_REG_FUNC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_AD">
+         <obj_property name="ElementShortName">VMA_AD</obj_property>
+         <obj_property name="ObjectShortName">VMA_AD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_ADR_ERR">
+         <obj_property name="ElementShortName">VMA_ADR_ERR</obj_property>
+         <obj_property name="ObjectShortName">VMA_ADR_ERR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_INC">
+         <obj_property name="ElementShortName">VMA_INC</obj_property>
+         <obj_property name="ObjectShortName">VMA_INC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_FETCH">
+         <obj_property name="ElementShortName">VMA_FETCH</obj_property>
+         <obj_property name="ObjectShortName">VMA_FETCH</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_EXTENDED">
+         <obj_property name="ElementShortName">VMA_EXTENDED</obj_property>
+         <obj_property name="ObjectShortName">VMA_EXTENDED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_SECTION_0">
+         <obj_property name="ElementShortName">VMA_SECTION_0</obj_property>
+         <obj_property name="ObjectShortName">VMA_SECTION_0</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_SECTION_01">
+         <obj_property name="ElementShortName">VMA_SECTION_01</obj_property>
+         <obj_property name="ObjectShortName">VMA_SECTION_01</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_READ">
+         <obj_property name="ElementShortName">VMA_READ</obj_property>
+         <obj_property name="ObjectShortName">VMA_READ</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_READ_OR_WRITE">
+         <obj_property name="ElementShortName">VMA_READ_OR_WRITE</obj_property>
+         <obj_property name="ObjectShortName">VMA_READ_OR_WRITE</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMAX_EN">
+         <obj_property name="ElementShortName">VMAX_EN</obj_property>
+         <obj_property name="ObjectShortName">VMAX_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_PAUSE">
+         <obj_property name="ElementShortName">VMA_PAUSE</obj_property>
+         <obj_property name="ObjectShortName">VMA_PAUSE</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_WRITE">
+         <obj_property name="ElementShortName">VMA_WRITE</obj_property>
+         <obj_property name="ObjectShortName">VMA_WRITE</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_PREV_EN">
+         <obj_property name="ElementShortName">VMA_PREV_EN</obj_property>
+         <obj_property name="ObjectShortName">VMA_PREV_EN</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/LOAD_VMA_CONTEXT">
+         <obj_property name="ElementShortName">LOAD_VMA_CONTEXT</obj_property>
+         <obj_property name="ObjectShortName">LOAD_VMA_CONTEXT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_EXEC">
+         <obj_property name="ElementShortName">VMA_EXEC</obj_property>
+         <obj_property name="ObjectShortName">VMA_EXEC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_USER">
+         <obj_property name="ElementShortName">VMA_USER</obj_property>
+         <obj_property name="ObjectShortName">VMA_USER</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_PUBLIC">
+         <obj_property name="ElementShortName">VMA_PUBLIC</obj_property>
+         <obj_property name="ObjectShortName">VMA_PUBLIC</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_PREVIOUS">
+         <obj_property name="ElementShortName">VMA_PREVIOUS</obj_property>
+         <obj_property name="ObjectShortName">VMA_PREVIOUS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/XR_PREVIOUS">
+         <obj_property name="ElementShortName">XR_PREVIOUS</obj_property>
+         <obj_property name="ObjectShortName">XR_PREVIOUS</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMAX_SEL">
+         <obj_property name="ElementShortName">VMAX_SEL[0:1]</obj_property>
+         <obj_property name="ObjectShortName">VMAX_SEL[0:1]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/LOAD_VMA_HELD">
+         <obj_property name="ElementShortName">LOAD_VMA_HELD</obj_property>
+         <obj_property name="ObjectShortName">LOAD_VMA_HELD</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PAGE_UEBR_REF">
+         <obj_property name="ElementShortName">PAGE_UEBR_REF</obj_property>
+         <obj_property name="ObjectShortName">PAGE_UEBR_REF</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PAGE_UEBR_REF_A">
+         <obj_property name="ElementShortName">PAGE_UEBR_REF_A</obj_property>
+         <obj_property name="ObjectShortName">PAGE_UEBR_REF_A</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_G">
+         <obj_property name="ElementShortName">VMA_G[27:33]</obj_property>
+         <obj_property name="ObjectShortName">VMA_G[27:33]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/ADR_ERR">
+         <obj_property name="ElementShortName">ADR_ERR</obj_property>
+         <obj_property name="ObjectShortName">ADR_ERR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_EPT">
+         <obj_property name="ElementShortName">VMA_EPT</obj_property>
+         <obj_property name="ObjectShortName">VMA_EPT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/VMA_UPT">
+         <obj_property name="ElementShortName">VMA_UPT</obj_property>
+         <obj_property name="ObjectShortName">VMA_UPT</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/EBOX_MAY_BE_PAGED">
+         <obj_property name="ElementShortName">EBOX_MAY_BE_PAGED</obj_property>
+         <obj_property name="ObjectShortName">EBOX_MAY_BE_PAGED</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PAGE_ILL_ENTRY">
+         <obj_property name="ElementShortName">PAGE_ILL_ENTRY</obj_property>
+         <obj_property name="ObjectShortName">PAGE_ILL_ENTRY</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PAGE_TEST_PRIVATE">
+         <obj_property name="ElementShortName">PAGE_TEST_PRIVATE</obj_property>
+         <obj_property name="ObjectShortName">PAGE_TEST_PRIVATE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/MCL/PAGE_ADDRESS_COND">
+         <obj_property name="ElementShortName">PAGE_ADDRESS_COND</obj_property>
+         <obj_property name="ObjectShortName">PAGE_ADDRESS_COND</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/MCL/EBUSdriver">
+         <obj_property name="ElementShortName">EBUSdriver</obj_property>
+         <obj_property name="ObjectShortName">EBUSdriver</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
