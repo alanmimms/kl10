@@ -129,7 +129,7 @@ module kl10pv_tb;
   end
 
   initial begin
-    top.ebox0.ctl0.DIAG_MEM_RESET = '0;
+    top.ebox0.MBOX.DIAG_MEM_RESET = '0;
     top.ebox0.CTL.DIAG_CHANNEL_CLK_STOP = '0;
     top.ebox0.CTL.DIAG_LD_EBUS_REG = '0;
     top.ebox0.CTL.DIAG_FORCE_EXTEND = '0;

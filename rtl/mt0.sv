@@ -22,8 +22,8 @@ module mt0(iCLK CLK,
 
   // MT01 p.96
   always_comb begin
-    MEM.ACKN_A = SBUS.ACKN_A;
-    MBOX.ERROR = SBUS.ERROR;
+    MBOX.MEM_ACKN_A = SBUS.ACKN_A;
+    MBOX.MEM_ERROR = SBUS.ERROR;
     MBOX.ADR_PAR_ERR = SBUS.ADR_PAR_ERR;
     SBUS.CLK_INT = CLK.SBUS_CLK;
     SBUS.CLK_EXT = CLK.SBUS_CLK;
@@ -44,7 +44,7 @@ module mt0(iCLK CLK,
     SBUS.RD_RQ = MBX.MEM_RD_RQ;
     SBUS.WR_RQ = MBX.MEM_WR_RQ;
     SBUS.DIAG = MBOX.MEM_DIAG;
-    SUBS.ADR_PAR = MBOX.MEM_ADR_PAR;
+    SBUS.ADR_PAR = MBOX.MEM_ADR_PAR;
   end
 
 
@@ -69,10 +69,10 @@ module mt0(iCLK CLK,
   // MT05 p.100
   always_comb begin
     SBUS.MEM_RESET = MBOX.DIAG_MEM_RESET;
-    DATA_TO_MEM_EN = MBOX.DATA_TO_MEM;
+    DATA_TO_MEM_EN = MBOX.MEM_DATA_TO_MEM;
 
     if (DATA_TO_MEM_EN) begin
-      SBUS.DATA_PAR = MBOX.MEM_PAR;
+      SBUS.DATA_PAR = MBOX.MEM_PAR; // XXX MEM_PAR is not driven anywhere
     end else begin
       MBOX.MEM_PAR_IN = SBUS.DATA_PAR;
     end
