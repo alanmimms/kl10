@@ -22,7 +22,8 @@ module mbox(input mboxClk,
             iSHM SHM,
             iVMA VMA,
             iEBUS EBUS,
-            iMBOX MBOX
+            iMBOX MBOX,
+            iSBUS SBUS
 );
 
   ccl ccl0(.*);
@@ -36,6 +37,7 @@ module mbox(input mboxClk,
   mbc mbc0(.*);
   mbx mbx0(.*);
   mbz mbz0(.*);
+  mt0 mt00(.*);
   pag pag0(.*);
   pma pma0(.*);
 endmodule // mbox

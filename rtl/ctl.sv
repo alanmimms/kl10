@@ -17,7 +17,6 @@ module ctl(iAPR APR,
 
   bit CTL_36_BIT_EA;
   bit RESET;
-  bit DIAG_MEM_RESET;
   bit SPEC_MTR_CTL;
 
 `include "cram-aliases.svh"
@@ -92,7 +91,7 @@ module ctl(iAPR APR,
                                            CTL.MQM_EN,
                                            CTL.ARR_CLR};
     4'b1111: CTL.EBUSdriver.data[24:28] = {CTL.INH_CRY_18,
-                                           DIAG_MEM_RESET,
+                                           MBOX.DIAG_MEM_RESET,
                                            CTL.ARXR_SEL[0],
                                            CTL.DIAG_LD_EBUS_REG,
                                            CTL.SPEC_CALL};
@@ -271,7 +270,7 @@ module ctl(iAPR APR,
   end
 
   always_ff @(posedge CTL.DIAG_LD_FUNC_076) begin
-    DIAG_MEM_RESET <= EBUS.data[24];
+    MBOX.DIAG_MEM_RESET <= EBUS.data[24];
     CTL.DIAG_CHANNEL_CLK_STOP <= EBUS.data[25];
     CTL.DIAG_LD_EBUS_REG <= EBUS.data[26];
     CTL.DIAG_FORCE_EXTEND <= EBUS.data[27];
