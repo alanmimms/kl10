@@ -1448,6 +1448,7 @@ interface iCSH;
   bit CCA_CYC;
   bit CCA_CYC_DONE;
   bit CCA_INVAL_T4;
+  bit CCA_REQ_EN;
   bit CCA_REQ_GRANT;
   bit CCA_WRITEBACK;
   bit CHAN_CYC;
