@@ -25,7 +25,7 @@ module mbx(iCLK CLK,
   bit e85q2, e85q15;
   bit SBUS_DIAG_0, SBUS_DIAG_1, SBUS_DIAG_2, SBUS_DIAG_3, SBUS_DIAG_CYC;
   bit CSH_CHAN_CYC, CACHE_TO_MB_T1, CACHE_TO_MB_T3, CACHE_TO_MB_CONT;
-  bit RD_NON_VAL_WDS, DIAG_EN, CACHE_TO_MB_DONE, MB_SEL_HOLD_FF;
+  bit RD_NON_VAL_WDS, DIAG_EN, CACHE_TO_MB_DONE, MB_SEL_HOLD_FF, ONE_WORD_RD;
   bit [4:6] DIAG;
   bit [0:2] MB_IN_SEL;
   bit CORE_DATA_VALIDminus1, CORE_DATA_VALID, EBOX_LOAD_REG, CHAN_READ;
@@ -316,28 +316,29 @@ module mbx(iCLK CLK,
   // MBX5 p.182
   bit e71q13, e75q14, e75q15;
   always_comb begin
-    RD_NON_VAL_WDS = E_CORE_RD_RQ & ~CSH.ONE_WORD_RD |
+    ONE_WORD_RD = CSH.ONE_WORD_RD;
+    RD_NON_VAL_WDS = E_CORE_RD_RQ & ~ONE_WORD_RD |
                      CSH.PGRF_CYC |
                      CSH.CHAN_CYC & ~MBX.CHAN_WR_CYC;
     WR_WDS_IN_MB = CSH.E_CACHE_WR_CYC | MBX.CHAN_WR_CYC | PMA.CSH_WRITEBACK_CYC;
 
-    MBX.RQ_IN[0] = ~PMA.PA[34] & ~PMA.PA[35] & CSH.ONE_WORD_RD |
+    MBX.RQ_IN[0] = ~PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[0] |
                    ~CSH_WD_0_VAL & WD_NEEDED[0] & RD_NON_VAL_WDS;
-    MBX.RQ_IN[1] = ~PMA.PA[34] & PMA.PA[35] & CSH.ONE_WORD_RD |
+    MBX.RQ_IN[1] = ~PMA.PA[34] & PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[1] |
                    ~CSH_WD_1_VAL & WD_NEEDED[1] & RD_NON_VAL_WDS;
-    MBX.RQ_IN[2] = PMA.PA[34] & ~PMA.PA[35] & CSH.ONE_WORD_RD |
+    MBX.RQ_IN[2] = PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[2] |
                    ~CSH_WD_2_VAL & WD_NEEDED[2] & RD_NON_VAL_WDS;
-    MBX.RQ_IN[3] = PMA.PA[34] & PMA.PA[35] & CSH.ONE_WORD_RD |
+    MBX.RQ_IN[3] = PMA.PA[34] & PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[3] |
                    ~CSH_WD_3_VAL & WD_NEEDED[3] & RD_NON_VAL_WDS;
     C_DIR_PAR_ERR = APR.C_DIR_P_ERR | e75q15;
 
-    MBX.MEM_RD_RQ_IN = E_CORE_RD_RQ | CSH.ONE_WORD_RD | RD_NON_VAL_WDS;
+    MBX.MEM_RD_RQ_IN = E_CORE_RD_RQ | ONE_WORD_RD | RD_NON_VAL_WDS;
     MBX.MEM_WR_RQ_IN = MBX.CACHE_TO_MB_T4 | MBX.CHAN_WR_CYC |
-                       CSH.ONE_WORD_RD & MCL.VMA_PAUSE;
+                       ONE_WORD_RD & MCL.VMA_PAUSE;
     MBX.MB_REQ_IN = MBOX.MB_REQ_HOLD & ~CSH.MB_CYC & MB_REQ_ALLOW & ~MBC.INH_1ST_MB_REQ;
     MBOX.MEM_TO_C_EN = CSH.MB_CYC | MBOX.MEM_TO_C_DIAG_EN;
   end
@@ -348,7 +349,7 @@ module mbx(iCLK CLK,
               ~READY_TO_GO & ~RESET & e71q13;
     e75q14 <= e71q13 & READY_TO_GO |
               ~APR.C_DIR_P_ERR & MBX.CSH_ADR_PAR_ERR & ~RESET;
-    e75q15 = e75q14;
+    e75q15 <= e75q14;
   end
 
 
