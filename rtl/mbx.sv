@@ -248,7 +248,7 @@ module mbx(iCLK CLK,
                            (E_CORE_RD_RQ | EBOX_DIAG_CYC) & e48SR[3];
     MBOX.MEM_TO_C_SEL[1] = e48SR[1] & e48SR[2] |
                            (E_CORE_RD_RQ | EBOX_DIAG_CYC) & e48SR[3] &
-                           ~CSH.E_CACHE_WR_CYC;
+                           ~MBOX.E_CACHE_WR_CYC;
 
   end
 
@@ -320,7 +320,7 @@ module mbx(iCLK CLK,
     RD_NON_VAL_WDS = E_CORE_RD_RQ & ~ONE_WORD_RD |
                      CSH.PGRF_CYC |
                      CSH.CHAN_CYC & ~MBX.CHAN_WR_CYC;
-    WR_WDS_IN_MB = CSH.E_CACHE_WR_CYC | MBX.CHAN_WR_CYC | PMA.CSH_WRITEBACK_CYC;
+    WR_WDS_IN_MB = MBOX.E_CACHE_WR_CYC | MBX.CHAN_WR_CYC | PMA.CSH_WRITEBACK_CYC;
 
     MBX.RQ_IN[0] = ~PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[0] |

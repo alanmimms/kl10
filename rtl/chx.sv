@@ -10,4 +10,13 @@ module chx(iCSH CSH,
     CSH._2_WD_VAL = '0;
     CSH._3_WD_VAL = '0;
   end
+
+  // From M8549-YF-CHSX cache substitute
+  always_comb begin
+    CSH._0_VALID_MATCH = '0;
+    CSH._1_VALID_MATCH = '0;
+    CSH._2_VALID_MATCH = '0;
+    CSH._3_VALID_MATCH = '0;
+    CSH.ADR_PAR_BAD = '0;
+  end
 endmodule // chx

@@ -131,10 +131,10 @@ module mcl(iAPR APR,
   always_ff @(posedge clk) begin
 
     if (MCL.REQ_EN) begin
-      e13SR[0] <= gatedMagic | gatedAD | AREAD_1xx | MEM_LOAD_AR | RW_OR_RPW_CYCLE;
-      e13SR[1] <= gatedMagic | gatedAD | FETCH_EN | MEM_LOAD_ARX;
-      e13SR[2] <= gatedMagic | gatedAD | AREAD_x11 | MEM_RPW_CYCLE;
-      e13SR[3] <= gatedMagic | gatedAD | AREAD_3_6_7 | MEM_B_WRITE |
+      e13SR[0] <= gatedMagic[0] | gatedAD[0] | AREAD_1xx | MEM_LOAD_AR | RW_OR_RPW_CYCLE;
+      e13SR[1] <= gatedMagic[1] | gatedAD[1] | FETCH_EN | MEM_LOAD_ARX;
+      e13SR[2] <= gatedMagic[2] | gatedAD[2] | AREAD_x11 | MEM_RPW_CYCLE;
+      e13SR[3] <= gatedMagic[3] | gatedAD[3] | AREAD_3_6_7 | MEM_B_WRITE |
                   RW_OR_RPW_CYCLE | MEM_WRITE;
     end
   end
