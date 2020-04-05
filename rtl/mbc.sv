@@ -7,7 +7,7 @@ module mbc(iCLK CLK,
            iMBC MBC,
            iMBX MBX,
            iMBOX MBOX
-);
+           );
 
   bit clk, RESET;
   bit [34:35] ADR;
@@ -16,7 +16,7 @@ module mbc(iCLK CLK,
   bit CSH_VAL_WR_PULSE, CSH_WR_WR_PULSE, CSH_ADR_WR_PULSE;
   bit CACHE_WR_00, CACHE_WR_09, CACHE_WR_18, CACHE_WR_27;
   bit RQ_HOLD, WRITE_OK, FORCE_BAD_ADR_PAR, RD_PAUSE_2ND_HALF, LAST_ACKN_SEEN;
-  bit A_PHASE, CLK_A_PHASE_COMING, INH_1ST_MB_REQ, FIRST_WD_ADR_SEL, CORE_BUSY;
+  bit A_PHASE, CLK_A_PHASE_COMING, INH_1ST_MB_REQ, FIRST_WD_ADR_SEL;
   bit RQ_0A, RQ_0B, RQ_1A, RQ_2A, RQ_3A;
   bit MEM_START, MEM_START_RD, MEM_START_SET, MEM_START_CLR;
   bit ANY_SBUS_RQ_IN, PMA_ADR_PAR_HOLD;
@@ -221,10 +221,9 @@ module mbc(iCLK CLK,
     MBOX.DATA_VALID_B_OUT <= (MBOX.DATA_VALID_B_OUT | MBC.B_CHANGE_COMING) &
                              (MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF |
                               ~MBC.B_CHANGE_COMING);
-    CORE_BUSY <= (CORE_BUSY & ~MBC.CORE_DATA_VALID |
-                  MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
-                 ~RESET;
-    MBOX.CORE_BUSY <= CORE_BUSY;
+    MBOX.CORE_BUSY <= (MBOX.CORE_BUSY & ~MBC.CORE_DATA_VALID |
+                       MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
+                      ~RESET;
   end
   
 
@@ -239,7 +238,7 @@ module mbc(iCLK CLK,
                       (MBOX.MEM_ACKN_B | MBOX.NXM_ACKN) & MBC.B_CHANGE_COMING & ~RESET;
     MBC.CORE_DATA_VALminus2 = MBOX.NXM_DATA_VAL & MBC.A_CHANGE_COMING |
                               MBOX.MEM_DATA_VALID_A & MBC.A_CHANGE_COMING |
-                              MBOX.MEM_DATA_VALID_B & MBC.B_CHANGE_COMING &
+                              MBOX.MEM_DATA_VALID_B & MBC.B_CHANGE_COMING |
                               MBOX.NXM_DATA_VAL & MBC.B_CHANGE_COMING;
     CORE_DATA_VALIDminus2 = MBC.CORE_DATA_VALminus2;
     MBOX.CORE_RD_IN_PROG = ~RESET | CORE_RD_IN_PROG;
@@ -328,9 +327,9 @@ module mbc(iCLK CLK,
     MBOX.FORCE_VALID_MATCH[1] = MBOX.CSH_WR_EN[1] & forced |
                                 ~MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
     MBOX.FORCE_VALID_MATCH[2] = MBOX.CSH_WR_EN[2] & forced |
-                                 MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
+                                MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
     MBOX.FORCE_VALID_MATCH[3] = MBOX.CSH_WR_EN[3] & forced |
-                                 MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
+                                MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
   end
 
   always_ff @(posedge clk) begin
@@ -349,7 +348,7 @@ module mbc(iCLK CLK,
   mux e16(.en(CTL.DIAG_READ_FUNC_16x),
           .sel(CTL.DIAG[4:6]),
           .d({MBOX.FORCE_VALID_MATCH[1], ~MBC.CSH_DATA_CLR_T2,
-              CACHE_WR_09, ~CORE_BUSY,
+              CACHE_WR_09, ~MBOX.CORE_BUSY,
               INH_1ST_MB_REQ, MBOX.CAM_SEL[0],
               MBOX.MEM_RQ[0], EBUS_REG[28]}),
           .q(MBC.EBUSdriver.data[28]));

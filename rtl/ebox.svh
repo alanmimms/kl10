@@ -1469,7 +1469,6 @@ interface iCSH;
   bit EBOX_T0_IN;
   bit EBOX_T3;
   bit EBOX_WR_T4_IN;
-  bit E_CACHE_WR_CYC;
   bit E_CORE_RD_RQ;
   bit E_WRITEBACK;
   bit FILL_CACHE_RD;
