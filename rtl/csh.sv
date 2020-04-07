@@ -35,7 +35,7 @@ module csh(iAPR APR,
   bit ANY_WRITTEN_MATCH;
   bit MB_WR_RQ_CLR_NXT, EBOX_TOOK_1_WD, WR_DATA_RDY;
   bit PAGE_FAIL_DLY, EBOX_WR_T4, PAGE_FAIL_T3;
-  bit EBOX_WR_T4_IN, PAGE_FAIL_HOLD, PAGE_FAIL_DELAY, PAGE_FAIL_HOLD_FF;
+  bit EBOX_WR_T4_IN, PAGE_FAIL_HOLD_FF;
   bit DATA_CLR_T2, DATA_CLR_T4, PAGE_REFILL_T8, CHAN_CYC, WR_FROM_MEM_NXT;
   bit CHAN_T4, EBOX_SYNC_SEEN, DATA_DLY1, CACHE_WR_IN, WRITE_OK, CCA_INVAL_T4;
 
@@ -63,8 +63,10 @@ module csh(iAPR APR,
                       EBOX_T0 & APR.EBOX_LOAD_REG |
                       CACHE_IDLE_IN_C;
 
+    // NOTE: Wire OR
     CACHE_IDLE_IN_D = VMA.AC_REF & EBOX_T0 | EBOX_T1 & CLK.EBOX_CYC_ABORT;
 
+    // NOTE: Wire OR
     CACHE_IDLE_IN = e52q3 | e52q14 | e52q15;
     CACHE_IDLE = CACHE_IDLE_IN;
 
@@ -203,6 +205,7 @@ module csh(iAPR APR,
 
 
   // CSH4 p.27
+  bit e18q4, e18q13;
   always_comb begin
     CSH.EBOX_T0_IN = CSH.READY_TO_GO & CSH.EBOX_REQ_GRANT |
                      CLK.EBOX_REQ & RD_PSE_2ND_REQ_EN;
@@ -215,6 +218,9 @@ module csh(iAPR APR,
     EBOX_PAUSE = MCL.VMA_PAUSE;
     EBOX_WR_T4_IN = EBOX_WR_T3 & ~EBOX_RETRY_NEXT_IN;
     CSH.REFILL_RAM_WR = APR.EN_REFILL_RAM_WR & EBOX_T2;
+
+    // NOTE: Wire AND
+    PAGE_FAIL_T2 = e18q13 & e18q4;
   end
 
   always_ff @(posedge clk) begin
@@ -230,8 +236,9 @@ module csh(iAPR APR,
                         PAG.PAGE_OK & MBX.CACHE_BIT & LRU_ANY_WR & ~ANY_VALID_MATCH;
     WRITEBACK_T2 <= WRITEBACK_T1;
 
-    PAGE_FAIL_DLY <= PAGE_FAIL_HOLD;
-    PAGE_FAIL_T2 <= ~(~PAGE_FAIL_DELAY | ~PAGE_FAIL_HOLD);
+    PAGE_FAIL_DLY <= CSH.PAGE_FAIL_HOLD;
+    e18q4 <= PAGE_FAIL_DLY;
+    e18q13 <= CSH.PAGE_FAIL_HOLD;
     PAGE_FAIL_T3 <= PAGE_FAIL_T2;
 
     DATA_CLR_T2 <= MBC.CSH_DATA_CLR_T3;
@@ -276,7 +283,11 @@ module csh(iAPR APR,
     PAGE_REFILL_T4_IN = ~CORE_BUSY & CSH.EBOX_T3 & EBOX_REFILL_OK & PAG.PAGE_REFILL;
     EBOX_REFILL_OK = (EBOX_MAP | ~APR.EBOX_READ_REG) & ~PAGE_REFILL_COMP;
     PAGE_REFILL_T7 = PAG.PAGE_REFILL_CYC & T3;
-    T0 = e68q3 | e68q2;
+
+    // NOTE: Wire AND
+`error "FIXME: Find CSH5 CSH_T0 and T0 and determine if they are the same signal"
+    T0 = e68q3 & e68q2;
+
     T2_IN = T1 & ~WR_FROM_MEM_NXT;
     CCA_T3 = T3 & CSH.CCA_CYC;
     PAGE_REFILL_T7 = PMA.PAGE_REFILL_CYC & T3;
@@ -325,8 +336,12 @@ module csh(iAPR APR,
     CSH.CACHE_WR_IN = MBC.CSH_DATA_CLR_T1 & CSH.ONE_WORD_RD & CSH.E_CORE_RD_RQ |
                       EBOX_WR_T3 & WRITE_OK |
                       ~RESET & WR_FROM_MEM_NXT;
+
     KI10_PAGING_MODE = CON.KI10_PAGING_MODE;
-    CSH.MBOX_PT_DIR_WR = ~(~KI10_PAGING_MODE | ~(PAGE_FAIL_T3 | PAGE_REFILL_T12));
+
+    // NOTE: Wire AND
+    CSH.MBOX_PT_DIR_WR = KI10_PAGING_MODE & (PAGE_FAIL_T3 | PAGE_REFILL_T12);
+
     CSH.USE_WR_EN = PAG.PAGE_OK & ANY_VALID_MATCH & EBOX_T2 |
                     ~CSH.ONE_WORD_RD & MBC.CSH_DATA_CLR_T2 |
                     MBX.CCA_ALL_PAGES_CYC & CCA_INVAL_T4;
