@@ -2,31 +2,40 @@
 
 module kl10pv_tb;
   typedef enum bit [0:8] {
-                          clkfSTOP_CLOCK = 9'o000,
-                          clkfSTART_CLOCK = 9'o001,
+                          diagfCLR_BURST_CTR_RH = 9'o042,
+                          diagfCLR_BURST_CTR_LH = 9'o043,
+                          diagfCLR_CLK_SRC_RATE = 9'o044,
+                          diagfSET_EBOX_CLK_DISABLES = 9'o045,
+                          diagfRESET_PAR_REGS = 9'o046,
+                          diagfCLR_MBOXDIS_PARCHK_ERRSTOP = 9'o047,
 
-                          clkfSET_RESET = 9'o007,
-                          clkfCLR_RESET = 9'o006,
+                          diagfCLR_CRAM_DIAG_ADR_RH = 9'o051,
+                          diagfCLR_CRAM_DIAG_ADR_LH = 9'o052,
 
-                          clkfCLR_CLK_SRC_RATE = 9'o044,
-                          clkfCLR_BURST_CTR_RH = 9'o042,
-                          clkfCLR_BURST_CTR_LH = 9'o043,
-                          clkfRESET_PAR_REGS = 9'o046,
-                          clkfCLR_MBOXDIS_PARCHK_ERRSTOP = 9'o047,
+                          diagfENABLE_KL = 9'o067,
 
-                          clkfCLR_CRAM_DIAG_ADR_RH = 9'o051,
-                          clkfCLR_CRAM_DIAG_ADR_LH = 9'o052,
+                          diagfINIT_CHANNELS = 9'o070,
+                          diagfWRITE_MBOX = 9'o071,
+                          diagfEBUS_LOAD = 9'o076
+                          } tDiagFunction;
 
-                          clkfENABLE_KL = 9'o067,
+  typedef enum bit [0:8] {
+                          dte20fSTOP_CLOCK = 9'o000,
+                          dte20fSTART_CLOCK = 9'o001,
+                          dte20fSTEP_CLOCK = 9'o002,
+                          dte20fCOND_STEP = 9'o004,
 
-                          clkfEBUS_LOAD = 9'o076
-                          } tCLKFunction;
+                          dte20fCLR_RESET = 9'o006,
+                          dte20fSET_RESET = 9'o007,
 
+                          dte20fCLR_RUN = 9'o010
+                          } tDTE20Function;
   bit CROBAR;
   bit masterClk;
   bit clk;
 
   top top0(.*);
+
 
   var string indent = "";
 
@@ -36,9 +45,13 @@ module kl10pv_tb;
   initial masterClk = 0;
   always #10 masterClk = ~masterClk;
 
-  // Initialize our memories
-  zeroAllACs();
-
+  initial begin
+    // Initialize our memories
+    // Based on KLINIT.L20 $ZERAC subroutine.
+    // Zero all ACs, including the ones in block #7 (microcode's ACs).
+    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a) top0.ebox0.edp0.fm.mem[a] = '0;
+  end
+  
   initial begin                 // For now, MBOX memory is zero too
     for (int a = 0; a < $size(top0.memory0.mem0.mem); ++a)
       top0.memory0.mem0.mem[a] = '0;
@@ -170,25 +183,16 @@ module kl10pv_tb;
     //
     // // XXX this needs to change when we have channels. See
     // PARSER.LST .MRCLR function.
-    doCLKFunction(clkfSTART_CLOCK);
   end
-  
-
-  // Based on KLINIT.L20 $ZERAC subroutine.
-  // Zero all ACs, including the ones in block #7 (microcode's ACs).
-  task zeroAllACs();
-
-    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a)
-      top0.ebox0.edp0.fm.mem[a] = '0;
-  endtask
   
 
   ////////////////////////////////////////////////////////////////
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
-  task doCLKFunction(input tCLKFunction func);
+  task doDiagFunc(input tDiagFunction func, input [18:35] ebusRH = '0);
     @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
-      $display($time, " %sdoCLKFunction(%s) START", indent, func.name);
+      $display($time, " %sdoDiagFunc(%s) START EBUS=%06o", indent, func.name, ebusRH);
+      top0.ebox0.EBUS.data[18:35] = ebusRH;
       top0.ebox0.EBUS.ds[0:3] = 4'b0000;          // DIAG_CTL_FUNC_00x for CLK
       top0.ebox0.EBUS.ds[4:6] = func;
       top0.ebox0.EBUS.diagStrobe = '1;            // Strobe this
@@ -207,42 +211,103 @@ module kl10pv_tb;
   endtask
 
 
+  // XXX For now, I think this is just the same as doDiagFunc.
+  task doDTE20Func(input tDTE20Function func, input [18:35] ebusRH = '0);
+    doDiagFunc(tDiagFunction'(func), ebusRH);
+  endtask
+
+
   ////////////////////////////////////////////////////////////////
   // Patterned after PARSER .RESET function and table RESETT.
   task KLMasterReset();
     $display($time, " KLMasterReset() START");
     indent = "    ";
-    // Reset the DTE-20
-    // D2.RST (100)
-    // D3.RST (001)
-
     // Functions from KLINIT.L20 $KLMR (DO A MASTER RESET ON THE KL)
-    // $DFXC(.CLRUN)    ; Clear run
-    // $DTRW2(DRESET=0o100)   ; Reset bit to .DTEDT via DTE-20 diag 2
+    
+    // $DFXC(.CLRUN=010)    ; Clear run
+    // Until we have a DTE20 or equivalent this is done directly with diag writes.
+    // XXX TODO
+    doDTE20Func(dte20fCLR_RUN);
+
+    // $DTRW2(DRESET=100)   ; Reset bit to .DTEDT via DTE-20 diag 2
+    // With no DTE20, resetting the DTE is not very useful.
+    // XXX TODO
+
     // $DTRWS(DON10C|ERR10C|INT11C|PERCLR|DON11C|ERR11C)        ; Clear DTE-20 status
+    // With no DTE20, resetting the DTE error flags is not very useful.
+    // XXX TODO
+
+    // The codes below are either WRITE (no annotation) or EXECUTE
+    // FUNCTIONS (EXEFN). The former is a simple diagnostic write. The
+    // latter uses the equivalent of KLINIT.L20 $DFXC which is more
+    // complex than a simple write and does some special things based
+    // on which operation it is asked to perform.
+    //
     // Execute first block of functions in DMRMRT:
-    //         (072) Select KW20/22 for MOS systems
+
+    //         (072) Select KW20/22 (external clock oscillator) for MOS systems
+    // Not necessary in this implementation
+    
     //   .LDSEL(044) Clock load func #44
     //          (use DMRMOS MOS defaults = 0,,10 = EXTERNAL CLOCK, no divider)
-    //   .STPCL(000) Stop the clock
-    //   .SETMR(007) Set reset
+    doDiagFunc(diagfCLR_CLK_SRC_RATE, 18'o000010);
+
+    //   .STPCL(EXEFN:000) Stop the clock
+    doDTE20Func(dte20fSTOP_CLOCK);
+
+    //   .SETMR(EXEFN:007) Set reset
+    doDTE20Func(dte20fSET_RESET);
+
     //   .LDCK1(046) Load CLK partity check and FS check
+    doDiagFunc(diagfRESET_PAR_REGS);
+
     //   .LDCK2(047) Load CLK MBOX cycle disables, parity check, error stop enable
+    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP);
+
     //   .LDBRR(042) Load burst counter 8,4,2,1
+    doDiagFunc(diagfCLR_BURST_CTR_RH);
+
     //   .LDBRL(043) Load burst counter 128.64,32,16
+    doDiagFunc(diagfCLR_BURST_CTR_LH);
+
     //   .LDDIS(045) Load EBOX clock disable
-    //   .STRCL(001) Start the clock
+    doDiagFunc(diagfSET_EBOX_CLK_DISABLES);
+
+    //   .STRCL(EXEFN:001) Start the clock
+    doDTE20Func(dte20fSTART_CLOCK);
+
     //   .INICL(070) Init channels
+    doDiagFunc(diagfINIT_CHANNELS);
+
     //   .LDBRR(042) Load burst counter 8,4,2,1
+    doDiagFunc(diagfCLR_BURST_CTR_RH);
+
     // Loop up to three times:
-    //   Do diag function 162 via $DFRD test bit #10 (A CHANGE COMING A L)=EBUS[32]
-    //   If not set, $DFXC(.SSCLK) to single step the MBOX
+    //   Do diag function 162 via $DFRD test (A CHANGE COMING A L)=EBUS[32]
+    //   If not set, $DFXC(.SSCLK=002) to single step the MBOX
+    repeat (5) begin
+      if (!top0.mbox0.mbc0.MBC.A_CHANGE_COMING) doDTE20Func(dte20fSTEP_CLOCK);
+    end
+
+    if (!top0.mbox0.mbc0.MBC.A_CHANGE_COMING) begin
+      $display($time, " ERROR: STEP of MBOX five times did not set MBC.A_CHANGE_COMING");
+    end
+
     // Execute second set of functions in DMRMRT:
-    //   .CECLK(004) Conditional single step
-    //   .CLRMR(006) Clear reset
+    //   .CECLK(EXEFN:004) Conditional single step
+    doDTE20Func(dte20fCOND_STEP);
+
+    //   .CLRMR(EXEFN:006) Clear reset
+    doDTE20Func(dte20fCLR_RESET);
+
     //   .EIOJA(067) Enable KL STL decoding of codes and ACs
+    doDiagFunc(diagfENABLE_KL);
+
     //   .MEMRS(076) Set KL10 mem reset flop
-    //   .WRMBX(071) Write M-BOX
+    doDiagFunc(diagfEBUS_LOAD);
+
+    //   .WRMBX(071) Write M-BOX to do a memory reset
+    doDiagFunc(diagfWRITE_MBOX, 18'o000012);
 
 
     // Functions from KLINIT.L20 $DLGEN (ASK IF ENTERING DIALOG IS REQUIRED)
@@ -265,7 +330,8 @@ module kl10pv_tb;
 
 
     // Functions from KLINIT.L20 $TENST (START KL BOOT) routine
-    zeroAllACs();
+    // This was done earlier. XXX probably needs to be done again on reset.
+//    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a) top0.ebox0.edp0.fm.mem[a] = '0;
 
     // Execute equivalent of a series of CONO/DATAO instructions to do
     // the following operations.
@@ -294,7 +360,7 @@ module kl10pv_tb;
     top0.ebox0.apr0.S_ADR_P_ERR_EN = '0;
 
     // power fail, sweep done
-    top0.ebox0.apr0.PWR_WARN = '0;
+    top0.PWR_WARN = '0;
     top0.ebox0.apr0.PWR_FAIL = '0;
     top0.ebox0.apr0.APR.SWEEP_BUSY = '0;
     top0.ebox0.apr0.SWEEP_DONE_EN = '0;
@@ -315,8 +381,8 @@ module kl10pv_tb;
     // CONO PAG, 0              ; Paging system clear
     top0.ebox0.con0.CON.CACHE_LOOK_EN = '0;
     top0.ebox0.con0.CON.CACHE_LOAD_EN = '0;
-    top0.ebox0.con0.CON.WR_EVEN_PAR_DATA = '0;
-    top0.ebox0.con0.CON.WR_EVEN_PAR_DIR = '0;
+    top0.ebox0.con0.WR_EVEN_PAR_DATA = '0;
+    top0.ebox0.con0.WR_EVEN_PAR_DIR = '0;
 
     ////////////
     // DATAO PAG, 0             ; User base clear
@@ -333,16 +399,17 @@ module kl10pv_tb;
 
     // Load UPT page number with zero.
     // XXX Not 100% certain this is what this is supposed to do. 
-    top0.ebox0.pma0.UBR = '0;
+    top0.mbox0.pma0.UBR = '0;
 
     // Invalidate the entire page table by setting the invalid bits in all lines.
-    for (int a = 0; a < $size(top0.ebox0.pag0.ptDirA); ++a) begin
-      top0.ebox0.pag0.ptDirA[a] = '0;
-      top0.ebox0.pag0.ptDirB[a] = '0;
-      top0.ebox0.pag0.ptDirC[a] = '0;
-      top0.ebox0.pag0.ptParity[a] = '0;
+/*      Sim already does this by initializing entire RAM to zeros.
+    for (int a = 0; a < $size(top0.mbox0.pag0.ptDirA); ++a) begin
+      top0.mbox0.pag0.ptDirA[a] = '0;
+      top0.mbox0.pag0.ptDirB[a] = '0;
+      top0.mbox0.pag0.ptDirC[a] = '0;
+      top0.mbox0.pag0.ptParity[a] = '0;
     end
-
+*/
     // XXX For now, we do not turn on the cache. Here is where it
     // should be enabled if we want it.
     // Set $SETCA (CONFIGURE CACHE) routine in KLINIT.L20 for details on how.
@@ -352,45 +419,25 @@ module kl10pv_tb;
     // - 1b0 for no boot prompting
     // - 1b1 for dump KL
 
-    // (044) Clear the KL clock source and rate (.LDSEL)
-    doCLKFunction(clkfCLR_CLK_SRC_RATE);
-
-    // (000) Stop the KL clock STPCLK (.STPCL)
-    doCLKFunction(clkfSTOP_CLOCK);
-
-    // (007) Set master reset SETMR (.SETMR)
-    doCLKFunction(clkfSET_RESET);
-
-    // FW.IPE (046) Reset the parity registers (.LDCK1)
-    doCLKFunction(clkfRESET_PAR_REGS);
+    // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK1)
+    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP);
 
     // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK1)
-    doCLKFunction(clkfCLR_MBOXDIS_PARCHK_ERRSTOP);
-
-    // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK1)
-    doCLKFunction(clkfCLR_MBOXDIS_PARCHK_ERRSTOP);
-
-    // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK1)
-    doCLKFunction(clkfCLR_MBOXDIS_PARCHK_ERRSTOP);
+    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP);
 
     // Do contents of RESETT table:
-    // FW.LBR (042) Clear burst counter RIGHT
-    doCLKFunction(clkfCLR_BURST_CTR_RH);
-
-    // FW.LBL (043) Clear burst counter LEFT
-    doCLKFunction(clkfCLR_BURST_CTR_LH);
 
     // FW.CA2 (052) Clear CRAM diag address LEFT
-    doCLKFunction(clkfCLR_CRAM_DIAG_ADR_LH);
+    doDiagFunc(diagfCLR_CRAM_DIAG_ADR_LH);
 
     // FW.CA1 (051) Clear CRAM diag address RIGHT
-    doCLKFunction(clkfCLR_CRAM_DIAG_ADR_RH);
+    doDiagFunc(diagfCLR_CRAM_DIAG_ADR_RH);
 
 `ifdef notdef
     // FW.KLO (067) Enable KL opcodes
-    doCLKFunction(clkfENABLE_KL);
+    doDiagFunc(diagfENABLE_KL);
     // FW.EBL (076) EBUS load
-    doCLKFunction(clkfEBUS_LOAD);
+    doDiagFunc(diagfEBUS_LOAD);
 `endif
 
     $display($time, " DONE");
