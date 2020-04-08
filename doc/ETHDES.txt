@@ -1,0 +1,1009 @@
+perm filename ETHDES[KL,SYS] blob sn#517629 filedate 1980-06-17 generic text, type C, neo UTF8
+COMMENT ⊗   VALID 00009 PAGES
+C REC  PAGE   DESCRIPTION
+C00001 00001
+C00002 00002	Ethernet/KLDCP interface to WAITS
+C00010 00003	Facts about the DTE-20
+C00013 00004	DTE20 Registers (PDP-11 side)
+C00023 00005	DTE Programming, KL-10 Side
+C00025 00006	DEX transfers
+C00029 00007	Reloading the -11
+C00033 00008	For easy reference, the text of the M873YD bootstrap loader is presented below:
+C00046 00009		.TITLE	DTBOOT
+C00060 ENDMK
+C⊗;
+Ethernet/KLDCP interface to WAITS
+
+Build a queued message protocol.
+
+WAITS:
+			A "MESSAGE" is a blob of free storage
+			definitions:  0: queue link
+				      1: notification routine
+				      2: packet size in 16-bit items
+				      3 --- whatever: the data packet.
+		
+			The data in the data packet is further defined by
+			the value of the first 16-bit item:
+				 0: No-operation
+				 1: echo request
+				 2: echo response
+				 3: ethernet packet
+
+
+TO 11 Messages (QMPT11)
+	⊗Grab free storage
+	⊗Compose message
+	⊗Queue message.		QTO11
+		queue process returns quickly
+		to loop, waiting at UUO LEVEL
+
+After the queue process ships the message to the 11,
+	it runs a routine specified in the message header.
+
+TO-11 Queue process:
+	Add message at end of single linked queue.
+	If DTE is idle, store TO-11 byte pointer, store
+	TO-11 byte count in comm region, ring bell.
+DTMSGC←←6000		;TELL PDP-11 THE SIZE OF A TO11 XFER
+
+TO-11 Queue interrupt process
+	on completion of message, remove it from the queue, add
+	a clk request for releasing message
+	If queue is non-empty, start next message:
+		setup TO-11 byte pointer, deposit to-11 byte count
+		in comm region, ring bell.
+	if queue is empty, shut down dte.
+
+TO-11 Clock process: release message buffer that's been sent.
+
+
+TO-10 Messages
+	On doorbell interrupts, inspect cause.  If the 11 has
+	sent the to-10 byte count, then set up the to-10 byte
+	pointer and DATAO the to-10 byte count to the DTE.
+	Zero the to-10 byte count in the comm area
+	Of course, we must allocate a free stg block of
+	adequate size for the incoming message.
+
+	Eventually, the DTE will finish.  On a TO-10 transfer
+	done interrupt, inspect the message, dispatch accordingly.
+
+
+--------------------------
+KLDCP:
+
+TO-10 Messages
+	Messages are composed in buffers, by other processes.
+	A buffer address and count are passed to the TO-10 Queue.
+	TO-10 Queue builds linked list of buffers.
+
+TO-10 Dequeue:
+	If the TO10BC in the comm region is zero then:
+	If TO-10 was busy and is now done, dequeue the current message
+	If TO-10 is now idle and queue is non-empty, load the
+		TO10AD and TO10BC of the DTE-20.
+		Store the TO10BC in the comm area. Ding 10.
+TO-11 Messages
+	If the TO11 BC is non-zero in the comm region, copy it and
+	deposit zero there.
+	Find a buffer of appropriate size. load it's address as TO11AD
+	load DTE20 with TO11BC.
+	When DTE20 TO11 is done, clear done, process buffer.
+
+---------------------------
+
+QMP11
+	Each message, in or out, comes from a message pool.
+	A subroutine exists to grab a block of specified length
+	from the pool.  Another allows a block to be returned.
+	POOLI	initialize pool
+	POOLG	get block from pool
+	POOLR	return block to pool
+
+TO-10
+	Need a subroutine to add mesages to the queue.
+	Need a subr to send messages to 10.  When message is
+	done, return block to pool.
+	TO10P	put messages on TO-10 queue
+	TO10T	take message from TO10 queue, send & return block.
+
+TO-11	Subr accepts to-11 command, finds a block of appropriate
+	size, accepts the message from the -10.  Dispatches to
+	appropriate routine, that routine is responsible for
+	returning the block to the pool.
+	TO11G	get message from 10.
+
+WAITS 	Queued Message Protocol UUO (QMPUUO)
+
+	QMPUUO	AC,
+
+		AC contains a pointer to a three word block of data:
+			0:	function code
+			1:	IOWD for user space
+			2:	returned message identifier (some fcns)
+
+	Functions
+		0:	read a message.
+			if argument 2 is zero, this reads the first message
+			in the TO10 queue.  If argument 2 is non-zero and is
+			the message id for an existing message, this reads
+			the next message following the specified message.
+			If an invalid message id is given, the first message
+			will be returned.
+
+			Returns message data in the space specified by
+			the IOWD.  Returns a message ID, usable on a 
+			subsequent call.
+
+			Skips unless there are no messages.
+
+		1:	Delete a message.
+			Requires a valid returned message identifier.
+			The IOWD is ignored.
+			Skips, unless the specified message does not exist.
+
+		2:	Queue message.
+			argument 1 is the IOWD describing the message.
+			returns a message ID, usable in query message function.
+			Skips, unless TO11 Queue is too full.
+			On non-skip return, the message has not been queued.
+
+		3:	Query message.
+			Requires valid message identifier.
+			Skips if message has been transmitted to the 11
+				(I.e., the message is not in the queue).
+Facts about the DTE-20
+
+Inaccuracies are due to DEC's faulty documentation and my limited
+understanding.   Tough.
+
+The DTE-20 has three major operating modes.  The DTE-20 cycles from mode
+to mode.  If all three modes are active, the DTE20 will provide increments
+of service to each mode.  
+
+Deposit/Examine (DEX) mode:
+	The 11 can transfer one 36-bit word between KL10 memory and three
+	DTE20 registers.  The KL10 address, address space, and transfer
+	direction are specified by two DTE20 registers.
+
+	This transfer is effected without any PDP-11s interrupts being
+	generated.  See DEXDON in Status
+
+TO-11 Mode:
+	In this mode the KL10 specifies a TO-11 byte pointer in the EPT,
+	and the 11 specifies a TO-11 Address and the TO-11 Byte Count.
+	KL10 bytes, described by the TO-11 byte pointer are moved to
+	11 memory (either words or bytes).   Interrupts to the 11 or to
+	both can be generated at the successful conclusion of a transfer.
+	Interrupts to both if errors.
+
+TO-10 Mode:
+	The 11 specifies the TO-10 Address.  The KL specifies the TO-10
+	byte pointer, and DATAOs the TO10 byte count to the DTE.
+	11- words (or bytes) are moved from the 11- memory to the KL10
+	memory as specified by the TO-10 byte pointer.  Interrupts to
+	the KL only, or interrupts to both processors, can be generated
+	at the successful conclusion of a transfer.  Interrupts to both
+	if errors.
+
+In addition to these modes the KL10 can cause the DTE-20 to press the 11's
+reload button.   By this technique the 10 can obtain a dump of PDP-11 memory,
+and load PDP-11 bootstrap programs.   Presumably the bootstrap program can
+reload the -11 from any of the -11 peripherals, including the DTE20.
+
+DTE20 Registers (PDP-11 side)
+
+(The first 12 of these are not cleared by Unibus INIT, because they are
+implemented in RAMs.  The three DIAG words and the Status word are cleared
+by INIT)
+
+Unibus Address of DTE =     177400 + 40n		n = 0, 1, 2, 3
+Interrupt Vector of DTE =      774 - 4n			n = 0, 1, 2, 3
+BR level is set from the plug located in the ROM-Reload/Privilege Switch
+			assembly (M8564).  Normal BR level is BR6
+
+177400	DLYCNT		Delay count for TO10 and TO11 transfers.
+			Bits 15:14 are made PDP-11 address bits 17:16
+			for the -11 side of To-10 and To-11 transfers.
+
+			Bits 13:0 are the two's complement of the
+			number of 500ns ticks to wait between successive
+			bytes.  A copy of this number is counted up until
+			Bit 13 becomes a zero, at 500 ns per count.
+			This count up happens before each TO11 or TO10 byte
+			(when the corresponding major state is active).
+
+177402	DEXWD3		KL10 bits 20:36 for deposit/examine
+177404	DEXWD2		KL10 bits 04:19 for deposit/examine
+177406	DEXWD1		KL10 bits 00:03 for DEX appear in 11-bits 3:0
+
+177410	TENAD1		bits 15:13 specify which KL10 address space to use in DEX.
+			000 relative to EPT
+			001 Exec Virtual address
+			100 Physical address
+			bit  12 a one means deposit; zero means examine.
+			bit  11 a one means an unprotected, privileged DEX.
+				bit 11 is cleared after each DEX operation.
+			bits  6:0 are KL address bits 13:19 for DEX
+
+177412	TENAD2		KL address bits 20:35 for DEX
+			Depositing into this ram address initiates the
+			DEX operation.   (See DEXDON in STATUS.)
+
+177414	TO10BC		To-10 byte count.   Actually, we mean "item" count.
+			Normally, this is set by DATAO DTEn,
+			Bit 15 is the TO10 I Bit, Int -11 on normal to10 done.
+				(I can't find the print that reads this bit.
+				The 11 can not really set this bit, which
+				exists outside the ram file. DPS5 TO10 I BIT
+			Bits 14:12 are zero
+			Bits 11:0 are the twos complement of the number
+			of items to move.  In byte mode, this is the
+			byte count; in word mode, this is the word count.
+
+177416	TO11BC		To-11 byte count.   Actually, this is an ITEM count.
+			Storing into this cell AND into TO11AD initiates
+				a To-11 transfer.
+			15  INT10   Interrupt -10 also on normal termination.
+			14  ZSTOP   Stop when depositing a zero character
+			13  TO11BM  Set byte mode (store 2 bytes/word)
+			12  0
+			11:0        The twos complement of the number of
+				    bytes to transfer.  (In word mode,
+				    this is a WORD count.)
+
+177420	TO10AD		To-10 Address.  The 11-address (word or byte) for
+				the source of the next To-10 transfer.
+				(increments by 1 in byte mode, by 2 in word mode)
+				(To-10 byte mode is set by bit 0 in DIAG3)
+
+177422	TO11AD		To-11 Address.  The 11-address (word or byte) for
+				the destination of the next To-11 transfer.
+				(increments by 1 in byte mode, by 2 in word mode)
+
+177424	TO10DT		To-10 Data.  This contains the most recent word
+				(or byte) moved in a To-10 operation. This
+				location seems to be useful only for diagnostics.
+
+177426	TO11DT		To-11 Data.  This contains the most recent word
+				(or byte) moved in a To-11 operation. This
+				location seems to be useful only for diagnostics.
+
+177430	DIAG1		Diagnostic register 1
+    Read				Write
+15  CNT3 DIAG DS 00 OUT			DS00   Diag Status
+14  CNT3 DIAG DS 01 OUT			DS01
+13  CNT3 DIAG DS 02 OUT			DS02
+12  CNT3 DIAG DS 03 OUT			DS03
+11  Ebox Clock Error Stop  DS04 OUT	DS04
+10  KL is running	   DS05 OUT	DS05
+ 9  Ebox is halted	   DS06 OUT	DS06
+ 8  Major State is DEX
+ 7  Major State is TO10			DFUNC  CNT3 REMOVE STATUS
+ 6  Major State is TO11	
+ 5  CNT3 DIAG 10/11			D1011  10/11 Diagnotic Mode CNT3 DIAG 10/11
+ 4					       Single step clock.  CNT5 SINGLE PLS
+ 3					DIKL10 KL10 Diagnostic Mode CNT3 DIAG KL10
+ 2					DSEND  Send Ebus during Diag Funct CNT3 DIAG SEND
+ 1
+ 0 CNT3 DIAG COM START			DCSRT  Diag Command Start
+
+
+177432	DIAG2		Diagnostic register 2
+   Read					Write
+15 RAM File Mixer Address 0
+14 RFMAD1  DPS4 ADR 2			EDONES 	Set Ebus done. CNT2 BUS DONE SET
+13 RFMAD2  DPS4 ADR 1
+12 RFMAD3  DPS4 ADR 0
+11 0
+10 0
+ 9 0
+ 8 0
+ 7 0
+ 6 0					Diagnostic Reset.  INT1 MST CLR
+ 5 0
+ 4 0					Load  CNT4 STATE COUNT 8
+ 3 0					Load Minor State Count 4
+ 2 0					Load Minor State Count 2
+ 1 0					Load Minor State Count 1
+ 0 0
+
+177434	STATUS		Status register
+   Read					Write
+15 TO10DN To-10 Done			DON10S	Set TO10DN
+14 0					DON10C  Clear TO10DN
+13 TO10ER To-10 Error			ERR10S  Set TO10ER
+12 RAMIS0 Data out of ram is 0		ERR10C  Clear TO10ER
+11 TO11DB To-11 Doorbell		INT11S  Set TO11DB
+10 DXWRD1 DEX word 1			INT11C  Clear TO11DB
+ 9 D11MPE -11 Mem Par error		PERCLR	Clear D11MPE
+ 8 TO10DB To-10 Doorbell		INT10S  Set TO10DB
+ 7 TO11DN To-11 Done			DON11S	Set TO11DN
+ 6 EBSEL  E Buffer Select		DON11C	Clear TO11DN
+ 5 NULSTP Null Stop			INTRON  Enable DTE20 to interrupt -11
+ 4 BPARER E bus parity error		EBUSPC	Clear E bus par error
+ 3 RM     Restricted Mode		INTROF	Disable DTE20 from interrupting
+ 2 DEXDON Deposit/Examine Done		EBUSPS	Set E bus par error
+ 1 TO11ER To-11 Error			ERR11S  Set TO11ER
+ 0 INTSON DTE is enabled to int. 11	ERR11C	Clear TO11ER
+
+177436	DIAG3		Diagnostic register 3
+   Read					Write	
+15 -CNT1 SWAP SEL LT			
+14 DPS4 PARITY
+13 DPS7 CAP DATA 15
+12 DPS7 CAP DATA 14
+11 DPS7 CAP DATA 13
+10 DPS7 CAP DATA 12
+ 9 DPS7 CAP DATA 11
+ 8 DPS7 CAP DATA A00
+ 5					SCD     Shift Captured Data.  CNT8 CAP DATA CLK
+ 0  					TO10BM  Set byte mode for To-10
+
+DTE Programming, KL-10 Side
+
+EPT locations:
+
+140	TO-11 byte pointer
+141	TO-10 byte pointer
+142	Vector interrupt instruction
+143
+144	Size of comm area for examine
+145	Relocation of comm area for examine
+146	Size of comm area for deposit
+147	Relocation of comm area for deposit
+
+DTE20 CONI/CONO
+
+CONI					CONO
+
+20	Restricted Mode			must be zero
+21	DEAD11 - AC Low present in 11	must be zero
+22	TO11DB To-11 Doorbell		Set TO11DB
+23	0				CR11B	Clear 11 reboot button
+24	0				SR11B   Set   11 reboot button
+25	0				must be zero
+26	TO10DB To-10 Doorbell		CL11PI	Clear TO10DB
+27	TO11ER To-11 Error		must be zero
+28	0				must be zero
+29	TO11DN To-11 Done 		CLTO11  clear TO11DN and TO11ER
+30	TO10DN To-10 Done		CLTO10  clear TO10DN and TO10ER
+31	TO10ER To-10 Error		PIENB   Enable for CONO bits 32:35
+32	PI 0 is enabled			PI0ENB	Enable for PI 0 interrupts
+33:35	PIA				PIA
+
+DATAO DTE,  set TO-10 byte count.
+	0:22 must be zero
+	23   TO10IB if set, interrupt -11 also, when TO10 is done.
+		DPS5 TO10 I BIT
+	24:35 two's complement of the To-10 byte count.
+DEX transfers
+	DEX transfers can occur whenever the KL microcode is running.
+(Even if the KL is halted.)  DEX transfers happen without the KL macro
+code being aware of them.
+
+	Deposit
+
+	The PDP-11 loads the word to be deposited into DEXWD1, DEXWD2, and
+	DEXWD3.  Then it loads the high part of the KL10 address, the
+	deposit bit, the address space selection, and unprotect bit
+	into TENAD1.  Finally, the -11 loads the low order KL10 address
+	into TENAD2.  When the deposit is complete, DEXDON will come
+	on in the Status register.
+
+	Examine
+
+	The PDP-11 loads TENAD1 with the address space selection, the
+	unprotect bit, if wanted, and the high-order KL10 address.
+	Then the -11 loads TENAD2 with the low order address bits.
+	Loading TENAD2 starts the examine operation.  When it completes,
+	DEXDON will be set in the Status register.
+
+To-10 Transfers
+	(The -11 tells the -10 that it wants to send data.  Send the -10
+	a byte count.  The -10 will allocate an appropriate buffer.
+	The -11 will set the TO10AD register in the DTE)
+	
+	For a To-10 transfer the KL-10 must set up a byte pointer in
+	EPT location 141.  Don't use indexing, indirection, or
+	extended byte pointers.  The byte pointer is interpreted
+	in Exec Virtual space.
+
+	Use DATAO to set the To-10 Byte count.  The transfer will
+	start.  (A transfer starts when both a TO10AD and TO10BC
+	have been sent since the last transfer finished.)
+
+	When the byte count is exhausted the -10 will get a TO10DN
+	interrupt.  If the TO10 I Bit was set in the DATAO, the -11
+	will get an interrupt too.
+
+
+To-11 Transfers
+	For a To-11 transfer the KL-10 must set up a byte pointer in
+	EPT location 140.  Don't use indexing, indirection, or
+	extended byte pointers.  The byte pointer is interpreted
+	in Exec Virtual space.
+
+	The -10 tells the -11 that it wants to send data.  Send the -11
+	a byte count.
+	
+	The -11 will allocate space, and send the DTE a TO11AD and TO11BC.
+	A transfer will start when both an address and byte count are
+	given to the DTE since the completion of the last TO11 transfer.
+
+	When the byte count is exhausted the -11 will get a TO11DN
+	interrupt.  If the TO11 I Bit was set in the TO11BC, the -10
+	will get an interrupt too.
+
+
+Reloading the -11
+
+Reloading the -11, although great fun, should only be attempted as
+a last resotrt.  For example, it's dandy if the 11 is dead, or if
+you're trying to torture the -11 into doing new and marvellous things.
+
+KL10				PDP-11
+CONO DTE,SR11B!PIENB!PI0ENB	was running merrily.   Now gets AC low.
+wait				11 does power fail trap and waits
+CONO DTE,CR11B			allows the 11 to run, starting the
+				M873YD loader at location 173534.
+				Program runs looking for a DTE that
+				has a to11 doorbell and a magic number
+DATAO DTE,[1365] send the magic number
+CONO DTE,TO11DB	 ring the TO11 doorbell.
+				When the 11 finds the DTE, it does a
+				diagnostic reset to clear the TO10BC and
+				the TO11DB.
+Wait until the CONI
+shows that TO11 Doorbell
+has dropped.
+				The 11 sets the TO10AD to zero, and
+				sets the delay count to zero.
+				it is ready to dump all of 11 memory
+				thru the DTE into the 10.
+If you want an 11 core dump,
+just find a page, setup a TO10
+byte pointer, and DATAO a TO10
+byte count.  Probably don't set
+the TO10 I Bit, because you
+don't want to bother the 11.
+When you've swallowed enough,
+store the TO11 byte pointer in
+EPT location 141, and ring
+the TO11 Doorbell.
+
+The TO11 byte pointer should
+describe a 400-word PDP-11
+program (= 200 KL10 words).
+This bootstrap program will
+be loaded at -11 location
+zero.
+				Wait for the to11 doorbell.  When it
+				comes on, it's time to stop dumping
+				and start loading.
+				Do a dianostic reset to clear the
+				DTE and the TO11 doorbell.
+				Clear TO11 address.
+				Set TO11 byte count to 400, interrupt
+				both.
+Wait for the TO11 doorbell
+to go down.  Wait for the
+TO11 transfer to finish.
+Ring TO11DB when finished.
+				When TO11DB and TO11DN are seen, program
+				will examine the new contents of location
+				zero.  If a NOP is contained there, the
+				-11 will reset the DTE again and transfer
+				to zero.
+
+For easy reference, the text of the M873YD bootstrap loader is presented below:
+
+
+.TITLE BOOTSTRAP LOADER M873-YD
+
+;STARTUP OFFSETS
+;SWITCH		ADDRESS
+;  1		  000		SWITCH
+;  2		  304		RP04
+;  3		  014		DECTAPE
+;  4		  534		POWER (i.e., DTE-20)
+
+COMMENT ⊗
+If switch 1 is pressed, the switch register is examined.  If the low bit is off
+the machine transfers to the byte address in the switch register.  If the low
+bit is on the format of the switch register is as follows:
+Bits	Function
+ 15	Try indefinitely
+10-8	Drive number
+ 7	Use RP04 instead of DECTAPE
+ 0	Must be on to decode this way
+⊗
+
+R0=%0
+R1=%1
+R2=%2
+R3=%3
+R4=%4
+R5=%5
+SP=%6
+PC=%7
+
+;TC11 REGISTERS
+TCST=177340
+TCCM=177342
+TCWC=177344
+TCBA=177346
+
+;RP04 REGISTERS
+RPCS1=176700
+RPWC=176702
+RPBA=176704
+RPDA=176706
+RPCS2=176710
+RPDS=176712
+RPER1=176714
+RPAS=176716
+RPLA=176720
+RPDB=176722
+RPMR=176724
+RPDT=176726
+RPSN=176730
+RPOF=176732
+RPDC=176734
+RPCC=176736
+RPER2=176740
+RPER3=176742
+RPEC1=176744
+RPEC2=176746
+
+;DTE REGISTERS
+DTEORG=174400		;origin of the four DTE's
+DTESIZ=40		;number of bytes associated with DTE registers
+
+DLYCNT=00		;offsets from DTEORG addresses
+TENAD1=10
+TENAD2=12
+TO10BC=14
+TO11BC=16
+TO10AD==20
+TO11AD==22
+DIAG1=30
+DIAG2=32
+STATUS=34
+DIAG3=36
+
+SWREG=177570
+
+;Here when switch 1 is pressed (SWITCH REG)
+.=173000
+SW1GO:	BIT @#SWREG,#1
+	BNE SW1ODD		;BRANCH IF BIT 0 ON IN SWITCH REGISTER
+	MOV @#SWREG,PC		;JUMP TO ADDRESS IN SWITCH REGISTER
+
+;Here when switch 3 is pressed (DECTAPE)
+.=173014
+SW3GO:	MOVB (PC),R4		;R4 ← 1
+	CLR R1			;ASSUME DRIVE ZERO
+	CLR R5			;SIMULATE ZERO SWITCHES
+	BR SW1OD2
+
+.=173024
+	173000			;CAUSE DC LO TRAP TO TRANSFER TO ROM
+	340
+
+.=173030
+SW1ODD:	MOV @#SWREG,R1
+	ASLB R1
+	CMPB #340,R1
+	BLOS SW1OD1
+	CMPB #60,R1
+	BHI SW1OD1
+	CLR R1			;ASSUME DRIVE ZERO
+SW1OD1:	SWAB R1			;GET DRIVE NUMBER INTO LOW BYTE
+	BIC #177770,R1		;KEEP LOW 3 BITS (DECTAPE DRIVE NUMBER)
+	MOV @#SWREG,R5
+	CLR R4
+	TSTB R5
+	BMI SW2GO0		;BRANCH IF SWREG BIT 7 IS ON (RUN THE DISK)
+SW1OD2:	MOV #5,R0		;COMMAND FOR TCCM:DRIVE=0,RDATA,FORWARD,DO
+	MOV #-400,R2		;SET UP WORD COUNT REGISTER
+	MOV #4003,R3		;COMMAND FOR TCCM:DRIVE=0,RNUM,REVERSE,DO
+	SWAB R1			;PUT DRIVE NUMBER IN HIGH BYTE
+	BIS R1,R3		;OR DRIVE NUMBER INTO REVERSE COMMAND
+	BIS R1,R0		;OR DRIVE NUMBER INTO READ FORWARD COMMAND
+SW1OD5:	MOV #TCCM+2,R1		;AFTER AUTO DECREMENT WILL POINT AT TCCM
+SW1OD3:	MOV #24,SP		;USE SP AS A COUNTER
+SW1OD4:	TST R5
+	BMI SPIN		;BRANCH IF SWREG BIT 15 IS ON (TRY INDEFINITELY)
+	DEC SP			;BUMP COUNT
+	BPL SPIN		;BRANCH IF STILL NON-NEGATIVE
+	HALT
+	BR SW1OD3
+
+;START RUNNING THE TC11 DECTAPE DRIVE
+SPIN:	RESET			;CAUSES TCBA TO BE SET TO ZERO
+	MOV R3,-(R1)		;START SPINNING BACKWARDS READING BLOCK NUMS
+SPINL1:	TST (R1)		;WAIT FOR AN ERROR (SHOULD RUN INTO THE
+	BPL SPINL1		; FRONT END ZONE EVENTUALLY)
+	TST (R1)+		;POINT AT TCWC
+	TST -4(R1)		;LOOK AT END ZONE BIT IN TCST
+	BPL SW1OD4		;IF IT IS OFF TRY AGAIN (GOT SOME OTHER ERROR)
+	MOV R2,(R1)   		;STORE WORD COUNT IN TCWC
+	MOV R0,-(R1)   		;READ FORWARD CMD, LEAVE R1 POINTING AT TCCM
+SPINL2:	TSTB (R1)		;WAIT FOR READY
+	BPL SPINL2
+	TST (R1)+		;TEST ERROR BIT, POINT R1 AT TCWC
+	BMI SW1OD4		;BRANCH ON ERROR
+	TST -(R1)		;BUMP BACK TO TCCM
+	CLRB (R1)		;CLEAR FUNCTION, DO, INT ENB
+	CMPB #5,R0		;SEE IF LAST COMMAND WAS FORWARD READ
+	BNE HLTLUP		;IF NOT THEN HALT
+GOTHER:	JMP @(PC)+		;GO TO 0 ABSOLUTE (WHERE WE JUST READ 400 WDS INTO)
+HLTLUP:	0
+	BR HLTLUP		;STAY HALTED IF PRESS CONTINUE
+
+	MOV R0,@#40   			;173216
+	BR UTIL
+
+.=173224
+	173000			;CAUSE DC LO TRAP TO TRANSFER TO RAM
+	340
+
+.=173230
+UTIL:	MOV PC,R0
+	BR UTIL1			;SIMULATE JSP R0,UTIL1
+	MOV #4015,R0
+	MOV #110000,R2
+	MOV #3,R3
+	CLR R5
+	BR SW1OD5
+
+UTIL1:	MOV R1,@#42			;SAVE R1 IN 42
+	MOV #44,R1
+	MOV R2,(R1)+			;SAVE R2 IN 44
+	MOV R3,(R1)+			;SAVE R3 IN 46
+	MOV R4,(R1)+			;SAVE R4 IN 50
+	MOV R5,(R1)+			;SAVE R5 IN 52
+	MOV SP,(R1)+			;SAVE SP IN 54
+	MOV R0,(R1)+			;SAVE R0 (RETURN ADDRESS) IN 56
+	JMP 2(R0)			;RETURN FROM SIMULATED JSP R0,UTIL1
+
+
+;R3 AND R0 SPECIFY THE DISK ADDRESS.
+;R3 BITS
+; 15	ON MEANS 16 BIT / WORD FORMAT
+; 0-8	CYLINDER
+;10-14	TRACK
+
+;R0 BITS
+; 3-7	SECTOR ADDRESS
+; 8-15	COMMAND (STORED IN LOW BYTE OF RPCS1)
+
+;Here when switch 2 pressed (RP04)
+.=173304
+SW2GO:	MOVB (PC),R4			;R4 ← 5
+	CLR R5
+	CLR R1
+SW2GO0:	MOV #34400,R0			;71,,SECTOR 0 (71 = READ DATA COMMAND)
+	MOV #-400,R2			;WORD COUNT
+	MOV #626,R3			;CYLINDER 404 DECIMAL,TRACK 0,18 BIT FORMAT
+	BIS R1,R0			;SET DRIVE NUMBER IN R0
+SW2GO1:	MOV #RPCS1,R1
+SW2GO2:	RESET
+	MOV R0,SP
+	BIC #177770,SP
+	MOV SP,10(R1)			;SET DRIVE NUMBER IN RPCS2
+	BIT #4000,(R1)			;WAIT UNTIL DRIVE AVAILABLE
+	BEQ SW2GO2			;  ON THIS CONTROLLER
+	MOV #21,(R1)+			;GIVE "READ-IN-PRESET" COMMAND
+	MOV R3,SP
+	BIC #176000,SP
+	MOV SP,32(R1)			;SETUP DESIRED CYLINDER ADDRESS
+	MOV R3,SP
+	BPL SW2GO3			;BRANCH IF R3 BIT 15 IS OFF
+	MOV #10000,30(R1)		;SET 16 BIT / WORD FORMAT
+SW2GO3:	ASR SP
+	ASR SP
+	CLRB SP				;ALSO CLEARS C BIT
+	BISB R0,SP
+	RORB SP				;FLUSH LOW BIT AND ZERO HIGH BIT
+	ASRB SP
+	ASRB SP				;GET SECT ADDR TO BITS 0-4
+	MOV SP,4(R1)			;SET TRACK AND SECTOR ADDRESSES
+	MOV R2,(R1)			;SET WORD COUNT
+	MOV R0,SP
+	CLRB SP
+	SWAB SP
+	MOV SP,-(R1)			;GIVE COMMAND FROM LH OF R0
+SW2GO4:	TSTB (R1)
+	BPL SW2GO4			;WAIT FOR READY
+	BIT #60000,(R1)
+	BNE SW2GO2			;TRY AGAIN IF ERRORS
+	BIT #140000,12(R1)
+	BNE SW2GO2			;TRY AGAIN IF ATTENTION OR ERRORS
+	CMP #71,SP			;DID WE JUST GIVE A READ COMMAND?
+	BNE HLTLUP			;NO, LOSE
+	CMP #240,@#0			;IS FIRST WORD READ A NOP?
+	BEQ GOTHER			;YES, GO DO IT
+	HALT				;NO, LOSE.  IF YOU CONTINUE....
+	BR GOTHER			;....THEN START UP AT ZERO
+
+.=173506
+UTIL2:	MOV R0,@#40
+	MOV PC,R0			;SIMULATE JSP R0,UTIL1
+	BR UTIL1
+	MOV #30500,R0
+	MOV #110000,R2
+	MOV #32631,R3
+	BR SW2GO1
+
+
+;Here when switch 4 pressed (done by KL10)
+.=173534
+SW4GO:	MOV R0,@#40		;SAVE R0 IN ABSOLUTE 40
+	MOV PC,R0
+	BR UTIL1		;SIMULATE JSP R0,UTIL1 (SAVE REGS IN LOW CORE)
+	CLR R5
+	MOV (R5)+,R1		;C(0) → R1
+	MOV (R5)+,R3		;C(2) → R3
+	MOV (R5)+,R4		;C(4) → R4
+	MOV (R5),R0		;C(6) → R0, R5 = 6
+	MOV #340,(R5)		;340 → C(6) (SET UP ERROR PS)
+	TST -(R5)		;R5 = 4
+SW4GO1:	MOV #DTEORG-DTESIZ,R2	;R2 = address of DTE # -1
+	MOV PC,(R5)		;STORE ADDR OF NEXT INSTR NXM TRAP PC ( → C(4))
+	MOV R5,SP		;SP = 4
+SW4GO2:	ADD #DTESIZ,R2		;R2 = Address of DLYCNT of next DTE
+	TSTB R2			;Last DTE starts at 177540. 
+	BMI SW4GO1		;Brach if R2 is now 177600.  Loop thru DTEs again.
+	BIT #4000,STATUS(R2)	;Look at 10 REQ INT (1) in DTE STATUS register
+	BEQ SW4GO2		;This isn't the one. Try the next DTE.
+				;in case of bus time out, trap to 4 will return to
+				;the MOV preceding SW4GO2.
+	CMP TO10BC(R2),(PC)	;Compare TO10BC to magic constant (the BNE, 1365)
+	BNE SW4GO2		;Not this DTE
+	TST (R5)+		;R5 = 6
+	MOV R0,(R5)		;R0 → C(6)
+	MOV R4,-(R5)		;R4 → C(4)
+	MOV R3,-(R5)		;R3 → C(2)
+	MOV R1,-(R5)		;R1 → C(0)  R5 = 0
+	MOV #130,R0
+	MOV R2,R4		;R4 = ADDRESS OF APPROPRIATE DTE
+SW4GO3:	MOV (R4)+,(R0)+		;COPY DTE REGISTERS TO 130
+	CMP #160,R0
+	BHI SW4GO3
+	MOV R2,R1
+	ADD #DIAG2,R1		;POINTS AT DIAG2
+	MOV #100,(R1)+		;Set Diagnostic clear in DIAG2.  Set R1 to STATUS
+	CLR (R2)		;Clear DLYCNT
+	CLR TO10AD(R2)		;CLEAR TO 10 ADDRESS
+SW4GO4:	BIT #4000,(R1)		;Look at 10 REQ INT (1) in STATUS.
+	BEQ SW4GO4		;Wait for it to come on.
+	BIT #26,DIAG3(R2)	;Look at Unibus Parity Error bits in DIAG3
+	BEQ SW4GO5		;Br if no parity errors.
+	MOV #400,(R1)		;Errors.  Set REQ 10 INT in STATUS
+	HALT
+
+SW4GO5:	MOV #100,DIAG2(R2)	;RESET DTE AGAIN
+	CLR TO11AD(R2)		;CLEAR TO 11 ADDRESS
+	MOV #107400,TO11BC(R2)	;START TRANSFER OF 400 WORDS, I BIT ON
+SW4GO6:	BIT #4000,(R1)		;Wait FOR 10 REQ INT (1) in STATUS
+	BEQ SW4GO6
+SW4GO7:	BITB #202,(R1)		;LOOK AT TO11 ERR AND NORM TERM
+	BEQ SW4GO7		;WAIT FOR ONE TO COME ON
+	BPL SW4GO8		;BRANCH IF NORM TERM CLEAR
+	CMP #NOP,(R5)		;Normal. MAKE SURE FIRST WORD TRANSFERRED WAS A NOP
+	BEQ SW4GO9		;Ok.  run this program
+SW4GO8:	MOV #400,(R1)		;SET REQ 10 INT
+	HALT
+SW4GO9:	MOV #100,DIAG2(R2)	;RESET AGAIN JUST TO MAKE SURE
+	JMP (R5)		;TRANSFER TO 0
+
+.END
+	.TITLE	DTBOOT
+;THIS IS A SAMPLE.   See KLSER[S,SYS] for the most recent source!
+
+Comment ⊗
+
+Here is the text of the DTBOOT program.
+
+This program is loaded into the first 1000 bytes of the -11 by the action
+of the KL10 and the M873YD loader.  The function of the DTBOOT program
+is to:
+	Clear -11 core from 1000 to 157777
+Loop:	Diagnostic Clear to DTE
+	Examine EPT location 143.
+	If DEXWD1 AND '17 is zero, go to loop.  These are bits 0:3 of EPT 143.
+	If DEXWD1 AND '17 are 2, go to ST11.
+	If DEXWD1 AND '17 are 4, go to LD11.
+	Otherwise, go to ERROR
+
+ERROR:	(save offending command in ERCMD)
+	deposit BYTE(4)0(32)-1 in EPT 143.
+DONG:	DONG 10.
+	Go to loop.
+
+LD11:	Set TO11BC from DEXWD2
+	Set TO11AD from DEXWD3
+	(Save DEXWD2 and DEXWD3 in the buffer at CMDLST)
+LDLP:	If NOT(TO11DN or TO11EE or TO11DB) then go to LDLP.
+	IF NOT TO11DN Then go to ERROR.
+	Deposit zero in EPT 143.
+	Go to DONG
+
+ST11:	Copy DEXWD3 to R0.
+	Deposit -1 in EPT 143.
+	Clear as much of the region from 0 to 1000 as we can.
+	DO JMP (R0).
+
+⊗
+
+R0=%0
+R1=%1
+R2=%2
+R3=%3
+R4=%4
+R5=%5
+SP=%6
+PC=%7
+
+BIT15=100000
+BIT14= 40000
+BIT13= 20000
+BIT12= 10000
+BIT11=  4000
+BIT10=  2000
+BIT9=   1000
+BIT8=    400
+BIT7=    200
+BIT6=    100
+BIT5=     40
+BIT4=     20
+BIT3=     10
+BIT2=      4
+BIT1=      2
+BIT0=      1
+
+;DTE REGISTERS
+DTEORG=174400		;origin of the four DTE's
+DTESIZ=40		;number of bytes associated with DTE registers
+
+DLYCNT=00		;offsets from DTEORG addresses
+DEXWD3=02		;Bits 20:35 of the KL10 word
+DEXWD2=04		;Bits  4:19 of the KL10 word
+DEXWD1=06		;Bits  0: 3 of the KL10 word
+TENAD1=10
+		PRTOFF=BIT11		;set for priviledged examine
+		DEPOSI=BIT12		;set for deposit
+TENAD2=12		;Bits 20:25 of the KL10 address
+TO10BC=14
+TO11BC=16
+TO10AD=20
+TO11AD=22
+DIAG1=30
+DIAG2=32
+		DRESET=BIT6		;diagnostic reset 
+STATUS=34
+		TO11DB=BIT11		;To-11 doorbell
+		TO10DB=BIT8		;to-10 doorbell
+		TO11DN=BIT7		;to-11 done
+		DEXDON=BIT2		;deposit/examine done
+		TO11ER=BIT1		;to-11 error
+DIAG3=36
+
+EPT143=143	;a magic location in the EPT, known to the DTBOOT loader.
+
+.=0
+STBOOT:	NOP				;M873YD insists we start with NOP at 0
+	BR	12			;
+	.WORD   10			;4:  BUS Timeout traps to 10
+	.WORD	340			;6:  PS for timeout
+	.WORD	0			;10: HALT
+;location 12				;Clear -11 core from 1000 to 157777
+	MOV	#1000,R0		;Clear 11-Memory.  Start at 1000.
+1$:	CLR	(R0)+			;Clear a word.  Incr R0.
+	CMP	#160000,R0		;Compare R0, next wd to zero, to +INF.
+	BNE	1$			;branch if more left to zero
+	MOV	#DTEORG,R5		;R5 is base address of relevant DTE.
+	MOV	#ST11,SP		;ST11 is the address above stack
+	MOV	#37777,DLYCNT(R5)	;Set the delay count in the DTE
+	MOV	#CMDLST,R2		;address to store commands
+
+Comment ⊗
+Loop:	Diagnostic Clear to DTE
+	Examine EPT location 143.
+	If DEXWD1 AND '17 is zero, go to loop.  These are bits 0:3 of EPT 143.
+	If DEXWD1 AND '17 are 2, go to ST11.
+	If DEXWD1 AND '17 are 4, go to LD11.
+	Otherwise, deposit BYTE(4)0(32)-1 in EPT 143. DONG 10.  Go to loop.
+⊗
+
+LOOP:	MOV	#DRESET,DIAG2(R5)	;Diagnostic reset.
+	JSR	R4,EXAM			;examine EPT 143.
+	MOV	DEXWD1(R5),R0		;get high order 4 bits of -10 word.
+	BIC	#177760,R0		;clear all but 4 bits.
+	BIT	#11,R0			;low-order bit is a badness.
+	BNE	ERROR			;lose if low order bit is set.
+	JMP	@DISP(R0)		;dispatch
+DISP:	.WORD	LOOP			;0 No operation
+	.WORD	ST11			;2 Start 11
+	.WORD	LD11			;4 Load 11
+	.WORD	ERROR			;6 Error - Undefined.
+
+ERROR:	MOV	R2,-(SP)		;stack R2, command buffer pointer
+	MOV	#ERCMD,R2		;buffer for erroneous command
+	MOV	DEXWD1(R5),(R2)+	;save erroneous command
+	MOV	DEXWD2(R5),(R2)+
+	MOV	DEXWD3(R5),(R2)
+	MOV	(SP)+,R2		;restore R2 from stack.
+	JSR	R4,DEPO			;deposit 4 bits of zero, and 32 ones
+	.word	0
+	.word	177777
+	.word	177777
+DONG:	MOV	#TO10DB,STATUS(R5)	;THUMP THUMP.
+	BR	LOOP
+
+LD11:	MOV	DEXWD2(R5),R0		;Copy DEXWD2 for the TO11 Byte Count
+	MOV	DEXWD3(R5),R1		;Copy DEXWD3 for the TO11 Address
+	MOV	R0,(R2)+		;store commands in command buffer
+	MOV	R1,(R2)+
+	CMP	#ST11-20,R2
+	BLOS	9$			;branch unless cmd buffer ovflow
+	MOV	#CMDLST,R2
+9$:	JSR	R4,DEPO			;Deposit zero to ACK the -10.
+	.WORD	0
+	.WORD	0
+	.WORD	0
+	MOV	R1,TO11AD(R5)		;store the TO-11 address
+	MOV	R0,TO11BC(R5)		;store the byte count and GO!
+1$:	BIT	#TO11DN!TO11DB!TO11ER,STATUS(R5)	;wait for done or error
+	BEQ	1$					;or for the -10 to grump.
+	BIT	#TO11DN,STATUS(R5)	;was it normal termination?
+	BEQ	ERROR			;go grump at the -10
+	JSR	R4,DEPO			;Deposit zero to ACK the -10.
+	.WORD	0
+	.WORD	0
+	.WORD	0
+	BR	DONG
+
+;SUBRS for examine and deposit into EPT 143.  Call with JSR R4,
+
+EXAM:	MOV	#PRTOFF,TENAD1(R5)		;subr to examine EPT143.
+DEXGO:	MOV	#EPT143,TENAD2(R5)		;start examine.
+DEXWAT:	BIT	#TO11DB!DEXDON,STATUS(R5)	;wait for DEXDON or Bell.
+	BEQ	DEXWAT
+	RTS	R4
+
+DEPO:	MOV	#TENAD1,R3			;
+	ADD	R5,R3				;address of TENAD1
+	MOV	#PRTOFF!DEPOSI,(R3)		;deposit TENAD1
+	MOV	(R4)+,-(R3)			;deposit DEXWD1
+	MOV	(R4)+,-(R3)			;deposit DEXWD2
+	MOV	(R4)+,-(R3)			;deposit DEXWD3
+	BR	DEXGO
+
+ERCMD:	.WORD	0,0,0			;store erroneous from -10 command.
+CMDLST:	.WORD	0			;here begins the list of saved commands
+
+Comment ⊗
+;Here to start the -11 from the address given in DEXWD3
+ST11:	Copy DEXWD3 to R0.
+	Deposit -1 in EPT 143.
+	Clear as much of the region from 0 to 1000 as we can.
+	DO JMP (R0).
+⊗
+
+.=1000-<15*2>
+ST11:	MOV	DEXWD3(R5),R0		;R0 ← Starting address of 11 PGM.
+	JSR	R4,DEPO			;deposit -1 for the -10.
+	.word	17
+	.word	177777
+	.word	177777
+	CLR	R1			;try to vanish.  Start at zero
+1$:	CLR	(R1)+			;and clear until
+2$:	CMP	#2$,R1			;we clear the CLR instruction.
+	BNE	1$			;leaving 4 words untouched.
+	JMP	(R0)
+
+.END STBOOT
