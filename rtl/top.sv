@@ -16,7 +16,7 @@ module top(input clk,
   bit clk31;                  // XXX
 
   // TEMPORARY?
-  bit PWR_WARN = 0;
+  bit PWR_WARN;
 
   // While it might appear with an EBOX-centric viewpoint that EBUS is
   // entirely contained within the EBOX and should therefore be muxed
