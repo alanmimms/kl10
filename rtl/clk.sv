@@ -41,8 +41,9 @@ module clk(input clk,
   bit AR_ARX_PAR_CHECK;
   bit DIAG_CHANNEL_CLK_STOP = '0; // XXX used on CLK1. ??? where is this driven?
 
+  bit BURST;
   bit [0:7] burstCounter;
-  bit burstCounterEQ0;
+  bit BURST_CNTeq0;
 
 `ifndef KL10PV_TB
   ebox_clocks ebox_clocks0(.clk_in1(clk));
@@ -234,10 +235,10 @@ module clk(input clk,
     end
   end
 
-  bit [0:3] gatedSR;
+  bit [0:3] e42SR;
   // NOTE: Active-low schematic symbol
   USR4 e42(.RESET('0),
-           .S0('0),
+           .S0('1),
            .D({CLK.FUNC_SINGLE_STEP,
                CLK.FUNC_EBOX_SS,
                CLK.FUNC_EBOX_SS & ~CLK.SYNC,
@@ -245,11 +246,11 @@ module clk(input clk,
            .S3(CROBAR),
            .CLK(CLK.MAIN_SOURCE),
            .SEL(~{CLK.FUNC_GATE, CLK.FUNC_GATE | CLK.RATE_SELECTED}),
-           .Q(gatedSR));
+           .Q(e42SR));
 
   assign CLK.GATED_EN = CLK.GO & CLK.RATE_SELECTED |
-                        ~burstCounterEQ0 & CLK.BURST & CLK.RATE_SELECTED |
-                        gatedSR[0] & CLK.RATE_SELECTED |
+                        ~BURST_CNTeq0 & BURST & CLK.RATE_SELECTED |
+                        e42SR[0] & CLK.RATE_SELECTED |
                         CLK.FUNC_COND_SS & CLK.EBOX_CLK;
 
   // CLK2 p.169
@@ -278,21 +279,25 @@ module clk(input clk,
   end
 
   bit e66SRFF;
-  always @(posedge ~CLK.FUNC_SET_RESET,
-           posedge CLK.FUNC_CLR_RESET,
-           posedge CROBAR)
+  always_ff @(posedge ~CLK.FUNC_SET_RESET,
+              posedge CLK.FUNC_CLR_RESET,
+              posedge CROBAR)
   begin
 
+    // NOTE: Schematic symbol is active-low. To simplify this view the
+    // output of e66SRFF as it would be on Q and /Q outputs (set makes
+    // Q=1, clear makes Q=0) and then invert to drive MR_RESET which
+    // is wired to /Q.
     if (CROBAR) begin                           // CLEAR
-      e66SRFF <= '1;
-    end else if (CLK.FUNC_CLR_RESET) begin      // PRESET
       e66SRFF <= '0;
-    end else if (CLK.FUNC_SET_RESET) begin      // LOAD
+    end else if (CLK.FUNC_CLR_RESET) begin      // SET
       e66SRFF <= '1;
+    end else if (~CLK.FUNC_SET_RESET) begin     // LOAD
+      e66SRFF <= '0;
     end
   end
+  assign CLK.RESET = ~e66SRFF;
   assign CLK.MR_RESET = CLK.RESET;
-  assign CLK.RESET = e66SRFF;
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
 
   // In real KL, CLK.CLK is routed to far end of backplane and back as
@@ -334,7 +339,7 @@ module clk(input clk,
            .S3('0),
            .SEL(~{2{CLK.FUNC_GATE | CROBAR}}),
            .CLK(CLK.MAIN_SOURCE),
-           .Q({CLK.GO, CLK.BURST, CLK.EBOX_SS, ignoredE37}));
+           .Q({CLK.GO, BURST, CLK.EBOX_SS, ignoredE37}));
   
   bit e47Ignore;
   decoder e47Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x),
@@ -538,7 +543,7 @@ module clk(input clk,
                                      CLK.PAGE_FAIL_EN,
                                      CLK.FORCE_1777};
       3'b011: CLK.EBUSdriver.data = {CLK.DRAM_PAR_ERR,
-                                     ~CLK.BURST,
+                                     ~BURST,
                                      CLK.MB_XFER,
                                      ~CLK.EBOX_CLK,
                                      CLK.PAGE_ERROR,
@@ -579,12 +584,12 @@ module clk(input clk,
   bit burstLSBcarry;
 
   assign burstCounter = {burstMSB, burstLSB};
-  assign burstCounterEQ0 = burstCounter == '0;
+  assign BURST_CNTeq0 = burstCounter == '0;
 
   // NOTE: Active-low schematic symbol
   UCR4 e15(.RESET('0),
            .CIN(burstLSBCarry),
-           .SEL(~{CLK.BURST | CLK.FUNC_043, CLK.FUNC_043}),
+           .SEL(~{BURST | CLK.FUNC_043, CLK.FUNC_043}),
            .D(EBUS.data[32:35]),
            .COUT(),
            .Q(burstMSB),
@@ -592,12 +597,8 @@ module clk(input clk,
 
   // NOTE: Active-low schematic symbol
   UCR4 e21(.RESET('0),
-           .CIN(~burstCounterEQ0), // Double invert CLK5 BURST CNT=0 L
-                                   // since .CIN() is active high and
-                                   // so is our burstCounterEQ0.
-                                   // Desird effect is "carry-in when
-                                   // burstCounter != 0".
-           .SEL(~{CLK.FUNC_042 | CLK.RATE_SELECTED | CLK.BURST, CLK.FUNC_042}),
+           .CIN(~BURST_CNTeq0),
+           .SEL(~{CLK.FUNC_042 | CLK.RATE_SELECTED | BURST, CLK.FUNC_042}),
            .COUT(burstLSBcarry),
            .D(EBUS.data[32:35]),
            .Q(burstLSB),
