@@ -13,6 +13,38 @@ typedef enum bit [0:2] {
                           } tEBUSfunction;
 
 
+// EBUS.ds diagnostic functions driven by the DTE20.
+typedef enum bit [0:6] {
+                        diagfSTOP_CLOCK = 7'o000,
+                        diagfSTART_CLOCK = 7'o001,
+                        diagfSTEP_CLOCK = 7'o002,
+                        diagfCOND_STEP = 7'o004,
+                        diagfBURST = 7'o005,
+
+                        diagfCLR_RESET = 7'o006,
+                        diagfSET_RESET = 7'o007,
+                        diagfCLR_RUN = 7'o010,
+                        diagfSET_RUN = 7'o011,
+                        diagfCONTINUE = 7'o012,
+
+                        diagfCLR_BURST_CTR_RH = 7'o042,
+                        diagfCLR_BURST_CTR_LH = 7'o043,
+                        diagfCLR_CLK_SRC_RATE = 7'o044,
+                        diagfSET_EBOX_CLK_DISABLES = 7'o045,
+                        diagfRESET_PAR_REGS = 7'o046,
+                        diagfCLR_MBOXDIS_PARCHK_ERRSTOP = 7'o047,
+
+                        diagfCLR_CRAM_DIAG_ADR_RH = 7'o051,
+                        diagfCLR_CRAM_DIAG_ADR_LH = 7'o052,
+
+                        diagfENABLE_KL = 7'o067,
+
+                        diagfINIT_CHANNELS = 7'o070,
+                        diagfWRITE_MBOX = 7'o071,
+                        diagfEBUS_LOAD = 7'o076
+                        } tDiagFunction;
+
+
 // Each driver of EBUS gets its own instance of this. These are all
 // muxed onto the iEBUS.data member based on the one-hot
 // tEBUSdriver.driving indicator.
@@ -31,7 +63,7 @@ interface iEBUS;
   bit ack;                    // Dev -> EBOX acknowledge
   bit xfer;                   // Dev -> EBOX transfer done
   bit reset;                  // EBOX -> dev
-  bit [0:7] ds;               // Dev -> EBOX??? Diagnostic Select
+  tDiagFunction ds;           // Dev -> EBOX??? Diagnostic Select
   bit diagStrobe;             // Dev -> EBOX Diagnostic strobe
   bit dfunc;                  // Dev -> EBOX Diagnostic function
 endinterface
@@ -720,8 +752,6 @@ endinterface
 
 interface iCLK;
   bit APR;
-  bit BURST;
-  bit BURST_CNTeq0;
   bit CCL;
   bit CCW;
   bit CHC;
