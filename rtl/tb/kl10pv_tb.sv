@@ -1,68 +1,70 @@
 `include "ebox.svh"
 
 module kl10pv_tb;
-  typedef enum bit [0:8] {
-                          diagfCLR_BURST_CTR_RH = 9'o042,
-                          diagfCLR_BURST_CTR_LH = 9'o043,
-                          diagfCLR_CLK_SRC_RATE = 9'o044,
-                          diagfSET_EBOX_CLK_DISABLES = 9'o045,
-                          diagfRESET_PAR_REGS = 9'o046,
-                          diagfCLR_MBOXDIS_PARCHK_ERRSTOP = 9'o047,
+  typedef enum bit [0:7] {
+                          diagfCLR_BURST_CTR_RH = 8'o042,
+                          diagfCLR_BURST_CTR_LH = 8'o043,
+                          diagfCLR_CLK_SRC_RATE = 8'o044,
+                          diagfSET_EBOX_CLK_DISABLES = 8'o045,
+                          diagfRESET_PAR_REGS = 8'o046,
+                          diagfCLR_MBOXDIS_PARCHK_ERRSTOP = 8'o047,
 
-                          diagfCLR_CRAM_DIAG_ADR_RH = 9'o051,
-                          diagfCLR_CRAM_DIAG_ADR_LH = 9'o052,
+                          diagfCLR_CRAM_DIAG_ADR_RH = 8'o051,
+                          diagfCLR_CRAM_DIAG_ADR_LH = 8'o052,
 
-                          diagfENABLE_KL = 9'o067,
+                          diagfENABLE_KL = 8'o067,
 
-                          diagfINIT_CHANNELS = 9'o070,
-                          diagfWRITE_MBOX = 9'o071,
-                          diagfEBUS_LOAD = 9'o076
+                          diagfINIT_CHANNELS = 8'o070,
+                          diagfWRITE_MBOX = 8'o071,
+                          diagfEBUS_LOAD = 8'o076
                           } tDiagFunction;
 
-  typedef enum bit [0:8] {
-                          dte20fSTOP_CLOCK = 9'o000,
-                          dte20fSTART_CLOCK = 9'o001,
-                          dte20fSTEP_CLOCK = 9'o002,
-                          dte20fCOND_STEP = 9'o004,
+  typedef enum bit [0:7] {
+                          dte20fSTOP_CLOCK = 8'o000,
+                          dte20fSTART_CLOCK = 8'o001,
+                          dte20fSTEP_CLOCK = 8'o002,
+                          dte20fCOND_STEP = 8'o004,
 
-                          dte20fCLR_RESET = 9'o006,
-                          dte20fSET_RESET = 9'o007,
+                          dte20fCLR_RESET = 8'o006,
+                          dte20fSET_RESET = 8'o007,
 
-                          dte20fCLR_RUN = 9'o010
+                          dte20fCLR_RUN = 8'o010
                           } tDTE20Function;
+
+  // APRID hardware options
+  const bit hw50Hz = 1'b0;
+  const bit hwCache = 1'b1;
+  const bit hwInternalChannels = 1'b1;
+  const bit hwExtendedKL = 1'b1;
+  const bit hwMasterOscillator = 1'b1;
+  const bit [23:35] serialNumber = 4001;
+
   bit CROBAR;
   bit masterClk;
   bit clk;
 
   top top0(.*);
 
-
   var string indent = "";
 
   assign clk = masterClk;
 
-  // 50MHz EBOX clock
+  // 50MHz clock source
   initial masterClk = 0;
   always #10 masterClk = ~masterClk;
-
-  initial begin
-    // Initialize our memories
-    // Based on KLINIT.L20 $ZERAC subroutine.
-    // Zero all ACs, including the ones in block #7 (microcode's ACs).
-    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a) top0.ebox0.edp0.fm.mem[a] = '0;
-  end
-  
-  initial begin                 // For now, MBOX memory is zero too
-    for (int a = 0; a < $size(top0.memory0.mem0.mem); ++a)
-      top0.memory0.mem0.mem[a] = '0;
-  end
 
   initial $readmemh("../../../../images/DRAM.mem", top0.ebox0.ir0.dram.mem);
   initial $readmemh("../../../../images/CRAM.mem", top0.ebox0.crm0.cram.mem);
 
-
   // Initialization because of ECL
   initial begin
+    // Initialize our memories
+    // Based on KLINIT.L20 $ZERAC subroutine.
+    // Zero all ACs, including the ones in block #7 (microcode's ACs).
+    // For now, MBOX memory is zero too.
+    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a) top0.ebox0.edp0.fm.mem[a] = '0;
+    for (int a = 0; a < $size(top0.memory0.mem0.mem); ++a) top0.memory0.mem0.mem[a] = '0;
+
     // EBUS
     top0.ebox0.EBUS.data = '0;
     top0.ebox0.EBUS.parity = '0;
@@ -122,10 +124,7 @@ module kl10pv_tb;
     top0.ebox0.CLK.FS_EN_F = '0;
     top0.ebox0.CLK.FS_EN_G = '0;
     top0.ebox0.CLK.FS_EN_A = '0;
-  end
 
-  // XXX these should be initialized by front end via diag functions?
-  initial begin
     top0.ebox0.CLK.SOURCE_SEL = '0;
     top0.ebox0.CLK.RATE_SEL = '0;
     top0.ebox0.CLK.EBOX_CRM_DIS = '0;
@@ -139,62 +138,59 @@ module kl10pv_tb;
     top0.ebox0.clk0.MBOX_RESP_SIM = '0;
     top0.ebox0.clk0.AR_ARX_PAR_CHECK = '0;
     top0.ebox0.CLK.ERR_STOP_EN = '0;
-  end
 
-  initial begin
     top.ebox0.MBOX.DIAG_MEM_RESET = '0;
     top.ebox0.CTL.DIAG_CHANNEL_CLK_STOP = '0;
     top.ebox0.CTL.DIAG_LD_EBUS_REG = '0;
     top.ebox0.CTL.DIAG_FORCE_EXTEND = '0;
-  end
 
-  initial begin
     top.ebox0.CRM.PAR_16 = '0;
   end
   
-  bit uninitLogic;
-  bit uninitBit;
-
   initial begin
-    $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
-    $display($time, " uninitLogic=%01b uninitBit=%01b", uninitLogic, uninitBit);
-    CROBAR = 1;               // CROBAR stays asserted for a long time
-    #1000;                    // 1us CROBAR for the 21st century (and simulations)
-    CROBAR = 0;
+    // Suck out fields from microcode in well known addresses to
+    // retrieve microcode version.
+    tCRAM cram136 = tCRAM'(top0.ebox0.crm0.cram.mem['o136]);
+    tCRAM cram137 = tCRAM'(top0.ebox0.crm0.cram.mem['o137]);
+    int microcodeMajorVersion = cram136.MAGIC[0:5];
+    int microcodeMinorVersion = cram136.MAGIC[6:8];
+    int microcodeEditNumber = cram137.MAGIC[0:8];
 
     // Define available hardware options and processor serial number
     top0.ebox0.edp0.HardwareOptionsWord = {
                                            18'b0, // Upper half is microcode's domain
-                                           1'b0, // 50Hz
-                                           1'b1, // Cache
-                                           1'b1, // Channel
-                                           1'b1, // Extended KL10
-                                           1'b0, // Master oscillator
-                                           13'd4001 // (made up) processor serial number
+                                           hw50Hz,
+                                           hwCache,
+                                           hwInternalChannels,
+                                           hwExtendedKL,
+                                           hwMasterOscillator,
+                                           13'(serialNumber)
                                            };
 
+    CROBAR = 1;               // CROBAR stays asserted for a long time
+    #1000;                    // 1us CROBAR for the 21st century (and sims)
+    CROBAR = 0;
+
+    $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
     #100 KLMasterReset();
 
-    // Do (as a front-end would) the CLK diagnostic functions:
-    //
-    // * FUNC_SET_RESET
-    // * FUNC_START
-    // * FUNC_CLR_RESET
-    //
-    // // XXX this needs to change when we have channels. See
-    // PARSER.LST .MRCLR function.
+    #100 KLBootDialog(microcodeMajorVersion, microcodeMinorVersion, microcodeEditNumber);
   end
   
 
   ////////////////////////////////////////////////////////////////
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
-  task doDiagFunc(input tDiagFunction func, input [18:35] ebusRH = '0);
+  task doDiagFunc(input tDiagFunction func,
+                  input string name = func.name,
+                  input [18:35] ebusRH = '0);
     @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
-      $display($time, " %sdoDiagFunc(%s) START EBUS=%06o", indent, func.name, ebusRH);
+      string shortName;
+      shortName = replace(name, "diagf", "");
+      shortName = replace(shortName, "dte20f", "");
+      $display($time, " %sEBUS=%06o %s", indent, ebusRH, shortName);
       top0.ebox0.EBUS.data[18:35] = ebusRH;
-      top0.ebox0.EBUS.ds[0:3] = 4'b0000;          // DIAG_CTL_FUNC_00x for CLK
-      top0.ebox0.EBUS.ds[4:6] = func;
+      top0.ebox0.EBUS.ds = func;
       top0.ebox0.EBUS.diagStrobe = '1;            // Strobe this
     end
 
@@ -202,18 +198,17 @@ module kl10pv_tb;
 
     @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
       top0.ebox0.EBUS.diagStrobe = '0;
-      top0.ebox0.EBUS.ds[0:3] = 4'b0000;
-      top0.ebox0.EBUS.ds[4:6] = 3'b000;
+      top0.ebox0.EBUS.ds = '0;  // Idle
     end
 
     repeat(4) @(posedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
-    $display($time, " %sDONE", indent);
+    $display($time, " %s[done]", indent);
   endtask
 
 
   // XXX For now, I think this is just the same as doDiagFunc.
   task doDTE20Func(input tDTE20Function func, input [18:35] ebusRH = '0);
-    doDiagFunc(tDiagFunction'(func), ebusRH);
+    doDiagFunc(tDiagFunction'(func), func.name, ebusRH);
   endtask
 
 
@@ -221,12 +216,10 @@ module kl10pv_tb;
   // Patterned after PARSER .RESET function and table RESETT.
   task KLMasterReset();
     $display($time, " KLMasterReset() START");
-    indent = "    ";
+    indent = "  ";
     // Functions from KLINIT.L20 $KLMR (DO A MASTER RESET ON THE KL)
     
     // $DFXC(.CLRUN=010)    ; Clear run
-    // Until we have a DTE20 or equivalent this is done directly with diag writes.
-    // XXX TODO
     doDTE20Func(dte20fCLR_RUN);
 
     // $DTRW2(DRESET=100)   ; Reset bit to .DTEDT via DTE-20 diag 2
@@ -250,7 +243,7 @@ module kl10pv_tb;
     
     //   .LDSEL(044) Clock load func #44
     //          (use DMRMOS MOS defaults = 0,,10 = EXTERNAL CLOCK, no divider)
-    doDiagFunc(diagfCLR_CLK_SRC_RATE, 18'o000010);
+    doDiagFunc(.func(diagfCLR_CLK_SRC_RATE), .ebusRH(18'o000010));
 
     //   .STPCL(EXEFN:000) Stop the clock
     doDTE20Func(dte20fSTOP_CLOCK);
@@ -286,11 +279,14 @@ module kl10pv_tb;
     //   Do diag function 162 via $DFRD test (A CHANGE COMING A L)=EBUS[32]
     //   If not set, $DFXC(.SSCLK=002) to single step the MBOX
     repeat (5) begin
-      if (!top0.mbox0.mbc0.MBC.A_CHANGE_COMING) doDTE20Func(dte20fSTEP_CLOCK);
+      #500 ;
+      if (!top0.mbox0.mbc0.MBC.A_CHANGE_COMING) break;
+      #500 ;
+      doDTE20Func(dte20fSTEP_CLOCK);
     end
 
-    if (!top0.mbox0.mbc0.MBC.A_CHANGE_COMING) begin
-      $display($time, " ERROR: STEP of MBOX five times did not set MBC.A_CHANGE_COMING");
+    if (top0.mbox0.mbc0.MBC.A_CHANGE_COMING) begin
+      $display($time, " ERROR: STEP of MBOX five times did not clear MBC.A_CHANGE_COMING");
     end
 
     // Execute second set of functions in DMRMRT:
@@ -307,8 +303,34 @@ module kl10pv_tb;
     doDiagFunc(diagfEBUS_LOAD);
 
     //   .WRMBX(071) Write M-BOX to do a memory reset
-    doDiagFunc(diagfWRITE_MBOX, 18'o000012);
+    doDiagFunc(.func(diagfWRITE_MBOX), .ebusRH(18'o000012));
 
+    $display($time, " DONE");
+    indent = "";
+  endtask
+
+
+  task KLBootDialog(input int microcodeMajorVersion,
+                    input int microcodeMinorVersion,
+                    input int microcodeEditNumber);
+
+    // Time to pretend a little...
+    $display("");
+    $display("KLISIM -- VERSION 0.0.1 RUNNING");
+    $display("KLISIM -- KL10 S/N: %d., MODEL B, %2d HERTZ",
+             serialNumber, hw50Hz ? 50 : 60);
+    $display("KLISIM -- KL10 HARDWARE ENVIRONMENT");
+    if (hwMasterOscillator) $display("   MOS MASTER OSCILLATOR");
+    if (hwExtendedKL)       $display("   EXTENDED ADDRESSING");
+    if (hwInternalChannels) $display("   INTERNAL CHANNELS");
+    if (hwCache)            $display("   CACHE");
+    $display("");
+    $display("KLISIM -- MICROCODE VERSION %03o LOADED", microcodeEditNumber);
+    $display("");
+
+    $display($time, " KLBootDialog() START");
+    indent = "  ";
+    // XXX TODO
 
     // Functions from KLINIT.L20 $DLGEN (ASK IF ENTERING DIALOG IS REQUIRED)
     // (starting at 71:)
@@ -419,10 +441,10 @@ module kl10pv_tb;
     // - 1b0 for no boot prompting
     // - 1b1 for dump KL
 
-    // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK1)
+    // (046) Load clock parity check and FS check (.LDCK1)
     doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP);
 
-    // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK1)
+    // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK2)
     doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP);
 
     // Do contents of RESETT table:
@@ -433,15 +455,50 @@ module kl10pv_tb;
     // FW.CA1 (051) Clear CRAM diag address RIGHT
     doDiagFunc(diagfCLR_CRAM_DIAG_ADR_RH);
 
-`ifdef notdef
-    // FW.KLO (067) Enable KL opcodes
-    doDiagFunc(diagfENABLE_KL);
-    // FW.EBL (076) EBUS load
-    doDiagFunc(diagfEBUS_LOAD);
-`endif
-
     $display($time, " DONE");
     indent = "";
   endtask
+
+
+  // From https://stackoverflow.com/questions/27970151/string-search-and-replace-in-systemverilog
+  function automatic string replace(string original, string old, string replacement);
+    // First find the index of the old string
+    int start_index = 0;
+    int original_index = 0;
+    int replace_index = 0;
+    bit found = 0;
+
+    while(1) begin
+      if (original[original_index] == old[replace_index]) begin
+        if (replace_index == 0) begin
+          start_index = original_index;
+        end
+        replace_index++;
+        original_index++;
+        if (replace_index == old.len()) begin
+          found = 1;
+          break;
+        end
+      end else if (replace_index != 0) begin
+        replace_index = 0;
+        original_index = start_index + 1;
+      end else begin
+        original_index++;
+      end
+      if (original_index == original.len()) begin
+        // Not found
+        break;
+      end
+    end
+
+    if (!found) return original;
+
+    return {
+            original.substr(0, start_index-1),
+            replacement,
+            original.substr(start_index+old.len(), original.len()-1)
+            };
+
+  endfunction  
 
 endmodule
