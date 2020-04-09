@@ -132,7 +132,7 @@ module cra(iAPR APR,
   always @(posedge CLK.CRA) begin
 
     if (RESET)
-      CRA.CRADR <= 0;
+      CRA.CRADR <= '0;
     else
       CRA.CRADR <= CRAM.J | {11{CLK.FORCE_1777}} | dispMux;
   end
