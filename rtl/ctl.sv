@@ -222,7 +222,7 @@ module ctl(iAPR APR,
   assign CTL.DIAG_STROBE = EBUS.diagStrobe;
   always_comb begin
     CTL.DIAG_CTL_FUNC_00x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b000;
-    CTL.DIAG_CTL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b010;
+    CTL.DIAG_CTL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b001;
     CTL.DIAG_LD_FUNC_04x   = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b100;
     CTL.DIAG_LOAD_FUNC_05x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b101;
     CTL.DIAG_LOAD_FUNC_06x = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b110;
