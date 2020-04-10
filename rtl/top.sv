@@ -62,6 +62,10 @@ module top(input clk,
   mbox mbox0(.*);
   memory memory0(.*);
 
+`ifdef KL10PV_TB
+  kl10pv_tb kl10pv_tb0(.*);
+`endif
+
   always_comb begin
     if (APR.EBUSdriver.driving)       EBUS.data = APR.EBUSdriver.data;
     else if (CON.EBUSdriver.driving)  EBUS.data = CON.EBUSdriver.data;

@@ -1,7 +1,7 @@
 // Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2019.2 (lin64) Build 2708876 Wed Nov  6 21:39:14 MST 2019
-// Date        : Sat Feb 15 13:24:38 2020
+// Date        : Fri Apr 10 10:14:56 2020
 // Host        : alanm running 64-bit Ubuntu 19.10
 // Command     : write_verilog -force -mode funcsim /home/alan/kl10/kl10.runs/dram_mem_synth_1/dram_mem_sim_netlist.v
 // Design      : dram_mem

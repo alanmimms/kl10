@@ -1,6 +1,43 @@
 `include "ebox.svh"
 
-module kl10pv_tb;
+module kl10pv_tb(iAPR APR,
+                 iCCL CCL,
+                 iCCW CCW,
+                 iCHA CHA,
+                 iCHC CHC,
+                 iCLK CLK,
+                 iCON CON,
+                 iCRA CRA,
+                 iCRAM CRAM,
+                 iCRC CRC,
+                 iCRM CRM,
+                 iCSH CSH,
+                 iCTL CTL,
+                 iEDP EDP,
+                 iIR IR,
+                 iMBC MBC,
+                 iMBX MBX,
+                 iMBZ MBZ,
+                 iMCL MCL,
+                 iMTR MTR,
+                 iPAG PAG,
+                 iPI PIC,
+                 iPMA PMA,
+                 iSCD SCD,
+                 iSHM SHM,
+                 iVMA VMA,
+
+                 iEBUS EBUS,
+                 iMBOX MBOX,
+                 iSBUS SBUS,
+
+                 output bit clk,
+                 output bit CROBAR,
+                 output bit EXTERNAL_CLK,
+                 output bit clk30,
+                 output bit clk31,
+                 output bit PWR_WARN
+                 );
   // APRID hardware options
   const bit hw50Hz = 1'b0;
   const bit hwCache = 1'b1;
@@ -9,22 +46,20 @@ module kl10pv_tb;
   const bit hwMasterOscillator = 1'b1;
   const bit [23:35] serialNumber = 4001;
 
-  bit CROBAR;
   bit masterClk;
-  bit clk;
-
-  top top0(.*);
 
   var string indent = "";
 
   assign clk = masterClk;
+  assign clk30 = masterClk;
+  assign clk31 = masterClk;
 
   // 50MHz clock source
   initial masterClk = 0;
   always #10 masterClk = ~masterClk;
 
-  initial $readmemh("../../../../images/DRAM.mem", top0.ebox0.ir0.dram.mem);
-  initial $readmemh("../../../../images/CRAM.mem", top0.ebox0.crm0.cram.mem);
+  initial $readmemh("../../../../images/DRAM.mem", ebox0.ir0.dram.mem);
+  initial $readmemh("../../../../images/CRAM.mem", ebox0.crm0.cram.mem);
 
   // Initialization because of ECL
   initial begin
@@ -32,107 +67,61 @@ module kl10pv_tb;
     // Based on KLINIT.L20 $ZERAC subroutine.
     // Zero all ACs, including the ones in block #7 (microcode's ACs).
     // For now, MBOX memory is zero too.
-    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a) top0.ebox0.edp0.fm.mem[a] = '0;
-    for (int a = 0; a < $size(top0.memory0.mem0.mem); ++a) top0.memory0.mem0.mem[a] = '0;
+    for (int a = 0; a < $size(ebox0.edp0.fm.mem); ++a) ebox0.edp0.fm.mem[a] = '0;
+    for (int a = 0; a < $size(memory0.mem0.mem); ++a) memory0.mem0.mem[a] = '0;
 
     // EBUS
-    top0.ebox0.EBUS.data = '0;
-    top0.ebox0.EBUS.parity = '0;
-    top0.ebox0.EBUS.cs = '0;
-    top0.ebox0.EBUS.ds = tDiagFunction'('0);
-    top0.ebox0.EBUS.func = tEBUSfunction'('0);
-    top0.ebox0.EBUS.demand = '0;
-    top0.ebox0.EBUS.pi = '0;
-    top0.ebox0.EBUS.ack = '0;
-    top0.ebox0.EBUS.xfer = '0;
-    top0.ebox0.EBUS.reset = '0;
-    top0.ebox0.EBUS.diagStrobe = '0;
-    top0.ebox0.EBUS.dfunc = '0;
+    EBUS.data = '0;
+    EBUS.diagStrobe = '0;
+    EBUS.ds = tDiagFunction'('0);
 
-    top0.ebox0.APR.EBUSdriver.driving = '0;
-    top0.ebox0.APR.EBUSdriver.data = '0;
-    top0.ebox0.CON.EBUSdriver.driving = '0;
-    top0.ebox0.CON.EBUSdriver.data = '0;
-    top0.ebox0.CRA.EBUSdriver.driving = '0;
-    top0.ebox0.CRA.EBUSdriver.data = '0;
-    top0.ebox0.CTL.EBUSdriver.driving = '0;
-    top0.ebox0.CTL.EBUSdriver.data = '0;
-    top0.ebox0.EDP.EBUSdriver.driving = '0;
-    top0.ebox0.EDP.EBUSdriver.data = '0;
-    top0.ebox0.IR.EBUSdriver.driving = '0;
-    top0.ebox0.IR.EBUSdriver.data = '0;
-    top0.ebox0.MTR.EBUSdriver.driving = '0;
-    top0.ebox0.MTR.EBUSdriver.data = '0;
-    top0.ebox0.PIC.EBUSdriver.driving = '0;
-    top0.ebox0.PIC.EBUSdriver.data = '0;
-    top0.ebox0.SCD.EBUSdriver.driving = '0;
-    top0.ebox0.SCD.EBUSdriver.data = '0;
-    top0.ebox0.SHM.EBUSdriver.driving = '0;
-    top0.ebox0.SHM.EBUSdriver.data = '0;
-    top0.ebox0.VMA.EBUSdriver.driving = '0;
-    top0.ebox0.VMA.EBUSdriver.data = '0;
+    EBUS.parity = '0;
+    EBUS.cs = '0;
+    EBUS.func = tEBUSfunction'('0);
+    EBUS.demand = '0;
+    EBUS.pi = '0;
+    EBUS.ack = '0;
+    EBUS.xfer = '0;
+    EBUS.reset = '0;
+    EBUS.dfunc = '0;
 
-    top0.ebox0.CON.CONO_200000 = '0;
+    APR.EBUSdriver.driving = '0;
+    APR.EBUSdriver.data = '0;
+    CON.EBUSdriver.driving = '0;
+    CON.EBUSdriver.data = '0;
+    CRA.EBUSdriver.driving = '0;
+    CRA.EBUSdriver.data = '0;
+    CTL.EBUSdriver.driving = '0;
+    CTL.EBUSdriver.data = '0;
+    EDP.EBUSdriver.driving = '0;
+    EDP.EBUSdriver.data = '0;
+    IR.EBUSdriver.driving = '0;
+    IR.EBUSdriver.data = '0;
+    MTR.EBUSdriver.driving = '0;
+    MTR.EBUSdriver.data = '0;
+    PIC.EBUSdriver.driving = '0;
+    PIC.EBUSdriver.data = '0;
+    SCD.EBUSdriver.driving = '0;
+    SCD.EBUSdriver.data = '0;
+    SHM.EBUSdriver.driving = '0;
+    SHM.EBUSdriver.data = '0;
+    VMA.EBUSdriver.driving = '0;
+    VMA.EBUSdriver.data = '0;
+
+    CON.CONO_200000 = '0;
   end
 
-
-  bit [0:6] testBus;
-  bit en;
-  bit zero, one, two, three, four, five, six, seven;
-  decoder testDecoder(.en(en), .sel(testBus[4:6]), .q({zero, one, two, three, four, five, six, seven}));
-
-  // XXX until implemented
-  initial begin
-    top0.ebox0.CON.MBOX_WAIT = '0;
-    top0.ebox0.con0.MEM_CYCLE = '0;
-    top0.ebox0.CLK.RESP_MBOX = '0;
-    top0.ebox0.CLK.SYNC = '0;
-    top0.ebox0.VMA.AC_REF = '0;
-    top0.ebox0.APR.APR_PAR_CHK_EN = '0;
-    top0.ebox0.PAG.PF_EBOX_HANDLE = '0;
-
-    top0.ebox0.CLK.FS_EN_A = '0;
-    top0.ebox0.CLK.FS_EN_B = '0;
-    top0.ebox0.CLK.FS_EN_C = '0;
-    top0.ebox0.CLK.FS_EN_D = '0;
-    top0.ebox0.CLK.FS_EN_E = '0;
-    top0.ebox0.CLK.FS_EN_F = '0;
-    top0.ebox0.CLK.FS_EN_G = '0;
-    top0.ebox0.CLK.FS_EN_A = '0;
-
-    top0.ebox0.CLK.SOURCE_SEL = '0;
-    top0.ebox0.CLK.RATE_SEL = '0;
-    top0.ebox0.CLK.EBOX_CRM_DIS = '0;
-    top0.ebox0.CLK.EBOX_EDP_DIS = '0;
-    top0.ebox0.CLK.EBOX_CTL_DIS = '0;
-    top0.ebox0.CLK.FM_PAR_CHECK = '0;
-    top0.ebox0.CLK.CRAM_PAR_CHECK = '0;
-    top0.ebox0.CLK.DRAM_PAR_CHECK = '0;
-    top0.ebox0.CLK.FS_CHECK = '0;
-    top0.ebox0.CLK.MBOX_CYCLE_DIS = '0;
-    top0.ebox0.clk0.MBOX_RESP_SIM = '0;
-    top0.ebox0.clk0.AR_ARX_PAR_CHECK = '0;
-    top0.ebox0.CLK.ERR_STOP_EN = '0;
-
-    top.ebox0.MBOX.DIAG_MEM_RESET = '0;
-    top.ebox0.CTL.DIAG_CHANNEL_CLK_STOP = '0;
-    top.ebox0.CTL.DIAG_LD_EBUS_REG = '0;
-    top.ebox0.CTL.DIAG_FORCE_EXTEND = '0;
-
-    top.ebox0.CRM.PAR_16 = '0;
-  end
-  
   initial begin
     // Suck out fields from microcode in well known addresses to
     // retrieve microcode version.
-    tCRAM cram136 = tCRAM'(top0.ebox0.crm0.cram.mem['o136]);
-    tCRAM cram137 = tCRAM'(top0.ebox0.crm0.cram.mem['o137]);
-    int microcodeMajorVersion = cram136.MAGIC[0:5];
-    int microcodeMinorVersion = cram136.MAGIC[6:8];
-    int microcodeEditNumber = cram137.MAGIC[0:8];
+    var tCRAM cram136 = tCRAM'(ebox0.crm0.cram.mem['o136]);
+    var tCRAM cram137 = tCRAM'(ebox0.crm0.cram.mem['o137]);
+    var int microcodeMajorVersion = cram136.MAGIC[0:5];
+    var int microcodeMinorVersion = cram136.MAGIC[6:8];
+    var int microcodeEditNumber = cram137.MAGIC[0:8];
 
     // Define available hardware options and processor serial number
-    top0.ebox0.edp0.HardwareOptionsWord = {
+    ebox0.edp0.HardwareOptionsWord = {
                                            18'b0, // Upper half is microcode's domain
                                            hw50Hz,
                                            hwCache,
@@ -142,31 +131,9 @@ module kl10pv_tb;
                                            13'(serialNumber)
                                            };
 
-    CROBAR = 1;               // CROBAR stays asserted for a long time
-    #1000;                    // 1us CROBAR for the 21st century (and sims)
-    CROBAR = 0;
-
-    en = '0; testBus = 7'b1010000; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010000; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010000; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010001; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010001; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010010; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010010; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010011; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010011; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010100; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010100; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010101; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010101; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010110; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010110; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '1; testBus = 7'b1010111; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-    en = '0; testBus = 7'b1010111; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
-
-    $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
+    #10 CROBAR = '1;     // CROBAR stays asserted for a long time
+    #1000 CROBAR = '0;   // 1us CROBAR for the 21st century (and sims)
     #100 KLMasterReset();
-
     #100 KLBootDialog(microcodeMajorVersion, microcodeMinorVersion, microcodeEditNumber);
   end
   
@@ -176,23 +143,23 @@ module kl10pv_tb;
   // front-end setting up a KL10pv.
   task doDiagFunc(input tDiagFunction func,
                   input [18:35] ebusRH = '0);
-    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
+    @(negedge CLK.MHZ16_FREE) begin
       string shortName;
       shortName = replace(func.name, "diagf", "");
       $display($time, " %sEBUS=%06o %s", indent, ebusRH, shortName);
-      top0.ebox0.EBUS.data[18:35] = ebusRH;
-      top0.ebox0.EBUS.ds = func;
-      top0.ebox0.EBUS.diagStrobe = '1;            // Strobe this
+      EBUS.data[18:35] <= ebusRH;
+      EBUS.ds <= func;
+      EBUS.diagStrobe <= '1;            // Strobe this
     end
 
-    repeat (8) @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
+    repeat (8) @(negedge CLK.MHZ16_FREE) ;
 
-    @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
-      top0.ebox0.EBUS.diagStrobe = '0;
-      top0.ebox0.EBUS.ds = tDiagFunction'('0); // Idle
+    @(negedge CLK.MHZ16_FREE) begin
+      EBUS.diagStrobe <= '0;
+      EBUS.ds <= tDiagFunction'('0); // Idle
     end
 
-    repeat(4) @(posedge top0.ebox0.clk0.CLK.MHZ16_FREE) ;
+    repeat(4) @(posedge CLK.MHZ16_FREE) ;
     $display($time, " %s[done]", indent);
   endtask
 
@@ -265,12 +232,12 @@ module kl10pv_tb;
     //   If not set, $DFXC(.SSCLK=002) to single step the MBOX
     repeat (5) begin
       #500 ;
-      if (!top0.mbox0.mbc0.MBC.A_CHANGE_COMING) break;
+      if (!mbox0.mbc0.MBC.A_CHANGE_COMING) break;
       #500 ;
       doDiagFunc(diagfSTEP_CLOCK);
     end
 
-    if (top0.mbox0.mbc0.MBC.A_CHANGE_COMING) begin
+    if (mbox0.mbc0.MBC.A_CHANGE_COMING) begin
       $display($time, " ERROR: STEP of MBOX five times did not clear MBC.A_CHANGE_COMING");
     end
 
@@ -339,7 +306,7 @@ module kl10pv_tb;
     // XXX TBD
 
     // Turn off the NXM bit (FE uses CONO APR,,22000).
-    top0.ebox0.apr0.MBOX.NXM_ERR = '0;
+    MBOX.NXM_ERR = '0;
 
     ////////////////////////////////////////////////////////////////
     // Falls through into LXBRC 10$ symbol for end of boot loader
@@ -348,7 +315,7 @@ module kl10pv_tb;
     //
     // Functions from KLINIT.L20 $TENST (START KL BOOT) routine
     // This was done earlier. XXX probably needs to be done again on reset.
-//    for (int a = 0; a < $size(top0.ebox0.edp0.fm.mem); ++a) top0.ebox0.edp0.fm.mem[a] = '0;
+    //    for (int a = 0; a < $size(ebox0.edp0.fm.mem); ++a) ebox0.edp0.fm.mem[a] = '0;
 
     // Execute equivalent of a series of CONO/DATAO instructions to do
     // the following operations.
@@ -361,75 +328,75 @@ module kl10pv_tb;
 
       // Clear/disable selected flags
       // SBUS error, NXM, IO page fail
-      top0.ebox0.apr0.MBOX.SBUS_ERR = '0;
-      top0.ebox0.apr0.SBUS_ERR_EN = '0;
-      top0.ebox0.apr0.MBOX.NXM_ERR = '0;
-      top0.ebox0.apr0.NXM_ERR_EN = '0;
-      top0.ebox0.apr0.APR.SET_IO_PF_ERR = '0;
-      top0.ebox0.apr0.IO_PF_ERR_EN = '0;
+      MBOX.SBUS_ERR = '0;
+      ebox0.apr0.SBUS_ERR_EN = '0;
+      MBOX.NXM_ERR = '0;
+      ebox0.apr0.NXM_ERR_EN = '0;
+      APR.SET_IO_PF_ERR = '0;
+      ebox0.apr0.IO_PF_ERR_EN = '0;
       
       // MB parity, cache dir, addr parity
-      top0.ebox0.apr0.MBOX.MB_PAR_ERR = '0;
-      top0.ebox0.apr0.MB_PAR_ERR_EN = '0;
-      top0.ebox0.apr0.MBOX.CSH_ADR_PAR_ERR = '0;
-      top0.ebox0.apr0.C_DIR_P_ERR_EN = '0;
-      top0.ebox0.apr0.MBOX.ADR_PAR_ERR = '0;
-      top0.ebox0.apr0.S_ADR_P_ERR_EN = '0;
+      MBOX.MB_PAR_ERR = '0;
+      ebox0.apr0.MB_PAR_ERR_EN = '0;
+      MBOX.CSH_ADR_PAR_ERR = '0;
+      ebox0.apr0.C_DIR_P_ERR_EN = '0;
+      ebox0.apr0.MBOX.ADR_PAR_ERR = '0;
+      ebox0.apr0.S_ADR_P_ERR_EN = '0;
 
       // power fail, sweep done
-      top0.PWR_WARN = '0;
-      top0.ebox0.apr0.PWR_FAIL = '0;
-      top0.ebox0.apr0.APR.SWEEP_BUSY = '0;
-      top0.ebox0.apr0.SWEEP_DONE_EN = '0;
+      PWR_WARN = '0;
+      ebox0.apr0.PWR_FAIL = '0;
+      APR.SWEEP_BUSY = '0;
+      ebox0.apr0.SWEEP_DONE_EN = '0;
 
       // PI interrupt level #0
-      top0.ebox0.pi0.PIC.APR_PIA = '0;
+      ebox0.pi0.PIC.APR_PIA = '0;
     end
     
     ////////////
     // CONO PI,10000            ; Reset PI
     begin
-      top0.ebox0.pi0.ON = '0;
-      top0.ebox0.pi0.GEN = '0;
-      top0.ebox0.pi0.PIR_EN = '0;
-      top0.ebox0.pi0.PI_REQ_SET = '0;
-      top0.ebox0.pi0.PIH = '0;
-      top0.ebox0.pi0.ACTIVE = '0;
+      ebox0.pi0.ON = '0;
+      ebox0.pi0.GEN = '0;
+      ebox0.pi0.PIR_EN = '0;
+      ebox0.pi0.PI_REQ_SET = '0;
+      ebox0.pi0.PIH = '0;
+      ebox0.pi0.ACTIVE = '0;
     end
 
     ////////////
     // CONO PAG, 0              ; Paging system clear
     begin
-      top0.ebox0.con0.CON.CACHE_LOOK_EN = '0;
-      top0.ebox0.con0.CON.CACHE_LOAD_EN = '0;
-      top0.ebox0.con0.WR_EVEN_PAR_DATA = '0;
-      top0.ebox0.con0.WR_EVEN_PAR_DIR = '0;
+      CON.CACHE_LOOK_EN = '0;
+      CON.CACHE_LOAD_EN = '0;
+      ebox0.con0.WR_EVEN_PAR_DATA = '0;
+      ebox0.con0.WR_EVEN_PAR_DIR = '0;
     end
 
     ////////////
     // DATAO PAG, 0             ; User base clear
     begin
       // Set current and previous AC blocks to zero.
-      top0.ebox0.apr0.APR.CURRENT_BLOCK = '0;
-      top0.ebox0.apr0.APR.PREV_BLOCK = '0;
-      top0.ebox0.apr0.APR.CURRENT_BLOCK = '0;
-      top0.ebox0.apr0.APR.CURRENT_BLOCK = '0;
+      APR.CURRENT_BLOCK = '0;
+      APR.PREV_BLOCK = '0;
+      APR.CURRENT_BLOCK = '0;
+      APR.CURRENT_BLOCK = '0;
       
       // Set current section context to zero.
       // XXX Not 100% certain this is what this is supposed to do. 
-      top0.ebox0.vma0.VMA.PREV_SEC = '0;
+      VMA.PREV_SEC = '0;
 
       // Load UPT page number with zero.
       // XXX Not 100% certain this is what this is supposed to do. 
-      top0.mbox0.pma0.UBR = '0;
+      mbox0.pma0.UBR = '0;
 
       // Invalidate the entire page table by setting the invalid bits in all lines.
       /*      Sim already does this by initializing entire RAM to zeros.
-       for (int a = 0; a < $size(top0.mbox0.pag0.ptDirA); ++a) begin
-         top0.mbox0.pag0.ptDirA[a] = '0;
-         top0.mbox0.pag0.ptDirB[a] = '0;
-         top0.mbox0.pag0.ptDirC[a] = '0;
-         top0.mbox0.pag0.ptParity[a] = '0;
+       for (int a = 0; a < $size(mbox0.pag0.ptDirA); ++a) begin
+       mbox0.pag0.ptDirA[a] = '0;
+       mbox0.pag0.ptDirB[a] = '0;
+       mbox0.pag0.ptDirC[a] = '0;
+       mbox0.pag0.ptParity[a] = '0;
        end
        */
       // XXX For now, we do not turn on the cache. Here is where it
@@ -462,11 +429,11 @@ module kl10pv_tb;
     // IS RUNNING BEFORE WE LEAVE.
     //
     // XXX for now boot address is wrongly set to zero.
-    top.ebox0.edp0.EDP.AR = {14'b0, 22'b0};
+    EDP.AR = {14'b0, 22'b0};
 
     // Set the RUN flop.
     doDiagFunc(diagfSET_RUN);
-    if (!top.ebox0.con0.CON.RUN) begin
+    if (!CON.RUN) begin
       $display($time, " diagfSET_RUN should set the RUN flop and it didn't");
     end
 
@@ -478,15 +445,15 @@ module kl10pv_tb;
 
     repeat (1000) begin
       doDiagFunc(diagfSTEP_CLOCK);
-      if (!top.ebox0.con0.CON.EBOX_HALTED) break;
+      if (!CON.EBOX_HALTED) break;
     end
 
-    if (top.ebox0.con0.CON.EBOX_HALTED) begin
+    if (CON.EBOX_HALTED) begin
       $display($time, " ERROR: STEP MBOX < 1000 times waiting for HALT loop didn't clear CON.EBOX_HALTED");
     end
 
     // Verify RUN flop is still set.
-    if (!top.ebox0.con0.CON.RUN) begin
+    if (!CON.RUN) begin
       $display($time, " ???ERROR: STEP MBOX < 1000 times waiting for HALT loop cleared the RUN flop???");
     end
 
