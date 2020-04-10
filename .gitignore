@@ -18,3 +18,4 @@ kl10.sim/kl10pv/behav/xsim/simulate.log
 kl10.sim/kl10pv/behav/xsim/xelab.pb
 *.lock
 doc/MP00622_MF20_Oct82-OCR.pdf
+*.log
