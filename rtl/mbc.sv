@@ -1,12 +1,16 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
 // M8531 MBC (MBOX control #3)
-module mbc(iCLK CLK,
+module mbc(iAPR APR,
+           iCCL CCL,
+           iCLK CLK,
            iCON CON,
            iCSH CSH,
+           iCTL CTL,
            iMBC MBC,
            iMBX MBX,
-           iMBOX MBOX
+           iMBOX MBOX,
+           iPMA PMA
            );
 
   bit clk, RESET;

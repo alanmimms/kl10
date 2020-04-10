@@ -2,12 +2,15 @@
 `include "ebox.svh"
 // M8517 MB0 memory buffer board
 // Note all three instances of MB0 are modeled in this module
-module mb0(iCLK CLK,
+module mb0(iCCL CCL,
+           iCLK CLK,
            iCON CON,
            iCRC CRC,
            iEDP EDP,
-           iMBOX MBOX
-);
+           iMBOX MBOX,
+           iMBX MBX,
+           iPAG PAG
+           );
 
   bit clk;
   bit PT_IN_SEL_AR, CH_BUF_MB_SEL;
@@ -47,7 +50,8 @@ module mb0(iCLK CLK,
   generate
 
     for (k = 0; k < 36; k += 4) begin: MB01
-      USR4 chBufMux(.S0('0),
+      USR4 chBufMux(.RESET('0),
+                    .S0('0),
                     .D(CH_BUF[k+0:k+3]),
                     .S3('0),
                     .CLK(clk),
@@ -64,7 +68,8 @@ module mb0(iCLK CLK,
     for (mbNum = 0; mbNum < 4; ++mbNum) begin: mbArray
 
       for (k = 0; k < 36; k += 4) begin: mbMux
-        USR4 m(.S0('0),
+        USR4 m(.RESET('0),
+               .S0('0),
                .D(MBOX.MB[k+0:k+3]),
                .S3('0),
                .CLK(clk),
@@ -107,11 +112,11 @@ module mb0(iCLK CLK,
   sim_mem
     #(.SIZE(128), .WIDTH(36), .NBYTES(1))
   chBuf
-  (.clk(MBOX.CH_BUF_WR),
-   .din(CH_BUF_IN),
-   .dout(CH_BUF),
-   .addr(CH_BUF_ADR),
-   .wea(MBOX.CH_BUF_WR));
+    (.clk(MBOX.CH_BUF_WR),
+     .din(CH_BUF_IN),
+     .dout(CH_BUF),
+     .addr(CH_BUF_ADR),
+     .wea(MBOX.CH_BUF_WR));
 `else
   chBuf_mem chBuf(.addra(CH_BUF_ADR),
                   .clka(MBOX.CH_BUF_WR),

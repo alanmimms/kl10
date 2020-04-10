@@ -3,9 +3,15 @@
 // M8538 MTR
 module mtr(iCHC CHC,
            iCLK CLK,
+           iCON CON,
            iCRAM CRAM,
+           iCRC CRC,
+           iCSH CSH,
+           iCTL CTL,
            iMTR MTR,
+           iPI PIC,
            iSCD SCD,
+           iVMA VMA,
            iMBOX MBOX,
            iEBUS EBUS
            );
@@ -111,7 +117,7 @@ module mtr(iCHC CHC,
     end
   end
 
-  always_ff @(posedge CONO_MTR, RESET) begin
+  always_ff @(posedge CONO_MTR, posedge RESET) begin
 
     if (RESET)
       TIME_ON <= '0;
@@ -119,7 +125,8 @@ module mtr(iCHC CHC,
       TIME_ON <= TIME_ON & ~mtrEBUS[24] | mtrEBUS[25];
   end
 
-  UCR4 e88(.CIN('1),
+  UCR4 e88(.RESET('0),
+           .CIN('1),
            .SEL({1'b0, COUNT_TEN_USEC}),
            .D({4{~RESET}}),
            .CLK(INTERVAL_CLK),
@@ -127,15 +134,21 @@ module mtr(iCHC CHC,
            .COUT(TEN_USEC));
 
   bit e60COUT;
-  UCR4 e60(.CIN('1),
+  UCR4 e60(.RESET('0),
+           .CIN('1),
+           .CLK(MBOX_CLK),
            .SEL({RESET | MTR._1_MHZ, 1'b0}),
            .D(4'b0000),         // Note assumes MBOX_CLK of 33MHz
            .Q(),
            .COUT(e60COUT));
+
   bit [1:3] e59Unused;
-  UCR4 e59(.CIN(e60COUT),
-           .D({1'b0, ~RESET, ~RESET_PLSD, 1'b0}),
+  UCR4 e59(.RESET('0),
+           .CIN(e60COUT),
            .COUT(),
+           .SEL({RESET | MTR._1_MHZ, 1'b0}),
+           .CLK(MBOX_CLK),
+           .D({1'b0, ~RESET, ~RESET_PLSD, 1'b0}),
            .Q({MTR._1_MHZ, e59Unused}));
 
 
@@ -167,7 +180,7 @@ module mtr(iCHC CHC,
               .sel(CRAM.MAGIC[6:8]),
               .q(e1Q));
 
-  always_ff @(posedge CONO_TIM, RESET) begin
+  always_ff @(posedge CONO_TIM, posedge RESET) begin
     PERIOD <= mtrEBUS[24:35];
 
     if (RESET)
@@ -199,7 +212,7 @@ module mtr(iCHC CHC,
       INTERVAL_DONE <= INTERVAL_DONE | e42q6 | INTERVAL_MATCH;
   end
 
-  always @(posedge TIME_CLK | RESET_PLSD, RESET_TIME) begin
+  always @(posedge TIME_CLK | RESET_PLSD, posedge RESET_TIME) begin
 
     if (RESET_TIME)
       CLR_TIME <= '1;
@@ -207,7 +220,7 @@ module mtr(iCHC CHC,
       CLR_TIME <= RESET;
   end
 
-  always @(posedge PERF_CNT_CLK | RESET_PLSD, RESET_PERF) begin
+  always @(posedge PERF_CNT_CLK | RESET_PLSD, posedge RESET_PERF) begin
 
     if (RESET_PERF)
       CLR_PERF_CNT <= '1;
@@ -240,7 +253,8 @@ module mtr(iCHC CHC,
 
   mux4x2 e36(.SEL(CON.PI_CYCLE),
              .D0({NO_PI_PA_EN, PIC.HOLD}),
-             .D1({PI_PA_EN[0], PIC.PIC}));
+             .D1({PI_PA_EN[0], PIC.PIC}),
+             .B(e36Q));
 
   bit e54q3;
   always_ff @(posedge MBOX_CLK) begin

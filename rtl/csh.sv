@@ -2,12 +2,24 @@
 `include "ebox.svh"
 
 module csh(iAPR APR,
-           iCLK CLK,
            iCCL CCL,
+           iCLK CLK,
+           iCON CON,
            iCSH CSH,
+           iCTL CTL,
+           iEDP EDP,
+           iIR IR,
            iMBC MBC,
            iMBX MBX,
-           iPMA PMA
+           iMBOX MBOX,
+           iMCL MCL,
+           iMTR MTR,
+           iPAG PAG,
+           iPI PIC,
+           iPMA PMA,
+           iSCD SCD,
+           iSHM SHM,
+           iVMA VMA
            );
 
   bit clk;
@@ -142,7 +154,7 @@ module csh(iAPR APR,
     MBOX_RESP <= CSH.MBOX_RESP_IN;
 
     CSH.ONE_WORD_RD <= E_RD_T2_CORE_OK & ~ANY_VALID_MATCH & ~MBX.CACHE_BIT |
-                   ~EBOX_RESTART & CSH.ONE_WORD_RD & ~CSH.READY_TO_GO;
+                       ~EBOX_RESTART & CSH.ONE_WORD_RD & ~CSH.READY_TO_GO;
     RD_PAUSE_2ND_HALF <= CSH.ONE_WORD_RD & EBOX_RESTART & EBOX_PAUSE |
                          ~CSH.READY_TO_GO & RD_PAUSE_2ND_HALF;
     RD_PSE_2ND_REQ_EN <= DATA_DLY_2 & RD_PAUSE_2ND_HALF |

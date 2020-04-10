@@ -2,15 +2,23 @@
 `include "ebox.svh"
 
 // M8537 MBZ
-module mbz(iCCL CCL,
+module mbz(iAPR APR,
+           iCCL CCL,
+           iCCW CCW,
            iCLK CLK,
+           iCRC CRC,
+           iCSH CSH,
            iCTL CTL,
-           iMBZ MBZ,
-           iMTR MTR,
-           iPMA PMA,
            iEBUS EBUS,
-           iMBOX MBOX
-);
+           iMBOX MBOX,
+           iMBX MBX,
+           iMBZ MBZ,
+           iMCL MCL,
+           iMTR MTR,
+           iPAG PAG,
+           iPMA PMA,
+           iSHM SHM
+           );
 
   bit clk, RESET;
   bit CHAN_CORE_BUSY_IN, CHAN_CORE_BUSY, CSH_CHAN_CYC, EBOX_DIAG_CYC, CHAN_TO_MEM;

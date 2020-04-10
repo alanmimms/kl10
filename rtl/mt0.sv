@@ -15,6 +15,7 @@
 // this into a single module.
 module mt0(iCLK CLK,
            iMBOX MBOX,
+           iMBX MBX,
            iSBUS SBUS);
 
   bit DATA_TO_MEM_EN;
