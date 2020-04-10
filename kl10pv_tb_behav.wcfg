@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="9702000fs"></ZoomStartTime>
-      <ZoomEndTime time="11380001fs"></ZoomEndTime>
-      <Cursor1Time time="10590000fs"></Cursor1Time>
+      <ZoomStartTime time="9940000fs"></ZoomStartTime>
+      <ZoomEndTime time="14155001fs"></ZoomEndTime>
+      <Cursor1Time time="12420000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="214"></NameColumnWidth>
-      <ValueColumnWidth column_width="123"></ValueColumnWidth>
+      <ValueColumnWidth column_width="119"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="112" />
+   <WVObjectSize size="109" />
    <wvobject type="logic" fp_name="/kl10pv_tb/CROBAR">
       <obj_property name="ElementShortName">CROBAR</obj_property>
       <obj_property name="ObjectShortName">CROBAR</obj_property>
@@ -31,18 +31,6 @@
       <obj_property name="ElementShortName">MR_RESET</obj_property>
       <obj_property name="ObjectShortName">MR_RESET</obj_property>
       <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_CTL_FUNC_00x">
-      <obj_property name="ElementShortName">DIAG_CTL_FUNC_00x</obj_property>
-      <obj_property name="ObjectShortName">DIAG_CTL_FUNC_00x</obj_property>
-      <obj_property name="CustomSignalColor">#0000FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_LD_FUNC_04x">
-      <obj_property name="ElementShortName">DIAG_LD_FUNC_04x</obj_property>
-      <obj_property name="ObjectShortName">DIAG_LD_FUNC_04x</obj_property>
-      <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/kl10pv_tb/top0/EBUS/ds">
@@ -62,6 +50,60 @@
       <obj_property name="ElementShortName">FUNC_GATE</obj_property>
       <obj_property name="ObjectShortName">FUNC_GATE</obj_property>
       <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_CTL_FUNC_00x">
+      <obj_property name="ElementShortName">DIAG_CTL_FUNC_00x</obj_property>
+      <obj_property name="ObjectShortName">DIAG_CTL_FUNC_00x</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_LD_FUNC_04x">
+      <obj_property name="ElementShortName">DIAG_LD_FUNC_04x</obj_property>
+      <obj_property name="ObjectShortName">DIAG_LD_FUNC_04x</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/CTL/DIAG_CTL_FUNC_01x">
+      <obj_property name="ElementShortName">DIAG_CTL_FUNC_01x</obj_property>
+      <obj_property name="ObjectShortName">DIAG_CTL_FUNC_01x</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/DIAG_CLR_RUN">
+      <obj_property name="ElementShortName">DIAG_CLR_RUN</obj_property>
+      <obj_property name="ObjectShortName">DIAG_CLR_RUN</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/DIAG_SET_RUN">
+      <obj_property name="ElementShortName">DIAG_SET_RUN</obj_property>
+      <obj_property name="ObjectShortName">DIAG_SET_RUN</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/run0">
+      <obj_property name="ElementShortName">run0</obj_property>
+      <obj_property name="ObjectShortName">run0</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/run1">
+      <obj_property name="ElementShortName">run1</obj_property>
+      <obj_property name="ObjectShortName">run1</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/run2">
+      <obj_property name="ElementShortName">run2</obj_property>
+      <obj_property name="ObjectShortName">run2</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/con0/DIAG_CONTINUE">
+      <obj_property name="ElementShortName">DIAG_CONTINUE</obj_property>
+      <obj_property name="ObjectShortName">DIAG_CONTINUE</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_SET_RESET">
@@ -4174,114 +4216,6 @@
       <wvobject type="logic" fp_name="/kl10pv_tb/top0/mbox0/pag0/e85q6">
          <obj_property name="ElementShortName">e85q6</obj_property>
          <obj_property name="ObjectShortName">e85q6</obj_property>
-      </wvobject>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_CTL_FUNC_00x">
-      <obj_property name="ElementShortName">DIAG_CTL_FUNC_00x</obj_property>
-      <obj_property name="ObjectShortName">DIAG_CTL_FUNC_00x</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/CTL/DIAG_LD_FUNC_04x">
-      <obj_property name="ElementShortName">DIAG_LD_FUNC_04x</obj_property>
-      <obj_property name="ObjectShortName">DIAG_LD_FUNC_04x</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/BURST">
-      <obj_property name="ElementShortName">BURST</obj_property>
-      <obj_property name="ObjectShortName">BURST</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/burstLSB">
-      <obj_property name="ElementShortName">burstLSB[0:3]</obj_property>
-      <obj_property name="ObjectShortName">burstLSB[0:3]</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/burstMSB">
-      <obj_property name="ElementShortName">burstMSB[0:3]</obj_property>
-      <obj_property name="ObjectShortName">burstMSB[0:3]</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/burstLSBcarry">
-      <obj_property name="ElementShortName">burstLSBcarry</obj_property>
-      <obj_property name="ObjectShortName">burstLSBcarry</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/burstLSBCarry">
-      <obj_property name="ElementShortName">burstLSBCarry</obj_property>
-      <obj_property name="ObjectShortName">burstLSBCarry</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/burstCounter">
-      <obj_property name="ElementShortName">burstCounter[0:7]</obj_property>
-      <obj_property name="ObjectShortName">burstCounter[0:7]</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/BURST_CNTeq0">
-      <obj_property name="ElementShortName">BURST_CNTeq0</obj_property>
-      <obj_property name="ObjectShortName">BURST_CNTeq0</obj_property>
-      <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="group" fp_name="group1233">
-      <obj_property name="label">clk0.e37</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e37/RESET">
-         <obj_property name="ElementShortName">RESET</obj_property>
-         <obj_property name="ObjectShortName">RESET</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e37/S0">
-         <obj_property name="ElementShortName">S0</obj_property>
-         <obj_property name="ObjectShortName">S0</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e37/D">
-         <obj_property name="ElementShortName">D[0:3]</obj_property>
-         <obj_property name="ObjectShortName">D[0:3]</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e37/S3">
-         <obj_property name="ElementShortName">S3</obj_property>
-         <obj_property name="ObjectShortName">S3</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/kl10pv_tb/top0/ebox0/clk0/e37/SEL">
-         <obj_property name="ElementShortName">SEL[0:1]</obj_property>
-         <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/e37/CLK">
-         <obj_property name="ElementShortName">CLK</obj_property>
-         <obj_property name="ObjectShortName">CLK</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/GO">
-         <obj_property name="ElementShortName">GO</obj_property>
-         <obj_property name="ObjectShortName">GO</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/ebox0/clk0/BURST">
-         <obj_property name="ElementShortName">BURST</obj_property>
-         <obj_property name="ObjectShortName">BURST</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/kl10pv_tb/top0/CLK/FUNC_EBOX_SS">
-         <obj_property name="ElementShortName">FUNC_EBOX_SS</obj_property>
-         <obj_property name="ObjectShortName">FUNC_EBOX_SS</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>
