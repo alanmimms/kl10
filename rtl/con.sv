@@ -244,11 +244,17 @@ module con(iAPR APR,
     CON.RUN <= run2;
   end
 
-  bit [0:7] runState;
-//  bit runStateNC1, runStateNC2, runStateNC3;
+  always @(EBUS.ds[0] or EBUS.ds[1] or EBUS.ds[2] or EBUS.ds[3] or
+           EBUS.ds[4] or EBUS.ds[5] or EBUS.ds[6]) begin
+    $display($time, " *********EBUS.ds TRACE******** ds=%03o", EBUS.ds);
+  end
+
+  bit runStateNC1, runStateNC2, runStateNC3;
+  bit [0:2] sel;
+  assign sel = EBUS.ds[4:6];
   decoder runStateDecoder(.en(CTL.DIAG_CTL_FUNC_01x),
-                          .sel(EBUS.ds[4:6]),
-                          /* NO IDEA why this does not work
+                          .sel(sel),
+                          .trace('1),
                           .q({DIAG_CLR_RUN,
                               DIAG_SET_RUN,
                               DIAG_CONTINUE,
@@ -256,18 +262,11 @@ module con(iAPR APR,
                               DIAG_IR_STROBE,
                               DIAG_DRAM_STROBE,
                               runStateNC2,
-                              runStateNC3})
-                           */
-                          .q(runState));
-  assign DIAG_CLR_RUN = runState[0];
-  assign DIAG_SET_RUN = runState[1];
-  assign DIAG_CONTINUE = runState[2];
-  assign DIAG_IR_STROBE = runState[4];
-  assign DIAG_DRAM_STROBE = runState[5];
+                              runStateNC3}));
 
   always @(posedge CTL.DIAG_CTL_FUNC_01x) begin
-    #5 $display($time, "      runStateDecoder sel=%03b, runState=%08b, DIAG_CLR_RUN=%01b, DIAG_SET_RUN=%01b",
-                EBUS.ds[4:6], runState, DIAG_CLR_RUN, DIAG_SET_RUN);
+    #5 $display($time, "      runStateDecoder sel=%03b, DIAG_CLR_RUN=%01b, DIAG_SET_RUN=%01b",
+                sel, DIAG_CLR_RUN, DIAG_SET_RUN);
   end
 
   bit skipEn6x, skipEn7x;
