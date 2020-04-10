@@ -1,12 +1,16 @@
 `timescale 1ns/1ns
 // M8520 PAG
 module pag(iAPR APR,
+           iCLK CLK,
+           iCON CON,
            iCSH CSH,
+           iMBOX MBOX,
+           iMCL MCL,
            iPAG PAG,
            iPMA PMA,
            iSHM SHM,
-           iMBOX MBOX
-);
+           iVMA VMA
+           );
 
   bit PT_WR, PT_LEFT_EN, PT_RIGHT_EN;
   bit [0:35] ptOut;
@@ -35,70 +39,102 @@ module pag(iAPR APR,
   sim_mem
     #(.SIZE(256), .WIDTH(36), .NBYTES(2))
   pt
-  (.clk(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
-   .din(PAG.PT_IN),
-   .dout(ptOut),
-   .addr(PAG.PT_ADR[18:25]),
-   .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
+    (.clk(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
+     .din(PAG.PT_IN),
+     .dout(ptOut),
+     .addr(PAG.PT_ADR[18:25]),
+     .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 
   sim_mem
     #(.SIZE(128), .WIDTH(6), .NBYTES(1))
   ptDirA
     (.clk(ptDirWEA),
-    .din({MCL.VMA_USER, VMA.VMA[13:17]}),
-    .dout(ptDirOut[12:17]),
-    .addr(PAG.PT_ADR[18:24]),
-    .wea(ptDirWEA));
+     .din({MCL.VMA_USER, VMA.VMA[13:17]}),
+     .dout(ptDirOut[12:17]),
+     .addr(PAG.PT_ADR[18:24]),
+     .wea(ptDirWEA));
 
-  // Two rightmost bits have unique CE
-  // XXX FIXME
+  // Two rightmost bits have unique CE and .addr[6].
   sim_mem
     #(.SIZE(128), .WIDTH(1), .NBYTES(1))
   ptDirB
     (.clk(~PAG.PT_ADR[24] | PT_DIR_CLR),
-    .din(PT_DIR_CLR),
-    .dout(ptDirOut[18]),
-    .addr({PAG.PT_ADR[18:23], 1'b0}),
-    .wea(ptDirWEA));
+     .din(PT_DIR_CLR),
+     .dout(ptDirOut[18]),
+     .addr({PAG.PT_ADR[18:23], 1'b0}),
+     .wea(ptDirWEA & (~PAG.PT_ADR[24] | PT_DIR_CLR)));
 
   sim_mem
     #(.SIZE(128), .WIDTH(1), .NBYTES(1))
   ptDirC
     (.clk(PAG.PT_ADR[24] | PT_DIR_CLR),
-    .din(PT_DIR_CLR),
-    .dout(ptDirOut[19]),
-    .addr({PAG.PT_ADR[18:23], 1'b0}),
-    .wea(ptDirWEA));
+     .din(PT_DIR_CLR),
+     .dout(ptDirOut[19]),
+     .addr({PAG.PT_ADR[18:23], 1'b0}),
+     .wea(ptDirWEA & (PAG.PT_ADR[24] & PT_DIR_CLR)));
 
   sim_mem
     #(.SIZE(256), .WIDTH(2), .NBYTES(2))
   ptParity
     (.clk(PT_WR),
-    .din({(PAG.MB_00to17_PAR | ~CON.KI10_PAGING_MODE) &
-          (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE),
-          (PAG.MB_18to35_PAR | ~CON.KI10_PAGING_MODE) &
-          (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE)}),
-    .dout({PT_PAR_LEFT, PT_PAR_RIGHT}),
-    .addr(PAG.PT_ADR[18:25]),
-    .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
+     .din({(PAG.MB_00to17_PAR | ~CON.KI10_PAGING_MODE) &
+           (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE),
+           (PAG.MB_18to35_PAR | ~CON.KI10_PAGING_MODE) &
+           (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE)}),
+     .dout({PT_PAR_LEFT, PT_PAR_RIGHT}),
+     .addr(PAG.PT_ADR[18:25]),
+     .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
+
 `else
-  pt_mem pt(.addra(PAG.PT_ADR),
-  .clka(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
-  .dina(PAG.PT_IN),
-  .douta(ptOut),
-  .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 
-  // XXX FIXME
+  pt_256x36_4byte_mem
+    //    #(.SIZE(256), .WIDTH(36), .NBYTES(2))
+    pt
+      (.addra(PAG.PT_ADR),
+       .clka(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
+       .dina(PAG.PT_IN),
+       .douta(ptOut),
+       .wea({{2{PT_WR & PT_LEFT_EN}}, {2{PT_WR & PT_RIGHT_EN}}}));
 
-/*  "this is not complete since we need to split the separate CE bits off
-  from the main block of RAM."
-  */
+  ptDir_128x6_mem
+    //    #(.SIZE(128), .WIDTH(6), .NBYTES(1))
+    ptDirA
+      (.clka(ptDirWEA),
+       .dina({MCL.VMA_USER, VMA.VMA[13:17]}),
+       .douta(ptDirOut[12:17]),
+       .addra(PAG.PT_ADR[18:24]),
+       .wea(ptDirWEA));
 
-  ptDir_mem ptDirA(.addra(PAG.PT_ADR),
-    .clka(PT_WR & (PT_LEFT_EN | PT_RIGHT_EN)),
-    .dina(PAG.PT_IN),
-    .douta(ptOut),
-    .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
+  // Two rightmost bits have unique CE and .addr[6].
+  ptDir_128x1_mem
+    //    #(.SIZE(128), .WIDTH(1), .NBYTES(1))
+    ptDirB
+      (.clka(~PAG.PT_ADR[24] | PT_DIR_CLR),
+       .dina(PT_DIR_CLR),
+       .douta(ptDirOut[18]),
+       .addra({PAG.PT_ADR[18:23], 1'b0}),
+       .wea(ptDirWEA & (~PAG.PT_ADR[24] | PT_DIR_CLR)));
+
+  ptDir_128x1_mem
+    //    #(.SIZE(128), .WIDTH(1), .NBYTES(1))
+    ptDirC
+      (.clka(~PAG.PT_ADR[24] | PT_DIR_CLR),
+       .dina(PT_DIR_CLR),
+       .douta(ptDirOut[19]),
+       .addra({PAG.PT_ADR[18:23], 1'b0}),
+       .wea(ptDirWEA & (PAG.PT_ADR[24] | PT_DIR_CLR)));
+
+  ptDir_256x2_mem
+    //    #(.SIZE(256), .WIDTH(2), .NBYTES(2))
+    ptParity
+      (.clka(PT_WR),
+       .dina({(PAG.MB_00to17_PAR | ~CON.KI10_PAGING_MODE) &
+              (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE),
+              (PAG.MB_18to35_PAR | ~CON.KI10_PAGING_MODE) &
+              (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE)}),
+       .douta({PT_PAR_LEFT, PT_PAR_RIGHT}),
+       .addra(PAG.PT_ADR[18:25]),
+       .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 `endif
 
   always_comb begin
@@ -122,7 +158,7 @@ module pag(iAPR APR,
   end
 
 
-    // PAG2 p.107
+  // PAG2 p.107
   always_comb begin
     for (int k = 14; k <= 26; ++k) begin
       PAG.PT[k] = (PT_EN | PMA.PA[k]) & (ptOut[k-9] | ptOut[k+9] | ~PT_EN);
@@ -172,7 +208,7 @@ module pag(iAPR APR,
                       (PT_PUBLIC_A | PT_PUBLIC_B | e67q14) &
                       PAG.PT_ACCESS;
     PAG.PF_EBOX_HANDLE = ((~PT_MATCH | ~PAG.PT_ACCESS & PT_PAR_ODD) & PAGED_REF |
-                         ~PAGE_WRITE_OK & PAGE_TEST_WRITE & PT_PAR_ODD) &
+                          ~PAGE_WRITE_OK & PAGE_TEST_WRITE & PT_PAR_ODD) &
                          ~CON.KI10_PAGING_MODE;
     PAGE_TEST_PRIVATE = MCL.PAGE_TEST_PRIVATE;
     PAGED_REF = PAGE_USER_PAGED_REF | PAGE_EXEC_PAGED_REF;
@@ -184,7 +220,7 @@ module pag(iAPR APR,
                   PAG.PT_ACCESS & ~MCL.VMA_WRITE & PAGE_EXEC_PAGED_REF & PT_PAR_ODD |
                   PAGE_EXEC_REF & PAGE_UNPAGED_REF & ~PAGE_TEST_PRIVATE;
     PAGE_FAIL_A = (MCL.PAGE_ILL_ENTRY |
-                  PAGE_TEST_PRIVATE & PAGE_UNPAGED_REF & PAGE_EXEC_REF) |
+                   PAGE_TEST_PRIVATE & PAGE_UNPAGED_REF & PAGE_EXEC_REF) |
                   ~CON.KI10_PAGING_MODE & ~PT_MATCH & PAGED_REF |
                   CSH.PAGE_REFILL_ERROR & PAGED_REF |
                   PAGED_REF & ~PT_PAR_ODD & PT_MATCH;

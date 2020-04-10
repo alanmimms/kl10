@@ -1,13 +1,22 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
 // M8529 MBX memory control logic
-module mbx(iCLK CLK,
+module mbx(iAPR APR,
+           iCCL CCL,
+           iCCW CCW,
+           iCLK CLK,
            iCON CON,
            iCRC CRC,
            iCSH CSH,
+           iCTL CTL,
+           iEBUS EBUS,
            iEDP EDP,
+           iIR IR,
+           iMBC MBC,
            iMBOX MBOX,
            iMBX MBX,
+           iMCL MCL,
+           iPAG PAG,
            iPMA PMA
 );
 
