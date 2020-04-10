@@ -76,6 +76,11 @@ module kl10pv_tb;
   end
 
 
+  bit [0:6] testBus;
+  bit en;
+  bit zero, one, two, three, four, five, six, seven;
+  decoder testDecoder(.en(en), .sel(testBus[4:6]), .q({zero, one, two, three, four, five, six, seven}));
+
   // XXX until implemented
   initial begin
     top0.ebox0.CON.MBOX_WAIT = '0;
@@ -141,6 +146,24 @@ module kl10pv_tb;
     #1000;                    // 1us CROBAR for the 21st century (and sims)
     CROBAR = 0;
 
+    en = '0; testBus = 7'b1010000; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010000; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010000; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010001; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010001; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010010; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010010; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010011; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010011; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010100; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010100; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010101; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010101; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010110; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010110; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '1; testBus = 7'b1010111; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+    en = '0; testBus = 7'b1010111; #10 $display($time, " decoder en=%01b sel=%03b q=%01b%01b%01b%01b%01b%01b%01b%01b", en, testBus[4:6], zero, one, two, three, four, five, six, seven);
+
     $display($time, " CRAM[0]=%028o", top0.ebox0.crm0.cram.mem[0]);
     #100 KLMasterReset();
 
@@ -156,7 +179,6 @@ module kl10pv_tb;
     @(negedge top0.ebox0.clk0.CLK.MHZ16_FREE) begin
       string shortName;
       shortName = replace(func.name, "diagf", "");
-      shortName = replace(shortName, "diagf", "");
       $display($time, " %sEBUS=%06o %s", indent, ebusRH, shortName);
       top0.ebox0.EBUS.data[18:35] = ebusRH;
       top0.ebox0.EBUS.ds = func;
@@ -444,6 +466,9 @@ module kl10pv_tb;
 
     // Set the RUN flop.
     doDiagFunc(diagfSET_RUN);
+    if (!top.ebox0.con0.CON.RUN) begin
+      $display($time, " diagfSET_RUN should set the RUN flop and it didn't");
+    end
 
     // Set the CONTINUE button.
     doDiagFunc(diagfCONTINUE);
@@ -457,12 +482,12 @@ module kl10pv_tb;
     end
 
     if (top.ebox0.con0.CON.EBOX_HALTED) begin
-      $display($time, " ERROR: STEP of MBOX up to 1000 times did not clear CON.EBOX_HALTED");
+      $display($time, " ERROR: STEP MBOX < 1000 times waiting for HALT loop didn't clear CON.EBOX_HALTED");
     end
 
     // Verify RUN flop is still set.
     if (!top.ebox0.con0.CON.RUN) begin
-      $display($time, " ???ERROR: STEP of MBOX up to 1000 times cleared the RUN flop???");
+      $display($time, " ???ERROR: STEP MBOX < 1000 times waiting for HALT loop cleared the RUN flop???");
     end
 
     // Start the clock.
