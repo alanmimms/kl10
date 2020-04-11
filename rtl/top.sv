@@ -2,18 +2,16 @@
 `include "ebox.svh"
 
 module top(input clk,
-           input CROBAR
+           input CROBAR,
+           input EXTERNAL_CLK,
+           input clk30,
+           input clk31
 );
 
   bit [27:35] MBOX_GATE_VMA;
   bit [10:12] CACHE_CLEARER;
 
   bit mboxClk;
-  bit EXTERNAL_CLK;
-  assign EXTERNAL_CLK = clk;
-  bit clk30;
-  assign clk30 = clk;
-  bit clk31;                  // XXX
 
   // TEMPORARY?
   bit PWR_WARN;
