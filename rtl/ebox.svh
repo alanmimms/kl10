@@ -41,7 +41,9 @@ typedef enum bit [0:6] {
 
                         diagfINIT_CHANNELS = 7'o070,
                         diagfWRITE_MBOX = 7'o071,
-                        diagfEBUS_LOAD = 7'o076
+                        diagfEBUS_LOAD = 7'o076,
+
+                        diagfIdle = 7'o077
                         } tDiagFunction;
 
 
@@ -1045,6 +1047,7 @@ interface iCTL;
   bit DISP_NICOND;
   bit DISP_RET;
   bit DISP_RETURN;
+  bit [0:6] DS;
   bit EBUS_E_TO_T_EN;
   bit EBUS_PARITY_OUT;
   bit EBUS_T_TO_E_EN;
