@@ -218,9 +218,9 @@ module ctl(iAPR APR,
   // CTL3 p.366
   bit NOTds00AndDiagStrobe;
   bit en1xx;
-  assign NOTds00AndDiagStrobe = ~EBUS.ds[0] & CTL.DIAG_STROBE;
   assign CTL.DIAG_READ = EDP.DIAG_READ_FUNC_10x;
   assign CTL.DIAG_STROBE = EBUS.diagStrobe;
+  assign NOTds00AndDiagStrobe = ~EBUS.ds[0] & CTL.DIAG_STROBE;
   always_comb begin
     CTL.DIAG_CTL_FUNC_00x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b000;
     CTL.DIAG_CTL_FUNC_01x  = NOTds00AndDiagStrobe && EBUS.ds[1:3] == 3'b001;
@@ -248,11 +248,16 @@ module ctl(iAPR APR,
     CTL.DIAG_READ_FUNC_16x = en1xx && CTL.DIAG[1:3] == 3'b110;
     CTL.DIAG_READ_FUNC_17x = en1xx && CTL.DIAG[1:3] == 3'b111;
 
-    CTL.CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
     CTL.READ_STROBE = CTL.CONSOLE_CONTROL ?
                       CTL.DIAG_STROBE :
-                      CON.COND_DIAG_FUNC & APR.CLK;
-    CTL.DIAG = CTL.CONSOLE_CONTROL ? EBUS.ds[0:6] : CRAM.MAGIC[2:8];
+                      CON.COND_DIAG_FUNC & ~APR.CLK;
+
+    // These next three lines are causing some concern. CTL.DIAG[4:6]
+    // is the backplane signal used in most EBOX modules to drive EBUS
+    // operations.
+    CTL.CONSOLE_CONTROL = EBUS.ds[0] | EBUS.ds[1];
+    CTL.DS = CTL.CONSOLE_CONTROL ? EBUS.ds : CRAM.MAGIC[2:8];
+    CTL.DIAG = CTL.DS[4:6];
 
     CTL.AD_TO_EBUS_L = CTL.CONSOLE_CONTROL &
                        (APR.CONO_OR_DATAO |
