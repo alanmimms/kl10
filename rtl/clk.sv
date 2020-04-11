@@ -36,7 +36,6 @@ module clk(input clk,
   bit DESKEW_CLK = '0;
   bit SYNCHRONIZE_CLK;
   assign SYNCHRONIZE_CLK = '0;
-  bit DIAG_READ;
   bit MBOX_RESP_SIM;
   bit AR_ARX_PAR_CHECK;
   bit DIAG_CHANNEL_CLK_STOP = '0; // XXX used on CLK1. ??? where is this driven?
@@ -56,11 +55,20 @@ module clk(input clk,
   bit delaysLocked;           // Watch for our clock delay mechanism to achieve lock
   assign CLK.CROBAR = CROBAR & ~delaysLocked;
 
+  // This is WEIRD. This assign here seems to not work all the time?
+  // Later on in this module near runStateDecoder I display DIAG and
+  // it is zero while EBUS.ds is 7'b0000001 and EBUS.ds[4:6] is
+  // 3'b001. WHY WOULD THAT BE?
+  //
+  // To try to find out why I changed several sites from DIAG to
+  //EBUS.ds[4:6] and NOW the module WORKS.
+/*
   bit [4:6] DIAG;
   assign DIAG[4:6] = EBUS.ds[4:6];
-
-  bit CLK_DIAG_READ;
-  assign CLK_DIAG_READ = EDP.DIAG_READ_FUNC_10x;
+*/
+  
+  bit DIAG_READ;
+  assign DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
   // CLK1 p.168
   mux e67(.en('1),
@@ -341,13 +349,47 @@ module clk(input clk,
            .CLK(CLK.MAIN_SOURCE),
            .Q({CLK.GO, BURST, CLK.EBOX_SS, ignoredE37}));
   
+/*
   bit e47Ignore;
   decoder e47Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x),
-                     .sel(DIAG[4:6]),
+                     .sel(DIAG),
+                     .trace('1),
+                     .traceName("clk.e47decoder"),
                      .q({e47Ignore, CLK.FUNC_START,
                          CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS,
                          CLK.FUNC_COND_SS, CLK.FUNC_BURST,
                          CLK.FUNC_CLR_RESET, CLK.FUNC_SET_RESET}));
+*/
+  always_comb begin
+
+    if (CLK.FUNC_GATE & CTL.DIAG_CTL_FUNC_00x) begin
+      case (EBUS.ds[4:6])
+      default: {CLK.FUNC_START, CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS, CLK.FUNC_COND_SS,
+                CLK.FUNC_BURST, CLK.FUNC_CLR_RESET, CLK.FUNC_SET_RESET} = '0;
+      3'b001: CLK.FUNC_START = 1'b1;
+      3'b010: CLK.FUNC_SINGLE_STEP = 1'b1;
+      3'b011: CLK.FUNC_EBOX_SS = 1'b1;
+      3'b100: CLK.FUNC_COND_SS = 1'b1;
+      3'b101: CLK.FUNC_BURST = 1'b1;
+      3'b110: CLK.FUNC_CLR_RESET = 1'b1;
+      3'b111: CLK.FUNC_SET_RESET = 1'b1;
+      endcase
+
+      // This is WEIRD. I display DIAG here and it is zero while
+      // EBUS.ds is 7'b0000001 and EBUS.ds[4:6] is 3'b001. WHY WOULD
+      // THAT BE?
+/*
+      $display($time, " @@@@@@CLK FUNC DECODER TRACE@@@@@@ DIAG=%03b EBUS.ds=%07b EBUS.ds[4:6]=%03b new=%07b",
+               DIAG, EBUS.ds, EBUS.ds[4:6],
+               {CLK.FUNC_START, CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS, CLK.FUNC_COND_SS,
+                CLK.FUNC_BURST, CLK.FUNC_CLR_RESET, CLK.FUNC_SET_RESET});
+*/
+    end else begin
+      {CLK.FUNC_START, CLK.FUNC_SINGLE_STEP, CLK.FUNC_EBOX_SS, CLK.FUNC_COND_SS,
+       CLK.FUNC_BURST, CLK.FUNC_CLR_RESET, CLK.FUNC_SET_RESET} = '0;
+    end
+  end
+
   bit [0:7] e50out;
   assign CLK.FUNC_042 = e50out[2];
   assign CLK.FUNC_043 = e50out[3];
@@ -356,7 +398,7 @@ module clk(input clk,
   assign CLK.FUNC_046 = e50out[6] | CROBAR;
   assign CLK.FUNC_047 = e50out[7] | CROBAR;
   decoder e50Decoder(.en(CLK.FUNC_GATE & CTL.DIAG_LD_FUNC_04x),
-                     .sel(DIAG[4:6]),
+                     .sel(EBUS.ds[4:6]),
                      .q(e50out));
 
   // CLK3 p.170
@@ -525,11 +567,11 @@ module clk(input clk,
   // CLK5 p.172
   always_comb begin
 
-    if (CLK_DIAG_READ) begin
+    if (DIAG_READ) begin
       CLK.EBUSdriver.driving = '1;
       CLK.EBUSdriver.data = '0;
 
-      case (DIAG[4:6])
+      case (EBUS.ds[4:6])
       3'b000: CLK.EBUSdriver.data = {CLK.EBUS_CLK,
                                      CLK.SBUS_CLK,
                                      CLK.INSTR_1777,
