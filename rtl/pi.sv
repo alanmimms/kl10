@@ -89,7 +89,7 @@ module pi(iAPR APR,
   bit [0:3] e2Q, e12Q, e15Q;
   always_comb begin
     clk = CLK.PIC;
-    PI_ON[0] = ~RESET & ~PIC2_PI[0] & ~PIC2_PI[1] & ~PIC2_PI[2];
+    PI_ON[0] = ~MR_RESET & ~PIC2_PI[0] & ~PIC2_PI[1] & ~PIC2_PI[2];
     PIC2_PI[1] = e78Q[0] | e77Q[0];
     PIC2_PI[2] = e78Q[1] | e77Q[1];
     REQ = e78Q[2] | e77Q[2];
@@ -247,19 +247,24 @@ module pi(iAPR APR,
     OFF = EBUS.data[9] & e4q3;
     _ON = EBUS.data[10] & e4q3;
 
-    SYS_CLR = EBUS.data[5] & ~CTL.CONSOLE_CONTROL & CON.CONO_PI | RESET;
+    SYS_CLR = EBUS.data[5] & ~CTL.CONSOLE_CONTROL & CON.CONO_PI | MR_RESET;
     PIC.EBUSdriver.data[3:9] = PIH[1:7];
     PIC.EBUSdriver.data[10] = ACTIVE;
     PIC.EBUSdriver.driving = BUS_EN;
     BUS_EN = EDP.DIAG_READ_FUNC_10x & ~CTL.DIAG[4];
     DIAG = CTL.DIAG[5:6];
     PIC.XOR_ON_BUS = BUS_EN | BUS_EN_5;
-    EBUS.func[2] = ~RESET & ~COMP | TIM[4] | APR.EBOX_SEND_F02;
+    EBUS.func[2] = ~MR_RESET & ~COMP | TIM[4] | APR.EBOX_SEND_F02;
     PIC.SEND_2H = e29Q[0] | e29Q[1] | e29Q[7];
     OK_ON_HALT = |e29Q[3:6];
 
     IOB = EBUS.data[11:17];
     IO_REQ = EBUS.pi[1:7] | PIC3_PI[1:7];
+
+    // PIC2 NOTE 3: RESET is wire ORed to clear PI5 CYC START.
+    // But I cannot find any evidence of this....
+
+    MR_RESET = CLK.MR_RESET;
   end
 
   always_ff @(posedge clk) begin
