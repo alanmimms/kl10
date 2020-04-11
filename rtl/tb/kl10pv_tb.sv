@@ -31,11 +31,12 @@ module kl10pv_tb(iAPR APR,
                  iMBOX MBOX,
                  iSBUS SBUS,
 
-                 output bit clk,
                  output bit CROBAR,
-                 output bit EXTERNAL_CLK,
+                 output bit clk,
                  output bit clk30,
                  output bit clk31,
+                 output bit EXTERNAL_CLK,
+
                  output bit PWR_WARN
                  );
   // APRID hardware options
@@ -51,8 +52,9 @@ module kl10pv_tb(iAPR APR,
   var string indent = "";
 
   assign clk = masterClk;
+  assign EXTERNAL_CLK = masterClk;
   assign clk30 = masterClk;
-  assign clk31 = masterClk;
+  assign clk31 = masterClk;     // XXX for now
 
   // 50MHz clock source
   initial masterClk = 0;
@@ -73,7 +75,8 @@ module kl10pv_tb(iAPR APR,
     // EBUS
     EBUS.data = '0;
     EBUS.diagStrobe = '0;
-    EBUS.ds = tDiagFunction'('0);
+
+    EBUS.ds = tDiagFunction'(diagfIdle);
 
     EBUS.parity = '0;
     EBUS.cs = '0;
@@ -155,8 +158,9 @@ module kl10pv_tb(iAPR APR,
     repeat (8) @(negedge CLK.MHZ16_FREE) ;
 
     @(negedge CLK.MHZ16_FREE) begin
+      EBUS.data[18:35] <= '0;
+      EBUS.ds <= diagfIdle;
       EBUS.diagStrobe <= '0;
-      EBUS.ds <= tDiagFunction'('0); // Idle
     end
 
     repeat(4) @(posedge CLK.MHZ16_FREE) ;
@@ -169,6 +173,7 @@ module kl10pv_tb(iAPR APR,
   task KLMasterReset();
     $display($time, " KLMasterReset() START");
     indent = "  ";
+
     // Functions from KLINIT.L20 $KLMR (DO A MASTER RESET ON THE KL)
     
     // $DFXC(.CLRUN=010)    ; Clear run
