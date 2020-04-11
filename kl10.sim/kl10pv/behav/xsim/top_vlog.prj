@@ -1,0 +1,53 @@
+# compile verilog/system verilog design source files
+sv xil_defaultlib  -i "../../../../rtl/include" --include "../../../../rtl" --include "../../../../kl10.ip_user_files/ipstatic/hdl" --include "../../../../kl10.srcs/sources_1/ip/ebox_clocks_1" --include "../../../../kl10.srcs/sources_1/ip/kl_delays" --include "/opt/Xilinx/Vivado/2019.2/data/xilinx_vip/include" -d "KL10PV_TB=1" \
+"../../../../rtl/top.sv" \
+"../../../../rtl/tb/kl10pv_tb.sv" \
+"../../../../rtl/tb/sim-mem.sv" \
+"../../../../rtl/ip-stubs.sv" \
+"../../../../rtl/apr.sv" \
+"../../../../rtl/universal-counter.sv" \
+"../../../../rtl/shm.sv" \
+"../../../../rtl/mux2x4.sv" \
+"../../../../rtl/mtr.sv" \
+"../../../../rtl/csh.sv" \
+"../../../../rtl/edp.sv" \
+"../../../../rtl/chc.sv" \
+"../../../../rtl/cha.sv" \
+"../../../../rtl/priority-encoder8.sv" \
+"../../../../rtl/mbox.sv" \
+"../../../../rtl/chd.sv" \
+"../../../../rtl/clk.sv" \
+"../../../../rtl/ccw.sv" \
+"../../../../rtl/mbc.sv" \
+"../../../../rtl/ebox.sv" \
+"../../../../rtl/universal-shift-register.sv" \
+"../../../../rtl/crm.sv" \
+"../../../../rtl/con.sv" \
+"../../../../rtl/decoder.sv" \
+"../../../../rtl/mux.sv" \
+"../../../../rtl/pi.sv" \
+"../../../../rtl/mbz.sv" \
+"../../../../rtl/mux4x2.sv" \
+"../../../../rtl/ir.sv" \
+"../../../../rtl/mc10179.sv" \
+"../../../../rtl/crc.sv" \
+"../../../../rtl/mc10181.sv" \
+"../../../../rtl/cra.sv" \
+"../../../../rtl/chx.sv" \
+"../../../../rtl/mcl.sv" \
+"../../../../rtl/pag.sv" \
+"../../../../rtl/vma.sv" \
+"../../../../rtl/ctl.sv" \
+"../../../../rtl/pma.sv" \
+"../../../../rtl/ccl.sv" \
+"../../../../rtl/scd.sv" \
+"../../../../rtl/mb0.sv" \
+"../../../../rtl/mbx.sv" \
+"../../../../rtl/mt0.sv" \
+"../../../../rtl/memory.sv" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
