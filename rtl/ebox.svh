@@ -1109,6 +1109,7 @@ interface iEDP;
   bit [0:35] FM;
   bit FM_PARITY;
   bit FM_WRITE;
+  bit [0:35] hwOptions;
   tEBUSdriver EBUSdriver;
 endinterface
 

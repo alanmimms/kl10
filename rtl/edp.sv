@@ -18,9 +18,6 @@ module edp(iAPR APR,
            iMBOX MBOX
 );
 
-  // This might be set by the testbench or in FPGA in a top.sv "initial begin" block.
-  bit [0:35] HardwareOptionsWord;
-
   // Universal shift register function selector values
   enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
   
@@ -360,13 +357,23 @@ module edp(iAPR APR,
     end
   endgenerate
 
+  bit [0:35] hwOptions = {18'b0,     // Domain of the Microcode
+                          1'b0,      // [18] 50Hz
+                          1'b1,      // [19] Cache
+                          1'b1,      // [20] Internal channels
+                          1'b1,      // [21] Extended KL
+                          1'b1,      // [22] Has master oscillator
+                          13'd4001}; // [23:35] Serial number
+
+  assign EDP.hwOptions = hwOptions;
+
   // ADXB mux
   generate
     for (n = '0; n < 36; n = n + 6) begin : ADXBmux
       always_comb
         unique case(CRAM.ADB)
         default: ADXB[n+0:n+5] = '0;
-        adbFM:   ADXB[n+0:n+5] = HardwareOptionsWord[n+0:n+5];
+        adbFM:   ADXB[n+0:n+5] = hwOptions[n+0:n+5];
         adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0};
         adbBR:   ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
         adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP.ARX[n+2:n+7] : {EDP.ARX[n+2:n+5], 2'b00};
