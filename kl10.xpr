@@ -32,7 +32,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="cora-z7-10"/>
-    <Option Name="WTXSimLaunchSim" Val="2329"/>
+    <Option Name="WTXSimLaunchSim" Val="2352"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -799,6 +799,16 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/dte-ops.wcfg">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PPRDIR/ebox-mbox.wcfg">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="top"/>
@@ -812,6 +822,8 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/kl10pv_tb_CLK-behav.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/kl10pv_tb_behav1-CRAM.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/top_kl10pv_tb_behav.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/dte-ops.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/ebox-mbox.wcfg"/>
         <Option Name="xsim.simulate.runtime" Val="20us"/>
         <Option Name="NLNetlistMode" Val="funcsim"/>
         <Define Name="KL10PV_TB" Val="1"/>
