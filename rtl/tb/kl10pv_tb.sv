@@ -39,17 +39,11 @@ module kl10pv_tb(iAPR APR,
 
                  output bit PWR_WARN
                  );
-  // APRID hardware options
-  const bit hw50Hz = 1'b0;
-  const bit hwCache = 1'b1;
-  const bit hwInternalChannels = 1'b1;
-  const bit hwExtendedKL = 1'b1;
-  const bit hwMasterOscillator = 1'b1;
-  const bit [23:35] serialNumber = 4001;
-
   bit masterClk;
 
   var string indent = "";
+
+  tCRAM cram137;
 
   assign clk = masterClk;
   assign EXTERNAL_CLK = masterClk;
@@ -65,6 +59,8 @@ module kl10pv_tb(iAPR APR,
 
   // Initialization because of ECL
   initial begin
+    cram137 = ebox0.crm0.cram.mem['o137];
+
     // Initialize our memories
     // Based on KLINIT.L20 $ZERAC subroutine.
     // Zero all ACs, including the ones in block #7 (microcode's ACs).
@@ -73,22 +69,7 @@ module kl10pv_tb(iAPR APR,
     for (int a = 0; a < $size(memory0.mem0.mem); ++a) memory0.mem0.mem[a] = '0;
 
     // EBUS
-    EBUS.data = '0;
-    EBUS.diagStrobe = '0;
-
-    EBUS.ds = tDiagFunction'(diagfIdle);
-
-    EBUS.parity = '0;
-    EBUS.cs = '0;
-    EBUS.func = tEBUSfunction'('0);
-    EBUS.demand = '0;
-    EBUS.pi = '0;
-    EBUS.ack = '0;
-    EBUS.xfer = '0;
-    EBUS.reset = '0;
-    EBUS.dfunc = '0;
-
-    APR.EBUSdriver.driving = '0;
+    APR.EBUSdriver.driving <= '0;
     APR.EBUSdriver.data = '0;
     CON.EBUSdriver.driving = '0;
     CON.EBUSdriver.data = '0;
@@ -115,62 +96,18 @@ module kl10pv_tb(iAPR APR,
   end
 
   initial begin
-    // Suck out fields from microcode in well known addresses to
-    // retrieve microcode version.
-    var tCRAM cram136 = tCRAM'(ebox0.crm0.cram.mem['o136]);
-    var tCRAM cram137 = tCRAM'(ebox0.crm0.cram.mem['o137]);
-    var int microcodeMajorVersion = cram136.MAGIC[0:5];
-    var int microcodeMinorVersion = cram136.MAGIC[6:8];
-    var int microcodeEditNumber = cram137.MAGIC[0:8];
-
-    // Define available hardware options and processor serial number
-    ebox0.edp0.HardwareOptionsWord = {
-                                           18'b0, // Upper half is microcode's domain
-                                           hw50Hz,
-                                           hwCache,
-                                           hwInternalChannels,
-                                           hwExtendedKL,
-                                           hwMasterOscillator,
-                                           13'(serialNumber)
-                                           };
-
     #10 CROBAR = '1;     // CROBAR stays asserted for a long time
     #1000 CROBAR = '0;   // 1us CROBAR for the 21st century (and sims)
+
     #100 KLMasterReset();
-    #100 KLBootDialog(microcodeMajorVersion, microcodeMinorVersion, microcodeEditNumber);
+
+    // Suck out field from microcode in well known address to retrieve
+    // microcode edit number.
+    #100 KLBootDialog(cram137.MAGIC[0:8], EDP.hwOptions);
   end
-  
-
-  ////////////////////////////////////////////////////////////////
-  // Request the specified CLK diagnostic function as if we were the
-  // front-end setting up a KL10pv.
-  task doDiagFunc(input tDiagFunction func,
-                  input [18:35] ebusRH = '0);
-    @(negedge CLK.MHZ16_FREE) begin
-      string shortName;
-      shortName = replace(func.name, "diagf", "");
-      $display($time, " %sEBUS=%06o %s", indent, ebusRH, shortName);
-      EBUS.data[18:35] <= ebusRH;
-      EBUS.ds <= func;
-      EBUS.diagStrobe <= '1;            // Strobe this
-    end
-
-    repeat (8) @(negedge CLK.MHZ16_FREE) ;
-
-    @(negedge CLK.MHZ16_FREE) begin
-      EBUS.data[18:35] <= '0;
-      EBUS.ds <= diagfIdle;
-      EBUS.diagStrobe <= '0;
-    end
-
-    repeat(4) @(posedge CLK.MHZ16_FREE) ;
-    $display($time, " %s[done]", indent);
-  endtask
 
 
-  ////////////////////////////////////////////////////////////////
-  // Patterned after PARSER .RESET function and table RESETT.
-  task KLMasterReset();
+  task KLMasterReset;
     $display($time, " KLMasterReset() START");
     indent = "  ";
 
@@ -265,24 +202,22 @@ module kl10pv_tb(iAPR APR,
     $display($time, " DONE");
     indent = "";
   endtask
+  
 
-
-  task KLBootDialog(input int microcodeMajorVersion,
-                    input int microcodeMinorVersion,
-                    input int microcodeEditNumber);
-
+  ////////////////////////////////////////////////////////////////
+  task KLBootDialog(input int microcodeEditNumber, input [0:35] hwo);
     // Time to pretend a little...
     $display("");
     $display("KLISIM -- VERSION 0.0.1 RUNNING");
-    $display("KLISIM -- KL10 S/N: %d., MODEL B, %2d HERTZ",
-             serialNumber, hw50Hz ? 50 : 60);
+    $display("KLISIM -- KL10 S/N: %0d., MODEL B, %0d HERTZ",
+             hwo[23:35], hwo[18] ? 50 : 60);
     $display("KLISIM -- KL10 HARDWARE ENVIRONMENT");
-    if (hwMasterOscillator) $display("   MOS MASTER OSCILLATOR");
-    if (hwExtendedKL)       $display("   EXTENDED ADDRESSING");
-    if (hwInternalChannels) $display("   INTERNAL CHANNELS");
-    if (hwCache)            $display("   CACHE");
+    if (hwo[22]) $display("   MOS MASTER OSCILLATOR");
+    if (hwo[21]) $display("   EXTENDED ADDRESSING");
+    if (hwo[20]) $display("   INTERNAL CHANNELS");
+    if (hwo[19]) $display("   CACHE");
     $display("");
-    $display("KLISIM -- MICROCODE VERSION %03o LOADED", microcodeEditNumber);
+    $display("KLISIM -- MICROCODE VERSION %0o LOADED", microcodeEditNumber);
     $display("");
 
     $display($time, " KLBootDialog() START");
@@ -467,6 +402,33 @@ module kl10pv_tb(iAPR APR,
 
     $display($time, " DONE");
     indent = "";
+  endtask
+
+
+  ////////////////////////////////////////////////////////////////
+  // Request the specified CLK diagnostic function as if we were the
+  // front-end setting up a KL10pv.
+  task doDiagFunc(input tDiagFunction func,
+                  input [18:35] ebusRH = '0);
+    @(negedge CLK.MHZ16_FREE) begin
+      string shortName;
+      shortName = replace(func.name, "diagf", "");
+      EBUS.data[18:35] <= ebusRH;
+      EBUS.ds <= func;
+      EBUS.diagStrobe <= '1;            // Strobe this
+      $display($time, " %sEBUS.data=0,,%0o and ds=%s", indent, ebusRH, shortName);
+    end
+
+    repeat (8) @(negedge CLK.MHZ16_FREE) ;
+
+    @(negedge CLK.MHZ16_FREE) begin
+      EBUS.data[18:35] <= '0;
+      EBUS.diagStrobe <= '0;
+      EBUS.ds <= tDiagFunction'('0);
+    end
+
+    repeat(4) @(posedge CLK.MHZ16_FREE) ;
+//    $display($time, " %s[done]", indent);
   endtask
 
 
