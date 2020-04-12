@@ -507,15 +507,17 @@ module clk(input clk,
   assign CLK.MB_XFER = e32Q3 | e32Q13;
   assign CLK.RESP_SIM = CSH.MBOX_RESP_IN & CLK.SYNC_EN;
   always_ff @(posedge CLK.MBOX_CLK) begin
-    CLK.EBOX_REQ <= CLK.EBOX_REQ & ~VMA.AC_REF |
-                    ~VMA.AC_REF & CSH.EBOX_RETRY_REQ |
-                    CLK.SYNC_EN & MCL.MBOX_CYC_REQ |
-                    CLK.SYNC & MCL.MBOX_CYC_REQ |
-                    (~CLK.PAGE_FAIL_EN &
-                     ~CSH.EBOX_T0_IN &
-                     ~CLK.MBOX_CYCLE_DIS &
-                     ~CLK.MR_RESET &
-                     ~CLK.FORCE_1777);
+    // NOTE: Wire AND
+    CLK.EBOX_REQ <= (CLK.EBOX_REQ & ~VMA.AC_REF |
+                     CSH.EBOX_RETRY_REQ & ~VMA.AC_REF |
+                     CLK.SYNC_EN & MCL.MBOX_CYC_REQ |
+                     CLK.SYNC & MCL.MBOX_CYC_REQ)
+      &
+                    ~(CLK.PAGE_FAIL_EN |
+                      CSH.EBOX_T0_IN |
+                      CLK.MBOX_CYCLE_DIS |
+                      CLK.MR_RESET |
+                      CLK.FORCE_1777);
 
     e32Q3 <= CON.MBOX_WAIT & MBOX_RESP_SIM & ~CLK.EBOX_CLK_EN & ~VMA.AC_REF;
     e32Q13 <= CSH.MBOX_RESP_IN;
