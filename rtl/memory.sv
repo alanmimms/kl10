@@ -19,15 +19,6 @@ module memory(iSBUS SBUS);
 
   always_comb begin
 
-    if (write)
-      dataIn = MBOX.MB;
-    else
-      dataIn = '0;
-
-    if (read)
-      MBOX.MB = dataOut;
-    else if (!write)
-      MBOX.MB = '0;
   end
 `else
 `endif
