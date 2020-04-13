@@ -96,7 +96,7 @@ module pma(iAPR APR,
   always_comb begin
     UEBR[14] = (UBR_SEL | EBR[14]) & (~UBR_SEL & UBR[14]);
     VA[14:26] = VMA.VMA[14:26];
-    VA_19to21eq7 = ~VMA.VMA[19];
+    VA_19to21eq7 = VMA.VMA[19:21] == 3'b111;
   end
 
 
