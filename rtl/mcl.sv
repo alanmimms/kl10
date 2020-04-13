@@ -391,8 +391,7 @@ module mcl(iAPR APR,
       e33SR[0] = ~CON.CACHE_LOAD_EN |
                  SPEC_SP_MEM_CYCLE & CRAM.MAGIC[7] |
                  LOAD_AD_FUNC & EDP.AD[11];
-      e33SR[1] = ~CON.TRAP_EN |
-                 SPEC_SP_MEM_CYCLE & LOAD_AD_FUNC |
+      e33SR[1] = CON.TRAP_EN |
                  SPEC_SP_MEM_CYCLE & CRAM.MAGIC[08] |
                  LOAD_AD_FUNC & EDP.AD[12];
       e33SR[2] = EPT_EN;
