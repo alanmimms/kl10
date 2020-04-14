@@ -1232,6 +1232,7 @@ interface iSBUS;
   bit [0:3] RQ;
   bit [0:3] WR_RQ;
   bit [14:35] ADR;
+  bit CROBAR;
 
   modport mbox(
                output START_A,
