@@ -1232,6 +1232,46 @@ interface iSBUS;
   bit [0:3] RQ;
   bit [0:3] WR_RQ;
   bit [14:35] ADR;
+
+  modport mbox(input DATA_VALID_A,
+               input DATA_VALID_B,
+               input ACKN_A,
+               input ACKN_B,
+               input ERROR,
+               input ADR_PAR_ERR,
+               inout D,
+               output RD_RQ,
+               output WR_RQ,
+               output MEM_RESET,
+               output DATA_PAR,
+               output ADR_PAR,
+               output DIAG,
+               output RQ,
+               output ADR,
+               output CLK_INT,
+               output CLK_EXT,
+               output START_A,
+               output START_B);
+
+  modport memory(input RD_RQ,
+                 input WR_RQ,
+                 input RQ,
+                 input ADR,
+                 input DATA_PAR,
+                 input ADR_PAR,
+                 input DIAG,
+                 input CLK_INT,
+                 input CLK_EXT,
+                 input MEM_RESET,
+                 inout D,
+                 input START_A,
+                 input START_B,
+                 output DATA_VALID_A,
+                 output DATA_VALID_B,
+                 output ERROR,
+                 output ADR_PAR_ERR,
+                 output ACKN_A,
+                 output ACKN_B);
 endinterface
 
 

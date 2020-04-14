@@ -57,8 +57,8 @@ module top(input clk,
   iSBUS SBUS();
 
   ebox ebox0(.*);
-  mbox mbox0(.*);
-  memory memory0(.*);
+  mbox mbox0(.SBUS(SBUS.mbox), .*);
+  memory memory0(.SBUS(SBUS.memory), .*);
 
 `ifdef KL10PV_TB
   kl10pv_tb kl10pv_tb0(.*);
