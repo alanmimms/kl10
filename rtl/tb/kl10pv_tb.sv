@@ -66,31 +66,7 @@ module kl10pv_tb(iAPR APR,
     // Zero all ACs, including the ones in block #7 (microcode's ACs).
     // For now, MBOX memory is zero too.
     for (int a = 0; a < $size(ebox0.edp0.fm.mem); ++a) ebox0.edp0.fm.mem[a] = '0;
-    for (int a = 0; a < $size(memory0.mem0.mem); ++a) memory0.mem0.mem[a] = '0;
-
-    // EBUS
-    APR.EBUSdriver.driving <= '0;
-    APR.EBUSdriver.data = '0;
-    CON.EBUSdriver.driving = '0;
-    CON.EBUSdriver.data = '0;
-    CRA.EBUSdriver.driving = '0;
-    CRA.EBUSdriver.data = '0;
-    CTL.EBUSdriver.driving = '0;
-    CTL.EBUSdriver.data = '0;
-    EDP.EBUSdriver.driving = '0;
-    EDP.EBUSdriver.data = '0;
-    IR.EBUSdriver.driving = '0;
-    IR.EBUSdriver.data = '0;
-    MTR.EBUSdriver.driving = '0;
-    MTR.EBUSdriver.data = '0;
-    PIC.EBUSdriver.driving = '0;
-    PIC.EBUSdriver.data = '0;
-    SCD.EBUSdriver.driving = '0;
-    SCD.EBUSdriver.data = '0;
-    SHM.EBUSdriver.driving = '0;
-    SHM.EBUSdriver.data = '0;
-    VMA.EBUSdriver.driving = '0;
-    VMA.EBUSdriver.data = '0;
+    for (int a = 0; a < $size(memory0.mem); ++a) memory0.mem[a] = '0;
 
     CON.CONO_200000 = '0;
   end
@@ -241,6 +217,7 @@ module kl10pv_tb(iAPR APR,
     // Test for presence of cache and configure it.
 
     // Functions from KLINIT.L20 $EXBLD (LOAD THE BOOT) routine
+    loadBootstrap();
 
     // Sweep the cache
     // XXX TBD
@@ -405,6 +382,76 @@ module kl10pv_tb(iAPR APR,
   endtask
 
 
+  typedef bit [7:0] tFileWord[0:4];
+
+
+  function bit [0:35] fileWordToWord(input tFileWord fw);
+    fileWordToWord = (fw[0] << 28) |
+                     (fw[1] << 20) |
+                     (fw[2] << 12) |
+                     (fw[3] <<  4) |
+                     (fw[4] >>  4);
+  endfunction
+
+
+  // Load the BOOT.EXE bootstrap into our fake memory 
+  function void loadBootstrap();
+    automatic int fd;
+    automatic int nRead;
+    automatic tFileWord iowd;
+    automatic bit [0:35] w;
+    automatic bit [0:35] minAddr;
+    automatic bit [0:35] maxAddr;
+    automatic bit [0:17] nww;
+    automatic bit [0:17] addr;
+    automatic int nWords;
+
+    $display("");
+    $display("[Loading BOOT.EXE]");
+
+    minAddr = 36'o777777_777777;
+    maxAddr = '0;
+
+    fd = $fopen("../../../../images/boot/boot.exe", "rb");
+
+    while ('1) begin
+      nRead = $fread(iowd, fd);
+      w = fileWordToWord(iowd);
+      nww = w[0:17];
+      addr = w[18:35];
+
+      if (nww < 18'o400000) begin
+        break;
+      end else begin
+        nWords = 19'o1000000 - nww;
+        //        $display("%06o: %0d words", addr, nWords);
+
+        for (int nw = nWords; nw; --nw) begin
+          nRead = $fread(iowd, fd);
+          w = fileWordToWord(iowd);
+          memory0.mem[addr] = w;
+
+          if (addr < minAddr) minAddr = addr;
+          if (addr > maxAddr) maxAddr = addr;
+          ++addr;
+        end
+      end
+    end
+
+    $display("[loaded]");
+    memory0.mem['0] = w;
+    $display("[Start instruction %s copied to memory at 0,,000000]", octW(w));
+    $display("[minAddr: %06o]", minAddr);
+    $display("[maxAddr: %06o]", maxAddr);
+    $display("");
+  endfunction
+
+
+  function string octW(input [0:35] w);
+    $sformat(octW, "%06o,,%06o", w[0:17], w[18:35]);
+  endfunction
+
+
   ////////////////////////////////////////////////////////////////
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
@@ -416,7 +463,7 @@ module kl10pv_tb(iAPR APR,
       EBUS.data[18:35] <= ebusRH;
       EBUS.ds <= func;
       EBUS.diagStrobe <= '1;            // Strobe this
-      $display($time, " %sEBUS.data=0,,%0o and ds=%s", indent, ebusRH, shortName);
+      $display($time, " %sEBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
     end
 
     repeat (8) @(negedge CLK.MHZ16_FREE) ;
@@ -428,49 +475,34 @@ module kl10pv_tb(iAPR APR,
     end
 
     repeat(4) @(posedge CLK.MHZ16_FREE) ;
-//    $display($time, " %s[done]", indent);
+    //    $display($time, " %s[done]", indent);
   endtask
 
 
-  // From https://stackoverflow.com/questions/27970151/string-search-and-replace-in-systemverilog
-  function automatic string replace(string original, string old, string replacement);
-    // First find the index of the old string
-    int start_index = 0;
-    int original_index = 0;
-    int replace_index = 0;
-    bit found = 0;
+  // Replace the first instance of `find` in `s` with `repl` or return
+  // `s` unchanged if not present.
+  function automatic string replace(string s, string find, string repl);
+    int startX = 0;
+    int replX = 0;
 
-    while(1) begin
-      if (original[original_index] == old[replace_index]) begin
-        if (replace_index == 0) begin
-          start_index = original_index;
+    for (int k = 0; k < s.len(); ++k) begin
+
+      if (s[k] == find[replX]) begin
+        if (replX == 0) startX = k;
+        ++replX;
+
+        if (replX == find.len()) begin // Success! Return s with find replaced by repl
+          return {s.substr(0, startX-1), repl, s.substr(startX+find.len(), s.len()-1)};
         end
-        replace_index++;
-        original_index++;
-        if (replace_index == old.len()) begin
-          found = 1;
-          break;
-        end
-      end else if (replace_index != 0) begin
-        replace_index = 0;
-        original_index = start_index + 1;
-      end else begin
-        original_index++;
-      end
-      if (original_index == original.len()) begin
-        // Not found
-        break;
+
+      end else if (replX != 0) begin
+        // Entire find string didn't match, so reset.
+        replX = 0;
+        k = startX;
       end
     end
 
-    if (!found) return original;
-
-    return {
-            original.substr(0, start_index-1),
-            replacement,
-            original.substr(start_index+old.len(), original.len()-1)
-            };
-
+    return s;                   // Not found, return s unmodified
   endfunction  
 
 endmodule

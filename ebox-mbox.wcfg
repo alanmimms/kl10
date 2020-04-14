@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="11175438fs"></ZoomStartTime>
-      <ZoomEndTime time="13245614fs"></ZoomEndTime>
-      <Cursor1Time time="12258000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="20000001fs"></ZoomEndTime>
+      <Cursor1Time time="6040724fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
       <ValueColumnWidth column_width="94"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="46" />
+   <WVObjectSize size="47" />
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
@@ -242,6 +242,12 @@
       <obj_property name="ObjectShortName">START_B</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/memory0/SBUS/D">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">D[0:35]</obj_property>
+      <obj_property name="ObjectShortName">D[0:35]</obj_property>
+      <obj_property name="label">memory0.SBUS.D</obj_property>
    </wvobject>
    <wvobject type="group" fp_name="group1703">
       <obj_property name="label">csh0</obj_property>
@@ -2736,6 +2742,7 @@
    <wvobject type="group" fp_name="group514">
       <obj_property name="label">SBUS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/top/SBUS/ACKN_A">
          <obj_property name="ElementShortName">ACKN_A</obj_property>
          <obj_property name="ObjectShortName">ACKN_A</obj_property>

@@ -30,5 +30,5 @@ module sim_mem
   endgenerate
 
   // Read data follows address unclocked.
-  assign dout = WIDTH'(mem[addr]);
+  always_comb dout = WIDTH'(mem[addr]);
 endmodule

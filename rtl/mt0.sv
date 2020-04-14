@@ -16,7 +16,7 @@
 module mt0(iCLK CLK,
            iMBOX MBOX,
            iMBX MBX,
-           iSBUS SBUS);
+           iSBUS.mbox SBUS);
 
   bit DATA_TO_MEM_EN;
 
@@ -52,9 +52,9 @@ module mt0(iCLK CLK,
   // MT02 p.97
   always_comb begin
     if (DATA_TO_MEM_EN)
-      MBOX.MEM_DATA_IN = SBUS.D;
-    else
       SBUS.D = MBOX.MB;
+    else
+      MBOX.MEM_DATA_IN = SBUS.D;
   end
 
 
