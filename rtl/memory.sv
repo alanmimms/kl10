@@ -8,51 +8,62 @@ module memory(iSBUS.memory SBUS);
   bit [0:35] mem[256*1024];
   bit [0:35] w;
   bit [12:35] addr;
+  bit [0:1] wOffset;
+  bit [12:35] fullAddr;
   bit [0:3] rqBits;
+
+  assign fullAddr = {addr[12:33], wOffset};
 
   always @(posedge SBUS.START_A) begin
     rqBits <= SBUS.RQ;
     addr <= SBUS.ADR;
-    $display($time, " START_A addr=%08o rqBits=%04b", addr, rqBits);
+    wOffset = '0;
+    $display($time, " START_A addr=%08o rqBits=%04b", fullAddr, rqBits);
     // 625-187ns = 438ns
     #438 ;                      // Delay inherent in KL10 design?
 
     while (rqBits != '0) begin
 
       if (rqBits[0]) begin
-        SBUS.DATA_VALID_A <= '1;
-        w = mem[addr];
+        SBUS.ACKN_A <= '1;
+        SBUS.DATA_VALID_A <= '0;
+        w = mem[fullAddr];
         SBUS.D <= w;
         #187 ;                  // Word to word delay inherent in KL10 design?
+        SBUS.ACKN_A <= '0;
         SBUS.DATA_VALID_A <= '1;
-        $display($time, "   data valid=%s addr=%08o rqBits=%04b", octW(w), addr, rqBits);
+        $display($time, "   data valid=%s addr=%08o rqBits=%04b", octW(w), fullAddr, rqBits);
       end
 
       rqBits <<= 1;
-      ++addr;
+      ++wOffset;
     end
   end
 
   always @(posedge SBUS.START_B) begin
     rqBits = SBUS.RQ;
     addr = SBUS.ADR;
-    $display($time, " START_B addr=%08o rqBits=%04b", addr, rqBits);
+    SBUS.ACKN_B <= '1;
+    wOffset = '0;
+    $display($time, " START_B addr=%08o rqBits=%04b", fullAddr, rqBits);
 
     #438 ;                      // Delay inherent in KL10 design?
 
     while (rqBits != '0) begin
 
       if (rqBits[0]) begin
+        SBUS.ACKN_B <= '1;
         SBUS.DATA_VALID_B <= '0;
-        w = mem[addr];
+        w = mem[fullAddr];
         SBUS.D <= w;
         #187 ;                  // Word to word delay inherent in KL10 design?
+        SBUS.ACKN_B <= '0;
         SBUS.DATA_VALID_B <= '1;
-        $display($time, "   data valid=%s addr=%08o rqBits=%04b", octW(w), addr, rqBits);
+        $display($time, "   data valid=%s addr=%08o rqBits=%04b", octW(w), fullAddr, rqBits);
       end
 
       rqBits <<= 1;
-      ++addr;
+      ++wOffset;
     end
   end
 `else
