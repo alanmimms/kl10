@@ -13,7 +13,8 @@
 // This module would be instantiated twice in a real KL to provide two
 // cable interfaces to the memory. In this implementation we unify
 // this into a single module.
-module mt0(iCLK CLK,
+module mt0(input CROBAR,
+           iCLK CLK,
            iMBOX MBOX,
            iMBX MBX,
            iSBUS.mbox SBUS);
@@ -23,6 +24,8 @@ module mt0(iCLK CLK,
 
   // MT01 p.96
   always_comb begin
+    SBUS.CROBAR = CROBAR;
+
     MBOX.MEM_ACKN_A = SBUS.ACKN_A;
     MBOX.MEM_ACKN_B = SBUS.ACKN_B;
     MBOX.MEM_ERROR = SBUS.ERROR;
