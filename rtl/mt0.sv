@@ -24,6 +24,7 @@ module mt0(iCLK CLK,
   // MT01 p.96
   always_comb begin
     MBOX.MEM_ACKN_A = SBUS.ACKN_A;
+    MBOX.MEM_ACKN_B = SBUS.ACKN_B;
     MBOX.MEM_ERROR = SBUS.ERROR;
     MBOX.ADR_PAR_ERR = SBUS.ADR_PAR_ERR;
     SBUS.CLK_INT = CLK.SBUS_CLK;
