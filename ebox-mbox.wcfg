@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="24156481fs"></ZoomEndTime>
+      <ZoomStartTime time="12219730fs"></ZoomStartTime>
+      <ZoomEndTime time="15000001fs"></ZoomEndTime>
       <Cursor1Time time="20000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
       <ValueColumnWidth column_width="86"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="53" />
+   <WVObjectSize size="54" />
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
@@ -205,13 +205,6 @@
       <obj_property name="CustomSignalColor">#808000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top/MBX/RQ_IN">
-      <obj_property name="ElementShortName">RQ_IN[0:3]</obj_property>
-      <obj_property name="ObjectShortName">RQ_IN[0:3]</obj_property>
-      <obj_property name="CustomSignalColor">#808000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBC/A_CHANGE_COMING">
       <obj_property name="ElementShortName">A_CHANGE_COMING</obj_property>
       <obj_property name="ObjectShortName">A_CHANGE_COMING</obj_property>
@@ -222,6 +215,12 @@
       <obj_property name="ElementShortName">B_CHANGE_COMING</obj_property>
       <obj_property name="ObjectShortName">B_CHANGE_COMING</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/SBUS/CLK_INT">
+      <obj_property name="ElementShortName">CLK_INT</obj_property>
+      <obj_property name="ObjectShortName">CLK_INT</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/SBUS/START_A">
@@ -235,6 +234,13 @@
       <obj_property name="ObjectShortName">START_B</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/MBX/RQ_IN">
+      <obj_property name="ElementShortName">RQ_IN[0:3]</obj_property>
+      <obj_property name="ObjectShortName">RQ_IN[0:3]</obj_property>
+      <obj_property name="CustomSignalColor">#808000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/SBUS/ACKN_A">
       <obj_property name="ElementShortName">ACKN_A</obj_property>
