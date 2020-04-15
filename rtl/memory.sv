@@ -51,50 +51,67 @@ module memPhase(input phase,
   tResponseState acknState;
   tResponseState validState;
   
-  always_ff @(negedge SBUS.CLK_INT == phase) begin
+  always_ff @(negedge SBUS.CLK_INT != phase) begin
 
-    if (START && toAck == '0) begin
-      toAck <= SBUS.RQ;           // Still to ACK
-    end else if (toAck != '0) begin
-      // If this word needs to be ACKed or its ACK signal needs to be
-      // deasserted...
+    // If we have completed all reads and acks and we see START it's a
+    // new cycle.
+    if (START && toAck == '0 && toRead == '0) begin
+      toAck <= SBUS.RQ;         // Still to ACK
+      toRead <= SBUS.RQ;        // Still to read and return
+      addr <= SBUS.ADR;         // Address of first word we do
+      wo <= SBUS.ADR[34:35];    // Word offset we increment mod 4
+
+      ACKN <= '0;
+      VALID <= '0;
+      $display($time, " START: SBUS.RQ=%4b", SBUS.RQ);
+    end else begin
+      // ^^^ else is up there because we want to do first ack or valid
+      // data on the NEXT cycle after START.
+      
+      // If this word needs to be ACKed or is being ACKed...
       if (toAck[0]) begin
 
-        // If the ACK for this word is asserted, we will deassert it
-        // and move on to the next word.
-        if (ACKN) toAck <= toAck << 1;
-
-        ACKN <= ~ACKN;
-      end else begin
-        toAck <= toAck << 1;    // Move on to next possible ACK
-      end
-    end
-
-    if (START && toRead == '0) begin
-      toRead <= SBUS.RQ;          // Still to read and return
-      addr <= SBUS.ADR;           // Address of first word we do
-      wo <= addr[34:35];          // Word offset we increment mod 4
-      $display($time, " START_%s addr=%08o rq=%5b", phase ? "B" : "A", addr, toRead);
-    end else if (toRead != '0) begin
-      // If this word needs to be returned or its VALID signal needs
-      // to be deasserted...
-      if (toRead[0]) begin
-
-        // If the VALID for this word is asserted, we will deassert it
-        // and move on to the next word.
-        if (VALID) begin
-          toRead <= toRead << 1;
-
-          // Move forward to next word (modulo 4) to return.
-          wo <= wo + '1;
+        if (ACKN) begin         // If the ACK for this word is
+                                // CURRENTLY asserted, we deassert it
+                                // and move on to the next word.
+          $display($time, " toAck DEASSERT-SHIFT: toAck=%4b", toAck);
+          toAck <= {toAck[1:3], '0};
+        end else begin          // Else we will assert it and stay on
+                                // this word.
+          $display($time, " toAck   ASSERT-SHIFT: toAck=%4b", toAck);
         end
 
-        VALID <= ~VALID;
-        SBUS.D <= memory[{addr[12:33], wo}];
-      end else begin
-        toRead <= toRead << 1;    // Move on to next word(s)
+        ACKN <= ~ACKN;          // Switch ACK state
+      end else if (toAck != '0) begin
+        assert(!ACKN);
+        $display($time, " toAck SHIFT-ONLY: toAck=%4b", toAck);
+        toAck <= {toAck[1:3], '0}; // Move on to next possible ACK
+      end
+
+      // If this word needs to be returned or VALID is asserted...
+      if (toRead[0]) begin
+
+        if (VALID) begin        // If VALID for this word is CURRENTLY
+                                // asserted, we deassert it and move
+                                // on to the next word.
+          $display($time, " toRead DEASSERT-SHIFT: toRead=%4b", toRead);
+
+          // Move forward to next word (modulo 4) to return.
+          toRead <= {toRead[1:3], '0};
+          wo <= wo + '1;
+        end else begin          // Else we will drive data and assert
+                                // VALID and stay on this word.
+          $display($time, " toRead   ASSERT-SHIFT: toRead=%4b", toRead);
+          SBUS.D <= memory[{addr[12:33], wo}];
+        end
+
+        VALID <= ~VALID;      // Switch VALID state
+      end else if (toRead != '0) begin
+        assert(!VALID);
+        $display($time, " toRead SHIFT-ONLY: toRead=%4b", toRead);
 
         // Move forward to next word (modulo 4) to return.
+        toRead <= {toRead[1:3], '0};
         wo <= wo + '1;
       end
     end
