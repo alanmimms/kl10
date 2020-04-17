@@ -152,3 +152,26 @@ Designation   Designation   Backplane    Model
 - Fix bit ordering in module arguments to be one way or the other.
 - Use sim to see if [0:3] is a four bit field we can use as a number.
 
+
+# Memory FSM
+
+## Desired sequence
+* IDLE:
+  * If START is asserted by MBOX:
+    * toAck <= SBUS.RQ
+    * next <= ACK1
+* ACK1:
+  * ACKN <= '0
+  * VALID <= '0
+  * if (toAck[0]):
+    * ACKN <= '1
+    * next <= READ1
+  * else:
+    * toAck <<= 1
+    * next <= ACK1      // Redundant
+* READ1:
+  * ACKN <= '0
+  * next <= READ2
+* READ2:
+  * VALID <= '1
+  * next <= ACK1
