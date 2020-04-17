@@ -48,21 +48,18 @@ module memPhase(input CROBAR,
 
   enum {
         mphIDLE,
-        mphACK,
+        mphWAITtoACK,
+        mphACKa,
+        mphACKb,
         mphREAD1,
         mphREAD2,
-        mphWAIT1,
-        mphWAIT2,
-        mphWAIT3,
-        mphWAIT4
+        mphWAITtoIDLE1,
+        mphWAITtoIDLE2,
+        mphWAITtoIDLE3,
+        mphWAITtoIDLE4
         } state, next;
 
   always_ff @(negedge SBUS.CLK_INT != phase) begin
-    if (CROBAR) $display($time, " CLOCK: CROBAR");
-
-    if (!CROBAR && (state != mphIDLE || next != mphIDLE))
-      $display($time, " CLOCK [IDLE]: state=%s  next=%s", state.name, next.name);
-
     if (CROBAR) state <= mphIDLE; // Initialize state machine
     else state <= next;           // Advance state machine
   end
@@ -71,38 +68,33 @@ module memPhase(input CROBAR,
   always_comb begin
 
     case (state)
+    default: next <= state;         // Hang here if we do not specify state transition
+
     mphIDLE:
       if (START) begin
-        next = mphACK;
-        $display($time, " comb START==> IDLE->ACK");
+        next = mphWAITtoACK;
       end else begin
         next = mphIDLE;
-        $display($time, " comb no START==> IDLE->IDLE");
       end
 
-    mphACK:
+    mphWAITtoACK: next = mphACKa;   // One clock delay before first ACK
+
+    mphACKa: next = mphACKb;
+
+    mphACKb:
       if (toAck[0]) begin
-        next = mphREAD1;
-        $display($time, " comb ACK->READ1 toAck[0] != 0");
+        next = mphWAITtoACK;
       end else if (toAck == '0) begin
-        next = mphWAIT1;
-        $display($time, " comb ACK->WAIT1 toAck == 0");
+        next = mphWAITtoIDLE1;
       end
 
-    mphREAD1: begin
-      next = mphREAD2;
-      $display($time, " comb READ1->READ2");
-    end
+    mphREAD1: next = mphREAD2;
+    mphREAD2: next = mphACKa;
 
-    mphREAD2: begin
-      next = mphACK;
-      $display($time, " comb READ2->ACK");
-    end
-
-    mphWAIT1: next = mphWAIT2;
-    mphWAIT2: next = mphWAIT3;
-    mphWAIT3: next = mphWAIT4;
-    mphWAIT4: next = mphIDLE;
+    mphWAITtoIDLE1: next = mphWAITtoIDLE2;
+    mphWAITtoIDLE2: next = mphWAITtoIDLE3;
+    mphWAITtoIDLE3: next = mphWAITtoIDLE4;
+    mphWAITtoIDLE4: next = mphIDLE;
     endcase
   end
 
@@ -112,7 +104,6 @@ module memPhase(input CROBAR,
     case (state)
     mphIDLE:
       if (START) begin
-        $display($time, " CLOCK OUT [IDLE]: SBUS.RQ=%4b, SBUS.ADR=%8o", SBUS.RQ, SBUS.ADR);
         toAck <= SBUS.RQ;         // Still to ACK
         addr <= SBUS.ADR;         // Address of first word we do
         wo <= SBUS.ADR[34:35];    // Word offset we increment mod 4
@@ -120,30 +111,18 @@ module memPhase(input CROBAR,
         VALID <= '0;
       end
 
-    mphACK: begin
-      $display($time, " CLOCK OUT [ACK]:                                        clear VALID");
+    mphACKa: begin
       VALID <= '0;
-
-      if (toAck[0]) begin
-        $display($time, " CLOCK OUT [ACK]:              set ACKN");
-        ACKN <= '1;
-      end
-
+      if (toAck[0]) ACKN <= '1;
       toAck <<= '1;
-      $display($time, " CLOCK OUT [ACK]: shift up from toAck=%4b", toAck);
     end
 
-    mphREAD1: begin
-      $display($time, " CLOCK OUT [READ1]             clear ACKN");
-      ACKN <= '0;
-    end
+    mphREAD1: ACKN <= '0;
 
     mphREAD2: begin
       VALID <= '1;
       SBUS.D <= memory[{addr[12:33], wo}];
       SBUS.DATA_PAR <= ~(^memory[{addr[12:33], wo}]);
-      $display($time, " CLOCK OUT [READ2]: mem[%8o]=%s  ++wo   set VALID",
-               {addr[12:33], wo}, octW(memory[{addr[12:33], wo}]));
       wo <= wo + 2'b01;
     end
 

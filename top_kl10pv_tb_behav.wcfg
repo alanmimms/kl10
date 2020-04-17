@@ -12,13 +12,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="3333333fs"></ZoomStartTime>
-      <ZoomEndTime time="23333334fs"></ZoomEndTime>
+      <ZoomStartTime time="4557661fs"></ZoomStartTime>
+      <ZoomEndTime time="32187995fs"></ZoomEndTime>
       <Cursor1Time time="20000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="172"></NameColumnWidth>
-      <ValueColumnWidth column_width="98"></ValueColumnWidth>
+      <ValueColumnWidth column_width="94"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="24" />
    <wvobject type="logic" fp_name="/top/CROBAR">
