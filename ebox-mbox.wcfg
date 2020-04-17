@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="12356020fs"></ZoomStartTime>
-      <ZoomEndTime time="15890052fs"></ZoomEndTime>
-      <Cursor1Time time="20000000fs"></Cursor1Time>
+      <ZoomStartTime time="12030521fs"></ZoomStartTime>
+      <ZoomEndTime time="14835400fs"></ZoomEndTime>
+      <Cursor1Time time="12615000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
       <ValueColumnWidth column_width="86"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="54" />
+   <WVObjectSize size="55" />
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
@@ -243,6 +243,71 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="label">SBUS.RQ[0:3]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group1719">
+      <obj_property name="label">aPhase</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/top/memory0/aPhase/CROBAR">
+         <obj_property name="ElementShortName">CROBAR</obj_property>
+         <obj_property name="ObjectShortName">CROBAR</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/memory0/aPhase/phase">
+         <obj_property name="ElementShortName">phase</obj_property>
+         <obj_property name="ObjectShortName">phase</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/memory0/aPhase/START">
+         <obj_property name="ElementShortName">START</obj_property>
+         <obj_property name="ObjectShortName">START</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/memory0/aPhase/ACKN">
+         <obj_property name="ElementShortName">ACKN</obj_property>
+         <obj_property name="ObjectShortName">ACKN</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/memory0/aPhase/VALID">
+         <obj_property name="ElementShortName">VALID</obj_property>
+         <obj_property name="ObjectShortName">VALID</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/memory0/aPhase/addr">
+         <obj_property name="ElementShortName">addr[12:35]</obj_property>
+         <obj_property name="ObjectShortName">addr[12:35]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/memory0/aPhase/wo">
+         <obj_property name="ElementShortName">wo[34:35]</obj_property>
+         <obj_property name="ObjectShortName">wo[34:35]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/memory0/aPhase/toAck">
+         <obj_property name="ElementShortName">toAck[0:3]</obj_property>
+         <obj_property name="ObjectShortName">toAck[0:3]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/memory0/aPhase/state">
+         <obj_property name="ElementShortName">state[31:0]</obj_property>
+         <obj_property name="ObjectShortName">state[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/memory0/aPhase/next">
+         <obj_property name="ElementShortName">next[31:0]</obj_property>
+         <obj_property name="ObjectShortName">next[31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFF00</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="logic" fp_name="/top/SBUS/ACKN_A">
       <obj_property name="ElementShortName">ACKN_A</obj_property>
@@ -3947,7 +4012,6 @@
    <wvobject type="group" fp_name="group514">
       <obj_property name="label">SBUS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/top/SBUS/ACKN_A">
          <obj_property name="ElementShortName">ACKN_A</obj_property>
          <obj_property name="ObjectShortName">ACKN_A</obj_property>
