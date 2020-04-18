@@ -19,11 +19,6 @@ module memory(input CROBAR,
   memPhase bPhase(CROBAR, '1, mem, SBUS, SBUS.START_B, SBUS.ACKN_B, SBUS.DATA_VALID_B);
 `else
 `endif
-
-
-  function string octW(input [0:35] w);
-    $sformat(octW, "%06o,,%06o", w[0:17], w[18:35]);
-  endfunction
 endmodule
 
 
@@ -48,15 +43,12 @@ module memPhase(input CROBAR,
 
   enum {
         mphIDLE,
-        mphWAITtoACK,
-        mphACKa,
-        mphACKb,
+        mphACK1,
+        mphACK2,
+        mphACKtoREADdelay,
         mphREAD1,
         mphREAD2,
-        mphWAITtoIDLE1,
-        mphWAITtoIDLE2,
-        mphWAITtoIDLE3,
-        mphWAITtoIDLE4
+        mphSHIFT
         } state, next;
 
   always_ff @(negedge SBUS.CLK_INT != phase) begin
@@ -68,69 +60,57 @@ module memPhase(input CROBAR,
   always_comb begin
 
     case (state)
-    default: next <= state;         // Hang here if we do not specify state transition
+    default: next <= state;
 
-    mphIDLE:
-      if (START) begin
-        next = mphWAITtoACK;
-      end else begin
-        next = mphIDLE;
-      end
+    mphIDLE: if (START) next = SBUS.RQ[0] ? mphACK1 : mphSHIFT;
+                // else stay
 
-    mphWAITtoACK: next = mphACKa;   // One clock delay before first ACK
-
-    mphACKa: next = mphACKb;
-
-    mphACKb:
-      if (toAck[0]) begin
-        next = mphWAITtoACK;
-      end else if (toAck == '0) begin
-        next = mphWAITtoIDLE1;
-      end
-
+    mphACK1: next = mphACK2;
+    mphACK2: next = mphACKtoREADdelay;
+    mphACKtoREADdelay: next = mphREAD1;
     mphREAD1: next = mphREAD2;
-    mphREAD2: next = mphACKa;
+    mphREAD2: next = mphSHIFT;
 
-    mphWAITtoIDLE1: next = mphWAITtoIDLE2;
-    mphWAITtoIDLE2: next = mphWAITtoIDLE3;
-    mphWAITtoIDLE3: next = mphWAITtoIDLE4;
-    mphWAITtoIDLE4: next = mphIDLE;
+    mphSHIFT: begin
+      if (toAck[1]) next = mphACK1;
+      else if (!START && toAck[1:3] == '0) next = mphIDLE;
+      // else stay
+    end
     endcase
   end
 
-  // Generate state machine outputs
+  // Generate state machine outputs and set up internal registers.
   always_ff @(negedge SBUS.CLK_INT != phase) begin
 
     case (state)
     mphIDLE:
       if (START) begin
-        toAck <= SBUS.RQ;         // Still to ACK
+        toAck <= SBUS.RQ;         // Addresses remaining to ACK
         addr <= SBUS.ADR;         // Address of first word we do
         wo <= SBUS.ADR[34:35];    // Word offset we increment mod 4
-        ACKN <= '0;
-        VALID <= '0;
       end
 
-    mphACKa: begin
-      VALID <= '0;
-      if (toAck[0]) ACKN <= '1;
-      toAck <<= '1;
-    end
+    mphACK1: ACKN <= '1;
+    mphACK2: ACKN <= '1;
 
-    mphREAD1: ACKN <= '0;
+    mphACKtoREADdelay: ACKN <= '0;
 
-    mphREAD2: begin
+    mphREAD1: begin
       VALID <= '1;
       SBUS.D <= memory[{addr[12:33], wo}];
       SBUS.DATA_PAR <= ~(^memory[{addr[12:33], wo}]);
       wo <= wo + 2'b01;
     end
 
+    mphREAD2: VALID <= '1;
+
+    mphSHIFT: begin
+      ACKN <= '0;
+      VALID <= '0;
+      toAck <<= '1;
+    end
+
     default: ;
     endcase
   end
-
-  function string octW(input [0:35] w);
-    $sformat(octW, "%06o,,%06o", w[0:17], w[18:35]);
-  endfunction
 endmodule
