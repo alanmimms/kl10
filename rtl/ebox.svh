@@ -1669,7 +1669,6 @@ endinterface
 interface iMBZ;
   bit RD_PSE_WR;
   bit RD_PSE_WR_REF;
-  bit CORE_BUSY;
 endinterface
 
 interface iPAG;

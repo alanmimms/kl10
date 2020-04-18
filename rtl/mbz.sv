@@ -25,7 +25,7 @@ module mbz(iAPR APR,
   bit MEM_RD_RQ, MEM_WR_RQ, CORE_BUSY_IN, CORE_RD_IN_PROG;
   bit CHAN_STATUS_TO_MB, CHAN_BUF_TO_MB, CHAN_EPT, AR_TO_MB_SEL, MEM_START_C;
   bit NXM_FLG, NXM_CLR_T0, NXM_CLR_DONE, A_CHANGE_COMING, MBOX_NXM_ERR_CLR;
-  bit SEQUENTIAL_RQ, RQ_HOLD_DLY, NXM_CRY_A, NXM_CRY_B, CORE_BUSY;
+  bit SEQUENTIAL_RQ, RQ_HOLD_DLY, NXM_CRY_A, NXM_CRY_B;
   bit [0:1] MB_DATA_SOURCE, MB_WD_SEL;
   bit LOAD_MB_MAGIC, MB_TEST_PAR_A_IN, MB_TEST_PAR_B_IN, HOLD_ERR_REG;
   bit ERR_HOLD, NXM_T6comma7, SBUS_ERR_FLG, MB_PAR_ERR, ADR_PAR_ERR_FLG;
@@ -64,9 +64,9 @@ module mbz(iAPR APR,
   always_ff @(posedge clk) begin
     CHAN_CORE_BUSY <= CHAN_CORE_BUSY_IN;
     MBZ.RD_PSE_WR_REF <= MEM_RD_RQ & MEM_WR_RQ & MEM_START_C |
-                         ~CORE_BUSY & MBZ.RD_PSE_WR_REF & ~RESET;
-    CORE_BUSY <= CHAN_CORE_BUSY | MEM_START_C |
-                 CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
+                         ~MBOX.CORE_BUSY & MBZ.RD_PSE_WR_REF & ~RESET;
+    MBOX.CORE_BUSY <= CHAN_CORE_BUSY | MEM_START_C |
+                      CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
     CHAN_TO_MEM <= CCL.CHAN_TO_MEM & CSH_CHAN_CYC |
                    ~CSH_CHAN_CYC & CHAN_TO_MEM & ~RESET;
     e51q14 <= CORE_RD_IN_PROG;
@@ -209,7 +209,7 @@ module mbz(iAPR APR,
   always_ff @(posedge clk) begin
     NXM_FLG <= NXM_CRY_A & NXM_CRY_B & MEM_START_C |
                ~NXM_CLR_DONE & NXM_FLG & ~RESET;
-    CHAN_MEM_REF <= MEM_START_C & CHAN_CORE_BUSY | CORE_BUSY & CHAN_MEM_REF & ~RESET;
+    CHAN_MEM_REF <= MEM_START_C & CHAN_CORE_BUSY | MBOX.CORE_BUSY & CHAN_MEM_REF & ~RESET;
     A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
     MBOX.NXM_ERR <= NXM_CLR_DONE |
                     ~MBOX.NXM_ERR_CLR & MBOX.NXM_ERR & ~RESET;
@@ -360,7 +360,7 @@ module mbz(iAPR APR,
                    PAG.PF_HOLD_05_IN,
                    PAG.PT_PUBLIC};
     MB_TEST_PAR_B_IN = CCL.CH_TEST_MB_PAR |
-                       MBX.CACHE_TO_MB_T4 & CORE_BUSY & ~RESET;
+                       MBX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
   end
 
   bit ignoredE18;
