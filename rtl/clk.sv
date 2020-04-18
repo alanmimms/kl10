@@ -147,8 +147,8 @@ module clk(input clk,
            negedge CLK.EBUS_CLK_SOURCE) #57 CLK.SOURCE_DELAYED <= ~CLK.SOURCE_DELAYED;
 
   always @(posedge CLK.SOURCE_DELAYED, negedge CLK.SOURCE_DELAYED) begin
-    #3 CLK.CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) &
-                     (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
+    #33 CLK.CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) &
+                      (CLK.SOURCE_DELAYED | DESKEW_CLK | CLK.GATED);
   end
 
   always @(posedge CLK.CLK_ON,
