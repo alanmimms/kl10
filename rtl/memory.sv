@@ -15,22 +15,35 @@ module memory(input CROBAR,
 
 `ifdef KL10PV_TB
   bit [0:35] mem[`MEM_SIZE];
-  memPhase aPhase(CROBAR, '0, mem, SBUS, SBUS.START_A, SBUS.ACKN_A, SBUS.DATA_VALID_A);
-  memPhase bPhase(CROBAR, '1, mem, SBUS, SBUS.START_B, SBUS.ACKN_B, SBUS.DATA_VALID_B);
+
+  bit aClk, bClk;
+
+  always @(posedge SBUS.START_A) aClk <= '0;
+  always @(negedge SBUS.CLK_INT) aClk <= ~aClk;
+
+  always @(posedge SBUS.START_B) bClk <= '0;
+  always @(posedge SBUS.CLK_INT) bClk <= ~bClk;
+
+  memPhase aPhase(CROBAR, aClk, mem, SBUS, SBUS.START_A, SBUS.ACKN_A, SBUS.DATA_VALID_A);
+  memPhase bPhase(CROBAR, bClk, mem, SBUS, SBUS.START_B, SBUS.ACKN_B, SBUS.DATA_VALID_B);
 `else
 `endif
 endmodule
 
 
-// This is one phase of the MB20 core memory. If `phase` is '0 we are
-// the A phase (SBUS.CLK_EXT negedge). Otherwise we are the B phase
-// (SBUS.CLK_EXT negedge). Control signals are driven on the edge of
-// the phase they apply to, but they are latched by the other side of
-// the SBUS on the NEXT edge of that phase. This was done to allow
-// synchronous operation with cabling (etc.) propagation delays always
-// less than the clock cycle time.
+// This is one phase of the MB20 core memory. Control signals are
+// driven on the edge of the phase they apply to, but they are latched
+// by the other side of the SBUS on the NEXT edge of that phase. This
+// was done to allow synchronous operation with cabling (etc.)
+// propagation delays always less than the clock cycle time.
+//
+// For now, we implement only read cycles and only non-interleaved
+// organization.
+//
+// Note START may already be asserted for subsequent cycle while we
+// are still finishing up the VALID pulses for the current one.
 module memPhase(input CROBAR,
-                input phase,
+                input clk,
                 ref bit [0:35] memory[`MEM_SIZE],
                 iSBUS.memory SBUS,
                 input START,
@@ -48,10 +61,11 @@ module memPhase(input CROBAR,
         mphACKtoREADdelay,
         mphREAD1,
         mphREAD2,
-        mphSHIFT
+        mphSHIFT,
+        mphWAITforIDLE
         } state, next;
 
-  always_ff @(negedge SBUS.CLK_INT != phase) begin
+  always_ff @(posedge clk) begin
     if (CROBAR) state <= mphIDLE; // Initialize state machine
     else state <= next;           // Advance state machine
   end
@@ -70,17 +84,18 @@ module memPhase(input CROBAR,
     mphACKtoREADdelay: next = mphREAD1;
     mphREAD1: next = mphREAD2;
     mphREAD2: next = mphSHIFT;
+    mphWAITforIDLE: next = mphIDLE;
 
     mphSHIFT: begin
       if (toAck[1]) next = mphACK1;
-      else if (!START && toAck[1:3] == '0) next = mphIDLE;
-      // else stay
+      else if (toAck[1:3] == '0) next = mphWAITforIDLE;
+      // else stay in mphSHIFT to shift intermediate zero bits through
     end
     endcase
   end
 
   // Generate state machine outputs and set up internal registers.
-  always_ff @(negedge SBUS.CLK_INT != phase) begin
+  always_ff @(posedge clk) begin
 
     case (state)
     mphIDLE:
@@ -98,7 +113,7 @@ module memPhase(input CROBAR,
     mphREAD1: begin
       VALID <= '1;
       SBUS.D <= memory[{addr[12:33], wo}];
-      SBUS.DATA_PAR <= ~(^memory[{addr[12:33], wo}]);
+      SBUS.DATA_PAR <= ^memory[{addr[12:33], wo}];
       wo <= wo + 2'b01;
     end
 
