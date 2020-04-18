@@ -23,7 +23,7 @@ module mbc(iAPR APR,
   bit A_PHASE, CLK_A_PHASE_COMING, INH_1ST_MB_REQ, FIRST_WD_ADR_SEL;
   bit [0:3] RQ_A;
   bit RQ_0B;
-  bit MEM_START, MEM_START_RD, MEM_START_SET, MEM_START_CLR;
+  bit MEM_START, MEM_START_RD, MEM_START_SET, MEM_START_CLR, CORE_BUSY;
   bit ANY_SBUS_RQ_IN, PMA_ADR_PAR_HOLD;
   bit CORE_DATA_VALIDminus2, CORE_RD_IN_PROG, INIT_COMP, LAST_ACKN, ANY_REQUEST;
   bit ANY_RQS_LEFT, HOLD_MATCH;
@@ -189,7 +189,7 @@ module mbc(iAPR APR,
     MBOX.A_CHANGE_COMING_IN = ~MBOX.PHASE_CHANGE_COMING & CLK_A_PHASE_COMING;
     MEM_START_SET = CSH.E_CORE_RD_RQ & ~MBOX.CORE_BUSY |
                     PMA.CSH_WRITEBACK_CYC & MBX.CACHE_TO_MB_T4 |
-                    ~MBOX.CORE_BUSY & MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
+                    ~CORE_BUSY & MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
                     CCL.START_MEM |
                     CSH.CHAN_RD_T5 & ANY_SBUS_RQ_IN |
                     CSH.PAGE_REFILL_T9 & ANY_SBUS_RQ_IN;
@@ -226,9 +226,9 @@ module mbc(iAPR APR,
     MBOX.DATA_VALID_B_OUT <= (MBOX.DATA_VALID_B_OUT | MBC.B_CHANGE_COMING) &
                              (MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF |
                               ~MBC.B_CHANGE_COMING);
-    MBOX.CORE_BUSY <= (MBOX.CORE_BUSY & ~MBC.CORE_DATA_VALID |
-                       MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
-                      ~RESET;
+    CORE_BUSY <= (CORE_BUSY & ~MBC.CORE_DATA_VALID |
+                  MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
+                 ~RESET;
   end
   
 
@@ -353,7 +353,7 @@ module mbc(iAPR APR,
   mux e16(.en(CTL.DIAG_READ_FUNC_16x),
           .sel(CTL.DIAG[4:6]),
           .d({MBOX.FORCE_VALID_MATCH[1], ~MBC.CSH_DATA_CLR_T2,
-              CACHE_WR_09, ~MBOX.CORE_BUSY,
+              CACHE_WR_09, ~CORE_BUSY,
               INH_1ST_MB_REQ, MBOX.CAM_SEL[0],
               MBOX.MEM_RQ[0], EBUS_REG[28]}),
           .q(MBC.EBUSdriver.data[28]));
