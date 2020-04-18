@@ -57,10 +57,7 @@ module memPhase(input CROBAR,
   enum {
         mphIDLE,
         mphACK1,
-        mphACK2,
-        mphACKtoREADdelay,
         mphREAD1,
-        mphREAD2,
         mphSHIFT,
         mphWAITforIDLE
         } state, next;
@@ -79,11 +76,8 @@ module memPhase(input CROBAR,
     mphIDLE: if (START) next = SBUS.RQ[0] ? mphACK1 : mphSHIFT;
                 // else stay
 
-    mphACK1: next = mphACK2;
-    mphACK2: next = mphACKtoREADdelay;
-    mphACKtoREADdelay: next = mphREAD1;
-    mphREAD1: next = mphREAD2;
-    mphREAD2: next = mphSHIFT;
+    mphACK1: next = mphREAD1;
+    mphREAD1: next = mphSHIFT;
     mphWAITforIDLE: next = mphIDLE;
 
     mphSHIFT: begin
@@ -106,18 +100,14 @@ module memPhase(input CROBAR,
       end
 
     mphACK1: ACKN <= '1;
-    mphACK2: ACKN <= '1;
-
-    mphACKtoREADdelay: ACKN <= '0;
 
     mphREAD1: begin
+      ACKN <= '0;
       VALID <= '1;
       SBUS.D <= memory[{addr[12:33], wo}];
       SBUS.DATA_PAR <= ^memory[{addr[12:33], wo}];
       wo <= wo + 2'b01;
     end
-
-    mphREAD2: VALID <= '1;
 
     mphSHIFT: begin
       ACKN <= '0;
