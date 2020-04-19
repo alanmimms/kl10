@@ -187,12 +187,15 @@ module mbc(iAPR APR,
   bit e20q15, e25q15, e56q13;
   always_comb begin
     MBOX.A_CHANGE_COMING_IN = ~MBOX.PHASE_CHANGE_COMING & CLK_A_PHASE_COMING;
+
+    // Note the distinction between MBOX.CORE_BUSY and local CORE_BUSY here.
     MEM_START_SET = CSH.E_CORE_RD_RQ & ~MBOX.CORE_BUSY |
                     PMA.CSH_WRITEBACK_CYC & MBX.CACHE_TO_MB_T4 |
                     ~CORE_BUSY & MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
                     CCL.START_MEM |
                     CSH.CHAN_RD_T5 & ANY_SBUS_RQ_IN |
                     CSH.PAGE_REFILL_T9 & ANY_SBUS_RQ_IN;
+
     RD_PAUSE_2ND_HALF = CSH.RD_PAUSE_2ND_HALF;
     MEM_START_CLR = MBC.MEM_START & MBOX.PHASE_CHANGE_COMING & LAST_ACKN_SEEN |
                     MBC.MEM_START_A & MBC.A_CHANGE_COMING & LAST_ACKN |
@@ -353,7 +356,7 @@ module mbc(iAPR APR,
   mux e16(.en(CTL.DIAG_READ_FUNC_16x),
           .sel(CTL.DIAG[4:6]),
           .d({MBOX.FORCE_VALID_MATCH[1], ~MBC.CSH_DATA_CLR_T2,
-              CACHE_WR_09, ~CORE_BUSY,
+              CACHE_WR_09, ~MBOX.CORE_BUSY,
               INH_1ST_MB_REQ, MBOX.CAM_SEL[0],
               MBOX.MEM_RQ[0], EBUS_REG[28]}),
           .q(MBC.EBUSdriver.data[28]));
