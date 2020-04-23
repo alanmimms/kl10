@@ -1,5 +1,5 @@
 # compile verilog/system verilog design source files
-sv xil_defaultlib  -i "../../../../rtl/include" --include "../../../../rtl" --include "../../../../kl10.ip_user_files/ipstatic/hdl" --include "../../../../kl10.srcs/sources_1/ip/ebox_clocks_1" --include "../../../../kl10.srcs/sources_1/ip/kl_delays" --include "/home/alan/Xilinx/Vivado/2019.2/data/xilinx_vip/include" -d "KL10PV_TB=1" \
+sv xil_defaultlib  -i "../../../../rtl/include" --include "../../../../rtl" --include "../../../../kl10.ip_user_files/ipstatic/hdl" --include "../../../../kl10.srcs/sources_1/ip/ebox_clocks_1" --include "../../../../kl10.srcs/sources_1/ip/kl_delays" --include "/opt/Xilinx/Vivado/2019.2/data/xilinx_vip/include" -d "KL10PV_TB=1" \
 "../../../../rtl/top.sv" \
 "../../../../rtl/tb/kl10pv_tb.sv" \
 "../../../../rtl/tb/sim-mem.sv" \
