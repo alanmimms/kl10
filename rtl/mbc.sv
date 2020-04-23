@@ -189,6 +189,12 @@ module mbc(iAPR APR,
     MBOX.A_CHANGE_COMING_IN = ~MBOX.PHASE_CHANGE_COMING & CLK_A_PHASE_COMING;
 
     // Note the distinction between MBOX.CORE_BUSY and local CORE_BUSY here.
+    // MBOX.CORE_BUSY is <DS1> -CORE BUSY L on MBC3 B7 p.191.
+    // MBC's local CORE_BUSY is -MBC3 CORE BUSY L on same page and area.
+    // MBC3 CORE BUSY H is generated on MBC3 A3.
+    // CORE BUSY A H <EE1> is generated there also.
+    // MBC5 CORE BUSY B is used on MBC5 D6 p.193.
+    // MBC5 CORE BUSY B is driven from MBC5 C7, derived from <EE1> CORE BUSY A H.
     MEM_START_SET = CSH.E_CORE_RD_RQ & ~MBOX.CORE_BUSY |
                     PMA.CSH_WRITEBACK_CYC & MBX.CACHE_TO_MB_T4 |
                     ~CORE_BUSY & MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |

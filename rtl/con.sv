@@ -247,7 +247,7 @@ module con(iAPR APR,
   bit runStateNC1, runStateNC2, runStateNC3;
   bit [0:2] sel;
 
-  always @(EBUS.ds[4] or EBUS.ds[5] or EBUS.ds[6]) begin
+  always_comb begin
     sel[0:2] = EBUS.ds[4:6];
 //    $display($time, " *********EBUS.ds TRACE******** ds=3'o%03o sel=3'b%03b", EBUS.ds, sel);
   end

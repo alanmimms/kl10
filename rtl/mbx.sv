@@ -126,6 +126,7 @@ module mbx(iAPR APR,
     MBX.MB_SEL_HOLD = (~MBOX.ACKN_PULSE | MBX.MEM_RD_RQ) &
                       MB_SEL_HOLD_FF &
                       (~SBUS_DIAG_2 & ~RESET) &
+                      // -MBX3 CORE BUSY 1A H on MBX2 A3.
                       (MBX.MEM_RD_RQ | ~CORE_DATA_VALID | ~CORE_BUSY);
     CHAN_READ = MBOX.CHAN_READ;
   end
@@ -144,6 +145,7 @@ module mbx(iAPR APR,
                         .q(e33Q));
   
   decoder e18(.sel({1'b0, MBC.CORE_ADR}),
+              // -MBX3 CORE BUSY 1A L on MBX2 B4.
               .en(~CORE_BUSY & (MBC.CORE_DATA_VALminus2 | CSH.ONE_WORD_WR_T0)),
               .q(CORE_WD_COMING)); // Only [0:3] is actually used
   
@@ -243,10 +245,13 @@ module mbx(iAPR APR,
     MBX.REFILL_HOLD = CCA_HOLD_ADR | PMA.CSH_WRITEBACK_CYC | MB_REQ_ALLOW;
     MB_REQ_ALLOW = CSH.E_CORE_RD_RQ & ~CSH.ONE_WORD_RD |
                    (MBOX.MB_REQ_HOLD | MBOX.CORE_RD_IN_PROG) & ~RESET & MB_REQ_ALLOW_FF;
+    // MBOX.CORE_BUSY is <EA1> CORE BUSY A H on MBX3 B7 (p.180).
+    // We drive MBX3 CORE BUSY 1A L and MBX3 CORE BUSY 1A H from that.
     CORE_BUSY = MBOX.CORE_BUSY;
     EBOX_DIAG_CYC = PMA.CSH_EBOX_CYC & APR.EBOX_SBUS_DIAG;
     MBOX.MEM_DATA_TO_MEM = MBC.MEM_START & ~MBX.MEM_RD_RQ |
                            SBUS_DIAG_0 & ~SBUS_DIAG_2 |
+                           // MBX3 CORE BUSY 1A H on MBX3 A7.
                            CORE_BUSY;
     e70q14 = MBX.CACHE_TO_MB_DONE & EBOX_DIAG_CYC |
              ~DIAG_CYC_DONE & SBUS_DIAG_CYC & ~RESET;

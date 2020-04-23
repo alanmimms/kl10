@@ -42,7 +42,7 @@ module csh(iAPR APR,
   bit E_RD_T2_OK, WRITEBACK_T1, EBOX_SYNC_HOLD, E_CORE_RD_COMP;
   bit EBOX_READ, E_REQ_EN_CLR, EBOX_RETRY_NEXT_IN;
   bit E_WR_T2, ANY_VALID_MATCH, CACHE_WR_FROM_MEM, RD_FOUND;
-  bit E_WRITEBACK, CORE_BUSY, EBOX_WR_T3, E_RD_T2_CORE_OK, RD_PAUSE_2ND_HALF;
+  bit E_WRITEBACK, EBOX_WR_T3, E_RD_T2_CORE_OK, RD_PAUSE_2ND_HALF;
   bit DATA_DLY_2, EBOX_PAUSE, MB_CYC, LOAD_EBUS_REG, KI10_PAGING_MODE;
   bit ANY_WRITTEN_MATCH;
   bit MB_WR_RQ_CLR_NXT, EBOX_TOOK_1_WD, WR_DATA_RDY;
@@ -90,9 +90,6 @@ module csh(iAPR APR,
                       ~MCL.VMA_PAUSE & MBOX_RESP & CSH.ONE_WORD_RD;
 
     RESET = CLK.MR_RESET;
-
-    // This is not driven here, so it must come from outside, right?
-    CORE_BUSY = MBOX.CORE_BUSY;
   end
 
   always_ff @(posedge clk) begin
@@ -107,7 +104,9 @@ module csh(iAPR APR,
 
     CHAN_REQ_EN <= ~WRITEBACK_T1 & ~PAGE_REFILL_T4_IN & ~MBOX.MEM_BUSY;
     MB_REQ <= MBX.MB_REQ_IN;
-    CSH.CCA_REQ_EN <= ~WRITEBACK_T1 & ~PAGE_REFILL_T4_IN & ~CORE_BUSY;
+
+    // MBOX.CORE_BUSY here is <EC1> -CORE BUSY L CSH1 A8 p.24.
+    CSH.CCA_REQ_EN <= ~WRITEBACK_T1 & ~PAGE_REFILL_T4_IN & ~MBOX.CORE_BUSY;
   end
 
   // Note active low symbol
@@ -139,14 +138,16 @@ module csh(iAPR APR,
 
     E_REQ_EN_CLR = WRITEBACK_T1 | (E_WRITEBACK & MCL.VMA_READ & PMA.CSH_WRITEBACK_CYC);
     EBOX_RETRY_NEXT_IN = (~MBX.CACHE_BIT | LRU_ANY_WR) &
-                         E_WR_T2 & PAG.PAGE_OK & CORE_BUSY &
+                          // <Fv2> CORE BUSY L CSH2 C4.
+                         E_WR_T2 & PAG.PAGE_OK & MBOX.CORE_BUSY &
                          ~ANY_VALID_MATCH |
                          (CSH.ADR_READY &
-                          (CORE_BUSY & APR.EBOX_SBUS_DIAG |
+                          // <Fv2> CORE BUSY L CSH2 C4.
+                          (MBOX.CORE_BUSY & APR.EBOX_SBUS_DIAG |
                            EBOX_REFILL_OK & PAG.PAGE_REFILL & ~RESET) &
                           CSH.EBOX_CYC) |
                          ~MBC.WRITE_OK & WR_TEST & CSH.EBOX_CYC |
-                         ~RD_FOUND & E_RD_T2_OK & CORE_BUSY;
+                         ~RD_FOUND & E_RD_T2_OK & MBOX.CORE_BUSY; // <FV2> CORE BUSY L CSH2 B3.
     WR_TEST = CSH.CLEAR_WR_T0 | EBOX_WR_T3;
   end
 
@@ -166,7 +167,8 @@ module csh(iAPR APR,
                         ~MBC.CORE_DATA_VALID & ~RESET & CSH.E_CORE_RD_RQ;
 
     EBOX_RETRY_NEXT <= EBOX_RETRY_NEXT_IN;
-    EBOX_REQ_EN <= ~CORE_BUSY & ~E_REQ_EN_CLR & ~PAGE_REFILL_T4_IN |
+    // <EC1> -CORE BUSY L on CSH2 A3.
+    EBOX_REQ_EN <= ~MBOX.CORE_BUSY & ~E_REQ_EN_CLR & ~PAGE_REFILL_T4_IN |
                    MB_CYC & MCL.VMA_READ |
                    RESET |
                    ~E_REQ_EN_CLR & EBOX_REQ_EN & ~EBOX_RETRY_NEXT;
@@ -226,7 +228,8 @@ module csh(iAPR APR,
     E_T2_MEM_REF = ~APR.EBOX_SBUS_DIAG & EBOX_T2 & ~APR.EBOX_READ_REG;
     E_WR_T2 = ~MCL.VMA_PAUSE & E_T2_MEM_REF & ~EBOX_READ;
     E_RD_T2_OK = PAG.PAGE_OK & MCL.VMA_READ & EBOX_T2;
-    E_RD_T2_CORE_OK = E_RD_T2_OK & ~CORE_BUSY;
+    // MBOX.CORE_BUSY is <EC1> -CORE BUSY L on CSH4 C5 p.27.
+    E_RD_T2_CORE_OK = E_RD_T2_OK & ~MBOX.CORE_BUSY;
     EBOX_READ = MCL.VMA_READ;
     EBOX_PAUSE_WRITE = ~EBOX_READ & EBOX_PAUSE;
     EBOX_PAUSE = MCL.VMA_PAUSE;
@@ -242,11 +245,14 @@ module csh(iAPR APR,
     EBOX_T1 <= EBOX_T0 & ~VMA.AC_REF & ~CACHE_IDLE_IN;
     EBOX_T2 <= EBOX_T1 & ~CLK.EBOX_CYC_ABORT;
     CSH.EBOX_T3 <= EBOX_T2;
-    CSH.ONE_WORD_WR_T0 <= ~CORE_BUSY & APR.EBOX_SBUS_DIAG & EBOX_T2 |
+    // <EC1> -CORE BUSY L on CSH4 B7.
+    CSH.ONE_WORD_WR_T0 <= ~MBOX.CORE_BUSY & APR.EBOX_SBUS_DIAG & EBOX_T2 |
                           ~MBX.CACHE_BIT & ~ANY_VALID_MATCH & PAG.PAGE_OK &
-                          ~CORE_BUSY & ~MCL.VMA_PAUSE & ~EBOX_READ & E_T2_MEM_REF;
+                          // <Ec1> -CORE BUSY L on CSH4 A7.
+                          ~MBOX.CORE_BUSY & ~MCL.VMA_PAUSE & ~EBOX_READ & E_T2_MEM_REF;
     CSH.WRITEBACK_T1 <= ANY_WRITTEN_MATCH & MBX.CSH_CCA_VAL_CORE & CCA_T3 |
-                        E_T2_MEM_REF & ~CORE_BUSY & ~EBOX_PAUSE_WRITE &
+                        // <Ec1> -CORE BUSY L on CSH4 A7.
+                        E_T2_MEM_REF & ~MBOX.CORE_BUSY & ~EBOX_PAUSE_WRITE &
                         PAG.PAGE_OK & MBX.CACHE_BIT & LRU_ANY_WR & ~ANY_VALID_MATCH;
     WRITEBACK_T2 <= WRITEBACK_T1;
 
@@ -271,10 +277,12 @@ module csh(iAPR APR,
     CSH.PAGE_REFILL_T9 <= MBX.CACHE_TO_MB_DONE & PMA.PAGE_REFILL_CYC;
     CSH.PAGE_REFILL_T13 <= PAGE_REFILL_T9comma12;
     PAGE_REFILL_T4 <= PAGE_REFILL_T4_IN;
-    PAGE_REFILL_COMP <= PAGE_REFILL_T10 & ~CORE_BUSY |
+    // <EC1> -CORE BUSY L on CSH5 B8 p.28.
+    PAGE_REFILL_COMP <= PAGE_REFILL_T10 & ~MBOX.CORE_BUSY |
                         ~EBOX_RESTART & PAGE_REFILL_COMP & ~RESET;
     CSH.PAGE_REFILL_T8 <= PAGE_REFILL_T7;
-    PAGE_REFILL_T10 <= CORE_BUSY & ~MBX.MB_SEL_HOLD_FF | PAGE_REFILL_T13;
+    // <FV2> CORE BUSY L on CSH5 C6.
+    PAGE_REFILL_T10 <= MBOX.CORE_BUSY & ~MBX.MB_SEL_HOLD_FF | PAGE_REFILL_T13;
     PAGE_REFILL_T11 <= PAGE_REFILL_T10;
     CSH.PAGE_REFILL_T12 <= PAGE_REFILL_T11;
     e68q3 <= NON_EBOX_REQ_GRANT;
@@ -282,8 +290,6 @@ module csh(iAPR APR,
     T1 <= CSH_T0;
     CSH.T2 <= T2_IN;
     T3 <= CSH.T2;
-    PAGE_REFILL_COMP <= PAGE_REFILL_T10 & ~CORE_BUSY |
-                        ~EBOX_RESTART & PAGE_REFILL_COMP & ~RESET;
     PAGE_REFILL_T8 <= PAGE_REFILL_T7;
     CHAN_WR_T5 <= CSH.CHAN_WR_T5_IN;
     CSH.CHAN_T4 <= ANY_VALID_MATCH & CSH.CHAN_T3;
@@ -294,7 +300,8 @@ module csh(iAPR APR,
 
   always_comb begin
     PAGE_REFILL_T9comma12 = CSH.PAGE_REFILL_T12 & CSH.PAGE_REFILL_T9;
-    PAGE_REFILL_T4_IN = ~CORE_BUSY & CSH.EBOX_T3 & EBOX_REFILL_OK & PAG.PAGE_REFILL;
+    // <EC1> -CORE BUSY L on CSH5 C8.
+    PAGE_REFILL_T4_IN = ~MBOX.CORE_BUSY & CSH.EBOX_T3 & EBOX_REFILL_OK & PAG.PAGE_REFILL;
     EBOX_REFILL_OK = (EBOX_MAP | ~APR.EBOX_READ_REG) & ~PAGE_REFILL_COMP;
     PAGE_REFILL_T7 = PAG.PAGE_REFILL_CYC & T3;
 
