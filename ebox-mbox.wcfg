@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="20000001fs"></ZoomEndTime>
-      <Cursor1Time time="11504606fs"></Cursor1Time>
+      <ZoomStartTime time="3333333fs"></ZoomStartTime>
+      <ZoomEndTime time="23333334fs"></ZoomEndTime>
+      <Cursor1Time time="20000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="82"></ValueColumnWidth>
+      <ValueColumnWidth column_width="78"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="71" />
+   <WVObjectSize size="76" />
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
@@ -101,12 +101,6 @@
       <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/CSH/E_CORE_RD_RQ">
-      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/top/MBC/CSH_DATA_CLR_T1">
       <obj_property name="ElementShortName">CSH_DATA_CLR_T1</obj_property>
       <obj_property name="ObjectShortName">CSH_DATA_CLR_T1</obj_property>
@@ -148,24 +142,6 @@
       <obj_property name="ObjectShortName">MBOX_RESP</obj_property>
       <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_OK">
-      <obj_property name="ElementShortName">E_RD_T2_OK</obj_property>
-      <obj_property name="ObjectShortName">E_RD_T2_OK</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_CORE_OK">
-      <obj_property name="ElementShortName">E_RD_T2_CORE_OK</obj_property>
-      <obj_property name="ObjectShortName">E_RD_T2_CORE_OK</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/MBOX/CORE_BUSY">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
-      <obj_property name="label">MBOX.CORE_BUSY</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/MCL/VMA_READ">
       <obj_property name="ElementShortName">VMA_READ</obj_property>
@@ -229,9 +205,55 @@
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
-      <obj_property name="label">bCLk</obj_property>
+      <obj_property name="label">bClk</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CSH/E_CORE_RD_RQ">
+      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
+      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_OK">
+      <obj_property name="ElementShortName">E_RD_T2_OK</obj_property>
+      <obj_property name="ObjectShortName">E_RD_T2_OK</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_CORE_OK">
+      <obj_property name="ElementShortName">E_RD_T2_CORE_OK</obj_property>
+      <obj_property name="ObjectShortName">E_RD_T2_CORE_OK</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbz0/CORE_BUSY_IN">
+      <obj_property name="ElementShortName">CORE_BUSY_IN</obj_property>
+      <obj_property name="ObjectShortName">CORE_BUSY_IN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbz0/CORE_RD_IN_PROG">
+      <obj_property name="ElementShortName">CORE_RD_IN_PROG</obj_property>
+      <obj_property name="ObjectShortName">CORE_RD_IN_PROG</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbz0/MEM_START_C">
+      <obj_property name="ElementShortName">MEM_START_C</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_C</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/MBOX/CORE_BUSY">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
+      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
+      <obj_property name="label">MBOX.CORE_BUSY</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbz0/XYZZY">
+      <obj_property name="ElementShortName">XYZZY</obj_property>
+      <obj_property name="ObjectShortName">XYZZY</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/CORE_BUSY">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
+      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
+      <obj_property name="label">mbc0.CORE_BUSY</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/SBUS/START_A">
       <obj_property name="ElementShortName">START_A</obj_property>
@@ -427,6 +449,7 @@
    <wvobject type="group" fp_name="group1703">
       <obj_property name="label">csh0</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/top/ebox0/csh0/clk">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -838,12 +861,6 @@
       <wvobject type="logic" fp_name="/top/ebox0/csh0/E_WRITEBACK">
          <obj_property name="ElementShortName">E_WRITEBACK</obj_property>
          <obj_property name="ObjectShortName">E_WRITEBACK</obj_property>
-         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top/ebox0/csh0/CORE_BUSY">
-         <obj_property name="ElementShortName">CORE_BUSY</obj_property>
-         <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
          <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
