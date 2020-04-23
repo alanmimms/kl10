@@ -191,7 +191,7 @@ module mbc(iAPR APR,
     // Note the distinction between MBOX.CORE_BUSY and local CORE_BUSY here.
     // MBOX.CORE_BUSY is <DS1> -CORE BUSY L on MBC3 B7 p.191.
     // MBC's local CORE_BUSY is -MBC3 CORE BUSY L on same page and area.
-    // MBC3 CORE BUSY H is generated on MBC3 A3.
+    // Local CORE_BUSY = MBC3 CORE BUSY H is generated on MBC3 A3.
     // CORE BUSY A H <EE1> is generated there also.
     // MBC5 CORE BUSY B is used on MBC5 D6 p.193.
     // MBC5 CORE BUSY B is driven from MBC5 C7, derived from <EE1> CORE BUSY A H.
@@ -263,6 +263,10 @@ module mbc(iAPR APR,
                        (^MBOX.MEM_RQ) ^
                        (^ADR) ^
                        FORCE_BAD_ADR_PAR;
+    ANY_RQS_LEFT = ANY_REQUEST | ~MBC.CORE_DATA_VALID;
+    INIT_COMP = ANY_RQS_LEFT & CORE_RD_IN_PROG |
+                ~MBOX.NXM_ACKN & ~LAST_ACKN_SEEN & ~MBC.CORE_ADR[34] & ~MBC.CORE_ADR[35] & MEM_START_RD;
+    MEM_START_RD = (MBC.MEM_START_A | MBC.MEM_START_B) & MBX.MEM_RD_RQ;
   end
 
   always_ff @(posedge clk) begin
@@ -274,12 +278,6 @@ module mbc(iAPR APR,
     MBC.CORE_DATA_VALminus1 <= CORE_DATA_VALIDminus2;
     MBC.CORE_DATA_VALID <= MBC.CORE_DATA_VALminus1;
     CORE_RD_IN_PROG <= INIT_COMP;
-    ANY_RQS_LEFT <= ANY_REQUEST | ~MBC.CORE_DATA_VALID;
-    INIT_COMP <= ANY_RQS_LEFT & CORE_RD_IN_PROG |
-                 ~MBOX.NXM_ACKN & ~LAST_ACKN_SEEN &
-                 ~MBC.CORE_ADR[34] & ~MBC.CORE_ADR[35] &
-                 MEM_START_RD;
-    MEM_START_RD <= MBC.MEM_START_A | MBC.MEM_START_B & MBX.MEM_RD_RQ;
   end
 
   bit [0:1] ignoredE76;
