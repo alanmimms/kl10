@@ -175,3 +175,28 @@ Designation   Designation   Backplane    Model
 * READ2:
   * VALID <= '1
   * next <= ACK1
+
+
+# CORE BUSY global backplane signal
+* CSH
+  * CORE BUSY L <FV2> CSH2, CSH5 reference.
+  * -CORE BUSY L <EC1> CSH2, CSH4x2, CSH5x2 reference.
+
+* MBC
+  * MBC3 drives <EE1> CORE BUSY A H and locally MBC3 CORE BUSY H.
+  * MBC5 receives <EE1> CORE BUSY A H and locally drives MBC5 CORE
+    BUSY B H.
+
+* MBX
+  * MBX2 refers to MBX3 CORE BUSY 1A.
+  * MBX3 receives <EA1> CORE BUSY A H and locally drives MBX3 CORE
+    BUSY 1A L and MBX3 CORE BUSY 1A H.
+
+* MBZ
+  * On MBZ1 CORE_BUSY is driven to backplane pins <DH2> CORE BUSY L
+    and <DM2> CORE BUSY H. On that page is also a reference to -MBZ4
+    CORE BUSY A L.
+  * On MBZ3 is a reference to <DH2> CORE BUSY L.
+  * On MBZ4 CORE_BUSY is on <EA1> CORE BUSY A H which is is locally
+    equivalent to MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.
+  * On MBZ6 is a reference to MBZ4 CORE BUSY A L.

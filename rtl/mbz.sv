@@ -21,6 +21,7 @@ module mbz(iAPR APR,
            );
 
   bit clk, RESET;
+  bit XYZZY;
   bit CHAN_CORE_BUSY_IN, CHAN_CORE_BUSY, CSH_CHAN_CYC, EBOX_DIAG_CYC, CHAN_TO_MEM;
   bit MEM_RD_RQ, MEM_WR_RQ, CORE_BUSY_IN, CORE_RD_IN_PROG;
   bit CHAN_STATUS_TO_MB, CHAN_BUF_TO_MB, CHAN_EPT, AR_TO_MB_SEL, MEM_START_C;
@@ -64,9 +65,13 @@ module mbz(iAPR APR,
   always_ff @(posedge clk) begin
     CHAN_CORE_BUSY <= CHAN_CORE_BUSY_IN;
     MBZ.RD_PSE_WR_REF <= MEM_RD_RQ & MEM_WR_RQ & MEM_START_C |
+                         // -MBZ4 CORE BUSY A L on MBZ1 B8 p.303. XXX
                          ~MBOX.CORE_BUSY & MBZ.RD_PSE_WR_REF & ~RESET;
+    // <DH2> CORE BUSY L and <DM2> CORE BUSY H latched and driven on MBZ1 D3.
     MBOX.CORE_BUSY <= CHAN_CORE_BUSY | MEM_START_C |
                       CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
+    XYZZY <= CHAN_CORE_BUSY | MEM_START_C |
+             CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
     CHAN_TO_MEM <= CCL.CHAN_TO_MEM & CSH_CHAN_CYC |
                    ~CSH_CHAN_CYC & CHAN_TO_MEM & ~RESET;
     e51q14 <= CORE_RD_IN_PROG;
@@ -127,6 +132,7 @@ module mbz(iAPR APR,
 
   mux2x4 e31(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
+             // <DM2> CORE BUSY H on MBZ2 C8.
              .D0({MBOX.CORE_BUSY, ~MBOX.ADR_PAR_ERR,
                   ~MBOX.CHAN_ADR_PAR_ERR, EBUS_REG[15]}),
              .D1({~MBOX.CHAN_PAR_ERR, MBOX.CBUS_PAR_LEFT_TE,
@@ -209,6 +215,7 @@ module mbz(iAPR APR,
   always_ff @(posedge clk) begin
     NXM_FLG <= NXM_CRY_A & NXM_CRY_B & MEM_START_C |
                ~NXM_CLR_DONE & NXM_FLG & ~RESET;
+    // <DH2> CORE BUSY L on MBZ3 B7.
     CHAN_MEM_REF <= MEM_START_C & CHAN_CORE_BUSY | MBOX.CORE_BUSY & CHAN_MEM_REF & ~RESET;
     A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
     MBOX.NXM_ERR <= NXM_CLR_DONE |
@@ -261,6 +268,8 @@ module mbz(iAPR APR,
     MEM_RD_RQ = MBX.MEM_RD_RQ;
     MEM_WR_RQ = MBX.MEM_WR_RQ;
     NXM_T6comma7 = NXM_T6 | e25q15;
+    // <EA1> CORE BUSY A H on MBZ4 A5.
+    // Same signal drives MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.
     CORE_BUSY_IN = NXM_T2 | NXM_T3 | NXM_T4 | NXM_T5 | MBOX.CORE_BUSY;
     LOAD_MB_MAGIC = ~ERR_HOLD & NXM_T6comma7 & NXM_FLG |
                     MB_TEST_PAR_A_IN & ~HOLD_ERR_REG |
@@ -360,6 +369,7 @@ module mbz(iAPR APR,
                    PAG.PF_HOLD_05_IN,
                    PAG.PT_PUBLIC};
     MB_TEST_PAR_B_IN = CCL.CH_TEST_MB_PAR |
+                       // MBZ4 CORE BUSY A L on MBZ6 A3.
                        MBX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
   end
 
