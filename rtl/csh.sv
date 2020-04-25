@@ -26,13 +26,13 @@ module csh(iAPR APR,
   bit MB_REQ, CHAN_REQ_EN, CYC_TYPE_HOLD, WRITEBACK_T2;
   bit EBOX_REQ_EN, NON_EBOX_REQ_GRANT;
   bit CACHE_IDLE_IN_A, CACHE_IDLE_IN_B, CACHE_IDLE_IN_C, CACHE_IDLE_IN_D, CACHE_IDLE_IN;
-  bit PHASE_CHANGE_COMING, CHAN_RD_T5;
+  bit PHASE_CHANGE_COMING;
   bit EBOX_T0, EBOX_T1, EBOX_T2, PGRF_CYC, RESET, DATA_DLY_1;
   bit MBOX_RESP, EBOX_RESTART, SBUS_DIAG_3;
   bit EBOX_MAP, MAP_PROBLEM, PAGE_FAIL_T2;
   bit MB_TEST_PAR_A_IN, LRU_ANY_WR;
   bit PAGE_REFILL_T4_IN, PAGE_REFILL_T4, PAGE_REFILL_T9comma12;
-  bit PAGE_REFILL_T10, PAGE_REFILL_T11, PAGE_REFILL_T12, PAGE_REFILL_T13;
+  bit PAGE_REFILL_T10, PAGE_REFILL_T11, PAGE_REFILL_T13;
   bit EBOX_REFILL_OK, PAGE_REFILL_COMP, PAGE_REFILL_T7;
   bit CSH_T0, T1, T2_IN, T3;
   bit CCA_T3, WR_TEST, RD_PSE_2ND_REQ_EN;
@@ -45,11 +45,11 @@ module csh(iAPR APR,
   bit E_WRITEBACK, EBOX_WR_T3, E_RD_T2_CORE_OK, RD_PAUSE_2ND_HALF;
   bit DATA_DLY_2, EBOX_PAUSE, MB_CYC, KI10_PAGING_MODE;
   bit ANY_WRITTEN_MATCH;
-  bit MB_WR_RQ_CLR_NXT, EBOX_TOOK_1_WD, WR_DATA_RDY;
+  bit EBOX_TOOK_1_WD, WR_DATA_RDY;
   bit PAGE_FAIL_DLY, EBOX_WR_T4, PAGE_FAIL_T3;
   bit EBOX_WR_T4_IN, PAGE_FAIL_HOLD_FF, EBOX_CYC;
-  bit DATA_CLR_T2, DATA_CLR_T4, PAGE_REFILL_T8, CHAN_CYC, WR_FROM_MEM_NXT;
-  bit CHAN_T4, EBOX_SYNC_SEEN, DATA_DLY1, CACHE_WR_IN, WRITE_OK, CCA_INVAL_T4;
+  bit DATA_CLR_T4;
+  bit EBOX_SYNC_SEEN, DATA_DLY1, CACHE_WR_IN, WRITE_OK, CCA_INVAL_T4;
 
   // CSH1 p.24
   always_comb begin
@@ -67,7 +67,7 @@ module csh(iAPR APR,
     CACHE_IDLE_IN_A = PMA.CSH_WRITEBACK_CYC & MBX.CACHE_TO_MB_DONE |
                       ~CSH.READY_TO_GO & CACHE_IDLE |
                       MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
-                      CHAN_RD_T5 & PHASE_CHANGE_COMING;
+                      CSH.CHAN_RD_T5 & PHASE_CHANGE_COMING;
 
     CACHE_IDLE_IN_B = EBOX_PAUSE_WRITE & E_T2_MEM_REF & PAG.PAGE_OK |
                       CCA_CYC_DONE | EBOX_WR_T4 |
@@ -185,35 +185,28 @@ module csh(iAPR APR,
     CSH.ADR_READY = EBOX_T2 | CSH.T2;
     CSH.ANY_VAL_HOLD_IN = CSH.ADR_READY & ANY_VALID_MATCH |
                           ~CSH.READY_TO_GO & CSH.ANY_VAL_HOLD;
-    ANY_WRITTEN_MATCH = CSH.VALID_MATCH[0] & CSH.ANY_WR[0] |
-                        CSH.VALID_MATCH[1] & CSH.ANY_WR[1] |
-                        CSH.VALID_MATCH[2] & CSH.ANY_WR[2] |
-                        CSH.VALID_MATCH[3] & CSH.ANY_WR[3];
-    RD_FOUND = CSH.WD_VAL[0] & CSH.VALID_MATCH[0] |
-               CSH.WD_VAL[1] & CSH.VALID_MATCH[1] |
-               CSH.WD_VAL[2] & CSH.VALID_MATCH[2] |
-               CSH.WD_VAL[3] & CSH.VALID_MATCH[3];
-    ANY_VALID_MATCH = CSH.VALID_MATCH[0] | CSH.VALID_MATCH[1] |
-                      CSH.VALID_MATCH[2] | CSH.VALID_MATCH[3];
-    MB_TEST_PAR_A_IN = DATA_DLY_2 | PAGE_REFILL_T12 | CACHE_WR_FROM_MEM;
+    ANY_WRITTEN_MATCH = |(CSH.VALID_MATCH & CSH.ANY_WR);
+    RD_FOUND = |(CSH.WD_VAL & CSH.VALID_MATCH);
+    ANY_VALID_MATCH = |(CSH.VALID_MATCH);
+    MB_TEST_PAR_A_IN = DATA_DLY_2 | CSH.PAGE_REFILL_T12 | CACHE_WR_FROM_MEM;
     CSH.MATCH_HOLD_IN[0] = (~ANY_VALID_MATCH | CSH.VALID_MATCH[3] | CSH.VALID_MATCH[2]) &
                            (CSH.VALID_MATCH[2] | CSH.LRU_2 | CSH.VALID_MATCH[3]);
     CSH.MATCH_HOLD_IN[1] = (~ANY_VALID_MATCH | CSH.VALID_MATCH[3] | CSH.VALID_MATCH[1]) &
                            (CSH.VALID_MATCH[1] | CSH.LRU_1 | CSH.VALID_MATCH[3]);
-    MB_WR_RQ_CLR_NXT = PAGE_REFILL_T11 | CSH.WR_FROM_MEM_NXT |
-                       EBOX_TOOK_1_WD | MBOX.CHAN_READ;
+    CSH.MB_WR_RQ_CLR_NXT = PAGE_REFILL_T11 | CSH.WR_FROM_MEM_NXT |
+                           EBOX_TOOK_1_WD | MBOX.CHAN_READ;
   end
 
   always_ff @(posedge clk) begin
     CSH.ANY_VAL_HOLD <= CSH.ANY_VAL_HOLD_IN;
-    CSH.GATE_VMA_27_33 <= CSH.EBOX_T0_IN | (CSH.EBOX_CYC & ~MBX.REFILL_ADR_EN_NXT);
+    CSH.GATE_VMA_27_33 <= CSH.EBOX_T0_IN | CSH.EBOX_CYC & ~MBX.REFILL_ADR_EN_NXT;
     CSH.ADR_PMA_EN <= ~CSH.EBOX_CYC & ~CSH.EBOX_T0_IN & ~MBX.REFILL_ADR_EN_NXT;
   end
 
   mux2x4 e26(.EN('1),
              .SEL({CSH.LRU_2, CSH.LRU_1}),
-             .D0({CSH.ANY_WR[0], CSH.ANY_WR[1], CSH.ANY_WR[2], CSH.ANY_WR[3]}),
-             .D1(4'b0000),
+             .D0(CSH.ANY_WR),
+             .D1('0),
              .B0(LRU_ANY_WR),
              .B1());
 
@@ -234,8 +227,8 @@ module csh(iAPR APR,
     EBOX_WR_T4_IN = EBOX_WR_T3 & ~EBOX_RETRY_NEXT_IN;
     CSH.REFILL_RAM_WR = APR.EN_REFILL_RAM_WR & EBOX_T2;
 
-    // NOTE: Wire AND
-    PAGE_FAIL_T2 = e18q13 & e18q4;
+    // NOTE: "Wire AND"
+    PAGE_FAIL_T2 = e18q13 | e18q4;
   end
 
   always_ff @(posedge clk) begin
@@ -245,13 +238,13 @@ module csh(iAPR APR,
     CSH.EBOX_T3 <= EBOX_T2;
     // <EC1> -CORE BUSY L on CSH4 B7.
     CSH.ONE_WORD_WR_T0 <= ~MBOX.CORE_BUSY & APR.EBOX_SBUS_DIAG & EBOX_T2 |
-                          ~MBX.CACHE_BIT & ~ANY_VALID_MATCH & PAG.PAGE_OK &
+                          ~MBX.CACHE_BIT & ~ANY_VALID_MATCH &
                           // <Ec1> -CORE BUSY L on CSH4 A7.
-                          ~MBOX.CORE_BUSY & ~MCL.VMA_PAUSE & ~EBOX_READ & E_T2_MEM_REF;
+                          PAG.PAGE_OK & ~MBOX.CORE_BUSY & ~MCL.VMA_PAUSE & ~EBOX_READ & E_T2_MEM_REF;
     CSH.WRITEBACK_T1 <= ANY_WRITTEN_MATCH & MBX.CSH_CCA_VAL_CORE & CCA_T3 |
                         // <Ec1> -CORE BUSY L on CSH4 A7.
-                        E_T2_MEM_REF & ~MBOX.CORE_BUSY & ~EBOX_PAUSE_WRITE &
-                        PAG.PAGE_OK & MBX.CACHE_BIT & LRU_ANY_WR & ~ANY_VALID_MATCH;
+                        E_T2_MEM_REF & ~MBOX.CORE_BUSY & ~EBOX_PAUSE_WRITE & PAG.PAGE_OK & MBX.CACHE_BIT &
+                        LRU_ANY_WR & ~ANY_VALID_MATCH;
     WRITEBACK_T2 <= WRITEBACK_T1;
 
     PAGE_FAIL_DLY <= CSH.PAGE_FAIL_HOLD;
@@ -259,7 +252,7 @@ module csh(iAPR APR,
     e18q13 <= CSH.PAGE_FAIL_HOLD;
     PAGE_FAIL_T3 <= PAGE_FAIL_T2;
 
-    DATA_CLR_T2 <= MBC.CSH_DATA_CLR_T3;
+    DATA_CLR_T4 <= MBC.CSH_DATA_CLR_T3;
     EBOX_WR_T3 <= DATA_CLR_T4 & MBOX.E_CACHE_WR_CYC |
                   E_WR_T2 & ANY_VALID_MATCH & PAG.PAGE_OK;
     EBOX_WR_T4 <= EBOX_WR_T4_IN;
@@ -270,7 +263,7 @@ module csh(iAPR APR,
 
 
   // CSH5 p.28
-  bit e68q3, e68q2;
+  bit e68q3, e68q2, e35q2, e35q14;
   always_ff @(posedge clk) begin
     CSH.PAGE_REFILL_T9 <= MBX.CACHE_TO_MB_DONE & PMA.PAGE_REFILL_CYC;
     CSH.PAGE_REFILL_T13 <= PAGE_REFILL_T9comma12;
@@ -281,43 +274,45 @@ module csh(iAPR APR,
     CSH.PAGE_REFILL_T8 <= PAGE_REFILL_T7;
     // <FV2> CORE BUSY L on CSH5 C6.
     PAGE_REFILL_T10 <= MBOX.CORE_BUSY & ~MBX.MB_SEL_HOLD_FF | PAGE_REFILL_T13;
-    PAGE_REFILL_T11 <= PAGE_REFILL_T10;
+    e35q14 <= PAGE_REFILL_T10;
+    e35q2 <= MBX.MB_SEL_HOLD;
+    // Note: "Wire AND"
+    PAGE_REFILL_T11 <= e35q14 | e35q2;
     CSH.PAGE_REFILL_T12 <= PAGE_REFILL_T11;
     e68q3 <= NON_EBOX_REQ_GRANT;
     e68q2 <= CSH.READY_TO_GO;
     T1 <= CSH_T0;
     CSH.T2 <= T2_IN;
     T3 <= CSH.T2;
-    PAGE_REFILL_T8 <= PAGE_REFILL_T7;
     CHAN_WR_T5 <= CSH.CHAN_WR_T5_IN;
     CSH.CHAN_T4 <= ANY_VALID_MATCH & CSH.CHAN_T3;
     CSH.CHAN_RD_T5 <= CSH.CHAN_T3 & ~CCL.CHAN_TO_MEM & ~ANY_VALID_MATCH |
-                      (MBX.CACHE_TO_MB_DONE & CHAN_CYC & ~RESET &
-                       ~CACHE_IDLE_IN & CSH.CHAN_RD_T5);
+                      MBX.CACHE_TO_MB_DONE & CSH.CHAN_CYC |
+                      ~RESET & ~CACHE_IDLE_IN & CSH.CHAN_RD_T5;
   end
 
   always_comb begin
-    PAGE_REFILL_T9comma12 = CSH.PAGE_REFILL_T12 & CSH.PAGE_REFILL_T9;
+    PAGE_REFILL_T9comma12 = CSH.PAGE_REFILL_T12 | CSH.PAGE_REFILL_T9;
     // <EC1> -CORE BUSY L on CSH5 C8.
     PAGE_REFILL_T4_IN = ~MBOX.CORE_BUSY & CSH.EBOX_T3 & EBOX_REFILL_OK & PAG.PAGE_REFILL;
     EBOX_REFILL_OK = (EBOX_MAP | ~APR.EBOX_READ_REG) & ~PAGE_REFILL_COMP;
     PAGE_REFILL_T7 = PAG.PAGE_REFILL_CYC & T3;
 
-    // NOTE: Wire AND
-    CSH_T0 = e68q3 & e68q2;
+    // NOTE: "Wire AND"
+    CSH_T0 = e68q3 | e68q2;
 
-    T2_IN = T1 & ~WR_FROM_MEM_NXT;
+    T2_IN = T1 & ~CSH.WR_FROM_MEM_NXT;
     CCA_T3 = T3 & CSH.CCA_CYC;
     PAGE_REFILL_T7 = PMA.PAGE_REFILL_CYC & T3;
-    CSH.CHAN_WR_T5_IN = CCL.CHAN_TO_MEM & CHAN_T4;
-    CSH.CHAN_T3 = CHAN_CYC & T3;
+    CSH.CHAN_WR_T5_IN = CCL.CHAN_TO_MEM & CSH.CHAN_T4;
+    CSH.CHAN_T3 = CSH.CHAN_CYC & T3;
   end
 
 
   // CSH6 p.29
   always_ff @(posedge clk) begin
     EBOX_SYNC_HOLD <= ~EBOX_T0 & ~RESET & EBOX_SYNC_SEEN;
-    CACHE_WR_FROM_MEM <= WR_FROM_MEM_NXT;
+    CACHE_WR_FROM_MEM <= CSH.WR_FROM_MEM_NXT;
     CSH.CHAN_WR_CACHE <= ANY_VALID_MATCH & CCL.CHAN_TO_MEM & CSH.CHAN_T3 |
                          CSH.CHAN_WR_CACHE & ~CSH.READY_TO_GO;
     PAGE_FAIL_HOLD_FF <= ~CON.KI10_PAGING_MODE & EBOX_T2 & PAG.PAGE_FAIL |
@@ -345,20 +340,20 @@ module csh(iAPR APR,
 
   always_comb begin
     EBOX_SYNC_SEEN = EBOX_SYNC_HOLD | EBOX_RESTART;
-    WR_FROM_MEM_NXT = EBOX_SYNC_SEEN & WR_DATA_RDY |
-                      T1 & MB_CYC & ~RESET;
+    CSH.WR_FROM_MEM_NXT = EBOX_SYNC_SEEN & WR_DATA_RDY |
+                          T1 & MB_CYC & ~RESET;
     CSH.PAGE_FAIL_HOLD = PAGE_FAIL_HOLD_FF;
     E_CORE_RD_COMP = CSH.E_CORE_RD_RQ & MBC.CORE_DATA_VALID;
     CSH.EBOX_LOAD_REG = APR.EBOX_LOAD_REG & EBOX_T0;
     WRITE_OK = MBC.WRITE_OK;
     CSH.CACHE_WR_IN = MBC.CSH_DATA_CLR_T1 & CSH.ONE_WORD_RD & CSH.E_CORE_RD_RQ |
                       EBOX_WR_T3 & WRITE_OK |
-                      ~RESET & WR_FROM_MEM_NXT;
+                      ~RESET & CSH.WR_FROM_MEM_NXT;
 
     KI10_PAGING_MODE = CON.KI10_PAGING_MODE;
 
     // NOTE: Wire AND
-    CSH.MBOX_PT_DIR_WR = KI10_PAGING_MODE & (PAGE_FAIL_T3 | PAGE_REFILL_T12);
+    CSH.MBOX_PT_DIR_WR = KI10_PAGING_MODE & (PAGE_FAIL_T3 | CSH.PAGE_REFILL_T12);
 
     CSH.USE_WR_EN = PAG.PAGE_OK & ANY_VALID_MATCH & EBOX_T2 |
                     ~CSH.ONE_WORD_RD & MBC.CSH_DATA_CLR_T2 |
@@ -369,26 +364,26 @@ module csh(iAPR APR,
   // CSH7 p.30
   assign CSH.EBUSdriver.driving = CTL.DIAG_READ_FUNC_17x;
   mux e12(.en(CTL.DIAG_READ_FUNC_17x),
-          .sel(CTL.DIAG[4:6]),
-          .d({~PAGE_REFILL_COMP, ~CHAN_RD_T5, ~CSH.CHAN_WR_CACHE, ~CSH.ONE_WORD_RD,
+          .sel(~CTL.DIAG[4:6]),
+          .d({~PAGE_REFILL_COMP, ~CSH.CHAN_RD_T5, ~CSH.CHAN_WR_CACHE, ~CSH.ONE_WORD_RD,
               ~CSH.E_CORE_RD_RQ, ~CSH.EBOX_RETRY_REQ,
               ~CSH.CCA_INVAL_T4, ~CSH.PAGE_REFILL_ERROR}),
           .q(CSH.EBUSdriver.data[22]));
 
   mux  e7(.en(CTL.DIAG_READ_FUNC_17x),
-          .sel(CTL.DIAG[4:6]),
+          .sel(~CTL.DIAG[4:6]),
           .d({CSH.CACHE_WR_IN, ~WR_DATA_RDY, ~CSH.CCA_CYC_DONE, ~MBOX_RESP,
-              ~CSH.PAGE_FAIL_HOLD, CSH.USE_WR_EN, ~CSH.PAGE_REFILL_T0, ~DATA_DLY_1}),
+              ~CSH.PAGE_FAIL_HOLD, CSH.USE_WR_EN, ~CSH.PAGE_REFILL_T8, ~DATA_DLY_1}),
           .q(CSH.EBUSdriver.data[23]));
 
   mux e32(.en(CTL.DIAG_READ_FUNC_17x),
-          .sel(CTL.DIAG[4:6]),
+          .sel(~CTL.DIAG[4:6]),
           .d({~CSH.MBOX_PT_DIR_WR, ~PAGE_FAIL_T2, ~CSH.CHAN_T4, ~RD_PSE_2ND_REQ_EN,
               ~PAGE_REFILL_T9comma12, ~MB_TEST_PAR_A_IN, ~EBOX_T0, PAGE_FAIL_DLY}),
           .q(CSH.EBUSdriver.data[24]));
 
   mux  e2(.en(CTL.DIAG_READ_FUNC_17x),
-          .sel(CTL.DIAG[4:6]),
+          .sel(~CTL.DIAG[4:6]),
           .d({~WR_TEST, CSH.EBOX_LOAD_REG, CSH.LRU_2, CSH.LRU_1,
               ~CSH.ANY_WR[3], ~CSH.ANY_WR[1], ~CSH.ANY_WR[2], ~CSH.ANY_WR[0]}),
           .q(CSH.EBUSdriver.data[25]));
@@ -408,7 +403,7 @@ module csh(iAPR APR,
   mux e73(.en(CTL.DIAG_READ_FUNC_17x),
           .sel(CTL.DIAG[4:6]),
           .d({~CSH.REFILL_RAM_WR, ~CSH.MB_WR_RQ_CLR_NXT, ~CSH.CCA_CYC, ~CSH.CCA_WRITEBACK,
-              ~CSH.EBOX_CYC, ~CSH.MB_CYC, ~CSH.E_WRITEBACK, ~CSH.RD_PAUSE_2ND_HALF}),
+              ~EBOX_CYC, ~CSH.MB_CYC, ~CSH.E_WRITEBACK, ~CSH.RD_PAUSE_2ND_HALF}),
           .q(CSH.EBUSdriver.data[28]));
 
   mux e57(.en(CTL.DIAG_READ_FUNC_17x),
@@ -417,8 +412,10 @@ module csh(iAPR APR,
               ~CACHE_IDLE, ~CSH.ONE_WORD_WR_T0, ~CSH.PAGE_REFILL_T4, ~EBOX_WR_T4}),
           .q(CSH.EBUSdriver.data[29]));
 
-  assign E_CORE_RD_T3 = ~EBOX_READ & CSH.EBOX_T3 |
-                        CSH.EBOX_T3 & CSH.E_CORE_RD_RQ & ~RESET;
+  always_comb begin
+    E_CORE_RD_T3 = ~EBOX_READ & CSH.EBOX_T3 |
+                   CSH.EBOX_T3 & CSH.E_CORE_RD_RQ & ~RESET;
+  end
 
   always_ff @(posedge clk) begin
     CSH.FILL_CACHE_RD <= E_CORE_RD_T3 & CSH.E_CORE_RD_RQ |
