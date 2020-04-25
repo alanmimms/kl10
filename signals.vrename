@@ -445,10 +445,10 @@ sigren	"CSH_VAL_SEL_ALL"		"CSH_VAL_SEL_ALL"		#rtl/mbc.sv rtl/ebox.svh
 sigren	"CSH_VAL_WR_DATA"		"CSH_VAL_WR_DATA"		#rtl/mbc.sv rtl/ebox.svh 
 sigren	"CSH_VAL_WR_PLS_FF"		"CSH_VAL_WR_PLS_FF"		#rtl/mbc.sv 
 sigren	"CSH_VAL_WR_PULSE"		"CSH_VAL_WR_PULSE"		#rtl/mbc.sv rtl/ebox.svh 
-sigren	"CSH_WD_0_VAL"			"CSH_WD_0_VAL"			#rtl/mbx.sv 
-sigren	"CSH_WD_1_VAL"			"CSH_WD_1_VAL"			#rtl/mbx.sv 
-sigren	"CSH_WD_2_VAL"			"CSH_WD_2_VAL"			#rtl/mbx.sv 
-sigren	"CSH_WD_3_VAL"			"CSH_WD_3_VAL"			#rtl/mbx.sv 
+sigren	"CSH_WD_0_VAL"			"CSH_WD_VAL[0]"			#rtl/mbx.sv 
+sigren	"CSH_WD_1_VAL"			"CSH_WD_VAL[1]"			#rtl/mbx.sv 
+sigren	"CSH_WD_2_VAL"			"CSH_WD_VAL[2]"			#rtl/mbx.sv 
+sigren	"CSH_WD_3_VAL"			"CSH_WD_VAL[3]"			#rtl/mbx.sv 
 sigren	"CSH_WD_VAL"			"CSH_WD_VAL"			#rtl/mbx.sv 
 sigren	"CSH_WRITEBACK_CYC"		"CSH_WRITEBACK_CYC"		#rtl/mbc.sv rtl/mbx.sv rtl/ebox.svh rtl/pma.sv rtl/csh.sv 
 sigren	"CSH_WR_DATA_FF"		"CSH_WR_DATA_FF"		#rtl/mbc.sv 
@@ -1537,28 +1537,28 @@ sigren	"XR_BLOCK"			"XR_BLOCK"			#rtl/ebox.svh rtl/apr.sv
 sigren	"XR_PREVIOUS"			"XR_PREVIOUS"			#rtl/ebox.svh rtl/apr.sv rtl/mcl.sv 
 sigren	"XR_SHORT"			"XR_SHORT"			#rtl/mcl.sv 
 sigren	"XYZZY"				"XYZZY"				#rtl/mbz.sv 
-sigren	"_0_ANY_WR"			"_0_ANY_WR"			#rtl/ebox.svh rtl/csh.sv 
-sigren	"_0_VALID_MATCH"		"_0_VALID_MATCH"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
-sigren	"_0_WD_VAL"			"_0_WD_VAL"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_0_ANY_WR"			"ANY_WR[0]"			#rtl/ebox.svh rtl/csh.sv 
+sigren	"_0_VALID_MATCH"		"VALID_MATCH[0]"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_0_WD_VAL"			"WD_VAL[0]"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
 sigren	"_14_26_PAR"			"_14_26_PAR"			#rtl/ebox.svh rtl/pma.sv 
 sigren	"_14to26_SEL"			"_14to26_SEL"			#rtl/pma.sv 
 sigren	"_1777_EN"			"_1777_EN"			#rtl/ebox.svh rtl/clk.sv 
 sigren	"_18_BIT_EA"			"_18_BIT_EA"			#rtl/ctl.sv rtl/ebox.svh rtl/mcl.sv 
-sigren	"_1_ANY_WR"			"_1_ANY_WR"			#rtl/ebox.svh rtl/csh.sv 
+sigren	"_1_ANY_WR"			"ANY_WR[1]"			#rtl/ebox.svh rtl/csh.sv 
 sigren	"_1_MHZ"			"_1_MHZ"			#rtl/ebox.svh rtl/pi.sv rtl/mtr.sv 
-sigren	"_1_VALID_MATCH"		"_1_VALID_MATCH"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
-sigren	"_1_WD_VAL"			"_1_WD_VAL"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_1_VALID_MATCH"		"VALID_MATCH[1]"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_1_WD_VAL"			"WD_VAL[1]"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
 sigren	"_23_BIT_EA"			"_23_BIT_EA"			#rtl/ctl.sv rtl/ebox.svh rtl/mcl.sv 
 sigren	"_27_SEL"			"_27_SEL"			#rtl/pma.sv 
 sigren	"_28to31_SEL"			"_28to31_SEL"			#rtl/pma.sv 
-sigren	"_2_ANY_WR"			"_2_ANY_WR"			#rtl/ebox.svh rtl/csh.sv 
-sigren	"_2_VALID_MATCH"		"_2_VALID_MATCH"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
-sigren	"_2_WD_VAL"			"_2_WD_VAL"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_2_ANY_WR"			"ANY_WR[2]"			#rtl/ebox.svh rtl/csh.sv 
+sigren	"_2_VALID_MATCH"		"VALID_MATCH[2]"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_2_WD_VAL"			"WD_VAL[2]"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
 sigren	"_32to33_SEL"			"_32to33_SEL"			#rtl/pma.sv 
 sigren	"_34to35_SEL"			"_34to35_SEL"			#rtl/pma.sv 
-sigren	"_3_ANY_WR"			"_3_ANY_WR"			#rtl/ebox.svh rtl/csh.sv 
-sigren	"_3_VALID_MATCH"		"_3_VALID_MATCH"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
-sigren	"_3_WD_VAL"			"_3_WD_VAL"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_3_ANY_WR"			"ANY_WR[3]"			#rtl/ebox.svh rtl/csh.sv 
+sigren	"_3_VALID_MATCH"		"VALID_MATCH[3]"		#rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
+sigren	"_3_WD_VAL"			"WD_VAL[3]"			#rtl/mbx.sv rtl/ebox.svh rtl/chx.sv rtl/csh.sv 
 sigren	"_EBOX_SVH_"			"_EBOX_SVH_"			#rtl/ebox.svh 
 sigren	"_ON"				"_ON"				#rtl/pi.sv 
 sigren	"_TIME"				"_TIME"				#rtl/ebox.svh rtl/clk.sv rtl/crm.sv rtl/mtr.sv 

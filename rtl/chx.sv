@@ -5,18 +5,18 @@ module chx(iCSH CSH,
 
   // XXX temporary
   initial begin
-    CSH._0_WD_VAL = '0;
-    CSH._1_WD_VAL = '0;
-    CSH._2_WD_VAL = '0;
-    CSH._3_WD_VAL = '0;
+    CSH.WD_VAL[0] = '0;
+    CSH.WD_VAL[1] = '0;
+    CSH.WD_VAL[2] = '0;
+    CSH.WD_VAL[3] = '0;
   end
 
   // From M8549-YF-CHSX cache substitute
   always_comb begin
-    CSH._0_VALID_MATCH = '0;
-    CSH._1_VALID_MATCH = '0;
-    CSH._2_VALID_MATCH = '0;
-    CSH._3_VALID_MATCH = '0;
+    CSH.VALID_MATCH[0] = '0;
+    CSH.VALID_MATCH[1] = '0;
+    CSH.VALID_MATCH[2] = '0;
+    CSH.VALID_MATCH[3] = '0;
     CSH.ADR_PAR_BAD = '0;
   end
 endmodule // chx
