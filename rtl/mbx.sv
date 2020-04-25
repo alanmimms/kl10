@@ -22,7 +22,7 @@ module mbx(iAPR APR,
 
   bit clk;
   bit E_CORE_RD_RQ, EBOX_DIAG_CYC, C_DIR_PAR_ERR, ANY_VAL_HOLD, READY_TO_GO;
-  bit CSH_WD_0_VAL, CSH_WD_1_VAL, CSH_WD_2_VAL, CSH_WD_3_VAL;
+  bit CSH_WD_VAL[0], CSH_WD_VAL[1], CSH_WD_VAL[2], CSH_WD_VAL[3];
   bit EBOX_PAGED, CCA_CYC_DONE, RESET, CSH_CCA_CYC, CSH_CCA_ONE_PAGE;
   bit CCA_HOLD_ADR, MB_WR_RQ_ANY, MB_WR_RQ_P1, MB_WR_RQ_P2, CTOMB_LOAD;
   bit MB_WR_RQ_CLR, MB_WR_RQ_CLR_FF, MB_SEL_HOLD_FF_IN;
@@ -56,10 +56,10 @@ module mbx(iAPR APR,
                           MBX.CCA_ALL_PAGES_CYC |
                           ~CON.CACHE_LOOK_EN |
                           C_DIR_PAR_ERR;
-    CSH_WD_0_VAL = ANY_VAL_HOLD & e77SR[0];
-    CSH_WD_1_VAL = ANY_VAL_HOLD & e77SR[1];
-    CSH_WD_2_VAL = ANY_VAL_HOLD & e77SR[2];
-    CSH_WD_3_VAL = ANY_VAL_HOLD & e77SR[3];
+    CSH_WD_VAL[0] = ANY_VAL_HOLD & e77SR[0];
+    CSH_WD_VAL[1] = ANY_VAL_HOLD & e77SR[1];
+    CSH_WD_VAL[2] = ANY_VAL_HOLD & e77SR[2];
+    CSH_WD_VAL[3] = ANY_VAL_HOLD & e77SR[3];
     READY_TO_GO = CSH.READY_TO_GO;
     EBOX_PAGED = PMA.EBOX_PAGED;
     MBX.CCA_INVAL_T4 = CSH.CCA_INVAL_T4;
@@ -85,7 +85,7 @@ module mbx(iAPR APR,
   end
 
   USR4 e77(.S0('0),
-           .D({CSH._0_WD_VAL, CSH._1_WD_VAL, CSH._2_WD_VAL, CSH._3_WD_VAL}),
+           .D({CSH.WD_VAL[0], CSH.WD_VAL[1], CSH.WD_VAL[2], CSH.WD_VAL[3]}),
            .S3('0),
            .SEL({2{ANY_VAL_HOLD}}),
            .Q(e77SR),
@@ -338,16 +338,16 @@ module mbx(iAPR APR,
 
     MBX.RQ_IN[0] = ~PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[0] |
-                   ~CSH_WD_0_VAL & WD_NEEDED[0] & RD_NON_VAL_WDS;
+                   ~CSH_WD_VAL[0] & WD_NEEDED[0] & RD_NON_VAL_WDS;
     MBX.RQ_IN[1] = ~PMA.PA[34] & PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[1] |
-                   ~CSH_WD_1_VAL & WD_NEEDED[1] & RD_NON_VAL_WDS;
+                   ~CSH_WD_VAL[1] & WD_NEEDED[1] & RD_NON_VAL_WDS;
     MBX.RQ_IN[2] = PMA.PA[34] & ~PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[2] |
-                   ~CSH_WD_2_VAL & WD_NEEDED[2] & RD_NON_VAL_WDS;
+                   ~CSH_WD_VAL[2] & WD_NEEDED[2] & RD_NON_VAL_WDS;
     MBX.RQ_IN[3] = PMA.PA[34] & PMA.PA[35] & ONE_WORD_RD |
                    WR_WDS_IN_MB & MB_WR_RQ[3] |
-                   ~CSH_WD_3_VAL & WD_NEEDED[3] & RD_NON_VAL_WDS;
+                   ~CSH_WD_VAL[3] & WD_NEEDED[3] & RD_NON_VAL_WDS;
     C_DIR_PAR_ERR = APR.C_DIR_P_ERR | e75q15;
 
     MBX.MEM_RD_RQ_IN = E_CORE_RD_RQ | ONE_WORD_RD | RD_NON_VAL_WDS;
