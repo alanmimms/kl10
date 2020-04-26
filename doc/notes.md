@@ -200,3 +200,8 @@ Designation   Designation   Backplane    Model
   * On MBZ4 CORE_BUSY is on <EA1> CORE BUSY A H which is is locally
     equivalent to MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.
   * On MBZ6 is a reference to MBZ4 CORE BUSY A L.
+
+
+# Manual review TODO
+* `MBOX.MEM_TO_C_EN` and `MBX.MEM_TO_C_EN` are separate. See MBC3 C2 and A2.
+    * Resolved in: MBC, MBX.
