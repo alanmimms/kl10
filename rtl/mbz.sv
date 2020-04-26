@@ -262,8 +262,8 @@ module mbz(iAPR APR,
   end
 
   always_comb begin
-    MEM_RD_RQ = MBX.MEM_RD_RQ;
-    MEM_WR_RQ = MBX.MEM_WR_RQ;
+    MEM_RD_RQ = MBOX.MEM_RD_RQ;
+    MEM_WR_RQ = MBOX.MEM_WR_RQ;
     NXM_T6comma7 = NXM_T6 | e25q15;
     // <EA1> CORE BUSY A H on MBZ4 A5.
     // Same signal drives MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.

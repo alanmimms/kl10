@@ -122,11 +122,11 @@ module mbx(iAPR APR,
                        (MB_WR_RQ_P2 | CHAN_READ);
     MBOX.MB_SEL_1_EN = (CCL.CH_MB_SEL[1] | ~CHAN_READ) &
                        (MB_WR_RQ_P1 | CHAN_READ);
-    MBX.MB_SEL_HOLD = (~MBOX.ACKN_PULSE | MBX.MEM_RD_RQ) &
+    MBX.MB_SEL_HOLD = (~MBOX.ACKN_PULSE | MBOX.MEM_RD_RQ) &
                       MB_SEL_HOLD_FF &
                       (~SBUS_DIAG_2 & ~RESET) &
                       // -MBX3 CORE BUSY 1A H on MBX2 A3.
-                      (MBX.MEM_RD_RQ | ~CORE_DATA_VALID | ~CORE_BUSY);
+                      (MBOX.MEM_RD_RQ | ~CORE_DATA_VALID | ~CORE_BUSY);
     CHAN_READ = MBOX.CHAN_READ;
   end
 
@@ -248,7 +248,7 @@ module mbx(iAPR APR,
     // We drive MBX3 CORE BUSY 1A L and MBX3 CORE BUSY 1A H from that.
     CORE_BUSY = MBOX.CORE_BUSY;
     EBOX_DIAG_CYC = PMA.CSH_EBOX_CYC & APR.EBOX_SBUS_DIAG;
-    MBOX.MEM_DATA_TO_MEM = MBC.MEM_START & ~MBX.MEM_RD_RQ |
+    MBOX.MEM_DATA_TO_MEM = MBC.MEM_START & ~MBOX.MEM_RD_RQ |
                            SBUS_DIAG_0 & ~SBUS_DIAG_2 |
                            // MBX3 CORE BUSY 1A H on MBX3 A7.
                            CORE_BUSY;
@@ -353,7 +353,7 @@ module mbx(iAPR APR,
     MBX.MEM_WR_RQ_IN = MBX.CACHE_TO_MB_T4 | MBX.CHAN_WR_CYC |
                        ONE_WORD_RD & MCL.VMA_PAUSE;
     MBX.MB_REQ_IN = MBOX.MB_REQ_HOLD & ~CSH.MB_CYC & MB_REQ_ALLOW & ~MBC.INH_1ST_MB_REQ;
-    MBOX.MEM_TO_C_EN = CSH.MB_CYC | MBOX.MEM_TO_C_DIAG_EN;
+    MBX.MEM_TO_C_EN = CSH.MB_CYC | MBOX.MEM_TO_C_DIAG_EN;
   end
 
   always_ff @(posedge clk) begin
@@ -403,7 +403,7 @@ module mbx(iAPR APR,
 
   mux e30(.en(DIAG_EN),
           .sel(DIAG),
-          .d({~MBOX.MEM_TO_C_EN, ~MBOX.MEM_DIAG, MBX.MEM_RD_RQ_IN, MBOX.MEM_TO_C_SEL[1],
+          .d({~MBX.MEM_TO_C_EN, ~MBOX.MEM_DIAG, MBX.MEM_RD_RQ_IN, MBOX.MEM_TO_C_SEL[1],
               MBOX.MEM_TO_C_SEL[0], MBX.MEM_WR_RQ_IN, MBX.REFILL_HOLD, MBX.RQ_IN[0]}),
           .q(MBX.EBUSdriver.data[34]));
 

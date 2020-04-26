@@ -1,3 +1,4 @@
+// 04-25-2020: Manually compared with schematics (and found a few problems).
 `timescale 1ns/1ns
 `include "ebox.svh"
 
@@ -26,7 +27,6 @@ module csh(iAPR APR,
   bit MB_REQ, CHAN_REQ_EN, CYC_TYPE_HOLD, WRITEBACK_T2;
   bit EBOX_REQ_EN, NON_EBOX_REQ_GRANT;
   bit CACHE_IDLE_IN_A, CACHE_IDLE_IN_B, CACHE_IDLE_IN_C, CACHE_IDLE_IN_D, CACHE_IDLE_IN;
-  bit PHASE_CHANGE_COMING;
   bit EBOX_T0, EBOX_T1, EBOX_T2, PGRF_CYC, RESET, DATA_DLY_1;
   bit MBOX_RESP, EBOX_RESTART, SBUS_DIAG_3;
   bit EBOX_MAP, MAP_PROBLEM, PAGE_FAIL_T2;
@@ -67,7 +67,7 @@ module csh(iAPR APR,
     CACHE_IDLE_IN_A = PMA.CSH_WRITEBACK_CYC & MBX.CACHE_TO_MB_DONE |
                       ~CSH.READY_TO_GO & CACHE_IDLE |
                       MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
-                      CSH.CHAN_RD_T5 & PHASE_CHANGE_COMING;
+                      CSH.CHAN_RD_T5 & MBOX.PHASE_CHANGE_COMING;
 
     CACHE_IDLE_IN_B = EBOX_PAUSE_WRITE & E_T2_MEM_REF & PAG.PAGE_OK |
                       CCA_CYC_DONE | EBOX_WR_T4 |
