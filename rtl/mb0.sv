@@ -80,7 +80,7 @@ module mb0(iCCL CCL,
   endgenerate
 
   always_ff @(posedge clk) begin
-    if (MBX.MB_SEL_HOLD) MB_SEL <= {MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN};
+    if (MBOX.MB_SEL_HOLD) MB_SEL <= {MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN};
   end
 
   always_comb begin
