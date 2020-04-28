@@ -1380,7 +1380,6 @@ interface iMBOX;
   bit CCW_BUF_IN;
   bit CCW_BUF_WR;
   bit CHAN_ADR_PAR_ERR;
-  bit CHAN_CYC;
   bit CHAN_NXM_ERR;
   bit CHAN_PAR_ERR;
   bit CHAN_READ;
@@ -1395,6 +1394,7 @@ interface iMBOX;
   bit CSH_ADR_PAR_BAD;
   bit CSH_ADR_PAR_ERR;
   bit CSH_ADR_WR_PULSE;
+  bit CSH_CHAN_CYC;
   bit CSH_EN_CSH_DATA;
   bit CSH_PAR_BIT_IN;
   bit CSH_SEL_LRU;
@@ -1496,7 +1496,7 @@ interface iCCL;
   bit MIX_MB_SEL;
   bit DATA_REVERSE;
   bit CH_TEST_MB_PAR;
-  bit [0:1] CH_MB_SEL;
+  bit [2:1] CH_MB_SEL;
 endinterface
 
 
