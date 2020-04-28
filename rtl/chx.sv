@@ -5,10 +5,10 @@ module chx(iCSH CSH,
 
   // XXX temporary
   initial begin
-    CSH.WD_VAL[0] = '0;
-    CSH.WD_VAL[1] = '0;
-    CSH.WD_VAL[2] = '0;
-    CSH.WD_VAL[3] = '0;
+    MBOX.CSH_WD_VAL[0] = '0;
+    MBOX.CSH_WD_VAL[1] = '0;
+    MBOX.CSH_WD_VAL[2] = '0;
+    MBOX.CSH_WD_VAL[3] = '0;
   end
 
   // From M8549-YF-CHSX cache substitute
@@ -17,6 +17,6 @@ module chx(iCSH CSH,
     CSH.VALID_MATCH[1] = '0;
     CSH.VALID_MATCH[2] = '0;
     CSH.VALID_MATCH[3] = '0;
-    CSH.ADR_PAR_BAD = '0;
+    MBOX.CSH_ADR_PAR_BAD = '0;
   end
 endmodule // chx

@@ -21,7 +21,7 @@ module mbz(iAPR APR,
            );
 
   bit clk, RESET;
-  bit CHAN_CORE_BUSY_IN, CHAN_CORE_BUSY, CSH_CHAN_CYC, EBOX_DIAG_CYC, CHAN_TO_MEM;
+  bit CHAN_CORE_BUSY_IN, CHAN_CORE_BUSY, EBOX_DIAG_CYC, CHAN_TO_MEM;
   bit MEM_RD_RQ, MEM_WR_RQ, CORE_BUSY_IN, CORE_RD_IN_PROG;
   bit CHAN_STATUS_TO_MB, CHAN_BUF_TO_MB, CHAN_EPT, AR_TO_MB_SEL, MEM_START_C;
   bit NXM_FLG, NXM_CLR_T0, NXM_CLR_DONE, A_CHANGE_COMING, MBOX_NXM_ERR_CLR;
@@ -42,7 +42,7 @@ module mbz(iAPR APR,
   // MBZ1 p.303
   always_comb begin
     clk = CLK.MBZ;
-    CHAN_CORE_BUSY_IN = MBOX.CCL_HOLD_MEM & CHAN_CORE_BUSY | CSH_CHAN_CYC;
+    CHAN_CORE_BUSY_IN = MBOX.CCL_HOLD_MEM & CHAN_CORE_BUSY | MBOX.CSH_CHAN_CYC;
     MBOX.MEM_BUSY = MEM_START_C | CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
     MBOX.CSH_EN_CSH_DATA = ~(~EBUS.data[34] & CTL.DIAG_LOAD_FUNC_071 |
                              ~EBUS.data[35] & CTL.DIAG_LOAD_FUNC_071 &
@@ -55,7 +55,7 @@ module mbz(iAPR APR,
     CHAN_EPT = CCL.CHAN_EPT;
     AR_TO_MB_SEL = PMA.CSH_EBOX_CYC & APR.EBOX_SBUS_DIAG &
                    ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK |
-                   ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK & MBOX.E_CACHE_WR_CYC;
+                   ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK & CSH.E_CACHE_WR_CYC;
     EBOX_DIAG_CYC = AR_TO_MB_SEL;
     CORE_RD_IN_PROG = ~RESET & MBOX.CORE_RD_IN_PROG;
   end
@@ -69,8 +69,8 @@ module mbz(iAPR APR,
     // <DH2> CORE BUSY L and <DM2> CORE BUSY H latched and driven on MBZ1 D3.
     MBOX.CORE_BUSY <= CHAN_CORE_BUSY | MEM_START_C |
                       CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
-    CHAN_TO_MEM <= CCL.CHAN_TO_MEM & CSH_CHAN_CYC |
-                   ~CSH_CHAN_CYC & CHAN_TO_MEM & ~RESET;
+    CHAN_TO_MEM <= CCL.CHAN_TO_MEM & MBOX.CSH_CHAN_CYC |
+                   ~MBOX.CSH_CHAN_CYC & CHAN_TO_MEM & ~RESET;
     e51q14 <= CORE_RD_IN_PROG;
   end
 
@@ -367,7 +367,7 @@ module mbz(iAPR APR,
                    PAG.PT_PUBLIC};
     MB_TEST_PAR_B_IN = CCL.CH_TEST_MB_PAR |
                        // MBZ4 CORE BUSY A L on MBZ6 A3.
-                       MBX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
+                       MBOX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
   end
 
   bit ignoredE18;

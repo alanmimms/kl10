@@ -66,7 +66,7 @@ module csh(iAPR APR,
 
     CACHE_IDLE_IN_A = PMA.CSH_WRITEBACK_CYC & MBX.CACHE_TO_MB_DONE |
                       ~CSH.READY_TO_GO & CACHE_IDLE |
-                      MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
+                      CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
                       CSH.CHAN_RD_T5 & MBOX.PHASE_CHANGE_COMING;
 
     CACHE_IDLE_IN_B = EBOX_PAUSE_WRITE & E_T2_MEM_REF & PAG.PAGE_OK |
@@ -122,7 +122,7 @@ module csh(iAPR APR,
   always_comb begin
     CSH.MBOX_RESP_IN = E_RD_T2_OK & RD_FOUND |
                        MBOX.A_CHANGE_COMING_IN & SBUS_DIAG_3 |
-                       ~RESET & (MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
+                       ~RESET & (CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
                                  ~EBOX_SYNC_HOLD & DATA_DLY_1 |
                                  MBC.CORE_DATA_VALminus1 & CSH.E_CORE_RD_RQ |
                                  ~E_CORE_RD_COMP & MBOX_RESP & ~EBOX_RESTART) |
@@ -131,7 +131,7 @@ module csh(iAPR APR,
     EBOX_RESTART = MBOX_RESP & CLK.EBOX_SYNC;
     SBUS_DIAG_3 = MBX.SBUS_DIAG_3;
 
-    MBOX.E_CACHE_WR_CYC = MCL.VMA_WRITE & CSH.EBOX_CYC & ~EBOX_READ;
+    CSH.E_CACHE_WR_CYC = MCL.VMA_WRITE & CSH.EBOX_CYC & ~EBOX_READ;
     CSH.EBOX_RETRY_REQ = CSH.EBOX_CYC & WRITEBACK_T1 |
                          EBOX_RETRY_NEXT & ~RESET;
 
@@ -186,7 +186,7 @@ module csh(iAPR APR,
     CSH.ANY_VAL_HOLD_IN = CSH.ADR_READY & ANY_VALID_MATCH |
                           ~CSH.READY_TO_GO & CSH.ANY_VAL_HOLD;
     ANY_WRITTEN_MATCH = |(CSH.VALID_MATCH & CSH.ANY_WR);
-    RD_FOUND = |(CSH.WD_VAL & CSH.VALID_MATCH);
+    RD_FOUND = |(MBOX.CSH_WD_VAL & CSH.VALID_MATCH);
     ANY_VALID_MATCH = |(CSH.VALID_MATCH);
     MB_TEST_PAR_A_IN = DATA_DLY_2 | CSH.PAGE_REFILL_T12 | CACHE_WR_FROM_MEM;
     CSH.MATCH_HOLD_IN[0] = (~ANY_VALID_MATCH | CSH.VALID_MATCH[3] | CSH.VALID_MATCH[2]) &
@@ -253,7 +253,7 @@ module csh(iAPR APR,
     PAGE_FAIL_T3 <= PAGE_FAIL_T2;
 
     DATA_CLR_T4 <= MBC.CSH_DATA_CLR_T3;
-    EBOX_WR_T3 <= DATA_CLR_T4 & MBOX.E_CACHE_WR_CYC |
+    EBOX_WR_T3 <= DATA_CLR_T4 & CSH.E_CACHE_WR_CYC |
                   E_WR_T2 & ANY_VALID_MATCH & PAG.PAGE_OK;
     EBOX_WR_T4 <= EBOX_WR_T4_IN;
     CSH.CLEAR_WR_T0 <= PAG.PAGE_OK & ~ANY_VALID_MATCH & E_WR_T2 & MBX.CACHE_BIT & ~LRU_ANY_WR;
@@ -397,7 +397,7 @@ module csh(iAPR APR,
   mux e71(.en(CTL.DIAG_READ_FUNC_17x),
           .sel(CTL.DIAG[4:6]),
           .d({~CSH.DATA_CLR_DONE, ~CHAN_WR_T5, CSH.USE_HOLD, WRITEBACK_T1,
-              CSH.ADR_PMA_EN, CSH.GATE_VMA_27_33, MBOX.E_CACHE_WR_CYC, CYC_TYPE_HOLD}),
+              CSH.ADR_PMA_EN, CSH.GATE_VMA_27_33, CSH.E_CACHE_WR_CYC, CYC_TYPE_HOLD}),
           .q(CSH.EBUSdriver.data[27]));
 
   mux e73(.en(CTL.DIAG_READ_FUNC_17x),

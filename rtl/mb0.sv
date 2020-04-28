@@ -14,7 +14,7 @@ module mb0(iCCL CCL,
 
   bit clk;
   bit PT_IN_SEL_AR, CH_BUF_MB_SEL;
-  bit [0:1] MEM_TO_C_SEL, MB_SEL;
+  bit [2:1] MEM_TO_C_SEL, MB_SEL;
   bit [0:35] CH_BUF, CH_BUF_IN, MB_IN_A, MB_IN, MB_CH_BUF, CH_REG;
   bit MB_CH_BUF_LOAD, CH_REG_HOLD, MB_IN_EN, CH_BUF_EN, MB_CH_LOAD;
   bit [0:6] CH_BUF_ADR;
