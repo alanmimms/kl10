@@ -1363,7 +1363,6 @@ endinterface
 
 interface iMBOX;
   bit ACKN_PULSE;
-  bit ADR_PAR_ERR;
   bit A_CHANGE_COMING_IN;
   bit CACHE_EXISTS;
   bit CACHE_TO_MB_T4;
@@ -1424,6 +1423,7 @@ interface iMBOX;
   bit MB_SEL_1_EN;
   bit MB_SEL_2_EN;
   bit MB_SEL_HOLD;
+  bit MBOX_ADR_PAR_ERR;
   bit MEM_ACKN_A;
   bit MEM_ACKN_B;
   bit MEM_ADR_PAR;
@@ -1683,17 +1683,17 @@ endinterface
 
 
 interface iPMA;
-  bit CSH_WRITEBACK_CYC;
-  bit PAGE_REFILL_CYC;
-  bit CCA_CRY_OUT;
   bit ADR_PAR;
-  bit _14_26_PAR;
+  bit CCA_CRY_OUT;
   bit CSH_EBOX_CYC;
+  bit CSH_WRITEBACK_CYC;
   bit CYC_TYPE_HOLD;
-  bit [14:35] CCW_CHA;
   bit EBOX_PAGED;
-  bit [14:35] PMA;
+  bit PAGE_REFILL_CYC;
+  bit [14:35] CCW_CHA;
   bit [14:35] PA;
+  bit [14:35] PMA;
+  bit _14_26_PAR;
 endinterface
 
 `endif

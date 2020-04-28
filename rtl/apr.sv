@@ -77,7 +77,7 @@ module apr(iAPR APR,
   `APREvent(clk, 10, MBOX.CSH_ADR_PAR_ERR, C_DIR_P_ERR_EN, C_DIR_P_ERR_IN);
 
   `APRInt(clk, 11, S_ADR_P_ERR_INT_EN, S_ADR_P_ERR_EN_IN);
-  `APREvent(clk, 11, MBOX.ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
+  `APREvent(clk, 11, MBOX.MBOX_ADR_PAR_ERR, S_ADR_P_ERR_EN, S_ADR_P_ERR_IN);
 
   `APRInt(clk, 12, PWR_FAIL_INT_EN, PWR_FAIL_EN_IN);
   `APREvent(clk, 12, PWR_WARN, PWR_FAIL, PWR_FAIL_IN);
@@ -97,7 +97,7 @@ module apr(iAPR APR,
                              SWEEP_DONE & SWEEP_DONE_INT_EN;
   assign APR.WR_BAD_ADR_PAR = ~APR.S_ADR_P_ERR &
                               CON.WR_EVEN_PAR_ADR &
-                              ~MBOX.ADR_PAR_ERR;
+                              ~MBOX.MBOX_ADR_PAR_ERR;
 
   always_ff @(posedge clk) begin
     APR.ANY_EBOX_ERR_FLG <= NXM_ERR_IN | MB_PAR_ERR_IN | S_ADR_P_ERR_IN;
