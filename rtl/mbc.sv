@@ -110,7 +110,7 @@ module mbc(iAPR APR,
 
   mux2x4 e23(.EN('1),
              .SEL({MBX.REFILL_ADR_EN, ~MBC.FIRST_WD_ADR_SEL}),
-             .D0({{2{MBOX.PMA[34]}}, PMA_HOLD[34], MBOX.MB_SEL[0]}),
+             .D0({{2{MBOX.PMA[34]}}, PMA_HOLD[34], MBOX.MB_SEL[2]}),
              .D1({{2{MBOX.PMA[35]}}, PMA_HOLD[35], MBOX.MB_SEL[1]}),
              .B0(MBOX.CACHE_ADR[34]),
              .B1(MBOX.CACHE_ADR[35]));
@@ -199,8 +199,8 @@ module mbc(iAPR APR,
     // MBC5 CORE BUSY B is used on MBC5 D6 p.193.
     // MBC5 CORE BUSY B is driven from MBC5 C7, derived from <EE1> CORE BUSY A H.
     MEM_START_SET = CSH.E_CORE_RD_RQ & ~MBOX.CORE_BUSY |
-                    PMA.CSH_WRITEBACK_CYC            & MBX.CACHE_TO_MB_T4 |
-                    ~CORE_BUSY & MBOX.E_CACHE_WR_CYC & MBX.CACHE_TO_MB_T4 |
+                    PMA.CSH_WRITEBACK_CYC            & MBOX.CACHE_TO_MB_T4 |
+                    ~CORE_BUSY & CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
                     CCL.START_MEM |
                     CSH.CHAN_RD_T5     & ANY_SBUS_RQ_IN |
                     CSH.PAGE_REFILL_T9 & ANY_SBUS_RQ_IN;
@@ -215,8 +215,8 @@ module mbc(iAPR APR,
     CLK_A_PHASE_COMING = MBC.A_PHASE_COMING;
     MBOX.CSH_VAL_WR_DATA = MBOX.MEM_TO_C_EN;
     MBOX.CSH_VAL_SEL_ALL = ~MBOX.MEM_TO_C_EN & ~CSH.CHAN_WR_CACHE;
-    MBOX.CSH_WR_WR_DATA = CSH.DATA_CLR_DONE & MBOX.E_CACHE_WR_CYC;
-    MBOX.CSH_WR_SEL_ALL = MBOX.CSH_WR_WR_DATA & ~CSH.CHAN_WR_CACHE;
+    MBC.CSH_WR_WR_DATA = CSH.DATA_CLR_DONE & CSH.E_CACHE_WR_CYC;
+    MBOX.CSH_WR_SEL_ALL = MBC.CSH_WR_WR_DATA & ~CSH.CHAN_WR_CACHE;
     MBOX.MEM_TO_C_EN = CSH.DATA_CLR_DONE & MBX.MEM_TO_C_EN;
     ANY_SBUS_RQ_IN = |MBX.RQ_IN;
   end
@@ -331,7 +331,7 @@ module mbc(iAPR APR,
   always_comb begin
     MBC.EBUSdriver.driving = CTL.DIAG_READ_FUNC_16x;
     HOLD_MATCH = e56q4 |
-                 CSH.DATA_CLR_DONE & MBOX.E_CACHE_WR_CYC & ~RESET;
+                 CSH.DATA_CLR_DONE & CSH.E_CACHE_WR_CYC & ~RESET;
     MBOX.FORCE_VALID_MATCH[0] = MBOX.CSH_WR_EN[0] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
                                 ~MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
     MBOX.FORCE_VALID_MATCH[1] = MBOX.CSH_WR_EN[1] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
@@ -343,7 +343,7 @@ module mbc(iAPR APR,
   end
 
   always_ff @(posedge clk) begin
-    e56q4 <= MBC.CSH_DATA_CLR_T1 & MBOX.E_CACHE_WR_CYC |
+    e56q4 <= MBC.CSH_DATA_CLR_T1 & CSH.E_CACHE_WR_CYC |
              ~CSH.EBOX_WR_T4_IN & e56q4 & ~RESET;
   end
 
@@ -412,7 +412,7 @@ module mbc(iAPR APR,
           .d({CSH_ADR_WR_PULSE,
               CSH_WR_WR_PULSE,
               ~MBC.A_CHANGE_COMING,
-              MBOX.CSH_WR_WR_DATA,
+              MBC.CSH_WR_WR_DATA,
               MBC.CORE_ADR[34],
               CORE_RD_IN_PROG,
               ~MBC.MEM_START,
@@ -435,7 +435,7 @@ module mbc(iAPR APR,
   always_latch begin
 
     if (HOLD_MATCH) begin
-      e12L = ~MBOX.E_CACHE_WR_CYC ? MATCH_HOLD : CSH.MATCH_HOLD_IN;
+      e12L = ~CSH.E_CACHE_WR_CYC ? MATCH_HOLD : CSH.MATCH_HOLD_IN;
     end
   end
 
