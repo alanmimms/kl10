@@ -118,7 +118,7 @@ module mbx(iAPR APR,
     CSH_TO_MB_WD = (WD_NEEDED & {4{CTOMB_LOAD}} | CSH.WD_WR) &
                    (MBOX.CSH_WD_VAL | {4{MBX.CHAN_WR_CYC}} | CSH.WD_WR);
     MB_SEL_HOLD_FF_IN = ~MB_WR_RQ_CLR_FF & (MB_WR_RQ_ANY | MBOX.MB_SEL_HOLD);
-    MBOX.MB_SEL_2_EN = (CCL.CH_MB_SEL[0] | ~CHAN_READ) &
+    MBOX.MB_SEL_2_EN = (CCL.CH_MB_SEL[2] | ~CHAN_READ) &
                        (MB_WR_RQ_P2 | CHAN_READ);
     MBOX.MB_SEL_1_EN = (CCL.CH_MB_SEL[1] | ~CHAN_READ) &
                        (MB_WR_RQ_P1 | CHAN_READ);
