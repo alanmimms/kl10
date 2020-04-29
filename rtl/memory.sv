@@ -67,6 +67,7 @@ module memPhase(input CROBAR,
   enum {
         mphIDLE,
         mphACK1,
+        mphACK2,
         mphREAD1,
         mphSHIFT,
         mphWAITforIDLE
@@ -86,7 +87,8 @@ module memPhase(input CROBAR,
     mphIDLE: if (START) next = SBUS.RQ[0] ? mphACK1 : mphSHIFT;
                 // else stay
 
-    mphACK1: next = mphREAD1;
+    mphACK1: next = mphACK2;
+    mphACK2: next = mphREAD1;
     mphREAD1: next = mphSHIFT;
     mphWAITforIDLE: next = mphIDLE;
 
