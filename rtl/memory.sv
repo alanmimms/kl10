@@ -24,8 +24,18 @@ module memory(input CROBAR,
   always @(posedge SBUS.START_B) bClk <= '0;
   always @(posedge SBUS.CLK_INT) bClk <= ~bClk;
 
-  memPhase aPhase(CROBAR, aClk, mem, SBUS, SBUS.START_A, SBUS.ACKN_A, SBUS.DATA_VALID_A);
-  memPhase bPhase(CROBAR, bClk, mem, SBUS, SBUS.START_B, SBUS.ACKN_B, SBUS.DATA_VALID_B);
+  memPhase aPhase(.clk(aClk),
+                  .memory(mem),
+                  .START(SBUS.START_A),
+                  .ACKN(SBUS.ACKN_A),
+                  .VALID(SBUS.DATA_VALID_A),
+                  .*);
+  memPhase bPhase(.clk(bClk),
+                  .memory(mem),
+                  .START(SBUS.START_B),
+                  .ACKN(SBUS.ACKN_B),
+                  .VALID(SBUS.DATA_VALID_B),
+                  .*);
 `else
 `endif
 endmodule
