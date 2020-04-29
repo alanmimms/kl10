@@ -14,13 +14,13 @@
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
       <ZoomEndTime time="20000001fs"></ZoomEndTime>
-      <Cursor1Time time="13128000fs"></Cursor1Time>
+      <Cursor1Time time="20000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
       <ValueColumnWidth column_width="97"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="61" />
+   <WVObjectSize size="49" />
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
@@ -167,46 +167,6 @@
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/CSH/E_CORE_RD_RQ">
-      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_OK">
-      <obj_property name="ElementShortName">E_RD_T2_OK</obj_property>
-      <obj_property name="ObjectShortName">E_RD_T2_OK</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_CORE_OK">
-      <obj_property name="ElementShortName">E_RD_T2_CORE_OK</obj_property>
-      <obj_property name="ObjectShortName">E_RD_T2_CORE_OK</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbz0/CORE_BUSY_IN">
-      <obj_property name="ElementShortName">CORE_BUSY_IN</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY_IN</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbz0/CORE_RD_IN_PROG">
-      <obj_property name="ElementShortName">CORE_RD_IN_PROG</obj_property>
-      <obj_property name="ObjectShortName">CORE_RD_IN_PROG</obj_property>
-      <obj_property name="CustomSignalColor">#FF0000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbz0/MEM_START_C">
-      <obj_property name="ElementShortName">MEM_START_C</obj_property>
-      <obj_property name="ObjectShortName">MEM_START_C</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbz0/CHAN_CORE_BUSY">
-      <obj_property name="ElementShortName">CHAN_CORE_BUSY</obj_property>
-      <obj_property name="ObjectShortName">CHAN_CORE_BUSY</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/MBOX/MB_REQ_HOLD">
-      <obj_property name="ElementShortName">MB_REQ_HOLD</obj_property>
-      <obj_property name="ObjectShortName">MB_REQ_HOLD</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/MBOX/CORE_BUSY">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">CORE_BUSY</obj_property>
@@ -218,18 +178,6 @@
       <obj_property name="ElementShortName">CORE_BUSY</obj_property>
       <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
       <obj_property name="label">mbc0.CORE_BUSY</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/SBUS/START_A">
-      <obj_property name="ElementShortName">START_A</obj_property>
-      <obj_property name="ObjectShortName">START_A</obj_property>
-      <obj_property name="CustomSignalColor">#FFA500</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/SBUS/START_B">
-      <obj_property name="ElementShortName">START_B</obj_property>
-      <obj_property name="ObjectShortName">START_B</obj_property>
-      <obj_property name="CustomSignalColor">#FFA500</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/SBUS/RQ">
       <obj_property name="DisplayName">label</obj_property>
@@ -298,21 +246,21 @@
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CSH/E_CORE_RD_RQ">
+      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
+      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_CORE_OK">
+      <obj_property name="ElementShortName">E_RD_T2_CORE_OK</obj_property>
+      <obj_property name="ObjectShortName">E_RD_T2_CORE_OK</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBC/A_CHANGE_COMING">
       <obj_property name="ElementShortName">A_CHANGE_COMING</obj_property>
       <obj_property name="ObjectShortName">A_CHANGE_COMING</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbc0/LAST_ACKN_SEEN">
-      <obj_property name="ElementShortName">LAST_ACKN_SEEN</obj_property>
-      <obj_property name="ObjectShortName">LAST_ACKN_SEEN</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbc0/LAST_ACKN">
-      <obj_property name="ElementShortName">LAST_ACKN</obj_property>
-      <obj_property name="ObjectShortName">LAST_ACKN</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
@@ -328,45 +276,38 @@
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/CSH/E_CORE_RD_RQ">
-      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+   <wvobject type="array" fp_name="/top/mbox0/mbc0/RQ_A">
+      <obj_property name="ElementShortName">RQ_A[0:3]</obj_property>
+      <obj_property name="ObjectShortName">RQ_A[0:3]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/LAST_ACKN">
+      <obj_property name="ElementShortName">LAST_ACKN</obj_property>
+      <obj_property name="ObjectShortName">LAST_ACKN</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/csh0/E_RD_T2_CORE_OK">
-      <obj_property name="ElementShortName">E_RD_T2_CORE_OK</obj_property>
-      <obj_property name="ObjectShortName">E_RD_T2_CORE_OK</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/LAST_ACKN_SEEN">
+      <obj_property name="ElementShortName">LAST_ACKN_SEEN</obj_property>
+      <obj_property name="ObjectShortName">LAST_ACKN_SEEN</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/MBOX/CORE_BUSY">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
-      <obj_property name="label">MBOX.CORE_BUSY</obj_property>
+   <wvobject type="logic" fp_name="/top/MBOX/PHASE_CHANGE_COMING">
+      <obj_property name="ElementShortName">PHASE_CHANGE_COMING</obj_property>
+      <obj_property name="ObjectShortName">PHASE_CHANGE_COMING</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbc0/CORE_BUSY">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
-      <obj_property name="label">mbc0.CORE_BUSY</obj_property>
+   <wvobject type="logic" fp_name="/top/SBUS/START_A">
+      <obj_property name="ElementShortName">START_A</obj_property>
+      <obj_property name="ObjectShortName">START_A</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbz0/CORE_BUSY_IN">
-      <obj_property name="ElementShortName">CORE_BUSY_IN</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY_IN</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/MBC/CORE_DATA_VALID">
-      <obj_property name="ElementShortName">CORE_DATA_VALID</obj_property>
-      <obj_property name="ObjectShortName">CORE_DATA_VALID</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/PMA/CSH_WRITEBACK_CYC">
-      <obj_property name="ElementShortName">CSH_WRITEBACK_CYC</obj_property>
-      <obj_property name="ObjectShortName">CSH_WRITEBACK_CYC</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CSH/PAGE_REFILL_T9">
-      <obj_property name="ElementShortName">PAGE_REFILL_T9</obj_property>
-      <obj_property name="ObjectShortName">PAGE_REFILL_T9</obj_property>
+   <wvobject type="logic" fp_name="/top/SBUS/START_B">
+      <obj_property name="ElementShortName">START_B</obj_property>
+      <obj_property name="ObjectShortName">START_B</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/mbc0/ANY_SBUS_RQ_IN">
       <obj_property name="ElementShortName">ANY_SBUS_RQ_IN</obj_property>
