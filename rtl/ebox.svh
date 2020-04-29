@@ -1604,6 +1604,7 @@ interface iMBC;
   bit A_CHANGE_COMING;
   bit A_PHASE_COMING;
   bit B_CHANGE_COMING;
+  bit CORE_BUSY;
   bit CORE_DATA_VALID;
   bit CORE_DATA_VALminus1;
   bit CORE_DATA_VALminus2;
