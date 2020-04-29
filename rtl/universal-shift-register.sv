@@ -13,7 +13,7 @@ module USR4(input RESET,
     if (RESET == 1'b1)
       Q <= '0;
     else
-      case (SEL)
+      unique case (SEL)
       2'b00: Q <= D;              // LOAD
       2'b01: Q <= {S0, Q[0:2]};   // SHIFT S0 in
       2'b10: Q <= {Q[1:3], S3};   // SHIFT S3 in

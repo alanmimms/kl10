@@ -14,7 +14,7 @@ module mux2x4
 
     if (EN) begin
 
-      case (SEL)
+      unique case (SEL)
       2'b00: begin B0 <= D0[0]; B1 <= D1[0]; end
       2'b01: begin B0 <= D0[1]; B1 <= D1[1]; end
       2'b10: begin B0 <= D0[2]; B1 <= D1[2]; end
