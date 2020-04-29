@@ -289,6 +289,7 @@ module mbc(iAPR APR,
                  CORE_RD_IN_PROG & ~MBC.CORE_DATA_VALID & RQ_0B & INIT_COMP |
                  ~INIT_COMP & MEM_START_RD}),
            .D({2'b00, ADR}),
+           .COUT(),
            .Q({ignoredE76, MBC.CORE_ADR}));
 
   USR4 e57(.S0('0),
