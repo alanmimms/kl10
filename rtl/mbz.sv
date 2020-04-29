@@ -165,7 +165,7 @@ module mbz(iAPR APR,
                   ~MBOX.MEM_TO_C_DIAG_EN,
                   ~MBOX.CHAN_READ,
                   EBUS_REG[19]}),
-             .D1({MBOX.MB_IN_SEL[2:0],
+             .D1({MBOX.MB_IN_SEL,
                   EBUS_REG[20]}),
              .B0(EBUS.data[19]),
              .B1(EBUS.data[20]));
@@ -304,7 +304,7 @@ module mbz(iAPR APR,
     NXM_T6comma7 = NXM_T6 | e25q15;
     // <EA1> CORE BUSY A H on MBZ4 A5.
     // Same signal drives MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.
-    CORE_BUSY_IN = NXM_T2 | NXM_T3 | NXM_T4 | NXM_T5 | MBOX.CORE_BUSY;
+    CORE_BUSY_IN = NXM_T2 | NXM_T3 | NXM_T4 | NXM_T5 | MBC.CORE_BUSY;
     LOAD_MB_MAGIC = ~ERR_HOLD & NXM_T6comma7 & NXM_FLG |
                     MB_TEST_PAR_A_IN & ~HOLD_ERR_REG |
                     MB_TEST_PAR_B_IN & ~HOLD_ERR_REG |

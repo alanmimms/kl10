@@ -219,6 +219,7 @@ module mbc(iAPR APR,
     MBOX.CSH_WR_SEL_ALL = MBC.CSH_WR_WR_DATA & ~CSH.CHAN_WR_CACHE;
     MBOX.MEM_TO_C_EN = CSH.DATA_CLR_DONE & MBX.MEM_TO_C_EN;
     ANY_SBUS_RQ_IN = |MBX.RQ_IN;
+    MBC.CORE_BUSY = CORE_BUSY;
   end
 
   always_ff @(posedge clk) begin
@@ -237,6 +238,7 @@ module mbc(iAPR APR,
     MBOX.DATA_VALID_B_OUT <= (MBOX.DATA_VALID_B_OUT | MBC.B_CHANGE_COMING) &
                               (~MBC.B_CHANGE_COMING |
                                MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF);
+    // This drives <EE1> CORE BUSY A H as well.
     CORE_BUSY <= (CORE_BUSY & ~MBC.CORE_DATA_VALID |
                   MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
                  ~RESET;
