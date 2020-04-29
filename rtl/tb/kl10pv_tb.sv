@@ -257,7 +257,7 @@ module kl10pv_tb(iAPR APR,
       ebox0.apr0.MB_PAR_ERR_EN = '0;
       MBOX.CSH_ADR_PAR_ERR = '0;
       ebox0.apr0.C_DIR_P_ERR_EN = '0;
-      ebox0.apr0.MBOX.ADR_PAR_ERR = '0;
+      ebox0.apr0.MBOX.MBOX_ADR_PAR_ERR = '0;
       ebox0.apr0.S_ADR_P_ERR_EN = '0;
 
       // power fail, sweep done
