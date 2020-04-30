@@ -7,6 +7,7 @@ module sim_mem
    input [0:WIDTH-1] din,
    output bit [0:WIDTH-1] dout,
    input [0:$clog2(SIZE)-1] addr,
+   input oe,                    // All enabled or not - no bytes for oe
    input [0:NBYTES-1] wea);
 
   localparam BYTE_WIDTH = WIDTH / NBYTES;
@@ -30,5 +31,5 @@ module sim_mem
   endgenerate
 
   // Read data follows address unclocked.
-  always_comb dout = WIDTH'(mem[addr]);
+  always_comb dout = oe ? WIDTH'(mem[addr]) : 'z;
 endmodule

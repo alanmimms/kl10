@@ -54,7 +54,8 @@ module edp(iAPR APR,
    .din(EDP.AR),
    .dout(EDP.FM),
    .addr({APR.FM_BLOCK, APR.FM_ADR}),
-   .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
+   .oe('1),
+ .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.

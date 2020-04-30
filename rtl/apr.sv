@@ -140,6 +140,7 @@ module apr(iAPR APR,
      .din({SHM.AR_EXTENDED, SHM.AR_PAR_ODD ^ SHM.AR_EXTENDED}),
      .dout({APR.FM_EXTENDED, fm36XORin}),
      .addr({APR.FM_BLOCK, APR.FM_ADR}),
+     .oe('1),
      .wea(~clk & CON.FM_WRITE_PAR & APR.SPARE)); // ??? WTF ???
 `else
   fm_ext_mem fm_ext(.addra({APR.FM_BLOCK, APR.FM_ADR}),
