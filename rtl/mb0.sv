@@ -1,3 +1,4 @@
+// Schematic review: MB01, MB02
 `timescale 1ns/1ns
 `include "ebox.svh"
 // M8517 MB0 memory buffer board
@@ -30,7 +31,7 @@ module mb0(iCCL CCL,
 
     // e61, e55, e27, e50, e41, e22, e21, e16
     if (MBOX.MEM_TO_C_EN) begin
-      case (MEM_TO_C_SEL)
+      unique case (MEM_TO_C_SEL)
       2'b00: MBOX.MEM_TO_CACHE = EDP.AR;
       2'b01: MBOX.MEM_TO_CACHE = MBOX.MB;
       2'b10: MBOX.MEM_TO_CACHE = MBOX.MEM_DATA_IN;
@@ -41,34 +42,39 @@ module mb0(iCCL CCL,
     // e50, e16
     MBOX.MB_PAR_ODD = ^MBOX.MB;
 
-    // e65, e40, e26
     PT_IN_SEL_AR = ~CON.KI10_PAGING_MODE;
+
+    // e65, e40, e26
     PAG.PT_IN = PT_IN_SEL_AR ? EDP.AR : MBOX.MB;
   end
 
   genvar k;
   generate
 
-    for (k = 0; k < 36; k += 4) begin: MB01
-      USR4 chBufMux(.RESET('0),
-                    .S0('0),
-                    .D(CH_BUF[k+0:k+3]),
-                    .S3('0),
-                    .CLK(clk),
-                    .Q(MBOX.CBUS_D_TE[k+0:k+3]),
-                    .SEL({2{MBOX.CBUS_OUT_HOLD}}));
+    for (k = 0; k < 36; k += 4) begin: mb1
+      USR4 chBuf(.RESET('0),
+                 .S0('0),
+                 .D(CH_BUF[k+0:k+3]),
+                 .S3('0),
+                 .CLK(clk),
+                 .Q(MBOX.CBUS_D_TE[k+0:k+3]),
+                 .SEL({2{MBOX.CBUS_OUT_HOLD}}));
     end
   endgenerate
 
 
   // MB02 p.75
+  //
+  // Instead of building three instances of boards each with 1/3 of
+  // the logic and storage, we just do all four MBs at full 36-bit
+  // width, building them up out of USR4 instances.
   genvar mbNum;
   generate
 
-    for (mbNum = 0; mbNum < 4; ++mbNum) begin: mbArray
+    for (mbNum = 0; mbNum < 4; ++mbNum) begin: mb2
 
       for (k = 0; k < 36; k += 4) begin: mbMux
-        USR4 m(.RESET('0),
+        USR4 r(.RESET('0),
                .S0('0),
                .D(MBOX.MB[k+0:k+3]),
                .S3('0),
@@ -79,9 +85,15 @@ module mb0(iCCL CCL,
     end
   endgenerate
 
-  always_ff @(posedge clk) begin
-    if (MBOX.MB_SEL_HOLD) MB_SEL <= {MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN};
-  end
+  // e76
+  bit [2:3] mbSelUnused;
+  USR4 mbSel(.RESET('0),
+             .S0('0),
+             .D({MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN, 2'b00}),
+             .S3('0),
+             .SEL({2{MBOX.MB_SEL_HOLD}}),
+             .CLK(clk),
+             .Q({MB_SEL, mbSelUnused}));
 
   always_comb begin
     MB_HOLD[0] = MBOX.MB0_HOLD_IN;
@@ -90,7 +102,7 @@ module mb0(iCCL CCL,
     MB_HOLD[3] = MBOX.MB3_HOLD_IN;
 
     // e71, e52, e78, e8, e28, e3
-    case (MB_SEL)
+    unique case (MB_SEL)
     2'b00: MBOX.MB = MBN[0];
     2'b01: MBOX.MB = MBN[1];
     2'b10: MBOX.MB = MBN[2];
@@ -116,6 +128,7 @@ module mb0(iCCL CCL,
      .din(CH_BUF_IN),
      .dout(CH_BUF),
      .addr(CH_BUF_ADR),
+     .oe(CH_BUF_EN),
      .wea(MBOX.CH_BUF_WR));
 `else
   chBuf_mem chBuf(.addra(CH_BUF_ADR),
