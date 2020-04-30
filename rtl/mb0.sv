@@ -1,4 +1,4 @@
-// Schematic review: MB01, MB02
+// Schematic review: MB01, MB02, MB03, MB04, MB05
 `timescale 1ns/1ns
 `include "ebox.svh"
 // M8517 MB0 memory buffer board
@@ -17,7 +17,7 @@ module mb0(iCCL CCL,
   bit PT_IN_SEL_AR, CH_BUF_MB_SEL;
   bit [2:1] MEM_TO_C_SEL, MB_SEL;
   bit [0:35] CH_BUF, CH_BUF_IN, MB_IN_A, MB_IN, MB_CH_BUF, CH_REG;
-  bit MB_CH_BUF_LOAD, CH_REG_HOLD, MB_IN_EN, CH_BUF_EN, MB_CH_LOAD;
+  bit MB_CH_BUF_LOAD, CH_REG_HOLD, MB_IN_EN, CH_BUF_EN;
   bit [0:6] CH_BUF_ADR;
 
   // This replaces [0:35] for MB0, MB1, MB2, and MB3 with an easy to
@@ -145,11 +145,16 @@ module mb0(iCCL CCL,
   always_comb begin
     clk = CLK.MB;
     MB_IN_EN = ~MBOX.NXM_ANY;
+
+    // e57, e38, e19
     MB_IN_A = MBOX.MB_IN_SEL[2] ? MB_CH_BUF : EDP.AR;
+
+    // e66, e37, e12, e70, e31, e11
     MBOX.CCW_MIX = CCL.MIX_MB_SEL ? MBOX.MB : ccwBuf[MBOX.CCW_BUF_ADR];
 
+    // e62 e67, e36, e45, e13, e18
     if (MB_IN_EN) begin
-      case (MBOX.MB_IN_SEL[0:1])
+      unique case (MBOX.MB_IN_SEL[0:1])
       2'b00: MB_IN = MBOX.CACHE_DATA;
       2'b01: MB_IN = MB_IN_A;
       2'b10: MB_IN = MBOX.MEM_DATA_IN;
@@ -158,6 +163,7 @@ module mb0(iCCL CCL,
     end
   end
 
+  // e70, e31, e11
   always_ff @(posedge MBOX.CCW_BUF_WR) begin
     ccwBuf[MBOX.CCW_BUF_ADR] = MBOX.CCW_BUF_IN;
   end
@@ -166,6 +172,7 @@ module mb0(iCCL CCL,
   // MB05 p.78
   always_latch begin
 
+    // e24, e29, e23
     if (CH_REG_HOLD) begin
       CH_REG <= MBOX.CH_REVERSE ?
                 {MBOX.CBUS_D_RE[18:35], MBOX.CBUS_D_RE[0:17]} :
@@ -178,11 +185,13 @@ module mb0(iCCL CCL,
   end
 
   always_ff @(posedge clk) begin
+    // e74, e48, e10
     CH_BUF_ADR <= CRC.CH_BUF_ADR;
     CH_BUF_EN <= CCL.CH_BUF_EN;
     CH_REG_HOLD <= ~MBOX.CH_T2;
 
-    if (MB_CH_LOAD) begin
+    // e58, e43, e14
+    if (MB_CH_BUF_LOAD) begin
       MB_CH_BUF <= CH_BUF;
     end
   end
