@@ -43,6 +43,7 @@ module pag(iAPR APR,
      .din(PAG.PT_IN),
      .dout(ptOut),
      .addr(PAG.PT_ADR[18:25]),
+     .oe('1),
      .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 
   sim_mem
@@ -52,6 +53,7 @@ module pag(iAPR APR,
      .din({MCL.VMA_USER, VMA.VMA[13:17]}),
      .dout(ptDirOut[12:17]),
      .addr(PAG.PT_ADR[18:24]),
+     .oe('1),
      .wea(ptDirWEA));
 
   // Two rightmost bits have unique CE and .addr[6].
@@ -62,6 +64,7 @@ module pag(iAPR APR,
      .din(PT_DIR_CLR),
      .dout(ptDirOut[18]),
      .addr({PAG.PT_ADR[18:23], 1'b0}),
+     .oe('1),
      .wea(ptDirWEA & (~PAG.PT_ADR[24] | PT_DIR_CLR)));
 
   sim_mem
@@ -71,6 +74,7 @@ module pag(iAPR APR,
      .din(PT_DIR_CLR),
      .dout(ptDirOut[19]),
      .addr({PAG.PT_ADR[18:23], 1'b0}),
+     .oe('1),
      .wea(ptDirWEA & (PAG.PT_ADR[24] & PT_DIR_CLR)));
 
   sim_mem
@@ -83,6 +87,7 @@ module pag(iAPR APR,
            (SHM.AR_PAR_ODD | CON.KI10_PAGING_MODE)}),
      .dout({PT_PAR_LEFT, PT_PAR_RIGHT}),
      .addr(PAG.PT_ADR[18:25]),
+     .oe('1),
      .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 
 `else

@@ -41,6 +41,7 @@ module ir(iIR IR,
      .din('0),                    // XXX
      .dout(DRAMdata),
      .addr(DRADR),
+     .oe('1),
      .wea('0));                   // XXX
 `else
   dram_mem dram(.clka(IR_CLK),
