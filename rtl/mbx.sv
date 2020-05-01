@@ -28,7 +28,7 @@ module mbx(iAPR APR,
   bit MB_WR_RQ_CLR, MB_WR_RQ_CLR_FF, MB_SEL_HOLD_FF_IN;
   bit MB_REQ_ALLOW, MB_REQ_ALLOW_FF, CORE_BUSY;
   bit [0:3] MB_WR_RQ, CTOMB_WD_RQ, CSH_TO_MB_WD, WD_NEEDED, CSH_WD_VAL;
-  bit [0:7] CORE_WD_COMING;     // Larger to drop 4MSBs off E18
+  bit [0:3] CORE_WD_COMING;     // Larger to drop 4MSBs off E18
   bit SBUS_DIAG_0, SBUS_DIAG_1, SBUS_DIAG_2, SBUS_DIAG_3, SBUS_DIAG_CYC;
   bit CSH_CHAN_CYC, CACHE_TO_MB_T1, CACHE_TO_MB_T3, CACHE_TO_MB_CONT;
   bit RD_NON_VAL_WDS, DIAG_EN, CACHE_TO_MB_DONE, MB_SEL_HOLD_FF, ONE_WORD_RD;
@@ -144,10 +144,11 @@ module mbx(iAPR APR,
                         .any(),
                         .q(e33Q));
   
+  bit [4:7] ignoredE18;
   decoder e18(.sel({1'b0, MBC.CORE_ADR}),
               // -MBX3 CORE BUSY 1A L on MBX2 B4.
               .en(~CORE_BUSY & (MBC.CORE_DATA_VALminus2 | CSH.ONE_WORD_WR_T0)),
-              .q(CORE_WD_COMING)); // Only [0:3] is actually used
+              .q({CORE_WD_COMING, ignoredE18}));
   
   bit unusedE12a, unusedE12b;
   USR4 e12(.S0('0),
