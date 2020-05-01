@@ -440,7 +440,7 @@ module clk(input clk,
            .CIN('1),
            .SEL({~CLK.EBOX_CLK_EN, 1'b0}),
            .CLK(CLK.MBOX_CLK),
-           .D(4'b0000),
+           .D('0),
            .COUT(e25COUT),
            .Q(e25Count));
 
@@ -454,7 +454,7 @@ module clk(input clk,
               ~CRAM._TIME[0],
               ~CRAM._TIME[1],
               ~CON.DELAY_REQ,
-              {4{e25COUT}}}),
+              {4{~e25COUT}}}),
           .q(e31B));
 
   always_comb begin
