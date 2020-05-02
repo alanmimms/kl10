@@ -12,35 +12,20 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="20000001fs"></ZoomEndTime>
-      <Cursor1Time time="20000000fs"></Cursor1Time>
+      <ZoomStartTime time="10955334fs"></ZoomStartTime>
+      <ZoomEndTime time="19845335fs"></ZoomEndTime>
+      <Cursor1Time time="12437000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="97"></ValueColumnWidth>
+      <ValueColumnWidth column_width="89"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="42" />
-   <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
-      <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
-      <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/MEM">
-      <obj_property name="ElementShortName">MEM[0:3]</obj_property>
-      <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
-   </wvobject>
+   <WVObjectSize size="60" />
    <wvobject type="logic" fp_name="/top/MCL/VMA_READ">
       <obj_property name="ElementShortName">VMA_READ</obj_property>
       <obj_property name="ObjectShortName">VMA_READ</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/mbox0/mbx0/WD_NEEDED">
-      <obj_property name="ElementShortName">WD_NEEDED[0:3]</obj_property>
-      <obj_property name="ObjectShortName">WD_NEEDED[0:3]</obj_property>
-      <obj_property name="CustomSignalColor">#808000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBC/A_CHANGE_COMING">
       <obj_property name="ElementShortName">A_CHANGE_COMING</obj_property>
@@ -87,6 +72,13 @@
       <obj_property name="ElementShortName">CORE_BUSY</obj_property>
       <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
       <obj_property name="label">mbc0.CORE_BUSY</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/mbox0/mbx0/WD_NEEDED">
+      <obj_property name="ElementShortName">WD_NEEDED[0:3]</obj_property>
+      <obj_property name="ObjectShortName">WD_NEEDED[0:3]</obj_property>
+      <obj_property name="CustomSignalColor">#808000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/SBUS/RQ">
       <obj_property name="DisplayName">label</obj_property>
@@ -242,22 +234,10 @@
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/SBUS/START_B">
-      <obj_property name="ElementShortName">START_B</obj_property>
-      <obj_property name="ObjectShortName">START_B</obj_property>
-      <obj_property name="CustomSignalColor">#FFA500</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/top/SBUS/ACKN_A">
       <obj_property name="ElementShortName">ACKN_A</obj_property>
       <obj_property name="ObjectShortName">ACKN_A</obj_property>
       <obj_property name="CustomSignalColor">#FF0000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/SBUS/ACKN_B">
-      <obj_property name="ElementShortName">ACKN_B</obj_property>
-      <obj_property name="ObjectShortName">ACKN_B</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/SBUS/DATA_VALID_A">
@@ -266,33 +246,104 @@
       <obj_property name="CustomSignalColor">#FF0000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/SBUS/DATA_VALID_B">
-      <obj_property name="ElementShortName">DATA_VALID_B</obj_property>
-      <obj_property name="ObjectShortName">DATA_VALID_B</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject type="logic" fp_name="/top/MBC/CORE_DATA_VALminus2">
+      <obj_property name="ElementShortName">CORE_DATA_VALminus2</obj_property>
+      <obj_property name="ObjectShortName">CORE_DATA_VALminus2</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/MBOX/MEM_DATA_TO_MEM">
-      <obj_property name="ElementShortName">MEM_DATA_TO_MEM</obj_property>
-      <obj_property name="ObjectShortName">MEM_DATA_TO_MEM</obj_property>
+   <wvobject type="logic" fp_name="/top/MBC/CORE_DATA_VALminus1">
+      <obj_property name="ElementShortName">CORE_DATA_VALminus1</obj_property>
+      <obj_property name="ObjectShortName">CORE_DATA_VALminus1</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbz0/MB_PAR_ERR">
-      <obj_property name="ElementShortName">MB_PAR_ERR</obj_property>
-      <obj_property name="ObjectShortName">MB_PAR_ERR</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject type="logic" fp_name="/top/MBC/CORE_DATA_VALID">
+      <obj_property name="ElementShortName">CORE_DATA_VALID</obj_property>
+      <obj_property name="ObjectShortName">CORE_DATA_VALID</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/csh0/RD_PAUSE_2ND_HALF">
+      <obj_property name="ElementShortName">RD_PAUSE_2ND_HALF</obj_property>
+      <obj_property name="ObjectShortName">RD_PAUSE_2ND_HALF</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/csh0/RD_PSE_2ND_REQ_EN">
+      <obj_property name="ElementShortName">RD_PSE_2ND_REQ_EN</obj_property>
+      <obj_property name="ObjectShortName">RD_PSE_2ND_REQ_EN</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/csh0/EBOX_RESTART">
       <obj_property name="ElementShortName">EBOX_RESTART</obj_property>
       <obj_property name="ObjectShortName">EBOX_RESTART</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/CTL/DISP_NICOND">
+      <obj_property name="ElementShortName">DISP_NICOND</obj_property>
+      <obj_property name="ObjectShortName">DISP_NICOND</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CON/RESET">
+      <obj_property name="ElementShortName">RESET</obj_property>
+      <obj_property name="ObjectShortName">RESET</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CON/LOAD_SPEC_INSTR">
+      <obj_property name="ElementShortName">LOAD_SPEC_INSTR</obj_property>
+      <obj_property name="ObjectShortName">LOAD_SPEC_INSTR</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/EBOX_SYNC">
       <obj_property name="ElementShortName">EBOX_SYNC</obj_property>
       <obj_property name="ObjectShortName">EBOX_SYNC</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
+      <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
+      <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRAM/MEM">
+      <obj_property name="ElementShortName">MEM[0:3]</obj_property>
+      <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRAM/_TIME">
+      <obj_property name="ElementShortName">_TIME[0:1]</obj_property>
+      <obj_property name="ObjectShortName">_TIME[0:1]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="LABELRADIX">false</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRAM/MAGIC">
+      <obj_property name="ElementShortName">MAGIC[0:8]</obj_property>
+      <obj_property name="ObjectShortName">MAGIC[0:8]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/clk0/e12SR">
+      <obj_property name="ElementShortName">e12SR[0:3]</obj_property>
+      <obj_property name="ObjectShortName">e12SR[0:3]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/EDP/AR">
+      <obj_property name="ElementShortName">AR[0:35]</obj_property>
+      <obj_property name="ObjectShortName">AR[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/EBOX_CLK_EN">
+      <obj_property name="ElementShortName">EBOX_CLK_EN</obj_property>
+      <obj_property name="ObjectShortName">EBOX_CLK_EN</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/clk0/e25Count">
+      <obj_property name="ElementShortName">e25Count[0:3]</obj_property>
+      <obj_property name="ObjectShortName">e25Count[0:3]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/e31B">
+      <obj_property name="ElementShortName">e31B</obj_property>
+      <obj_property name="ObjectShortName">e31B</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/csh0/E_CORE_RD_COMP">
       <obj_property name="ElementShortName">E_CORE_RD_COMP</obj_property>
       <obj_property name="ObjectShortName">E_CORE_RD_COMP</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/mbox0/mbx0/CSH_WD_VAL">
+      <obj_property name="ElementShortName">CSH_WD_VAL[0:3]</obj_property>
+      <obj_property name="ObjectShortName">CSH_WD_VAL[0:3]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/MBC/CORE_ADR">
+      <obj_property name="ElementShortName">CORE_ADR[34:35]</obj_property>
+      <obj_property name="ObjectShortName">CORE_ADR[34:35]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/mbox0/mbx0/CORE_WD_COMING">
+      <obj_property name="ElementShortName">CORE_WD_COMING[0:3]</obj_property>
+      <obj_property name="ObjectShortName">CORE_WD_COMING[0:3]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/csh0/MBOX_RESP">
       <obj_property name="ElementShortName">MBOX_RESP</obj_property>
@@ -310,6 +361,34 @@
       <obj_property name="ElementShortName">ADR[14:35]</obj_property>
       <obj_property name="ObjectShortName">ADR[14:35]</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/SBUS/START_B">
+      <obj_property name="ElementShortName">START_B</obj_property>
+      <obj_property name="ObjectShortName">START_B</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/SBUS/ACKN_B">
+      <obj_property name="ElementShortName">ACKN_B</obj_property>
+      <obj_property name="ObjectShortName">ACKN_B</obj_property>
+      <obj_property name="CustomSignalColor">#008000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/SBUS/DATA_VALID_B">
+      <obj_property name="ElementShortName">DATA_VALID_B</obj_property>
+      <obj_property name="ObjectShortName">DATA_VALID_B</obj_property>
+      <obj_property name="CustomSignalColor">#008000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/MBOX/MEM_DATA_TO_MEM">
+      <obj_property name="ElementShortName">MEM_DATA_TO_MEM</obj_property>
+      <obj_property name="ObjectShortName">MEM_DATA_TO_MEM</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbz0/MB_PAR_ERR">
+      <obj_property name="ElementShortName">MB_PAR_ERR</obj_property>
+      <obj_property name="ObjectShortName">MB_PAR_ERR</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
 </wave_config>
