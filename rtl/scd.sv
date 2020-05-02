@@ -368,6 +368,7 @@ module scd(iAPR APR,
   bit LOAD_PCP;
   assign LOAD_PCP = LOAD_FLAGS & ~JFCL;
 
+  // XXX Contrast this with CON.NICOND[10] guess on CON2
   assign NICOND_10 = (TRAP_REQ_1 | TRAP_REQ_2) & CON.TRAP_EN & CON.NICOND_TRAP_EN;
 
   always_ff @(posedge clk) begin
