@@ -1,3 +1,6 @@
+// TODO: Should the lack ACKN pulse last until START releases? (For
+// back-to-back cycles on the same phase I don't know that it will
+// actually release.)
 `timescale 1ns/1ns
 `include "ebox.svh"
 
