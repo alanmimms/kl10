@@ -42,6 +42,7 @@ module kl10pv_tb(iAPR APR,
   bit masterClk;
 
   var string indent = "";
+  var int nSteps;
 
   tCRAM cram137;
 
@@ -148,6 +149,7 @@ module kl10pv_tb(iAPR APR,
     // Loop up to three times:
     //   Do diag function 162 via $DFRD test (A CHANGE COMING A L)=EBUS[32]
     //   If not set, $DFXC(.SSCLK=002) to single step the MBOX
+    $display($time, " [step up to 5 clocks to syncronize MBOX]");
     repeat (5) begin
       #500 ;
       if (!mbox0.mbc0.MBC.A_CHANGE_COMING) break;
@@ -345,8 +347,9 @@ module kl10pv_tb(iAPR APR,
     // WE STEP THE MICROCODE OUT OF THE HALT LOOP TO MAKE SURE IT
     // IS RUNNING BEFORE WE LEAVE.
     //
-    // XXX for now boot address is wrongly set to zero.
-    EDP.AR = {14'b0, 22'b0};
+    // Boot address is hardcoded to 40000 for now.
+    EDP.AR = 'o40000;
+    $display($time, " [AR set to boot address %s]", octW(EDP.AR));
 
     // Set the RUN flop.
     doDiagFunc(diagfSET_RUN);
@@ -354,13 +357,24 @@ module kl10pv_tb(iAPR APR,
       $display($time, " diagfSET_RUN should set the RUN flop and it didn't");
     end
 
+    // Wait for HALT loop
+    $display($time, " [step up to 1000 clocks to get KL to HALT loop] halted=%b",
+             CON.EBOX_HALTED);
+    for (nSteps = 0; nSteps < 1000; ++nSteps) begin
+      doDiagFunc(diagfSTEP_CLOCK);
+      if (CON.EBOX_HALTED) break;
+    end
+    $display($time, " [it took %0d steps to get to HALT loop]", nSteps);
+
     // Set the CONTINUE button.
     doDiagFunc(diagfCONTINUE);
 
     // Single step the MBOX clock up to 1000 times waiting for
     // microcode to exit from the HALT loop.
+    $display($time, " [step up to 1000 clocks to get KL out of HALT loop] halted=%b",
+             CON.EBOX_HALTED);
 
-    repeat (1000) begin
+    for (nSteps = 0; nSteps < 1000; ++nSteps) begin
       doDiagFunc(diagfSTEP_CLOCK);
       if (!CON.EBOX_HALTED) break;
     end
@@ -374,7 +388,10 @@ module kl10pv_tb(iAPR APR,
       $display($time, " ???ERROR: STEP MBOX < 1000 times waiting for HALT loop cleared the RUN flop???");
     end
 
+    $display($time, " [it took %0d steps to get out of HALT loop]", nSteps);
+
     // Start the clock.
+    $display($time, " [starting with AR=%s]", octW(EDP.AR));
     doDiagFunc(diagfSTART_CLOCK);
 
     $display($time, " DONE");
@@ -439,10 +456,9 @@ module kl10pv_tb(iAPR APR,
     end
 
     $display("[loaded]");
-    memory0.mem['0] = w;
-    $display("[Start instruction %s copied to memory at 0,,000000]", octW(w));
-    $display("[minAddr: %06o]", minAddr);
-    $display("[maxAddr: %06o]", maxAddr);
+    $display("[start instruction is %s]", octW(w));
+    $display("[boot image minAddr: %06o]", minAddr);
+    $display("[boot image maxAddr: %06o]", maxAddr);
     $display("");
   endfunction
 
@@ -463,7 +479,9 @@ module kl10pv_tb(iAPR APR,
       EBUS.data[18:35] <= ebusRH;
       EBUS.ds <= func;
       EBUS.diagStrobe <= '1;            // Strobe this
-      $display($time, " %sEBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
+
+      if (func !== diagfSTEP_CLOCK) 
+        $display($time, " %sEBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
     end
 
     repeat (8) @(negedge CLK.MHZ16_FREE) ;
