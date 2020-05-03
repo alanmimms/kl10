@@ -229,7 +229,7 @@ module con(iAPR APR,
 
   bit start0, start1, start2;
   always_comb start0 = DIAG_CONTINUE |
-                       ~CON.START & ~start0 & ~CON.RESET;
+                        start0 & ~CON.START & ~CON.RESET;
   always_ff @(posedge clk) begin
     start1 <= start0;
     start2 = start1;
@@ -239,8 +239,8 @@ module con(iAPR APR,
   always @(posedge CON.START) $display($time, " [KL START]");
 
   bit run0, run1, run2;
-  always_comb run0 = DIAG_SET_RUN |
-                     ~DIAG_CLR_RUN & ~run0 & ~CON.RESET;
+  assign run0 = DIAG_SET_RUN |
+                run0 & ~DIAG_CLR_RUN & ~CON.RESET;
   always_ff @(posedge clk) begin
     run1 <= run0;
     run2 <= run1;
@@ -256,16 +256,18 @@ module con(iAPR APR,
   end
 
   bit runStateNC1, runStateNC2, runStateNC3;
+  bit [0:7] e39Q;
+  assign DIAG_CLR_RUN = e39Q[0];
+  assign DIAG_SET_RUN = e39Q[1];
+  assign DIAG_CONTINUE = e39Q[2];
+  assign DIAG_IR_STROBE = e39Q[3];
+  assign DIAG_DRAM_STROBE = e39Q[4];
   decoder e39(.en(CTL.DIAG_CTL_FUNC_01x),
-              .sel(sel),
-              .q({DIAG_CLR_RUN,
-                  DIAG_SET_RUN,
-                  DIAG_CONTINUE,
-                  runStateNC1,
-                  DIAG_IR_STROBE,
-                  DIAG_DRAM_STROBE,
-                  runStateNC2,
-                  runStateNC3}));
+              .sel(EBUS.ds[4:6]),
+              .q(e39Q));
+
+  always @(posedge EBUS.diagStrobe)
+    $display($time, " EBUS diagStrobe ds=%03o", EBUS.ds);
 
   bit e19Q, e27Q;
   mux e19(.sel(CRAM.COND[3:5]),

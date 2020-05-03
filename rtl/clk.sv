@@ -56,9 +56,9 @@ module clk(input clk,
   assign CLK.CROBAR = CROBAR & ~delaysLocked;
 
   // This is WEIRD. This assign here seems to not work all the time?
-  // Later on in this module near runStateDecoder I display DIAG and
-  // it is zero while EBUS.ds is 7'b0000001 and EBUS.ds[4:6] is
-  // 3'b001. WHY WOULD THAT BE?
+  // Later on in this module near e39 I display DIAG and it is zero
+  // while EBUS.ds is 7'b0000001 and EBUS.ds[4:6] is 3'b001. WHY WOULD
+  // THAT BE?
   //
   // To try to find out why I changed several sites from DIAG to
   //EBUS.ds[4:6] and NOW the module WORKS.

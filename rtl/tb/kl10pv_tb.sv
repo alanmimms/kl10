@@ -481,15 +481,21 @@ module kl10pv_tb(iAPR APR,
       EBUS.diagStrobe <= '1;            // Strobe this
 
       if (func !== diagfSTEP_CLOCK) 
-        $display($time, " %sEBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
+        $display($time, " %sASSERT EBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
     end
 
     repeat (8) @(negedge CLK.MHZ16_FREE) ;
 
     @(negedge CLK.MHZ16_FREE) begin
+      string shortName;
+      shortName = replace(func.name, "diagf", "");
       EBUS.data[18:35] <= '0;
       EBUS.diagStrobe <= '0;
-      EBUS.ds <= tDiagFunction'('0);
+      EBUS.ds <= diagfIdle;
+//      EBUS.ds <= tDiagFunction'('0);
+
+      if (func !== diagfSTEP_CLOCK) 
+        $display($time, " %sDEASSERT EBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
     end
 
     repeat(4) @(posedge CLK.MHZ16_FREE) ;
