@@ -30,7 +30,7 @@ module clk(input clk,
            iSHM SHM,
            iVMA VMA,
 
-           iEBUS EBUS
+           iEBUS.mod EBUS
            );
 
   bit DESKEW_CLK = '0;
@@ -546,11 +546,6 @@ module clk(input clk,
     CLK.PF_DLYD_B <= CLK.PF_DLYD_A;
   end
 
-  initial CLK.PAGE_FAIL_EN = '0;
-  initial CLK.FORCE_1777 = '0;
-  initial CLK.INSTR_1777 = '0;
-  initial CLK.SBR_CALL = '0;
-
   assign CLK.PAGE_ERROR = CLK.PAGE_FAIL_EN | CLK.INSTR_1777;
   assign CLK._1777_EN = CLK.FORCE_1777 & CLK.SBR_CALL;
   always @(posedge CLK.MBOX_CLK) begin
@@ -565,10 +560,10 @@ module clk(input clk,
   bit e38out7;                // XXX slashed
   assign e7out7 = CLK.EBOX_SOURCE | CLK.PF_DLYD_B | CLK.INSTR_1777;
   assign e38out7 = ~APR.APR_PAR_CHK_EN | ~AR_ARX_PAR_CHECK | e7out7;
-  assign CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & e7out7 |
-                         ~SHM.AR_PAR_ODD & CON.AR_LOADED & e38out7 |
-                         ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & e38out7 |
-                         CRAM.MEM[2] & CLK.PAGE_FAIL_EN & e7out7;
+  assign CLK.PAGE_FAIL = APR.SET_PAGE_FAIL & ~e7out7 |
+                         ~SHM.AR_PAR_ODD & CON.AR_LOADED & ~e38out7 |
+                         ~SHM.ARX_PAR_ODD & CON.ARX_LOADED & ~e38out7 |
+                         CRAM.MEM[2] & CLK.PAGE_FAIL_EN & ~e7out7;
   assign CLK.EBOX_CYC_ABORT = CLK.PAGE_FAIL | CLK.PF_DLYD_B;
 
   // CLK5 p.172
@@ -637,7 +632,7 @@ module clk(input clk,
 
   // NOTE: Active-low schematic symbol
   UCR4 e15(.RESET('0),
-           .CIN(burstLSBCarry),
+           .CIN(burstLSBcarry),
            .SEL(~{BURST | CLK.FUNC_043, CLK.FUNC_043}),
            .D(EBUS.data[32:35]),
            .COUT(),
