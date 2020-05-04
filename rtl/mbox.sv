@@ -23,7 +23,7 @@ module mbox(input mboxClk,
             iPMA PMA,
             iSHM SHM,
             iVMA VMA,
-            iEBUS EBUS,
+            iEBUS.mod EBUS,
             iMBOX MBOX,
             iSBUS SBUS
 );

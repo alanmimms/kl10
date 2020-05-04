@@ -8,7 +8,7 @@ module ir(iIR IR,
           iCON CON,
           iCTL CTL,
           iEDP EDP,
-          iEBUS EBUS,
+          iEBUS.mod EBUS,
           iMBOX MBOX
           );
 

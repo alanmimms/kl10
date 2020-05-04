@@ -65,9 +65,52 @@ interface iEBUS;
   bit ack;                    // Dev -> EBOX acknowledge
   bit xfer;                   // Dev -> EBOX transfer done
   bit reset;                  // EBOX -> dev
-  tDiagFunction ds;           // Dev -> EBOX??? Diagnostic Select
-  bit diagStrobe;             // Dev -> EBOX Diagnostic strobe
+  tDiagFunction ds;           // DTE -> EBOX Diagnostic Select
+  bit diagStrobe;             // DTE -> EBOX Diagnostic strobe
   bit dfunc;                  // Dev -> EBOX Diagnostic function
+
+
+  modport dev(inout data,
+              inout parity,
+              input cs,
+              input func,
+              input demand,
+              output pi,
+              output ack,
+              output xfer,
+              input reset,
+              input ds,
+              input diagStrobe,
+              input dfunc
+              );
+
+  modport dte(inout data,
+              input parity,
+              input cs,
+              input func,
+              input demand,
+              input pi,
+              input ack,
+              input xfer,
+              input reset,
+              output ds,
+              output diagStrobe,
+              input dfunc
+              );
+
+  modport mod(input data,
+              output parity,
+              output cs,
+              output func,
+              output demand,
+              input pi,
+              input ack,
+              input xfer,
+              output reset,
+              input ds,
+              input diagStrobe,
+              input dfunc
+              );
 endinterface
 
 

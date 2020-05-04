@@ -14,7 +14,7 @@ module edp(iAPR APR,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA,
-           iEBUS EBUS,
+           iEBUS.mod EBUS,
            iMBOX MBOX
 );
 

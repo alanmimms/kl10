@@ -13,7 +13,7 @@ module ctl(iAPR APR,
            iPI PIC,
            iSHM SHM,
 
-           iEBUS EBUS
+           iEBUS.mod EBUS
 );
 
   bit CTL_36_BIT_EA;

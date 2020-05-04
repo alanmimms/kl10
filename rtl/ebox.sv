@@ -33,7 +33,7 @@ module ebox(input clk,
             iSCD SCD,
             iSHM SHM,
             iVMA VMA,
-            iEBUS EBUS);
+            iEBUS.mod EBUS);
 
   bit mboxClk;
 
