@@ -12,13 +12,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="10156666fs"></ZoomStartTime>
-      <ZoomEndTime time="12452667fs"></ZoomEndTime>
-      <Cursor1Time time="12070000fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="2304001fs"></ZoomEndTime>
+      <Cursor1Time time="0fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="172"></NameColumnWidth>
-      <ValueColumnWidth column_width="112"></ValueColumnWidth>
+      <ValueColumnWidth column_width="108"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="40" />
    <wvobject type="logic" fp_name="/top/CROBAR">
@@ -90,18 +90,6 @@
       <obj_property name="ObjectShortName">FUNC_SET_RESET</obj_property>
       <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/con0/e39/en">
-      <obj_property name="ElementShortName">en</obj_property>
-      <obj_property name="ObjectShortName">en</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/ebox0/con0/e39/sel">
-      <obj_property name="ElementShortName">sel[0:2]</obj_property>
-      <obj_property name="ObjectShortName">sel[0:2]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/ebox0/con0/e39/q">
-      <obj_property name="ElementShortName">q[0:7]</obj_property>
-      <obj_property name="ObjectShortName">q[0:7]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/con0/DIAG_CLR_RUN">
       <obj_property name="ElementShortName">DIAG_CLR_RUN</obj_property>
@@ -188,6 +176,24 @@
       <obj_property name="ObjectShortName">diagStrobe</obj_property>
       <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/con0/e39/en">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">en</obj_property>
+      <obj_property name="ObjectShortName">en</obj_property>
+      <obj_property name="label">e39.en</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/con0/e39/sel">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">sel[0:2]</obj_property>
+      <obj_property name="ObjectShortName">sel[0:2]</obj_property>
+      <obj_property name="label">e39.sel[0:2]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/con0/e39/q">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">q[0:7]</obj_property>
+      <obj_property name="ObjectShortName">q[0:7]</obj_property>
+      <obj_property name="label">e39.q[0:7]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/CTL/DIAG_CTL_FUNC_00x">
       <obj_property name="ElementShortName">DIAG_CTL_FUNC_00x</obj_property>
@@ -1219,12 +1225,6 @@
       <wvobject type="logic" fp_name="/top/ebox0/clk0/burstLSBcarry">
          <obj_property name="ElementShortName">burstLSBcarry</obj_property>
          <obj_property name="ObjectShortName">burstLSBcarry</obj_property>
-         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/top/ebox0/clk0/burstLSBCarry">
-         <obj_property name="ElementShortName">burstLSBCarry</obj_property>
-         <obj_property name="ObjectShortName">burstLSBCarry</obj_property>
          <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
