@@ -24,7 +24,7 @@ module cra(iAPR APR,
            iSCD SCD,
            iSHM SHM,
            iVMA VMA,
-           iEBUS EBUS
+           iEBUS.mod EBUS
 );
 
   bit [0:11] dispMux;
