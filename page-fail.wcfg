@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_top_sv " />
+            <top_module name="glbl" />
+            <top_module name="top" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="11806473fs"></ZoomStartTime>
+      <ZoomEndTime time="13615641fs"></ZoomEndTime>
+      <Cursor1Time time="12045806fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="198"></NameColumnWidth>
+      <ValueColumnWidth column_width="85"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="15" />
+   <wvobject type="logic" fp_name="/top/APR/SET_PAGE_FAIL">
+      <obj_property name="ElementShortName">SET_PAGE_FAIL</obj_property>
+      <obj_property name="ObjectShortName">SET_PAGE_FAIL</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/e7out7">
+      <obj_property name="ElementShortName">e7out7</obj_property>
+      <obj_property name="ObjectShortName">e7out7</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CON/AR_LOADED">
+      <obj_property name="ElementShortName">AR_LOADED</obj_property>
+      <obj_property name="ObjectShortName">AR_LOADED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/SHM/AR_PAR_ODD">
+      <obj_property name="ElementShortName">AR_PAR_ODD</obj_property>
+      <obj_property name="ObjectShortName">AR_PAR_ODD</obj_property>
+      <obj_property name="CustomSignalColor">#00FF00</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CON/ARX_LOADED">
+      <obj_property name="ElementShortName">ARX_LOADED</obj_property>
+      <obj_property name="ObjectShortName">ARX_LOADED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/SHM/ARX_PAR_ODD">
+      <obj_property name="ElementShortName">ARX_PAR_ODD</obj_property>
+      <obj_property name="ObjectShortName">ARX_PAR_ODD</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/e38out7">
+      <obj_property name="ElementShortName">e38out7</obj_property>
+      <obj_property name="ObjectShortName">e38out7</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/CRAM/MEM">
+      <obj_property name="ElementShortName">MEM[0:3]</obj_property>
+      <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/APR/APR_PAR_CHK_EN">
+      <obj_property name="ElementShortName">APR_PAR_CHK_EN</obj_property>
+      <obj_property name="ObjectShortName">APR_PAR_CHK_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/PAGE_FAIL_EN">
+      <obj_property name="ElementShortName">PAGE_FAIL_EN</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/PAGE_FAIL">
+      <obj_property name="ElementShortName">PAGE_FAIL</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/PF_DLYD_A">
+      <obj_property name="ElementShortName">PF_DLYD_A</obj_property>
+      <obj_property name="ObjectShortName">PF_DLYD_A</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/PF_DLYD_B">
+      <obj_property name="ElementShortName">PF_DLYD_B</obj_property>
+      <obj_property name="ObjectShortName">PF_DLYD_B</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/FORCE_1777">
+      <obj_property name="ElementShortName">FORCE_1777</obj_property>
+      <obj_property name="ObjectShortName">FORCE_1777</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/csh0/MBOX_RESP">
+      <obj_property name="ElementShortName">MBOX_RESP</obj_property>
+      <obj_property name="ObjectShortName">MBOX_RESP</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+</wave_config>
