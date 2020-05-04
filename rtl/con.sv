@@ -18,7 +18,7 @@ module con(iAPR APR,
            iSCD SCD,
            iVMA VMA,
 
-           iEBUS EBUS);
+           iEBUS.mod EBUS);
 
   bit clk;
   bit DIAG_READ;
@@ -250,24 +250,39 @@ module con(iAPR APR,
   always @(posedge CON.RUN) $display($time, " [KL RUN]");
   always @(negedge CON.RUN) $display($time, " [RUN flip-flop deassert]");
 
-  bit [0:2] sel;
-  always_comb begin
-    sel[0:2] = EBUS.ds[4:6];
-  end
-
   bit runStateNC1, runStateNC2, runStateNC3;
   bit [0:7] e39Q;
   assign DIAG_CLR_RUN = e39Q[0];
   assign DIAG_SET_RUN = e39Q[1];
   assign DIAG_CONTINUE = e39Q[2];
-  assign DIAG_IR_STROBE = e39Q[3];
-  assign DIAG_DRAM_STROBE = e39Q[4];
+  assign DIAG_IR_STROBE = e39Q[4];
+  assign DIAG_DRAM_STROBE = e39Q[5];
+
   decoder e39(.en(CTL.DIAG_CTL_FUNC_01x),
               .sel(EBUS.ds[4:6]),
               .q(e39Q));
 
   always @(posedge EBUS.diagStrobe)
-    $display($time, " EBUS diagStrobe ds=%03o", EBUS.ds);
+    $display($time, " CON: EBUS diagStrobe ds=%03o", EBUS.ds);
+
+/*
+  always_comb begin
+    DIAG_CLR_RUN = '0;
+    DIAG_SET_RUN = '0;
+    DIAG_CONTINUE = '0;
+    DIAG_IR_STROBE = '0;
+    DIAG_DRAM_STROBE = '0;
+
+    unique case({CTL.DIAG_CTL_FUNC_01x, EBUS.ds[4:6]})
+    4'b1000: DIAG_CLR_RUN = '1;
+    4'b1001: DIAG_SET_RUN = '1;
+    4'b1010: DIAG_CONTINUE = '1;
+    4'b1100: DIAG_IR_STROBE = '1;
+    4'b1101: DIAG_DRAM_STROBE = '1;
+    default: ;
+    endcase
+  end
+*/
 
   bit e19Q, e27Q;
   mux e19(.sel(CRAM.COND[3:5]),
