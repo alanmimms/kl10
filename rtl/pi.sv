@@ -6,7 +6,7 @@ module pi(iAPR APR,
           iCLK CLK,
           iCON CON,
           iCTL CTL,
-          iEBUS EBUS,
+          iEBUS.mod EBUS,
           iEDP EDP,
           iMTR MTR,
           iPI PIC               // Note we use PIC internally here bc of collision
@@ -17,7 +17,7 @@ module pi(iAPR APR,
   bit [0:7] PIR, PI_ON;
   bit SYS_CLR, OFF, ACTIVE, APR_REQUESTING, DK20_REQUESTING, HONOR_INTERNAL;
   bit GEN_INT, TIM_5comma6, TIM1, TIM2, TIM3, TIM4, TIM5, TIM6, TIM7, COMP;
-  bit _ON, PHY_FORCE, ON_SET, ON_CLR, GEN_SET, GEN_CLR, REQ;
+  bit _ON, PHY_FORCE, ON_SET, ON_CLR, GEN_ON, GEN_SET, GEN_CLR, REQ;
   bit [0:3] SEL_PHY;
   bit [0:15] PHY_NO;
   bit [11:17] IOB;
