@@ -13,7 +13,7 @@ module mtr(iCHC CHC,
            iSCD SCD,
            iVMA VMA,
            iMBOX MBOX,
-           iEBUS EBUS
+           iEBUS.mod EBUS
            );
 
   bit clk, RESET, MBOX_CLK;
