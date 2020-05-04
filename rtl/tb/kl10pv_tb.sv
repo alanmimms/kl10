@@ -27,9 +27,8 @@ module kl10pv_tb(iAPR APR,
                  iSHM SHM,
                  iVMA VMA,
 
-                 iEBUS EBUS,
+                 iEBUS.dte EBUS,
                  iMBOX MBOX,
-                 iSBUS SBUS,
 
                  output bit CROBAR,
                  output bit clk,
@@ -353,8 +352,11 @@ module kl10pv_tb(iAPR APR,
 
     // Set the RUN flop.
     doDiagFunc(diagfSET_RUN);
+
+    repeat (10) @(negedge CLK.MHZ16_FREE) ; // Wait for RUN flop to get clocked in
+
     if (!CON.RUN) begin
-      $display($time, " diagfSET_RUN should set the RUN flop and it didn't");
+      $display($time, " ???ERROR: diagfSET_RUN should set the RUN flop and it didn't");
     end
 
     // Wait for HALT loop
@@ -364,7 +366,11 @@ module kl10pv_tb(iAPR APR,
       doDiagFunc(diagfSTEP_CLOCK);
       if (CON.EBOX_HALTED) break;
     end
-    $display($time, " [it took %0d steps to get to HALT loop]", nSteps);
+
+    if (nSteps == 1000)
+      $display($time, " ???ERROR: wait to enter HALT loop didn't succeed");
+    else
+      $display($time, " [it took %0d steps to get to HALT loop]", nSteps);
 
     // Set the CONTINUE button.
     doDiagFunc(diagfCONTINUE);
@@ -380,12 +386,12 @@ module kl10pv_tb(iAPR APR,
     end
 
     if (CON.EBOX_HALTED) begin
-      $display($time, " ERROR: STEP MBOX < 1000 times waiting for HALT loop didn't clear CON.EBOX_HALTED");
+      $display($time, " ???ERROR: STEP MBOX <1000 times waiting for HALT loop didn't clear CON.EBOX_HALTED");
     end
 
     // Verify RUN flop is still set.
     if (!CON.RUN) begin
-      $display($time, " ???ERROR: STEP MBOX < 1000 times waiting for HALT loop cleared the RUN flop???");
+      $display($time, " ???ERROR: STEP MBOX <1000 times waiting for HALT loop cleared the RUN flop???");
     end
 
     $display($time, " [it took %0d steps to get out of HALT loop]", nSteps);
