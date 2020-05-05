@@ -119,13 +119,15 @@ module csh(iAPR APR,
 
 
   // CSH2 p.25
+  bit e23out2;
+  assign e23out2 = CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
+                   ~EBOX_SYNC_HOLD & DATA_DLY_1 |
+                   MBC.CORE_DATA_VALminus1 & CSH.E_CORE_RD_RQ |
+                   ~E_CORE_RD_COMP & MBOX_RESP & ~EBOX_RESTART;
   always_comb begin
     CSH.MBOX_RESP_IN = E_RD_T2_OK & RD_FOUND |
                        MBOX.A_CHANGE_COMING_IN & SBUS_DIAG_3 |
-                       ~RESET & (CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
-                                 ~EBOX_SYNC_HOLD & DATA_DLY_1 |
-                                 MBC.CORE_DATA_VALminus1 & CSH.E_CORE_RD_RQ |
-                                 ~E_CORE_RD_COMP & MBOX_RESP & ~EBOX_RESTART) |
+                       ~RESET & e23out2 |
                        CACHE_IDLE_IN & CSH.EBOX_CYC;
 
     EBOX_RESTART = MBOX_RESP & CLK.EBOX_SYNC;
@@ -153,9 +155,9 @@ module csh(iAPR APR,
     MBOX_RESP <= CSH.MBOX_RESP_IN;
 
     CSH.ONE_WORD_RD <= E_RD_T2_CORE_OK & ~ANY_VALID_MATCH & ~MBX.CACHE_BIT |
-                       ~EBOX_RESTART & CSH.ONE_WORD_RD & ~CSH.READY_TO_GO;
+                       CSH.ONE_WORD_RD & ~EBOX_RESTART & ~CSH.READY_TO_GO;
     RD_PAUSE_2ND_HALF <= CSH.ONE_WORD_RD & EBOX_RESTART & EBOX_PAUSE |
-                         ~CSH.READY_TO_GO & RD_PAUSE_2ND_HALF;
+                         RD_PAUSE_2ND_HALF & ~CSH.READY_TO_GO;
     RD_PSE_2ND_REQ_EN <= DATA_DLY_2 & RD_PAUSE_2ND_HALF |
                          RD_PSE_2ND_REQ_EN & ~CLK.EBOX_REQ & ~RESET;
 
@@ -270,7 +272,7 @@ module csh(iAPR APR,
     PAGE_REFILL_T4 <= PAGE_REFILL_T4_IN;
     // <EC1> -CORE BUSY L on CSH5 B8 p.28.
     PAGE_REFILL_COMP <= PAGE_REFILL_T10 & ~MBOX.CORE_BUSY |
-                        ~EBOX_RESTART & PAGE_REFILL_COMP & ~RESET;
+                        PAGE_REFILL_COMP & ~EBOX_RESTART & ~RESET;
     CSH.PAGE_REFILL_T8 <= PAGE_REFILL_T7;
     // <FV2> CORE BUSY L on CSH5 C6.
     PAGE_REFILL_T10 <= MBOX.CORE_BUSY & ~MBX.MB_SEL_HOLD_FF | PAGE_REFILL_T13;
@@ -320,7 +322,7 @@ module csh(iAPR APR,
                          ~CSH.READY_TO_GO & PAGE_FAIL_HOLD_FF & ~APR.EBOX_READ_REG |
                          CSH.EBOX_T3 & PAG.PAGE_REFILL & PAGE_REFILL_COMP;
     CSH.PAGE_REFILL_ERROR <= PAGE_REFILL_COMP & PAG.PAGE_REFILL & CSH.EBOX_T3 |
-                             ~EBOX_RESTART & CSH.PAGE_REFILL_ERROR & ~RESET;
+                             CSH.PAGE_REFILL_ERROR & ~EBOX_RESTART & ~RESET;
     DATA_DLY_1 <= E_CORE_RD_COMP;
     DATA_DLY_2 <= DATA_DLY1;
     WR_DATA_RDY <= ~CSH.ONE_WORD_RD & E_CORE_RD_COMP |
@@ -419,7 +421,7 @@ module csh(iAPR APR,
 
   always_ff @(posedge clk) begin
     CSH.FILL_CACHE_RD <= E_CORE_RD_T3 & CSH.E_CORE_RD_RQ |
-                         ~EBOX_RESTART & CSH.FILL_CACHE_RD & ~RESET;
+                         CSH.FILL_CACHE_RD & ~EBOX_RESTART & ~RESET;
     CSH.CCA_WRITEBACK <= WRITEBACK_T1 & CSH.CCA_CYC |
                          ~CACHE_IDLE & CSH.CCA_WRITEBACK;
     CSH.E_WRITEBACK <= WRITEBACK_T1 & CSH.EBOX_CYC |
