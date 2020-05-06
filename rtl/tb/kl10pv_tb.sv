@@ -51,7 +51,7 @@ module kl10pv_tb(iAPR APR,
   assign clk31 = masterClk;     // XXX for now
 
   // 50MHz clock source
-  initial masterClk = 0;
+  initial masterClk <= 0;
   always #10 masterClk = ~masterClk;
 
   initial $readmemh("../../../../images/DRAM.mem", ebox0.ir0.dram.mem);
@@ -59,21 +59,21 @@ module kl10pv_tb(iAPR APR,
 
   // Initialization because of ECL
   initial begin
-    cram137 = ebox0.crm0.cram.mem['o137];
+    cram137 <= ebox0.crm0.cram.mem['o137];
 
     // Initialize our memories
     // Based on KLINIT.L20 $ZERAC subroutine.
     // Zero all ACs, including the ones in block #7 (microcode's ACs).
     // For now, MBOX memory is zero too.
-    for (int a = 0; a < $size(ebox0.edp0.fm.mem); ++a) ebox0.edp0.fm.mem[a] = '0;
-    for (int a = 0; a < $size(memory0.mem); ++a) memory0.mem[a] = '0;
+    for (int a = 0; a < $size(ebox0.edp0.fm.mem); ++a) ebox0.edp0.fm.mem[a] <= '0;
+    for (int a = 0; a < $size(memory0.mem); ++a) memory0.mem[a] <= '0;
 
-    CON.CONO_200000 = '0;
+    CON.CONO_200000 <= '0;
   end
 
   initial begin
-    #10 CROBAR = '1;     // CROBAR stays asserted for a long time
-    #1000 CROBAR = '0;   // 1us CROBAR for the 21st century (and sims)
+    #10 CROBAR <= '1;     // CROBAR stays asserted for a long time
+    #1000 CROBAR <= '0;   // 1us CROBAR for the 21st century (and sims)
 
     #100 KLMasterReset();
 
@@ -224,7 +224,7 @@ module kl10pv_tb(iAPR APR,
     // XXX TBD
 
     // Turn off the NXM bit (FE uses CONO APR,,22000).
-    MBOX.NXM_ERR = '0;
+    MBOX.NXM_ERR <= '0;
 
     ////////////////////////////////////////////////////////////////
     // Falls through into LXBRC 10$ symbol for end of boot loader
@@ -246,75 +246,75 @@ module kl10pv_tb(iAPR APR,
 
       // Clear/disable selected flags
       // SBUS error, NXM, IO page fail
-      MBOX.SBUS_ERR = '0;
-      ebox0.apr0.SBUS_ERR_EN = '0;
-      MBOX.NXM_ERR = '0;
-      ebox0.apr0.NXM_ERR_EN = '0;
-      APR.SET_IO_PF_ERR = '0;
-      ebox0.apr0.IO_PF_ERR_EN = '0;
+      MBOX.SBUS_ERR <= '0;
+      ebox0.apr0.SBUS_ERR_EN <= '0;
+      MBOX.NXM_ERR <= '0;
+      ebox0.apr0.NXM_ERR_EN <= '0;
+      APR.SET_IO_PF_ERR <= '0;
+      ebox0.apr0.IO_PF_ERR_EN <= '0;
       
       // MB parity, cache dir, addr parity
-      MBOX.MB_PAR_ERR = '0;
-      ebox0.apr0.MB_PAR_ERR_EN = '0;
-      MBOX.CSH_ADR_PAR_ERR = '0;
-      ebox0.apr0.C_DIR_P_ERR_EN = '0;
-      ebox0.apr0.MBOX.MBOX_ADR_PAR_ERR = '0;
-      ebox0.apr0.S_ADR_P_ERR_EN = '0;
+      MBOX.MB_PAR_ERR <= '0;
+      ebox0.apr0.MB_PAR_ERR_EN <= '0;
+      MBOX.CSH_ADR_PAR_ERR <= '0;
+      ebox0.apr0.C_DIR_P_ERR_EN <= '0;
+      ebox0.apr0.MBOX.MBOX_ADR_PAR_ERR <= '0;
+      ebox0.apr0.S_ADR_P_ERR_EN <= '0;
 
       // power fail, sweep done
-      PWR_WARN = '0;
-      ebox0.apr0.PWR_FAIL = '0;
-      APR.SWEEP_BUSY = '0;
-      ebox0.apr0.SWEEP_DONE_EN = '0;
+      PWR_WARN <= '0;
+      ebox0.apr0.PWR_FAIL <= '0;
+      APR.SWEEP_BUSY <= '0;
+      ebox0.apr0.SWEEP_DONE_EN <= '0;
 
       // PI interrupt level #0
-      ebox0.pi0.PIC.APR_PIA = '0;
+      ebox0.pi0.PIC.APR_PIA <= '0;
     end
     
     ////////////
     // CONO PI,10000            ; Reset PI
     begin
-      ebox0.pi0.ON = '0;
-      ebox0.pi0.GEN = '0;
-      ebox0.pi0.PIR_EN = '0;
-      ebox0.pi0.PI_REQ_SET = '0;
-      ebox0.pi0.PIH = '0;
-      ebox0.pi0.ACTIVE = '0;
+      ebox0.pi0.ON <= '0;
+      ebox0.pi0.GEN <= '0;
+      ebox0.pi0.PIR_EN <= '0;
+      ebox0.pi0.PI_REQ_SET <= '0;
+      ebox0.pi0.PIH <= '0;
+      ebox0.pi0.ACTIVE <= '0;
     end
 
     ////////////
     // CONO PAG, 0              ; Paging system clear
     begin
-      CON.CACHE_LOOK_EN = '0;
-      CON.CACHE_LOAD_EN = '0;
-      ebox0.con0.WR_EVEN_PAR_DATA = '0;
-      ebox0.con0.WR_EVEN_PAR_DIR = '0;
+      CON.CACHE_LOOK_EN <= '0;
+      CON.CACHE_LOAD_EN <= '0;
+      ebox0.con0.WR_EVEN_PAR_DATA <= '0;
+      ebox0.con0.WR_EVEN_PAR_DIR <= '0;
     end
 
     ////////////
     // DATAO PAG, 0             ; User base clear
     begin
       // Set current and previous AC blocks to zero.
-      APR.CURRENT_BLOCK = '0;
-      APR.PREV_BLOCK = '0;
-      APR.CURRENT_BLOCK = '0;
-      APR.CURRENT_BLOCK = '0;
+      APR.CURRENT_BLOCK <= '0;
+      APR.PREV_BLOCK <= '0;
+      APR.CURRENT_BLOCK <= '0;
+      APR.CURRENT_BLOCK <= '0;
       
       // Set current section context to zero.
       // XXX Not 100% certain this is what this is supposed to do. 
-      VMA.PREV_SEC = '0;
+      VMA.PREV_SEC <= '0;
 
       // Load UPT page number with zero.
       // XXX Not 100% certain this is what this is supposed to do. 
-      mbox0.pma0.UBR = '0;
+      mbox0.pma0.UBR <= '0;
 
       // Invalidate the entire page table by setting the invalid bits in all lines.
       /*      Sim already does this by initializing entire RAM to zeros.
        for (int a = 0; a < $size(mbox0.pag0.ptDirA); ++a) begin
-       mbox0.pag0.ptDirA[a] = '0;
-       mbox0.pag0.ptDirB[a] = '0;
-       mbox0.pag0.ptDirC[a] = '0;
-       mbox0.pag0.ptParity[a] = '0;
+       mbox0.pag0.ptDirA[a] <= '0;
+       mbox0.pag0.ptDirB[a] <= '0;
+       mbox0.pag0.ptDirC[a] <= '0;
+       mbox0.pag0.ptParity[a] <= '0;
        end
        */
       // XXX For now, we do not turn on the cache. Here is where it
@@ -347,7 +347,7 @@ module kl10pv_tb(iAPR APR,
     // IS RUNNING BEFORE WE LEAVE.
     //
     // Boot address is hardcoded to 40000 for now.
-    EDP.AR = 'o40000;
+    EDP.AR <= 'o40000;
     $display($time, " [AR set to boot address %s]", octW(EDP.AR));
 
     // Set the RUN flop.
