@@ -52,8 +52,7 @@ module mb0(iCCL CCL,
   generate
 
     for (k = 0; k < 36; k += 4) begin: mb1
-      USR4 chBuf(.RESET('0),
-                 .S0('0),
+      USR4 chBuf(.S0('0),
                  .D(CH_BUF[k+0:k+3]),
                  .S3('0),
                  .CLK(clk),
@@ -74,8 +73,7 @@ module mb0(iCCL CCL,
     for (mbNum = 0; mbNum < 4; ++mbNum) begin: mb2
 
       for (k = 0; k < 36; k += 4) begin: mbMux
-        USR4 r(.RESET('0),
-               .S0('0),
+        USR4 r(.S0('0),
                .D(MBOX.MB[k+0:k+3]),
                .S3('0),
                .CLK(clk),
@@ -87,8 +85,7 @@ module mb0(iCCL CCL,
 
   // e76
   bit [2:3] mbSelUnused;
-  USR4 mbSel(.RESET('0),
-             .S0('0),
+  USR4 mbSel(.S0('0),
              .D({MBOX.MB_SEL_2_EN, MBOX.MB_SEL_1_EN, 2'b00}),
              .S3('0),
              .SEL({2{MBOX.MB_SEL_HOLD}}),
