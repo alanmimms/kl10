@@ -43,24 +43,19 @@ module kl10pv_tb(iAPR APR,
   var string indent = "";
   var int nSteps;
 
-  tCRAM cram137;
-
   assign clk = masterClk;
   assign EXTERNAL_CLK = masterClk;
   assign clk30 = masterClk;
   assign clk31 = masterClk;     // XXX for now
 
-  // 50MHz clock source
+  // 62.5MHz clock source
   initial masterClk <= 0;
-  always #10 masterClk = ~masterClk;
+  always #16 masterClk = ~masterClk;
 
   initial $readmemh("../../../../images/DRAM.mem", ebox0.ir0.dram.mem);
   initial $readmemh("../../../../images/CRAM.mem", ebox0.crm0.cram.mem);
 
-  // Initialization because of ECL
   initial begin
-    cram137 <= ebox0.crm0.cram.mem['o137];
-
     // Initialize our memories
     // Based on KLINIT.L20 $ZERAC subroutine.
     // Zero all ACs, including the ones in block #7 (microcode's ACs).
@@ -71,6 +66,7 @@ module kl10pv_tb(iAPR APR,
     CON.CONO_200000 <= '0;
   end
 
+  tCRAM cram137;
   initial begin
     #10 CROBAR <= '1;     // CROBAR stays asserted for a long time
     #1000 CROBAR <= '0;   // 1us CROBAR for the 21st century (and sims)
@@ -79,6 +75,7 @@ module kl10pv_tb(iAPR APR,
 
     // Suck out field from microcode in well known address to retrieve
     // microcode edit number.
+    cram137 <= ebox0.crm0.cram.mem['o137];
     #100 KLBootDialog(cram137.MAGIC[0:8], EDP.hwOptions);
   end
 
