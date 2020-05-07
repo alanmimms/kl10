@@ -66,16 +66,14 @@ module pi(iAPR APR,
     ACTIVE = _ON | ~SYS_CLR & OFF & ~ACTIVE;
   end
 
-  USR4 e79(.RESET('0),
-           .S0('0),
+  USR4 e79(.S0('0),
            .D(PIR_EN[1:4]),
            .S3('0),
            .SEL('0),
            .CLK(LOAD),
            .Q(PIR[1:4]));
   
-  USR4 e76(.RESET('0),
-           .S0('0),
+  USR4 e76(.S0('0),
            .D({PIR_EN[5:7], EBUS.pi[0]}), // EBUS PI00 E H (should be a PIC enable?)
            .S3('0),
            .SEL('0),
@@ -147,16 +145,14 @@ module pi(iAPR APR,
               .en(CON.SET_PIH),
               .q(e88Q));
 
-  USR4  e2(.RESET('0),
-           .S0(CYC_START),
+  USR4  e2(.S0(CYC_START),
            .D(4'b0000),
            .S3('0),
            .SEL({STATE_HOLD, ~MR_RESET}),
            .CLK(clk),
            .Q(TIM[1:4]));
 
-  USR4 e12(.RESET('0),
-           .S0(TIM[4]),
+  USR4 e12(.S0(TIM[4]),
            .D(4'b0000),
            .S3('0),
            .SEL({STATE_HOLD, ~MR_RESET}),
@@ -171,8 +167,7 @@ module pi(iAPR APR,
   end
 
   bit [1:3] ignoredE3;
-  USR4  e3(.RESET('0),
-           .S0('0),
+  USR4  e3(.S0('0),
            .D('0),
            .S3(EBUS.xfer | XFER_FORCE),
            .CLK(clk),
@@ -180,8 +175,7 @@ module pi(iAPR APR,
            .Q({TRAN_REC, ignoredE3}));
 
   bit e10COUT;
-  UCR4 e10(.RESET('0),
-           .CIN(~(TIM[5] & ~TRAN_REC)),
+  UCR4 e10(.CIN(~(TIM[5] & ~TRAN_REC)),
            .SEL({~(TIMER_DONE | EBUS_RETURN | CYC_START), 1'b0}),
            .D({TIM[1] | TIM[2] | TIM[6],
                TIM[2] | TIM[6] | CYC_START | TIM[3],
@@ -191,8 +185,7 @@ module pi(iAPR APR,
            .COUT(e10COUT),
            .Q());
 
-  UCR4 e15(.RESET('0),
-           .CIN(e10COUT),
+  UCR4 e15(.CIN(e10COUT),
            .SEL({~(TIMER_DONE | EBUS_RETURN | CYC_START), 1'b0}),
            .D({2'b00, TIM[7], ~TIM[1]}),
            .CLK(clk),
@@ -218,16 +211,14 @@ module pi(iAPR APR,
               .q(e52Q));    
 
   bit ignoredE51, ignoredE56;
-  USR4 e56(.RESET('0),
-           .S0('0),
+  USR4 e56(.S0('0),
            .D({IOB[15:17], 1'b0}),
            .S3('0),
            .SEL({~CON.CONO_APR, ~CON.CONO_APR & ~MR_RESET}),
            .CLK(clk),
            .Q({PIC.APR_PIA, ignoredE56}));
 
-  USR4 e51(.RESET('0),
-           .S0('0),
+  USR4 e51(.S0('0),
            .D({IOB[15:17], 1'b0}),
            .S3('0),
            .SEL({~MTR.CONO_MTR, ~MTR.CONO_MTR & ~MR_RESET}),
@@ -333,8 +324,7 @@ module pi(iAPR APR,
       e6q14 <= '0;
   end
 
-  UCR4  e1(.RESET('0),
-           .CIN(~TIM[2]),
+  UCR4  e1(.CIN(~TIM[2]),
            .SEL({EBUS.demand & ~TRAN_REC, 1'b0}),
            .D(4'b0000),
            .CLK(~MTR._1_MHZ),
@@ -363,8 +353,7 @@ module pi(iAPR APR,
       CYC_START <= '0;
   end
 
-  USR4 e30(.RESET('0),
-           .S0(~LOAD & ~WAIT1 & ~WAIT2),
+  USR4 e30(.S0(~LOAD & ~WAIT1 & ~WAIT2),
            .D(4'b0000),
            .S3('0),
            .SEL({EBUS_REQ, ~INHIBIT_REQ & ~CONO_DLY}),

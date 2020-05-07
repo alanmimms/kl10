@@ -165,24 +165,21 @@ module scd(iAPR APR,
   bit RESET, ignoreE68;
   bit [0:1] feSEL;
   assign feSEL = {CRAM.FE | CON.COND_FE_SHRT, CRAM.FE | RESET};
-  USR4 e68(.RESET('0),
-           .S0(SCD.FE_SIGN),
+  USR4 e68(.S0(SCD.FE_SIGN),
            .D({{3{SCAD[0]}}, SCAD[1]}),
            .S3('0),
            .SEL(feSEL),
            .CLK(clk),
            .Q({SCD.FE_SIGN, ignoreE68, SCD.FE[0:1]}));
 
-  USR4 e69(.RESET('0),
-           .S0(SCD.FE[1] | CRAM.FE),
+  USR4 e69(.S0(SCD.FE[1] | CRAM.FE),
            .D(SCAD[2:5]),
            .S3('0),
            .SEL(feSEL),
            .CLK(clk),
            .Q(SCD.FE[2:5]));
 
-  USR4 e55(.RESET('0),
-           .S0(SCD.FE[5] | CRAM.FE),
+  USR4 e55(.S0(SCD.FE[5] | CRAM.FE),
            .D(SCAD[6:9]),
            .S3('0),
            .SEL(feSEL),

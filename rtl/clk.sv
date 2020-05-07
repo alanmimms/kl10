@@ -207,10 +207,9 @@ module clk(input clk,
 `endif
   
   bit [0:3] rateSelSR;
-  assign RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
+  always_comb RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
   
-  USR4 e5(.RESET('0),
-          .S0('0),
+  USR4 e5(.S0('0),
           .D({CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0}),
           .S3('0),
           .SEL({~RATE_SELECTED, 1'b0}),
@@ -244,8 +243,7 @@ module clk(input clk,
 
   bit [0:3] e42SR;
   // NOTE: Active-low schematic symbol
-  USR4 e42(.RESET('0),
-           .S0('1),
+  USR4 e42(.S0('1),
            .D({CLK.FUNC_SINGLE_STEP,
                CLK.FUNC_EBOX_SS,
                CLK.FUNC_EBOX_SS & ~CLK.SYNC,
@@ -268,8 +266,7 @@ module clk(input clk,
   // This chip has active-low for its D and Q domains. These end as
   // usual at the schematic's slash marks on the lines going in and
   // coming out.
-  USR4 e64(.RESET('0),
-           .S0('0),
+  USR4 e64(.S0('0),
            .D({e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1}),
            .S3(SYNCHRONIZE_CLK),
            .SEL({CLK.MHZ16_FREE, 1'b0}),
@@ -330,8 +327,7 @@ module clk(input clk,
   bit e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];
 
-  UCR4 e52(.RESET('0),
-           .CIN('1),            // Always count
+  UCR4 e52(.CIN('1),            // Always count
            .SEL({1'b0, ~e52COUT | CROBAR | CON.CONO_200000}),
            .CLK(CLK.MHZ16_FREE),
            .D('0),
@@ -340,8 +336,7 @@ module clk(input clk,
 
   bit ignoredE37;
   // NOTE: Active-low schematic symbol
-  USR4 e37(.RESET('0),
-           .S0('0),
+  USR4 e37(.S0('0),
            .D({CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS, 1'b0}),
            .S3('0),
            .SEL(~{2{CLK.FUNC_GATE | CROBAR}}),
@@ -435,8 +430,7 @@ module clk(input clk,
   bit [0:3] e25Count;
   bit e25COUT;
   // NOTE: Active-low schematic symbol
-  UCR4 e25(.RESET('0),
-           .CIN('1),
+  UCR4 e25(.CIN('1),
            .SEL({~EBOX_CLK_EN, 1'b0}),
            .CLK(MBOX_CLK),
            .D('0),
@@ -474,8 +468,7 @@ module clk(input clk,
   assign notHoldAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
   assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | EBOX_SS | CLK.RESET;
 
-  USR4 e12(.RESET('0),
-           .S0(CLK.PF_DLYD_A),
+  USR4 e12(.S0(CLK.PF_DLYD_A),
            .D({CLK.SYNC & e17out & notHoldAB & ~EBOX_CRM_DIS,
                CLK.SYNC & e17out & notHoldAB & ~EBOX_EDP_DIS,
                CLK.SYNC & e17out & notHoldAB & ~EBOX_CTL_DIS,
@@ -529,8 +522,7 @@ module clk(input clk,
   end
 
   // NOTE: Active-low schematic symbol
-  USR4 e30(.RESET('0),
-           .S0('0),
+  USR4 e30(.S0('0),
            .D({PAG.PF_EBOX_HANDLE,
                CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN,
                ~SHM.AR_PAR_ODD & CON.AR_LOADED,
@@ -625,13 +617,13 @@ module clk(input clk,
   bit [0:3] burstLSB;       // E21
   bit [0:3] burstMSB;       // E15
   bit burstLSBcarry;
-
-  assign burstCounter = {burstMSB, burstLSB};
-  assign BURST_CNTeq0 = burstCounter == '0;
+  always_comb begin
+    burstCounter = {burstMSB, burstLSB};
+    BURST_CNTeq0 = burstCounter == '0;
+  end
 
   // NOTE: Active-low schematic symbol
-  UCR4 e15(.RESET('0),
-           .CIN(burstLSBcarry),
+  UCR4 e15(.CIN(burstLSBcarry),
            .SEL(~{BURST | CLK.FUNC_043, CLK.FUNC_043}),
            .D(EBUS.data[32:35]),
            .COUT(),
