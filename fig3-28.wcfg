@@ -12,18 +12,26 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="11510000fs"></ZoomStartTime>
-      <ZoomEndTime time="12770001fs"></ZoomEndTime>
-      <Cursor1Time time="11928000fs"></Cursor1Time>
+      <ZoomStartTime time="23974982fs"></ZoomStartTime>
+      <ZoomEndTime time="29824983fs"></ZoomEndTime>
+      <Cursor1Time time="26469982fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="172"></NameColumnWidth>
       <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="30" />
    <wvobject type="logic" fp_name="/top/CLK/GO">
       <obj_property name="ElementShortName">GO</obj_property>
       <obj_property name="ObjectShortName">GO</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/RATE_SELECTED">
+      <obj_property name="ElementShortName">RATE_SELECTED</obj_property>
+      <obj_property name="ObjectShortName">RATE_SELECTED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/GATED_EN">
+      <obj_property name="ElementShortName">GATED_EN</obj_property>
+      <obj_property name="ObjectShortName">GATED_EN</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/clk0/GATED">
       <obj_property name="ElementShortName">GATED</obj_property>
