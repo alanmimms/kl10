@@ -15,4 +15,5 @@ module USR4(input S0,
     2'b10: Q <= {Q[1:3], S3};   // SHIFT S3 in
     2'b11:;                     // HOLD
     endcase
+  end
 endmodule
