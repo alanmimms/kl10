@@ -12,18 +12,22 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="23974982fs"></ZoomStartTime>
-      <ZoomEndTime time="29824983fs"></ZoomEndTime>
-      <Cursor1Time time="26469982fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="585001fs"></ZoomEndTime>
+      <Cursor1Time time="93000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="172"></NameColumnWidth>
       <ValueColumnWidth column_width="90"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="30" />
+   <WVObjectSize size="31" />
    <wvobject type="logic" fp_name="/top/CLK/GO">
       <obj_property name="ElementShortName">GO</obj_property>
       <obj_property name="ObjectShortName">GO</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/MAIN_SOURCE">
+      <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/clk0/RATE_SELECTED">
       <obj_property name="ElementShortName">RATE_SELECTED</obj_property>
