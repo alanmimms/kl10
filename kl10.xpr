@@ -32,7 +32,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="cora-z7-10"/>
-    <Option Name="WTXSimLaunchSim" Val="2769"/>
+    <Option Name="WTXSimLaunchSim" Val="2797"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -814,6 +814,11 @@
           <Attr Name="UsedIn" Val="simulation"/>
         </FileInfo>
       </File>
+      <File Path="$PPRDIR/fig3-28.wcfg">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="top"/>
@@ -830,6 +835,7 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/dte-ops.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/ebox-mbox.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/page-fail.wcfg"/>
+        <Option Name="XSimWcfgFile" Val="$PPRDIR/fig3-28.wcfg"/>
         <Option Name="xsim.simulate.runtime" Val="1ms"/>
         <Option Name="NLNetlistMode" Val="funcsim"/>
         <Define Name="KL10PV_TB" Val="1"/>

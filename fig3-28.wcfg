@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="top_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit_top_sv " />
+            <top_module name="glbl" />
+            <top_module name="top" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="11510000fs"></ZoomStartTime>
+      <ZoomEndTime time="12770001fs"></ZoomEndTime>
+      <Cursor1Time time="11928000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="172"></NameColumnWidth>
+      <ValueColumnWidth column_width="90"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="28" />
+   <wvobject type="logic" fp_name="/top/CLK/GO">
+      <obj_property name="ElementShortName">GO</obj_property>
+      <obj_property name="ObjectShortName">GO</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/GATED">
+      <obj_property name="ElementShortName">GATED</obj_property>
+      <obj_property name="ObjectShortName">GATED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/SBUS_CLK">
+      <obj_property name="ElementShortName">SBUS_CLK</obj_property>
+      <obj_property name="ObjectShortName">SBUS_CLK</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/EBUS_CLK">
+      <obj_property name="ElementShortName">EBUS_CLK</obj_property>
+      <obj_property name="ObjectShortName">EBUS_CLK</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/ODD">
+      <obj_property name="ElementShortName">ODD</obj_property>
+      <obj_property name="ObjectShortName">ODD</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/CLK_MBOX">
+      <obj_property name="ElementShortName">CLK_MBOX</obj_property>
+      <obj_property name="ObjectShortName">CLK_MBOX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/CLK_OUT">
+      <obj_property name="ElementShortName">CLK_OUT</obj_property>
+      <obj_property name="ObjectShortName">CLK_OUT</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/MBOX_CLK">
+      <obj_property name="ElementShortName">MBOX_CLK</obj_property>
+      <obj_property name="ObjectShortName">MBOX_CLK</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/EBOX_SOURCE">
+      <obj_property name="ElementShortName">EBOX_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">EBOX_SOURCE</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/EBOX_SYNC">
+      <obj_property name="ElementShortName">EBOX_SYNC</obj_property>
+      <obj_property name="ObjectShortName">EBOX_SYNC</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/EBOX_SRC_EN">
+      <obj_property name="ElementShortName">EBOX_SRC_EN</obj_property>
+      <obj_property name="ObjectShortName">EBOX_SRC_EN</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/EBOX_CLK_EN">
+      <obj_property name="ElementShortName">EBOX_CLK_EN</obj_property>
+      <obj_property name="ObjectShortName">EBOX_CLK_EN</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/EBOX_CLK">
+      <obj_property name="ElementShortName">EBOX_CLK</obj_property>
+      <obj_property name="ObjectShortName">EBOX_CLK</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/CRM">
+      <obj_property name="ElementShortName">CRM</obj_property>
+      <obj_property name="ObjectShortName">CRM</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/CRAM/_TIME">
+      <obj_property name="ElementShortName">_TIME[0:1]</obj_property>
+      <obj_property name="ObjectShortName">_TIME[0:1]</obj_property>
+      <obj_property name="LABELRADIX">false</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/SYNC_EN">
+      <obj_property name="ElementShortName">SYNC_EN</obj_property>
+      <obj_property name="ObjectShortName">SYNC_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CON/MBOX_WAIT">
+      <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
+      <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/RESP_MBOX">
+      <obj_property name="ElementShortName">RESP_MBOX</obj_property>
+      <obj_property name="ObjectShortName">RESP_MBOX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CSH/MBOX_RESP_IN">
+      <obj_property name="ElementShortName">MBOX_RESP_IN</obj_property>
+      <obj_property name="ObjectShortName">MBOX_RESP_IN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CSH/PAGE_FAIL_HOLD">
+      <obj_property name="ElementShortName">PAGE_FAIL_HOLD</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL_HOLD</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/PAGE_FAIL_EN">
+      <obj_property name="ElementShortName">PAGE_FAIL_EN</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL_EN</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/PAGE_FAIL">
+      <obj_property name="ElementShortName">PAGE_FAIL</obj_property>
+      <obj_property name="ObjectShortName">PAGE_FAIL</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/PF_DLYD_A">
+      <obj_property name="ElementShortName">PF_DLYD_A</obj_property>
+      <obj_property name="ObjectShortName">PF_DLYD_A</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/PF_DLYD_B">
+      <obj_property name="ElementShortName">PF_DLYD_B</obj_property>
+      <obj_property name="ObjectShortName">PF_DLYD_B</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/FORCE_1777">
+      <obj_property name="ElementShortName">FORCE_1777</obj_property>
+      <obj_property name="ObjectShortName">FORCE_1777</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/SBR_CALL">
+      <obj_property name="ElementShortName">SBR_CALL</obj_property>
+      <obj_property name="ObjectShortName">SBR_CALL</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/_1777_EN">
+      <obj_property name="ElementShortName">_1777_EN</obj_property>
+      <obj_property name="ObjectShortName">_1777_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/INSTR_1777">
+      <obj_property name="ElementShortName">INSTR_1777</obj_property>
+      <obj_property name="ObjectShortName">INSTR_1777</obj_property>
+   </wvobject>
+</wave_config>
