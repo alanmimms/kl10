@@ -104,60 +104,59 @@ module clk(input clk,
    (GD == Gate Delay)
 
    MAIN_SOURCE
-     | [DL 5ns]
+     | [PCB-DL 5ns]
      +--- GATED
-            | [DL 2ns-20ns]
-            +--- EBUS_CLK_SOURCE
-                   | [DL 10ns-50ns]
-                   | [GD 2.6ns]
-                   | [DL 10ns-50ns]
-                   | [DL 2.6ns]
-                   | [DL 0ns-2.5ns]
-                   +--- SOURCE_DELAYED
-                          | [GD ~3ns]
-                          +--- CLK_ON
-                                 | [GD ~2.25ns]
-                                 +--- ODD
-                                 | [DL 2.65ns DL]
-                                 | [GD ~2.25ns GD]
-                                 +--- MBOX
-                                        | [DL 3ns]
-                                        | [GD ~2.25ns]
-                                        +--- CCL, CRC, CHC
-                                        | [DL 3ns]
-                                        | [GD ~2.25ns]
-                                        +--- MB 06, MB 12, CCW
-                                        | [DL 3ns]
-                                        | [GD ~2.25ns]
-                                        +--- MBC, MBX, MBZ
-                                        +--- MBOX 13, MBOX 14, MB 00
-                                        | [DL 3ns]
-                                        | [GD ~2.25ns]
-                                        +--- MTR, CLK_OUT, PIC, PMA, CHX, CSH
+            | [DL1 2ns..20ns] - assume 50% = 10ns
+            +===+===+--- EBUS_CLK_SOURCE = GATED + 20ns
+                | [10101 E73q3 2.6ns]
+                | [DL2 10ns..50ns] - assume 50% = 25ns
+                | [10101 E73q15 2.6ns]  XXX NOTE INVERTING GATE
+                | [DL3 50ns]
+                | [10101 E73q5 2.6ns]
+                | [PCB-DL 2.5ns]
+                +--- SOURCE_DELAYED (GATED+10+2.6+25+2.6+50+2.6+2.5ns)
+                       | [10117 E63q15 3ns]
+                       +--- CLK_ON
+                              | [10210 E59q2 ~2.25ns]
+                              +--- ODD
+                              | [PCB-DL 2.65ns]
+                              | [10210 E49q14 ~2.25ns]
+                              +--- MBOX
+                                     | [PCB-DL 3ns]
+                                     | [GD ~2.25ns]
+                                     +--- CCL, CRC, CHC
+                                     | [PCB-DL 3ns]
+                                     | [GD ~2.25ns]
+                                     +--- MB 06, MB 12, CCW
+                                     | [PCB-DL 3ns]
+                                     | [GD ~2.25ns]
+                                     +--- MBC, MBX, MBZ
+                                     +--- MBOX 13, MBOX 14, MB 00
+                                     | [PCB-DL 3ns]
+                                     | [GD ~2.25ns]
+                                     +--- MTR, CLK_OUT, PIC, PMA, CHX, CSH
    */
 
-  always @(posedge MAIN_SOURCE,
-           negedge MAIN_SOURCE)     #5 GATED = e56q2 & MAIN_SOURCE;
+  always @(posedge MAIN_SOURCE, negedge MAIN_SOURCE)
+    #5 GATED = e56q2 & MAIN_SOURCE;
 
-  always @(posedge GATED,
-           negedge GATED)           #10 EBUS_CLK_SOURCE <= ~EBUS_CLK_SOURCE;
+  always @(posedge GATED, negedge GATED)
+    #20 EBUS_CLK_SOURCE <= ~GATED;
 
-  always @(posedge EBUS_CLK_SOURCE,
-           negedge EBUS_CLK_SOURCE) #57 SOURCE_DELAYED <= ~SOURCE_DELAYED;
+  always @(posedge GATED, negedge GATED)
+    #(10+2.6+25+2.6+50+2.6+2.5) SOURCE_DELAYED <= ~GATED;
 
-  always @(posedge SOURCE_DELAYED, negedge SOURCE_DELAYED) begin
-    #33 CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) &
-                      (SOURCE_DELAYED | DESKEW_CLK | GATED);
-  end
+  always @(posedge SOURCE_DELAYED, negedge SOURCE_DELAYED)
+    #3 CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK);
 
-  always @(posedge CLK_ON,
-           negedge CLK_ON)        #2.25 ODD <= ~ODD;
+  always @(posedge CLK_ON, negedge CLK_ON)
+    #2.25 ODD <= CLK_ON;
 
-  always @(posedge ODD,
-           negedge ODD)            #5.9 CLK_MBOX <= ~CLK_MBOX;
+  always @(posedge CLK_ON, negedge CLK_ON)
+    #(2.65+2.25) CLK_MBOX <= ~CLK_ON;
 
-  always @(posedge CLK_MBOX,
-           negedge CLK_MBOX)            #25 CLK_OUT <= ~CLK_OUT;
+  always @(posedge CLK_MBOX, negedge CLK_MBOX)
+    #(3+2.25) CLK_OUT <= ~CLK_OUT;
 
   always_comb begin
     CLK.CCL = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
@@ -263,9 +262,6 @@ module clk(input clk,
   bit [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
-  // This chip has active-low for its D and Q domains. These end as
-  // usual at the schematic's slash marks on the lines going in and
-  // coming out.
   USR4 e64(.S0('0),
            .D({e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1}),
            .S3(SYNCHRONIZE_CLK),
@@ -334,14 +330,15 @@ module clk(input clk,
            .COUT(e52COUT),
            .Q(e52Count));
 
-  bit ignoredE37;
+  bit ncE37;
+  // CLK.GO is derived from CLK.FUNC_START, which means "Start the KL clock".
   // NOTE: Active-low schematic symbol
   USR4 e37(.S0('0),
            .D({CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS, 1'b0}),
            .S3('0),
            .SEL(~{2{CLK.FUNC_GATE | CROBAR}}),
            .CLK(MAIN_SOURCE),
-           .Q({CLK.GO, BURST, EBOX_SS, ignoredE37}));
+           .Q({CLK.GO, BURST, EBOX_SS, ncE37}));
   
 /*
   bit e47Ignore;
@@ -482,15 +479,21 @@ module clk(input clk,
   assign EBOX_SRC_EN = CLK.SYNC & e17out;
   assign EBOX_CLK_EN = EBOX_SRC_EN | CLK._1777_EN;
 
-  assign CLK.CRM = e12SR[0];
-  assign CLK.CRA = e12SR[0];
-  assign CLK.EDP = CTL.DIAG_CLK_EDP | e12SR[1];
-  assign CLK.APR = e12SR[2];
-  assign CLK.CON = e12SR[2];
-  assign CLK.VMA = e12SR[2];
-  assign CLK.MCL = e12SR[2];
-  assign CLK.IR  = e12SR[2];
-  assign CLK.SCD = e12SR[2];
+  always @(posedge e12SR[0], negedge e12SR[0]) begin
+    #(3+2.25) CLK.CRM = e12SR[0];
+    CLK.CRA = e12SR[0];
+    CLK.EDP = CTL.DIAG_CLK_EDP | e12SR[1];
+  end
+
+  always @(posedge e12SR[2], negedge e12SR[2]) begin
+    #(3+2.25) CLK.APR = e12SR[2];
+    CLK.CON = e12SR[2];
+    CLK.VMA = e12SR[2];
+    CLK.MCL = e12SR[2];
+    CLK.IR  = e12SR[2];
+    CLK.SCD = e12SR[2];
+  end
+
   assign EBOX_SOURCE = e12SR[3];
 
   // CLK4 p.171
