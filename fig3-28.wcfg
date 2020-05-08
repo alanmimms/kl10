@@ -12,22 +12,138 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="585001fs"></ZoomEndTime>
-      <Cursor1Time time="93000fs"></Cursor1Time>
+      <ZoomStartTime time="980433333fs"></ZoomStartTime>
+      <ZoomEndTime time="1003913334fs"></ZoomEndTime>
+      <Cursor1Time time="1000000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="172"></NameColumnWidth>
-      <ValueColumnWidth column_width="90"></ValueColumnWidth>
+      <ValueColumnWidth column_width="86"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="31" />
-   <wvobject type="logic" fp_name="/top/CLK/GO">
-      <obj_property name="ElementShortName">GO</obj_property>
-      <obj_property name="ObjectShortName">GO</obj_property>
+   <WVObjectSize size="34" />
+   <wvobject type="group" fp_name="group1117">
+      <obj_property name="label">GO-debug</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/top/CLK/CROBAR">
+         <obj_property name="ElementShortName">CROBAR</obj_property>
+         <obj_property name="ObjectShortName">CROBAR</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/CTL/DIAG_CTL_FUNC_00x">
+         <obj_property name="ElementShortName">DIAG_CTL_FUNC_00x</obj_property>
+         <obj_property name="ObjectShortName">DIAG_CTL_FUNC_00x</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/CTL/DIAG_LD_FUNC_04x">
+         <obj_property name="ElementShortName">DIAG_LD_FUNC_04x</obj_property>
+         <obj_property name="ObjectShortName">DIAG_LD_FUNC_04x</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/clk0/MAIN_SOURCE">
+         <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
+         <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/CLK/MHZ16_FREE">
+         <obj_property name="ElementShortName">MHZ16_FREE</obj_property>
+         <obj_property name="ObjectShortName">MHZ16_FREE</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group1105">
+         <obj_property name="label">clk0.E64</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/top/ebox0/clk0/e64/S0">
+            <obj_property name="ElementShortName">S0</obj_property>
+            <obj_property name="ObjectShortName">S0</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top/ebox0/clk0/e64/D">
+            <obj_property name="ElementShortName">D[0:3]</obj_property>
+            <obj_property name="ObjectShortName">D[0:3]</obj_property>
+            <obj_property name="Radix">BINARYRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top/ebox0/clk0/e64/S3">
+            <obj_property name="ElementShortName">S3</obj_property>
+            <obj_property name="ObjectShortName">S3</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top/ebox0/clk0/e64/SEL">
+            <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+            <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+            <obj_property name="Radix">BINARYRADIX</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top/ebox0/clk0/e64/CLK">
+            <obj_property name="ElementShortName">CLK</obj_property>
+            <obj_property name="ObjectShortName">CLK</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top/ebox0/clk0/e64/Q">
+            <obj_property name="ElementShortName">Q[0:3]</obj_property>
+            <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+            <obj_property name="Radix">BINARYRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/ebox0/clk0/e60FF">
+         <obj_property name="ElementShortName">e60FF[0:3]</obj_property>
+         <obj_property name="ObjectShortName">e60FF[0:3]</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/FUNC_START">
+         <obj_property name="ElementShortName">FUNC_START</obj_property>
+         <obj_property name="ObjectShortName">FUNC_START</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/FUNC_BURST">
+         <obj_property name="ElementShortName">FUNC_BURST</obj_property>
+         <obj_property name="ObjectShortName">FUNC_BURST</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/FUNC_EBOX_SS">
+         <obj_property name="ElementShortName">FUNC_EBOX_SS</obj_property>
+         <obj_property name="ObjectShortName">FUNC_EBOX_SS</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/GO">
+         <obj_property name="ElementShortName">GO</obj_property>
+         <obj_property name="ObjectShortName">GO</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/clk0/BURST">
+         <obj_property name="ElementShortName">BURST</obj_property>
+         <obj_property name="ObjectShortName">BURST</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/clk0/EBOX_SS">
+         <obj_property name="ElementShortName">EBOX_SS</obj_property>
+         <obj_property name="ObjectShortName">EBOX_SS</obj_property>
+      </wvobject>
+      <wvobject type="group" fp_name="group1094">
+         <obj_property name="label">clk0.E37</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <wvobject type="logic" fp_name="/top/ebox0/clk0/e37/S0">
+            <obj_property name="ElementShortName">S0</obj_property>
+            <obj_property name="ObjectShortName">S0</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top/ebox0/clk0/e37/D">
+            <obj_property name="ElementShortName">D[0:3]</obj_property>
+            <obj_property name="ObjectShortName">D[0:3]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top/ebox0/clk0/e37/S3">
+            <obj_property name="ElementShortName">S3</obj_property>
+            <obj_property name="ObjectShortName">S3</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top/ebox0/clk0/e37/SEL">
+            <obj_property name="ElementShortName">SEL[0:1]</obj_property>
+            <obj_property name="ObjectShortName">SEL[0:1]</obj_property>
+         </wvobject>
+         <wvobject type="logic" fp_name="/top/ebox0/clk0/e37/CLK">
+            <obj_property name="ElementShortName">CLK</obj_property>
+            <obj_property name="ObjectShortName">CLK</obj_property>
+         </wvobject>
+         <wvobject type="array" fp_name="/top/ebox0/clk0/e37/Q">
+            <obj_property name="ElementShortName">Q[0:3]</obj_property>
+            <obj_property name="ObjectShortName">Q[0:3]</obj_property>
+         </wvobject>
+      </wvobject>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/clk0/MAIN_SOURCE">
       <obj_property name="ElementShortName">MAIN_SOURCE</obj_property>
       <obj_property name="ObjectShortName">MAIN_SOURCE</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/CLK/MHZ16_FREE">
+      <obj_property name="ElementShortName">MHZ16_FREE</obj_property>
+      <obj_property name="ObjectShortName">MHZ16_FREE</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/GO">
+      <obj_property name="ElementShortName">GO</obj_property>
+      <obj_property name="ObjectShortName">GO</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/clk0/RATE_SELECTED">
       <obj_property name="ElementShortName">RATE_SELECTED</obj_property>
@@ -40,6 +156,12 @@
    <wvobject type="logic" fp_name="/top/ebox0/clk0/GATED">
       <obj_property name="ElementShortName">GATED</obj_property>
       <obj_property name="ObjectShortName">GATED</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/EBUS_CLK_SOURCE">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">EBUS_CLK_SOURCE</obj_property>
+      <obj_property name="ObjectShortName">EBUS_CLK_SOURCE</obj_property>
+      <obj_property name="label">CLK GATED 20ns DLYD</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/CLK/SBUS_CLK">
       <obj_property name="ElementShortName">SBUS_CLK</obj_property>
