@@ -39,7 +39,7 @@ module clk(input clk,
 
   bit CRAM_PAR_CHECK, FM_PAR_CHECK, DRAM_PAR_CHECK, FS_CHECK;
   bit FS_EN_A, FS_EN_B, FS_EN_C, FS_EN_D, FS_EN_E, FS_EN_F, FS_EN_G;
-  bit EBOX_SOURCE, EBOX_SRC_EN, CLK_MBOX, EBOX_SS;
+  bit EBOX_SOURCE, EBOX_SRC_EN, MBOX, EBOX_SS;
   bit RATE_SELECTED, EBUS_CLK_SOURCE, SOURCE_DELAYED, CLK_OUT, EBOX_CLK;
   bit EBOX_CLK_EN, EBOX_CLK_ERROR, EBOX_EDP_DIS, EBOX_CRM_DIS, EBOX_CTL_DIS;
   bit BURST, CLK_DELAYED, MBOX_CLK, MAIN_SOURCE, GATED, GATED_EN, ODD, CLK_ON;
@@ -144,8 +144,8 @@ module clk(input clk,
     CLK_ON = #3 ((~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK));
 
   always @(CLK_ON) ODD <= #2.25 CLK_ON;
-  always @(~CLK_ON) CLK_MBOX <= #(2.65+2.25) ~CLK_ON;
-  always @(~CLK_OUT) CLK_OUT <= #(3+2.25) ~CLK_OUT;
+  always @(~CLK_ON) MBOX <= #(2.65+2.25) CLK_ON;
+  always @(MBOX) CLK_OUT <= #(3+2.25) MBOX;
 
   always_comb begin
     CLK.CCL = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
@@ -172,26 +172,26 @@ module clk(input clk,
   kl_delays delays0(.clk_in1(GATED),
                     .locked(delaysLocked),
                     .ph5(ODD),
-                    .ph10(CLK_MBOX),
+                    .ph10(MBOX),
                     .ph20(SOURCE_DELAYED),
                     .ph40(EBUS_CLK_SOURCE));
-  assign CLK.CCL = CLK_MBOX | DIAG_CHANNEL_CLK_STOP;
-  assign CLK.CRC = CLK_MBOX | DIAG_CHANNEL_CLK_STOP;
-  assign CLK.CHC = CLK_MBOX | DIAG_CHANNEL_CLK_STOP;
-  assign CLK.CCW = CLK_MBOX | DIAG_CHANNEL_CLK_STOP;
-  assign CLK.MB = CLK_MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CCL = MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CRC = MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CHC = MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CCW = MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.MB = MBOX | DIAG_CHANNEL_CLK_STOP;
 
-  assign CLK.MBC = CLK_MBOX;
-  assign CLK.MBX = CLK_MBOX;
-  assign CLK.MBZ = CLK_MBOX;
-  assign CLK.MBOX_13 = CLK_MBOX;
-  assign CLK.MBOX_14 = CLK_MBOX;
-  assign CLK.MTR = CLK_MBOX;
-  assign CLK_OUT = CLK_MBOX;
-  assign CLK.PIC = CLK_MBOX;
-  assign CLK.PMA = CLK_MBOX;
-  assign CLK.CHX = CLK_MBOX;
-  assign CLK.CSH = CLK_MBOX;
+  assign CLK.MBC = MBOX;
+  assign CLK.MBX = MBOX;
+  assign CLK.MBZ = MBOX;
+  assign CLK.MBOX_13 = MBOX;
+  assign CLK.MBOX_14 = MBOX;
+  assign CLK.MTR = MBOX;
+  assign CLK_OUT = MBOX;
+  assign CLK.PIC = MBOX;
+  assign CLK.PMA = MBOX;
+  assign CLK.CHX = MBOX;
+  assign CLK.CSH = MBOX;
 `endif
   
   bit [0:3] rateSelSR;
@@ -293,8 +293,11 @@ module clk(input clk,
   // CLK1 CLK DELAYED according to EBOX-UD Logical Delays and Skew,
   // Figure 3-25. In KL10B this signal is called CLK_OUT when it
   // leaves the CLK board (see CLK1 A1 E72 pin 3 <FR2>).
-  assign CLK_OUT = CLK_MBOX;
-  assign CLK_DELAYED = CLK_OUT;
+  assign CLK_OUT = MBOX;
+
+  // 125ns is a guess for round trip delay of clock signal across backplane.
+  always @(CLK_OUT) CLK_DELAYED <= #125 CLK_OUT;
+
   assign MBOX_CLK = CLK_DELAYED;
 
   bit e32q2;
