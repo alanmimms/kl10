@@ -250,6 +250,7 @@ module con(iAPR APR,
   always @(posedge CON.RUN) $display($time, " [KL RUN]");
   always @(negedge CON.RUN) $display($time, " [RUN flip-flop deassert]");
 
+/*
   bit runStateNC1, runStateNC2, runStateNC3;
   bit [0:7] e39Q;
   assign DIAG_CLR_RUN = e39Q[0];
@@ -261,11 +262,8 @@ module con(iAPR APR,
   decoder e39(.en(CTL.DIAG_CTL_FUNC_01x),
               .sel(EBUS.ds[4:6]),
               .q(e39Q));
+*/
 
-  always @(posedge EBUS.diagStrobe)
-    $display($time, " CON: EBUS diagStrobe ds=%03o", EBUS.ds);
-
-/*
   always_comb begin
     DIAG_CLR_RUN = '0;
     DIAG_SET_RUN = '0;
@@ -282,7 +280,6 @@ module con(iAPR APR,
     default: ;
     endcase
   end
-*/
 
   bit e19Q, e27Q;
   mux e19(.sel(CRAM.COND[3:5]),
