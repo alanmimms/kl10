@@ -12,13 +12,13 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="11667000fs"></ZoomStartTime>
-      <ZoomEndTime time="13965001fs"></ZoomEndTime>
-      <Cursor1Time time="12050000fs"></Cursor1Time>
+      <ZoomStartTime time="9795250fs"></ZoomStartTime>
+      <ZoomEndTime time="15560251fs"></ZoomEndTime>
+      <Cursor1Time time="11405250fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="85"></ValueColumnWidth>
+      <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="60" />
    <wvobject type="logic" fp_name="/top/MCL/VMA_READ">

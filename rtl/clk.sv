@@ -1,7 +1,4 @@
-// PROBLEM: EBUS_CLK never starts running.
-
-// PROBLEM: CLK.CRM stays high rather than pulsing.
-`timescale 1ns/1ns
+`timescale 1ns/100ps
 `include "ebox.svh"
 
 // M8526 CLK
@@ -42,7 +39,7 @@ module clk(input clk,
 
   bit CRAM_PAR_CHECK, FM_PAR_CHECK, DRAM_PAR_CHECK, FS_CHECK;
   bit FS_EN_A, FS_EN_B, FS_EN_C, FS_EN_D, FS_EN_E, FS_EN_F, FS_EN_G;
-  bit EBOX_SOURCE, EBOX_SRC_EN, CLK_MBOX;
+  bit EBOX_SOURCE, EBOX_SRC_EN, CLK_MBOX, EBOX_SS;
   bit RATE_SELECTED, EBUS_CLK_SOURCE, SOURCE_DELAYED, CLK_OUT, EBOX_CLK;
   bit EBOX_CLK_EN, EBOX_CLK_ERROR, EBOX_EDP_DIS, EBOX_CRM_DIS, EBOX_CTL_DIS;
   bit BURST, CLK_DELAYED, MBOX_CLK, MAIN_SOURCE, GATED, GATED_EN, ODD, CLK_ON;
@@ -114,7 +111,7 @@ module clk(input clk,
                 | [DL3 50ns]
                 | [10101 E73q5 2.6ns]
                 | [PCB-DL 2.5ns]
-                +--- SOURCE_DELAYED (GATED+10+2.6+25+2.6+50+2.6+2.5ns)
+                +--- SOURCE_DELAYED (~GATED+10+2.6+25+2.6+50+2.6+2.5ns)
                        | [10117 E63q15 3ns]
                        +--- CLK_ON
                               | [10210 E59q2 ~2.25ns]
@@ -137,32 +134,24 @@ module clk(input clk,
                                      +--- MTR, CLK_OUT, PIC, PMA, CHX, CSH
    */
 
-  always @(posedge MAIN_SOURCE, negedge MAIN_SOURCE)
-    #5 GATED = e56q2 & MAIN_SOURCE;
+  always @(e56q2 & MAIN_SOURCE) GATED <= #5 (e56q2 & MAIN_SOURCE);
+  always @(~GATED) EBUS_CLK_SOURCE <= #20 ~GATED;
 
-  always @(posedge GATED, negedge GATED)
-    #20 EBUS_CLK_SOURCE <= ~GATED;
+  // Note inversion here
+  always @(~GATED) SOURCE_DELAYED <= #93.7 ~GATED;
 
-  always @(posedge GATED, negedge GATED)
-    #(10+2.6+25+2.6+50+2.6+2.5) SOURCE_DELAYED <= ~GATED;
+  always @((~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK))
+    CLK_ON = #3 ((~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK));
 
-  always @(posedge SOURCE_DELAYED, negedge SOURCE_DELAYED)
-    #3 CLK_ON <= (~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK);
-
-  always @(posedge CLK_ON, negedge CLK_ON)
-    #2.25 ODD <= CLK_ON;
-
-  always @(posedge CLK_ON, negedge CLK_ON)
-    #(2.65+2.25) CLK_MBOX <= ~CLK_ON;
-
-  always @(posedge CLK_MBOX, negedge CLK_MBOX)
-    #(3+2.25) CLK_OUT <= ~CLK_OUT;
+  always @(CLK_ON) ODD <= #2.25 CLK_ON;
+  always @(~CLK_ON) CLK_MBOX <= #(2.65+2.25) ~CLK_ON;
+  always @(~CLK_OUT) CLK_OUT <= #(3+2.25) ~CLK_OUT;
 
   always_comb begin
     CLK.CCL = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
     CLK.CRC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
     CLK.CHC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
-    CLK.MB = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
+    CLK.MB  = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
     CLK.CCW = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
 
     CLK.MBC = CLK_OUT;
@@ -479,20 +468,18 @@ module clk(input clk,
   assign EBOX_SRC_EN = CLK.SYNC & e17out;
   assign EBOX_CLK_EN = EBOX_SRC_EN | CLK._1777_EN;
 
-  always @(posedge e12SR[0], negedge e12SR[0]) begin
-    #(3+2.25) CLK.CRM = e12SR[0];
-    CLK.CRA = e12SR[0];
-    CLK.EDP = CTL.DIAG_CLK_EDP | e12SR[1];
-  end
+  const real e12SRtoClockDLY = 3 + 2.25;
 
-  always @(posedge e12SR[2], negedge e12SR[2]) begin
-    #(3+2.25) CLK.APR = e12SR[2];
-    CLK.CON = e12SR[2];
-    CLK.VMA = e12SR[2];
-    CLK.MCL = e12SR[2];
-    CLK.IR  = e12SR[2];
-    CLK.SCD = e12SR[2];
-  end
+  always @(e12SR[0]) CLK.CRM <= #e12SRtoClockDLY e12SR[0];
+  always @(e12SR[0]) CLK.CRA <= #e12SRtoClockDLY e12SR[0];
+  always @(CTL.DIAG_CLK_EDP | e12SR[1])
+    CLK.EDP <= #e12SRtoClockDLY CTL.DIAG_CLK_EDP | e12SR[1];
+  always @(e12SR[2]) CLK.APR <= #e12SRtoClockDLY e12SR[2];
+  always @(e12SR[2]) CLK.CON <= #e12SRtoClockDLY e12SR[2];
+  always @(e12SR[2]) CLK.VMA <= #e12SRtoClockDLY e12SR[2];
+  always @(e12SR[2]) CLK.MCL <= #e12SRtoClockDLY e12SR[2];
+  always @(e12SR[2]) CLK.IR  <= #e12SRtoClockDLY  e12SR[2];
+  always @(e12SR[2]) CLK.SCD <= #e12SRtoClockDLY e12SR[2];
 
   assign EBOX_SOURCE = e12SR[3];
 
@@ -656,17 +643,17 @@ module clk(input clk,
     end
 
     if (CLK.FUNC_046) begin
-      FM_PAR_CHECK = EBUS.data[32];
-      CRAM_PAR_CHECK = EBUS.data[33];
-      DRAM_PAR_CHECK = EBUS.data[34];
-      FS_CHECK = EBUS.data[35];
+      FM_PAR_CHECK <= EBUS.data[32];
+      CRAM_PAR_CHECK <= EBUS.data[33];
+      DRAM_PAR_CHECK <= EBUS.data[34];
+      FS_CHECK <= EBUS.data[35];
     end
 
     if (CLK.FUNC_047) begin
-      CLK.MBOX_CYCLE_DIS = EBUS.data[32];
-      MBOX_RESP_SIM = EBUS.data[33];
-      AR_ARX_PAR_CHECK = EBUS.data[34];
-      CLK.ERR_STOP_EN = EBUS.data[35];
+      CLK.MBOX_CYCLE_DIS <= EBUS.data[32];
+      MBOX_RESP_SIM <= EBUS.data[33];
+      AR_ARX_PAR_CHECK <= EBUS.data[34];
+      CLK.ERR_STOP_EN <= EBUS.data[35];
     end
   end
 endmodule // clk

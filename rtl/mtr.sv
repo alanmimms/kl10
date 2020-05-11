@@ -332,8 +332,8 @@ module mtr(iCHC CHC,
   always_latch begin
 
     if (HOLD_INTERRUPT_SEL)
-      e18D = {_TIME[2], PERF_COUNT[2], EBOX_COUNT[2], CACHE_COUNT[2],
-              PIC.MTR_HONOR, 3'b000};
+      e18D <= {_TIME[2], PERF_COUNT[2], EBOX_COUNT[2], CACHE_COUNT[2],
+               PIC.MTR_HONOR, 3'b000};
   end
 
   bit [1:2] unusedE37a;
