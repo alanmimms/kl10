@@ -205,3 +205,52 @@ Designation   Designation   Backplane    Model
 # Manual review TODO
 * `MBOX.MEM_TO_C_EN` and `MBX.MEM_TO_C_EN` are separate. See MBC3 C2 and A2.
     * Resolved in: MBC, MBX.
+
+
+# Backplane and slot and connectors
+
+## References to backplane coordinates like 4E22F2
+* Found in DMA20 deskew procedure
+* Refers to KL CPU backplane slot #22 (that's the "4" and the "22" respectively)
+* Module in slot #22 according to module utilization p. 10 is M8531-YA MBC
+* On MBC3, "A CHANGE COMING L" is on <EF2>
+* Signal matches the name given in the deskew procedure
+* On the edge connector this is group E, pair F, solder side (#2)
+* Similarly <DP1> is MBOX CLOCK C on MTR board at 4D33P1 in slot #33
+* See LCG_GoodStuffNewsletters-OCD.pdf p.522-527
+* Leading digit refers to which backplane (see LCG_GoodStuffNewsletters-OCD.pdf p.97)
+  * 1 is DMA/DIA backplane
+  * 2 is RH20/DTE backplane
+  * MEM (internal)?
+  * 4 is KL CPU backplane
+  * 5 is MA20/MB20 memory backplane
+  
+  
+# Instruction timing
+* Can be found in `EK-0KL20-IN-001_inst_Aug78.pdf` p.104-105
+
+
+# Memory transaction timing
+* Can be found in LCG_GoodStuffNewsletters-OCD.pdf p.520
+* Barely legible
+
+# Clock timing
+* From LCG_GoodStuffNewsletters.pdf p.42
+
+    |                            KL10-PV                                |
+    | ================================================================  |
+    | MBOX     | 33.3ns | MB00 H, MB06 H, MB12 H, MBZ H, MBX H, MBC H,  |
+    |          |        | CSH H, PMA H, PI H, CLK H, MTR H              |
+    | CHANNELS | 33.3ns | CHC H, CRC H, CCL H, CCW H                    |
+    | CACHE    | 33.3ns | CHX H                                         |
+    | EBOX     | 66.6ns to 166.5ns (_TIME field) | APR H, CON H, VMA H, |
+    |          |                                 | EDP {00,06,12,18,24,30} H |
+    |          |                                 | CRM {00,04,08,12,16} H |
+    |          |                                 | MCL H, IR H, SCD H   |
+    | DTE      | 66.6ns  | EBUS 10/11 CLK {08,09,10,11} L               |
+    | EBUS     | 133.2ns | CLK 0[0-7] L, CLK 15L |
+    | SBUS     | 133.2ns | CLK INT L, CLK EXT L  |
+
+
+# Backplane wire-wrap and etch listing info
+* LCG_GoodStuffNewsletters.pdf p.97-100
