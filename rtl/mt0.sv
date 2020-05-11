@@ -66,7 +66,7 @@ module mt0(input CROBAR,
   always_latch begin
 
     if (MBOX.SBUS_ADR_HOLD) begin
-      SBUS.ADR = MBOX.PMA;
+      SBUS.ADR <= MBOX.PMA;
     end
   end
 

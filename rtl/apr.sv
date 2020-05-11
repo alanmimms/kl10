@@ -116,9 +116,9 @@ module apr(iAPR APR,
   always_latch begin
 
     if (e14SR[3]) begin
-      e2Latch = CRAM.MAGIC[5] ?
-                {CRAM.MAGIC[6], ~APR.AC[9], F02_EN} :
-                {CRAM.MAGIC[6:8]};
+      e2Latch <= CRAM.MAGIC[5] ?
+                 {CRAM.MAGIC[6], ~APR.AC[9], F02_EN} :
+                 {CRAM.MAGIC[6:8]};
     end
   end
 

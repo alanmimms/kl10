@@ -85,7 +85,7 @@ module mbz(iAPR APR,
                         .q(e47Q));
 
   always_latch begin
-    if (e51q14) MBOX.MB_IN_SEL = e47Q;
+    if (e51q14) MBOX.MB_IN_SEL <= e47Q;
   end
 
 
@@ -350,12 +350,12 @@ module mbz(iAPR APR,
   always_latch begin
 
     if (CH_REG_HOLD) begin
-      CH_REG_00to17_PAR = CCL.DATA_REVERSE ?
-                          MBOX.CBUS_PAR_RIGHT_RE :
-                          MBOX.CBUS_PAR_LEFT_RE;
-      CH_REG_18to35_PAR = CCL.DATA_REVERSE ?
-                          MBOX.CBUS_PAR_LEFT_RE :
-                          MBOX.CBUS_PAR_RIGHT_RE;
+      CH_REG_00to17_PAR <= CCL.DATA_REVERSE ?
+                           MBOX.CBUS_PAR_RIGHT_RE :
+                           MBOX.CBUS_PAR_LEFT_RE;
+      CH_REG_18to35_PAR <= CCL.DATA_REVERSE ?
+                           MBOX.CBUS_PAR_LEFT_RE :
+                           MBOX.CBUS_PAR_RIGHT_RE;
     end
   end
 

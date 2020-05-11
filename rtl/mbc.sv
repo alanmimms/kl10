@@ -324,7 +324,7 @@ module mbc(iAPR APR,
   always_latch begin
 
     if (RQ_HOLD) begin
-      ADR = MBOX.SBUS_ADR[34:35];
+      ADR <= MBOX.SBUS_ADR[34:35];
     end
   end
 
@@ -438,7 +438,7 @@ module mbc(iAPR APR,
   always_latch begin
 
     if (HOLD_MATCH) begin
-      e12L = ~CSH.E_CACHE_WR_CYC ? MATCH_HOLD : CSH.MATCH_HOLD_IN;
+      e12L <= ~CSH.E_CACHE_WR_CYC ? MATCH_HOLD : CSH.MATCH_HOLD_IN;
     end
   end
 
