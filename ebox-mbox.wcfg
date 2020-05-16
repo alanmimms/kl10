@@ -12,20 +12,34 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="9795250fs"></ZoomStartTime>
-      <ZoomEndTime time="15560251fs"></ZoomEndTime>
-      <Cursor1Time time="11405250fs"></Cursor1Time>
+      <ZoomStartTime time="9808250fs"></ZoomStartTime>
+      <ZoomEndTime time="10384751fs"></ZoomEndTime>
+      <Cursor1Time time="10013250fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
       <ValueColumnWidth column_width="81"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="60" />
+   <WVObjectSize size="63" />
    <wvobject type="logic" fp_name="/top/MCL/VMA_READ">
       <obj_property name="ElementShortName">VMA_READ</obj_property>
       <obj_property name="ObjectShortName">VMA_READ</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/MBC">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">MBC</obj_property>
+      <obj_property name="ObjectShortName">MBC</obj_property>
+      <obj_property name="label">CLK.MBC</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/MBOX/PHASE_CHANGE_COMING">
+      <obj_property name="ElementShortName">PHASE_CHANGE_COMING</obj_property>
+      <obj_property name="ObjectShortName">PHASE_CHANGE_COMING</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/CLK_A_PHASE_COMING">
+      <obj_property name="ElementShortName">CLK_A_PHASE_COMING</obj_property>
+      <obj_property name="ObjectShortName">CLK_A_PHASE_COMING</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBC/A_CHANGE_COMING">
       <obj_property name="ElementShortName">A_CHANGE_COMING</obj_property>
