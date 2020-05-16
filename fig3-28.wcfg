@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="980433333fs"></ZoomStartTime>
-      <ZoomEndTime time="1003913334fs"></ZoomEndTime>
-      <Cursor1Time time="1000000000fs"></Cursor1Time>
+      <ZoomStartTime time="9911800fs"></ZoomStartTime>
+      <ZoomEndTime time="10147401fs"></ZoomEndTime>
+      <Cursor1Time time="9959600fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="172"></NameColumnWidth>
-      <ValueColumnWidth column_width="86"></ValueColumnWidth>
+      <ValueColumnWidth column_width="82"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="34" />
+   <WVObjectSize size="38" />
    <wvobject type="group" fp_name="group1117">
       <obj_property name="label">GO-debug</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -141,6 +141,14 @@
       <obj_property name="ElementShortName">MHZ16_FREE</obj_property>
       <obj_property name="ObjectShortName">MHZ16_FREE</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/CON/RESET">
+      <obj_property name="ElementShortName">RESET</obj_property>
+      <obj_property name="ObjectShortName">RESET</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CON/RUN">
+      <obj_property name="ElementShortName">RUN</obj_property>
+      <obj_property name="ObjectShortName">RUN</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/GO">
       <obj_property name="ElementShortName">GO</obj_property>
       <obj_property name="ObjectShortName">GO</obj_property>
@@ -174,10 +182,6 @@
    <wvobject type="logic" fp_name="/top/ebox0/clk0/ODD">
       <obj_property name="ElementShortName">ODD</obj_property>
       <obj_property name="ObjectShortName">ODD</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/clk0/CLK_MBOX">
-      <obj_property name="ElementShortName">CLK_MBOX</obj_property>
-      <obj_property name="ObjectShortName">CLK_MBOX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/clk0/CLK_OUT">
       <obj_property name="ElementShortName">CLK_OUT</obj_property>
@@ -222,6 +226,18 @@
       <obj_property name="ObjectShortName">CRM</obj_property>
       <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/APR">
+      <obj_property name="ElementShortName">APR</obj_property>
+      <obj_property name="ObjectShortName">APR</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/EDP">
+      <obj_property name="ElementShortName">EDP</obj_property>
+      <obj_property name="ObjectShortName">EDP</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRA/CRADR">
+      <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
+      <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/ebox0/CRAM/_TIME">
       <obj_property name="ElementShortName">_TIME[0:1]</obj_property>
