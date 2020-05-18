@@ -308,9 +308,9 @@ module clk(input clk,
   assign CLK.PT_WR = e32q2 & APR.PT_WR;
 
   // This counter's operation is described in EK-EBOX-UD-006 p. 231
-  // (C-32). It counts down to zero over and over again while CROBAR
-  // is asserted and then stops after reaching zero after CROBAR's
-  // trailing edge.
+  // (C-32) and in "3.2.3 EBus Reset" on p. 178. It counts down
+  // to zero over and over again while CROBAR is asserted and then
+  // stops after reaching zero after CROBAR's trailing edge.
   bit [0:3] e52Count;
   bit e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];
@@ -443,9 +443,25 @@ module clk(input clk,
     CLK.SYNC_EN = EBOX_SS & ~EBOX_CLK_EN | e31B & ~EBOX_CLK_EN;
   end
 
-  bit e10FF;                  // Merged into single FF
-  assign CLK.EBOX_SYNC = e10FF;
+  bit e10FF;                    // Merged into single FF
   assign CLK.SYNC = e10FF;      // XXX slashed signals
+
+  // Note CLK.EBOX_SYNC is described in EK-EBUS-UD-006 "3.2.4 EBox
+  // Clock Control" p. 178. This signal is the "... MBOX Sync Point
+  // (EBOX SYNC), which is always asserted one MBOX Clock prior to the
+  // generation of the EBox clock (Figure 3-20)."
+  //
+  // Figure 3-20 Simplified Diagram, MBox Clock, Sync, EBox Clock
+  //                  ___     ___
+  // CLK MBOX CLK  __| 1 |__2|   |
+  //                  _______
+  // CLK EBOX SYNC __| 1     |____
+  //                          ____
+  // CLK EBOX CLK  __________|2
+  //
+  // NOTE: Actually EBOX CLOCK is clocked via CLK ODD which occurs
+  // ~16ns earlier than MBOX CLK.
+  assign CLK.EBOX_SYNC = e10FF;
 
   always_ff @(posedge MBOX_CLK) begin
     e10FF <= CLK.SYNC_EN;       // XXX slashed signals

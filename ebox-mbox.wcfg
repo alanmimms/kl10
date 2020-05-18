@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="9808250fs"></ZoomStartTime>
-      <ZoomEndTime time="10384751fs"></ZoomEndTime>
-      <Cursor1Time time="10013250fs"></Cursor1Time>
+      <ZoomStartTime time="17856917fs"></ZoomStartTime>
+      <ZoomEndTime time="19850918fs"></ZoomEndTime>
+      <Cursor1Time time="18189250fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="81"></ValueColumnWidth>
+      <ValueColumnWidth column_width="77"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="63" />
+   <WVObjectSize size="70" />
    <wvobject type="logic" fp_name="/top/MCL/VMA_READ">
       <obj_property name="ElementShortName">VMA_READ</obj_property>
       <obj_property name="ObjectShortName">VMA_READ</obj_property>
@@ -33,18 +33,32 @@
       <obj_property name="ObjectShortName">MBC</obj_property>
       <obj_property name="label">CLK.MBC</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/MBX">
+      <obj_property name="ElementShortName">MBX</obj_property>
+      <obj_property name="ObjectShortName">MBX</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBOX/PHASE_CHANGE_COMING">
       <obj_property name="ElementShortName">PHASE_CHANGE_COMING</obj_property>
       <obj_property name="ObjectShortName">PHASE_CHANGE_COMING</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/mbc0/CLK_A_PHASE_COMING">
       <obj_property name="ElementShortName">CLK_A_PHASE_COMING</obj_property>
       <obj_property name="ObjectShortName">CLK_A_PHASE_COMING</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/MBOX/A_CHANGE_COMING_IN">
+      <obj_property name="ElementShortName">A_CHANGE_COMING_IN</obj_property>
+      <obj_property name="ObjectShortName">A_CHANGE_COMING_IN</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBC/A_CHANGE_COMING">
       <obj_property name="ElementShortName">A_CHANGE_COMING</obj_property>
       <obj_property name="ObjectShortName">A_CHANGE_COMING</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/mbox0/MBC/B_CHANGE_COMING">
@@ -52,6 +66,10 @@
       <obj_property name="ObjectShortName">B_CHANGE_COMING</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/ebox0/clk0/GATED">
+      <obj_property name="ElementShortName">GATED</obj_property>
+      <obj_property name="ObjectShortName">GATED</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/CSH">
       <obj_property name="DisplayName">label</obj_property>
@@ -82,6 +100,20 @@
       <obj_property name="label">bClk</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/MCL/REQ_EN">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">REQ_EN</obj_property>
+      <obj_property name="ObjectShortName">REQ_EN</obj_property>
+      <obj_property name="label">MCL.REQ_EN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/MCL/MBOX_CYC_REQ">
+      <obj_property name="ElementShortName">MBOX_CYC_REQ</obj_property>
+      <obj_property name="ObjectShortName">MBOX_CYC_REQ</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CON/MBOX_WAIT">
+      <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
+      <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/ebox0/MBOX/CORE_BUSY">
       <obj_property name="DisplayName">label</obj_property>
@@ -325,6 +357,31 @@
    <wvobject type="logic" fp_name="/top/CLK/EBOX_SYNC">
       <obj_property name="ElementShortName">EBOX_SYNC</obj_property>
       <obj_property name="ObjectShortName">EBOX_SYNC</obj_property>
+   </wvobject>
+   <wvobject type="vbus" fp_name="vbus1157">
+      <obj_property name="label">ParityErrs</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="CustomSignalColor">#FF0000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <wvobject type="logic" fp_name="/top/CLK/FM_PAR_ERR">
+         <obj_property name="ElementShortName">FM_PAR_ERR</obj_property>
+         <obj_property name="ObjectShortName">FM_PAR_ERR</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/CRAM_PAR_ERR">
+         <obj_property name="ElementShortName">CRAM_PAR_ERR</obj_property>
+         <obj_property name="ObjectShortName">CRAM_PAR_ERR</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/DRAM_PAR_ERR">
+         <obj_property name="ElementShortName">DRAM_PAR_ERR</obj_property>
+         <obj_property name="ObjectShortName">DRAM_PAR_ERR</obj_property>
+         <obj_property name="CustomSignalColor">#FF0000</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
