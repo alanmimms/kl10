@@ -166,33 +166,24 @@ module mbc(iAPR APR,
 
   assign MBC.DATA_CLR_DONE_IN = MBC.CSH_DATA_CLR_T3 | CSH.DATA_CLR_DONE;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBOX.RQ_HOLD_FF <= MBX.CHAN_WR_CYC & CSH.CHAN_T3 |
                        ~MBC.MEM_START & MBOX.RQ_HOLD_FF & ~RESET;
-  end
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     FORCE_BAD_ADR_PAR <= APR.WR_BAD_ADR_PAR & ~MBC.MEM_START |
                          MBC.MEM_START & FORCE_BAD_ADR_PAR & ~RESET;
-  end
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBC.CSH_DATA_CLR_T1 <= CSH.CLEAR_WR_T0 & WRITE_OK |
                            CSH.EBOX_T3 & CSH.E_CORE_RD_RQ;
-  end
 
-  always_ff @(posedge clk) begin
-    MBC.CSH_DATA_CLR_T2 <= MBC.CSH_DATA_CLR_T1;
-  end
+  always_ff @(posedge clk) MBC.CSH_DATA_CLR_T2 <= MBC.CSH_DATA_CLR_T1;
+  always_ff @(posedge clk) MBC.CSH_DATA_CLR_T3 <= MBC.CSH_DATA_CLR_T2;
 
-  always_ff @(posedge clk) begin
-    MBC.CSH_DATA_CLR_T3 <= MBC.CSH_DATA_CLR_T2;
-  end
-
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBOX.CSH_SEL_LRU <= MBC.CSH_DATA_CLR_T1 & ~CSH.ANY_VAL_HOLD |
                         MBC.CSH_DATA_CLR_T2 & ~CSH.ANY_VAL_HOLD;
-  end
 
 
   // MBC3 p.191
@@ -235,56 +226,33 @@ module mbc(iAPR APR,
   assign ANY_SBUS_RQ_IN = |MBX.RQ_IN;
   assign MBC.CORE_BUSY = CORE_BUSY;
 
-  always_ff @(posedge clk) begin
-    MBC.A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
-  end
+  always_ff @(posedge clk) MBC.A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
+  always_ff @(posedge clk) MBC.B_CHANGE_COMING <= ~MBOX.PHASE_CHANGE_COMING & ~CLK_A_PHASE_COMING;
+  always_ff @(posedge clk) e56q13 <= RESET;
+  always_ff @(posedge clk) e20q15 <= ~A_PHASE | e56q13 & ~RESET;
+  always_ff @(posedge clk) e25q15 <= (~A_PHASE | e56q13 & ~RESET) ^ CLK_A_PHASE_COMING;
+  always_ff @(posedge clk) A_PHASE <= MBC.A_PHASE_COMING;
 
-  always_ff @(posedge clk) begin
-    MBC.B_CHANGE_COMING <= ~MBOX.PHASE_CHANGE_COMING & ~CLK_A_PHASE_COMING;
-  end
-  
-  always_ff @(posedge clk) begin
-    e56q13 <= RESET;
-  end
-  
-  always_ff @(posedge clk) begin
-    e20q15 <= ~A_PHASE | e56q13 & ~RESET;
-  end
-  
-  always_ff @(posedge clk) begin
-    e25q15 <= (~A_PHASE | e56q13 & ~RESET) ^ CLK_A_PHASE_COMING;
-  end
-  
-  always_ff @(posedge clk) begin
-    A_PHASE <= MBC.A_PHASE_COMING;
-  end
-  
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBC.INH_1ST_MB_REQ <= CSH.E_CORE_RD_RQ | ~CSH_VAL_WR_PULSE & MBC.INH_1ST_MB_REQ & ~RESET;
-  end
-  
-  always_ff @(posedge clk) begin
-    FIRST_WD_ADR_SEL <= MBC.INH_1ST_MB_REQ;
-  end
-  
-  always_ff @(posedge clk) begin
+
+  always_ff @(posedge clk) FIRST_WD_ADR_SEL <= MBC.INH_1ST_MB_REQ;
+
+  always_ff @(posedge clk)
     MBOX.DATA_VALID_A_OUT <= (MBOX.DATA_VALID_A_OUT | MBC.A_CHANGE_COMING) &
                              (~MBC.A_CHANGE_COMING |
                               MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF);
-  end
   
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBOX.DATA_VALID_B_OUT <= (MBOX.DATA_VALID_B_OUT | MBC.B_CHANGE_COMING) &
                               (~MBC.B_CHANGE_COMING |
                                MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF);
-  end
   
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     // This drives <EE1> CORE BUSY A H as well.
     CORE_BUSY <= (CORE_BUSY & ~MBC.CORE_DATA_VALID |
                   MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
                  ~RESET;
-  end
 
 
   // MBC4 p.192
@@ -312,31 +280,18 @@ module mbc(iAPR APR,
                      & ~MBC.CORE_ADR[34] & ~MBC.CORE_ADR[35] & MEM_START_RD;
   assign MEM_START_RD = (MBOX.MEM_START_A | MBOX.MEM_START_B) & MBOX.MEM_RD_RQ;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBOX.MEM_START_A <= MBOX.MEM_START_A & ~MEM_START_CLR |
                        ~MBOX.MEM_START_B & MBC.A_CHANGE_COMING & MEM_START_SET;
-  end
   
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     MBOX.MEM_START_B <= MBOX.MEM_START_B & ~MEM_START_CLR |
                        ~MBOX.MEM_START_A & MBC.B_CHANGE_COMING & MEM_START_SET;
-  end
   
-  always_ff @(posedge clk) begin
-    LAST_ACKN_SEEN <= LAST_ACKN | ~MBOX.PHASE_CHANGE_COMING & LAST_ACKN_SEEN;
-  end
-  
-  always_ff @(posedge clk) begin
-    MBC.CORE_DATA_VALminus1 <= CORE_DATA_VALIDminus2;
-  end
-  
-  always_ff @(posedge clk) begin
-    MBC.CORE_DATA_VALID <= MBC.CORE_DATA_VALminus1;
-  end
-  
-  always_ff @(posedge clk) begin
-    CORE_RD_IN_PROG <= INIT_COMP;
-  end
+  always_ff @(posedge clk) LAST_ACKN_SEEN <= LAST_ACKN | ~MBOX.PHASE_CHANGE_COMING & LAST_ACKN_SEEN;
+  always_ff @(posedge clk) MBC.CORE_DATA_VALminus1 <= CORE_DATA_VALIDminus2;
+  always_ff @(posedge clk) MBC.CORE_DATA_VALID <= MBC.CORE_DATA_VALminus1;
+  always_ff @(posedge clk) CORE_RD_IN_PROG <= INIT_COMP;
 
   bit [0:1] ignoredE76;
   UCR4 e76(.CIN('1),
@@ -377,12 +332,7 @@ module mbc(iAPR APR,
            .CLK(clk),
            .Q({MBOX.MEM_RD_RQ, PMA_ADR_PAR_HOLD, ignoredE62, MBOX.MEM_WR_RQ}));
 
-  always_latch begin
-
-    if (RQ_HOLD) begin
-      ADR <= MBOX.SBUS_ADR[34:35];
-    end
-  end
+  always_latch if (RQ_HOLD) ADR <= MBOX.SBUS_ADR[34:35];
 
 
   // MBC5 p.193
@@ -399,10 +349,9 @@ module mbc(iAPR APR,
   assign MBOX.FORCE_VALID_MATCH[3] = MBOX.CSH_WR_EN[3] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
                                      MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
 
-  always_ff @(posedge clk) begin
+  always_ff @(posedge clk)
     e56q4 <= MBC.CSH_DATA_CLR_T1 & CSH.E_CACHE_WR_CYC |
              ~CSH.EBOX_WR_T4_IN & e56q4 & ~RESET;
-  end
 
   mux e38(.en(CTL.DIAG_READ_FUNC_16x),
           .sel(CTL.DIAG[4:6]),
@@ -489,12 +438,7 @@ module mbc(iAPR APR,
           .q(MBC.EBUSdriver.data[33]));
 
   bit [0:1] e12L;
-  always_latch begin
-
-    if (HOLD_MATCH) begin
-      e12L <= ~CSH.E_CACHE_WR_CYC ? MATCH_HOLD : CSH.MATCH_HOLD_IN;
-    end
-  end
+  always_latch if (HOLD_MATCH) e12L <= ~CSH.E_CACHE_WR_CYC ? MATCH_HOLD : CSH.MATCH_HOLD_IN;
 
   bit [4:7] ignoredE19;
   decoder e19(.en(~CSH.RD_PAUSE_2ND_HALF & ~CSH.ONE_WORD_RD),
