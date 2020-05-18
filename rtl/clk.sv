@@ -83,9 +83,7 @@ module clk(input clk,
 
   // XXX ignoring the delay lines
   bit e56q2;
-  always_ff @(posedge MAIN_SOURCE) begin
-    e56q2 <= GATED_EN;
-  end
+  always_ff @(posedge MAIN_SOURCE) e56q2 <= GATED_EN;
 
 `ifdef KL10PV_TB
   assign delaysLocked = '1;
@@ -147,26 +145,24 @@ module clk(input clk,
   always @(~CLK_ON) MBOX <= #(2.65+2.25) CLK_ON;
   always @(MBOX) CLK_OUT <= #(3+2.25) MBOX;
 
-  always_comb begin
-    CLK.CCL = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
-    CLK.CRC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
-    CLK.CHC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
-    CLK.MB  = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
-    CLK.CCW = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CCL = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CRC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CHC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.MB  = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.CCW = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
 
-    CLK.MBC = CLK_OUT;
-    CLK.MBX = CLK_OUT;
-    CLK.MBZ = CLK_OUT;
+  assign CLK.MBC = CLK_OUT;
+  assign CLK.MBX = CLK_OUT;
+  assign CLK.MBZ = CLK_OUT;
 
-    CLK.MBOX_13 = CLK_OUT;
-    CLK.MBOX_14 = CLK_OUT;
+  assign CLK.MBOX_13 = CLK_OUT;
+  assign CLK.MBOX_14 = CLK_OUT;
 
-    CLK.MTR = CLK_OUT;
-    CLK.PIC = CLK_OUT;
-    CLK.PMA = CLK_OUT;
-    CLK.CHX = CLK_OUT;
-    CLK.CSH = CLK_OUT;
-  end
+  assign CLK.MTR = CLK_OUT;
+  assign CLK.PIC = CLK_OUT;
+  assign CLK.PMA = CLK_OUT;
+  assign CLK.CHX = CLK_OUT;
+  assign CLK.CSH = CLK_OUT;
 `else
   assign GATED = e56q2 & MAIN_SOURCE;
   kl_delays delays0(.clk_in1(GATED),
@@ -195,7 +191,7 @@ module clk(input clk,
 `endif
   
   bit [0:3] rateSelSR;
-  always_comb RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
+  assign RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
   
   USR4 e5(.S0('0),
           .D({CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0}),
@@ -285,6 +281,7 @@ module clk(input clk,
       e66SRFF <= '0;
     end
   end
+
   assign CLK.RESET = ~e66SRFF;
   assign CLK.MR_RESET = CLK.RESET;
   assign CLK.SYNC_HOLD = CLK.MR_RESET | CLK.SYNC;
@@ -301,9 +298,7 @@ module clk(input clk,
   assign MBOX_CLK = CLK_DELAYED;
 
   bit e32q2;
-  always_ff @(posedge MBOX_CLK) begin
-    e32q2 <= EBOX_CLK;
-  end
+  always_ff @(posedge MBOX_CLK) e32q2 <= EBOX_CLK;
   assign CLK.PT_DIR_WR = e32q2 & APR.PT_DIR_WR;
   assign CLK.PT_WR = e32q2 & APR.PT_WR;
 
@@ -396,7 +391,8 @@ module clk(input clk,
                             FS_EN_E & FS_EN_F & FS_EN_G & FS_CHECK;
   assign CLK.ERROR = e45FF4 | e45FF13;
   assign CLK.FS_ERROR = ~e45FF14;
-  always_ff @(posedge ODD) begin
+
+  always_ff @(posedge ODD)
     e58FF <= {CLK.ERROR_HOLD_A,
               ~CRM.PAR_16 & CRAM_PAR_CHECK,
               ~APR.FM_ODD_PARITY & FM_PAR_CHECK,
@@ -404,10 +400,9 @@ module clk(input clk,
               ~CLK.ERROR_HOLD_B,
               CLK.ERROR_HOLD_A};
 
-    e45FF4 <= CLK.ERROR_HOLD_B;
-    e45FF13 <= CLK.ERROR_HOLD_A;
-    e45FF14 <= ~CLK.ERROR_HOLD_B;
-  end
+  always_ff @(posedge ODD) e45FF4 <= CLK.ERROR_HOLD_B;
+  always_ff @(posedge ODD) e45FF13 <= CLK.ERROR_HOLD_A;
+  always_ff @(posedge ODD) e45FF14 <= ~CLK.ERROR_HOLD_B;
 
   // From EK-EBOX-UD-006-OCR.pdf on PDF p.233:
   //   The clock phase sync detector compares the MBox clock counter
@@ -439,9 +434,7 @@ module clk(input clk,
               {4{~e25COUT}}}),
           .q(e31B));
 
-  always_comb begin
-    CLK.SYNC_EN = EBOX_SS & ~EBOX_CLK_EN | e31B & ~EBOX_CLK_EN;
-  end
+  assign CLK.SYNC_EN = EBOX_SS & ~EBOX_CLK_EN | e31B & ~EBOX_CLK_EN;
 
   bit e10FF;                    // Merged into single FF
   assign CLK.SYNC = e10FF;      // XXX slashed signals
@@ -463,9 +456,7 @@ module clk(input clk,
   // ~16ns earlier than MBOX CLK.
   assign CLK.EBOX_SYNC = e10FF;
 
-  always_ff @(posedge MBOX_CLK) begin
-    e10FF <= CLK.SYNC_EN;       // XXX slashed signals
-  end
+  always_ff @(posedge MBOX_CLK) e10FF <= CLK.SYNC_EN;       // XXX slashed signals
 
   bit notHoldAB;
   bit [0:3] e12SR;
@@ -509,7 +500,7 @@ module clk(input clk,
   assign CLK.RESP_SIM = CSH.MBOX_RESP_IN & CLK.SYNC_EN;
 
   // Negative logic Wire AND
-  always_ff @(posedge MBOX_CLK) begin
+  always_ff @(posedge MBOX_CLK)
     // NOTE: Wire AND
     CLK.EBOX_REQ <= ~(
                       ~(
@@ -525,10 +516,9 @@ module clk(input clk,
                         ~CLK.FORCE_1777) // E17q15
                       );
 
-    e32Q3 <= CON.MBOX_WAIT & MBOX_RESP_SIM & ~EBOX_CLK_EN & ~VMA.AC_REF;
-    e32Q13 <= CSH.MBOX_RESP_IN;
-    EBOX_CLK <= EBOX_CLK_EN;
-  end
+  always_ff @(posedge MBOX_CLK) e32Q3 <= CON.MBOX_WAIT & MBOX_RESP_SIM & ~EBOX_CLK_EN & ~VMA.AC_REF;
+  always_ff @(posedge MBOX_CLK) e32Q13 <= CSH.MBOX_RESP_IN;
+  always_ff @(posedge MBOX_CLK) EBOX_CLK <= EBOX_CLK_EN;
 
   // NOTE: Active-low schematic symbol
   USR4 e30(.S0('0),
@@ -541,20 +531,18 @@ module clk(input clk,
            .CLK(ODD),
            .Q(CLK.PF_DISP[7:10]));
 
-  always @(posedge ODD) begin
-    CLK.PF_DLYD_A <= CLK.PAGE_FAIL;
-    CLK.PF_DLYD_B <= CLK.PF_DLYD_A;
-  end
+  always @(posedge ODD) CLK.PF_DLYD_A <= CLK.PAGE_FAIL;
+  always @(posedge ODD) CLK.PF_DLYD_B <= CLK.PF_DLYD_A;
 
   assign CLK.PAGE_ERROR = CLK.PAGE_FAIL_EN | CLK.INSTR_1777;
   assign CLK._1777_EN = CLK.FORCE_1777 & CLK.SBR_CALL;
-  always @(posedge MBOX_CLK) begin
+  always @(posedge MBOX_CLK)
     CLK.PAGE_FAIL_EN <= ~CLK.INSTR_1777 &
                         (CSH.PAGE_FAIL_HOLD | (CLK.PAGE_FAIL_EN & ~CLK.RESET));
-    CLK.INSTR_1777 <= CLK._1777_EN | (~EBOX_CLK_EN & CLK.INSTR_1777);
-    CLK.FORCE_1777 <= CLK.PF_DLYD_A;
-    CLK.SBR_CALL <= CLK.PF_DLYD_B;
-  end
+
+  always @(posedge MBOX_CLK) CLK.INSTR_1777 <= CLK._1777_EN | (~EBOX_CLK_EN & CLK.INSTR_1777);
+  always @(posedge MBOX_CLK) CLK.FORCE_1777 <= CLK.PF_DLYD_A;
+  always @(posedge MBOX_CLK) CLK.SBR_CALL <= CLK.PF_DLYD_B;
 
   bit e7out7;                 // XXX slashed
   bit e38out7;                // XXX slashed
@@ -626,10 +614,8 @@ module clk(input clk,
   bit [0:3] burstLSB;       // E21
   bit [0:3] burstMSB;       // E15
   bit burstLSBcarry;
-  always_comb begin
-    burstCounter = {burstMSB, burstLSB};
-    BURST_CNTeq0 = burstCounter == '0;
-  end
+  assign burstCounter = {burstMSB, burstLSB};
+  assign BURST_CNTeq0 = burstCounter == '0;
 
   // NOTE: Active-low schematic symbol
   UCR4 e15(.CIN(burstLSBcarry),
