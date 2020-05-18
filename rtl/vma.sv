@@ -50,10 +50,8 @@ module vma(iAPR APR,
   assign SPEC_VMA_MAGIC = CON.COND_VMA_MAGIC;
 
   bit VMA_G;
-  always_comb begin
-    // XXX this goes nowhere. Why?
-    VMA_G = CSH.GATE_VMA_27_33 ? VMA.VMA[27:33] : '0;
-  end
+  // XXX this goes nowhere. Why?
+  assign VMA_G = CSH.GATE_VMA_27_33 ? VMA.VMA[27:33] : '0;
 
   bit AD_CRY_20, AD_CRY_24, AD_CRY_28, AD_CRY_32;
   bit AD_CG_20_23, AD_CP_20_23, AD_CG_24_27, AD_CP_24_27, AD_CG_28_31, AD_CP_28_31;
@@ -117,9 +115,7 @@ module vma(iAPR APR,
   bit [12:17] VMA_IN;
   bit CRY_16, CRY_20, CRY_24, CRY_28, CRY_32;
   bit [18:35] vmaMux;
-  always_comb begin
-    vmaMux = MCL.VMA_AD ? EDP.AD[18:35] : VMA_AD[18:35];
-  end
+  assign vmaMux = MCL.VMA_AD ? EDP.AD[18:35] : VMA_AD[18:35];
 
   UCR4 e11(.RESET('0),
            .D(VMA_IN[12:15]),
@@ -242,26 +238,19 @@ module vma(iAPR APR,
   assign VMAX_EN = ~MCL.VMAX_EN | CON.COND_VMAX_MAGIC;
 
   // E12 top half
-  always_comb begin
-    if (VMAX_EN && MCL.VMAX_SEL == 2'b00) VMA_IN[12] = VMA.VMA[12];
-  end
+  always_comb if (VMAX_EN && MCL.VMAX_SEL == 2'b00) VMA_IN[12] = VMA.VMA[12];
 
   // Note change of signal name from VMA_nn_IN to VMA_IN[nn].
   // E12 bottom half, E17, E19
   generate
     for (k = 13; k < 18; k += 2) begin: vmaIN
 
-      always_comb begin
-
-        if (VMAX_EN) begin
-          case (MCL.VMAX_SEL)
-          2'b00: VMA_IN[k] = VMA.VMA[k];
-          2'b01: VMA_IN[k] = VMA.PC[k];
-          2'b10: VMA_IN[k] = VMA.PREV_SEC[k];
-          2'b11: VMA_IN[k] = EDP.AD[k];
-          endcase
-        end
-      end
+      always_comb if (VMAX_EN) case (MCL.VMAX_SEL)
+                               2'b00: VMA_IN[k] = VMA.VMA[k];
+                               2'b01: VMA_IN[k] = VMA.PC[k];
+                               2'b10: VMA_IN[k] = VMA.PREV_SEC[k];
+                               2'b11: VMA_IN[k] = EDP.AD[k];
+                               endcase
     end
   endgenerate
 

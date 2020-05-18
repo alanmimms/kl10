@@ -50,13 +50,11 @@ module apr(iAPR APR,
 
 // I wanted to use nested modules for this but they broke xelab (SIGSEGV)
 `define APRInt(clk, m, e, i) \
-  always_comb i = CON.SEL_EN & EBUS.data[m] | i & ~RESET & CON.SEL_DIS & EBUS.data[m]; \
+  assign i = CON.SEL_EN & EBUS.data[m] | i & ~RESET & CON.SEL_DIS & EBUS.data[m]; \
   always_ff @(posedge clk) e <= i;
 
 `define APREvent(clk, m, o, e, i) \
-  always_comb \
-        i = CON.SEL_SET & EBUS.data[m] | ~CON.SEL_CLR & e & ~RESET | \
-        e & ~EBUS.data[m] & ~RESET | o; \
+  assign i = CON.SEL_SET & EBUS.data[m] | ~CON.SEL_CLR & e & ~RESET | e & ~EBUS.data[m] & ~RESET | o; \
   always_ff @(posedge clk) e <= i;
 
    // APR1 p.382
@@ -99,36 +97,22 @@ module apr(iAPR APR,
                               CON.WR_EVEN_PAR_ADR &
                               ~MBOX.MBOX_ADR_PAR_ERR;
 
-  always_ff @(posedge clk) begin
-    APR.ANY_EBOX_ERR_FLG <= NXM_ERR_IN | MB_PAR_ERR_IN | S_ADR_P_ERR_IN;
-  end
+  always_ff @(posedge clk) APR.ANY_EBOX_ERR_FLG <= NXM_ERR_IN | MB_PAR_ERR_IN | S_ADR_P_ERR_IN;
 
   // APR3 p.384
   bit [0:3] e14SR;
-  always_ff @(posedge clk) begin
-
-    if (CON.COND_EBUS_CTL | RESET) begin
-      e14SR <= {CRAM.MAGIC[0:1], CRAM.MAGIC[3:4]};
-    end
-  end
+  always_ff @(posedge clk) if (CON.COND_EBUS_CTL | RESET) e14SR <= {CRAM.MAGIC[0:1], CRAM.MAGIC[3:4]};
 
   bit [0:2] e2Latch;
-  always_latch begin
+  always_latch if (e14SR[3]) e2Latch <= CRAM.MAGIC[5] ?
+                                        {CRAM.MAGIC[6], ~APR.AC[9], F02_EN} :
+                                        {CRAM.MAGIC[6:8]};
 
-    if (e14SR[3]) begin
-      e2Latch <= CRAM.MAGIC[5] ?
-                 {CRAM.MAGIC[6], ~APR.AC[9], F02_EN} :
-                 {CRAM.MAGIC[6:8]};
-    end
-  end
-
-  always_comb begin
-    APR.EBUS_DISABLE_CS = e14SR[3] & e2Latch[0];
-    APR.EBUS_F01 = e14SR[3] & e2Latch[1];
-    APR.EBOX_SEND_F02 = e14SR[3] & e2Latch[2];
-    APR.CONI_OR_DATAI = ~APR.EBOX_SEND_F02;
-    APR.CONO_OR_DATAO = e14SR[3] & ~APR.CONI_OR_DATAI;
-  end
+  assign APR.EBUS_DISABLE_CS = e14SR[3] & e2Latch[0];
+  assign APR.EBUS_F01 = e14SR[3] & e2Latch[1];
+  assign APR.EBOX_SEND_F02 = e14SR[3] & e2Latch[2];
+  assign APR.CONI_OR_DATAI = ~APR.EBOX_SEND_F02;
+  assign APR.CONO_OR_DATAO = e14SR[3] & ~APR.CONI_OR_DATAI;
 
   bit fm36XORin;
 
@@ -150,18 +134,14 @@ module apr(iAPR APR,
                     .wea(~clk & CON.FM_WRITE_PAR & APR.SPARE)); // WTF?
 `endif
 
-  always_comb begin
-    APR.FM_BIT_36 = fm36XORin ^ APR.FM_EXTENDED;
-    APR.FM_ODD_PARITY = |CRAM.ADB | EDP.FM_PARITY;
-  end
+  assign APR.FM_BIT_36 = fm36XORin ^ APR.FM_EXTENDED;
+  assign APR.FM_ODD_PARITY = |CRAM.ADB | EDP.FM_PARITY;
 
-  always_ff @(posedge clk) begin
-    if (CON.DATAO_APR) begin
-      {APR.FETCH_COMP,
-       APR.READ_COMP,
-       APR.WRITE_COMP,
-       APR.USER_COMP} <= EBUS.data[9:12];
-    end
+  always_ff @(posedge clk) if (CON.DATAO_APR) begin
+    {APR.FETCH_COMP,
+     APR.READ_COMP,
+     APR.WRITE_COMP,
+     APR.USER_COMP} <= EBUS.data[9:12];
   end
 
 
@@ -195,29 +175,27 @@ module apr(iAPR APR,
           .q(APR.FM_ADR[3]));
 
   bit AC7, AC67, AC37, AC567, AC01;
-  always_comb begin
-    AC67 = APR.AC[10] ^ APR.AC[11];
-    AC37 = APR.AC[11] ^ APR.AC[12];
-    AC7 = ~(~AC67 | ~AC37);
-    AC567 = APR.AC[10] ^ ~ACplus3[10];
-    AC01 = ~APR.AC[10] & ~APR.AC[11];
-    F02_EN = AC567 | AC01;
+  assign AC67 = APR.AC[10] ^ APR.AC[11];
+  assign AC37 = APR.AC[11] ^ APR.AC[12];
+  assign AC7 = ~(~AC67 | ~AC37);
+  assign AC567 = APR.AC[10] ^ ~ACplus3[10];
+  assign AC01 = ~APR.AC[10] & ~APR.AC[11];
+  assign F02_EN = AC567 | AC01;
 
-    ACplus1[9] = APR.AC[9] ^ AC7;
-    ACplus1[10] = APR.AC[10] ^ AC37;
-    ACplus1[11] = APR.AC[11] ^ APR.AC[12];
-    ACplus1[12] = ~APR.AC[12];
+  assign ACplus1[9] = APR.AC[9] ^ AC7;
+  assign ACplus1[10] = APR.AC[10] ^ AC37;
+  assign ACplus1[11] = APR.AC[11] ^ APR.AC[12];
+  assign ACplus1[12] = ~APR.AC[12];
 
-    ACplus2[9] = APR.AC[9] ^ AC67;
-    ACplus2[10] = APR.AC[10] & APR.AC[11];
-    ACplus2[11] = ~APR.AC[11];
-    ACplus2[12] = APR.AC[12];
+  assign ACplus2[9] = APR.AC[9] ^ AC67;
+  assign ACplus2[10] = APR.AC[10] & APR.AC[11];
+  assign ACplus2[11] = ~APR.AC[11];
+  assign ACplus2[12] = APR.AC[12];
 
-    ACplus3[9] = APR.AC[9] ^ AC567;
-    ACplus3[10] = ACplus1[10] ^ ACplus1[11];
-    ACplus3[11] = ACplus1[11];
-    ACplus3[12] = ~APR.AC[12];
-  end
+  assign ACplus3[9] = APR.AC[9] ^ AC567;
+  assign ACplus3[10] = ACplus1[10] ^ ACplus1[11];
+  assign ACplus3[11] = ACplus1[11];
+  assign ACplus3[12] = ~APR.AC[12];
 
   mc10181 e61(.S(CRAM.MAGIC[1:4]),
               .M(CRAM.MAGIC[0]),
@@ -294,12 +272,10 @@ module apr(iAPR APR,
            .CLK(clk),
            .Q({ignoreE29, APR.VMA_BLOCK}));
 
-  always_comb begin
-    APR.SET_PAGE_FAIL = CRAM.MAGIC[1] & CON.COND_MBOX_CTL;
-    APR.SET_IO_PF_ERR = CRAM.MAGIC[2] & CON.COND_MBOX_CTL;
-    APR.PT_DIR_WR = CRAM.MAGIC[4] & CON.COND_MBOX_CTL;
-    APR.PT_WR = CRAM.MAGIC[5] & CON.COND_MBOX_CTL;
-  end
+  assign APR.SET_PAGE_FAIL = CRAM.MAGIC[1] & CON.COND_MBOX_CTL;
+  assign APR.SET_IO_PF_ERR = CRAM.MAGIC[2] & CON.COND_MBOX_CTL;
+  assign APR.PT_DIR_WR = CRAM.MAGIC[4] & CON.COND_MBOX_CTL;
+  assign APR.PT_WR = CRAM.MAGIC[5] & CON.COND_MBOX_CTL;
 
 
   // APR6 p.387
@@ -395,11 +371,9 @@ module apr(iAPR APR,
                  APR.EBOX_SBUS_DIAG, ignoreE6b, APR.EN_REFILL_RAM_WR,
                  ignoreE6c}));
 
-  always_comb begin
-    REG_FUNC_EN = e4out[3];
-    APR.EBOX_LOAD_REG = e4out[0] & e4out[2];
-    APR.EBOX_READ_REG = MCL.EBOX_MAP | e4out[1] & e4out[2];
-    APR.EBOX_CCA = e7out[0] & e7out[1] & e7out[3] & REG_FUNC_EN;
-    APR.EBOX_ERA = e7out[1] & e7out[2] & e7out[3] & REG_FUNC_EN;
-  end
+  assign REG_FUNC_EN = e4out[3];
+  assign APR.EBOX_LOAD_REG = e4out[0] & e4out[2];
+  assign APR.EBOX_READ_REG = MCL.EBOX_MAP | e4out[1] & e4out[2];
+  assign APR.EBOX_CCA = e7out[0] & e7out[1] & e7out[3] & REG_FUNC_EN;
+  assign APR.EBOX_ERA = e7out[1] & e7out[2] & e7out[3] & REG_FUNC_EN;
 endmodule // apr

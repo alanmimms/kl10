@@ -82,119 +82,92 @@ module edp(iAPR APR,
 
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
-  always_comb begin
-    unique case (CTL.ARL_SEL)
-    default: ARL = '0;
-    3'b000: ARL = {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER};
-    3'b001: ARL = MBOX.CACHE_DATA[0:17];
-    3'b010: ARL = EDP.AD[0:17];
-    3'b011: ARL = EBUS.data[0:17];
-    3'b100: ARL = SHM.SH[0:17];
-    3'b101: ARL = EDP.AD[1:18];
-    3'b110: ARL = EDP.ADX[0:17];
-    3'b111: ARL = {EDP.AD_EX[-2:-1], EDP.AD[0:14]};
-    endcase
-  end
+  always_comb unique case (CTL.ARL_SEL)
+              default: ARL = '0;
+              3'b000: ARL = {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER};
+              3'b001: ARL = MBOX.CACHE_DATA[0:17];
+              3'b010: ARL = EDP.AD[0:17];
+              3'b011: ARL = EBUS.data[0:17];
+              3'b100: ARL = SHM.SH[0:17];
+              3'b101: ARL = EDP.AD[1:18];
+              3'b110: ARL = EDP.ADX[0:17];
+              3'b111: ARL = {EDP.AD_EX[-2:-1], EDP.AD[0:14]};
+              endcase
   
   // EDP.AR
-  always_ff @(posedge CLK.EDP) begin
+  always_ff @(posedge CLK.EDP) if (CTL.AR00to11_CLR) EDP.AR[0:11] <= '0;
+                               else if (CTL.AR00to08_LOAD) EDP.AR[0:8] <= ARL[0:8];
 
-    if (CTL.AR00to11_CLR) begin
-      EDP.AR[0:11] <= '0;
-    end else if (CTL.AR00to08_LOAD) begin
-      EDP.AR[0:8] <= ARL[0:8];
-    end
+  always_ff @(posedge CLK.EDP) if (CTL.AR12to17_CLR) EDP.AR[12:17] <= '0;
+                               else if (CTL.AR09to17_LOAD) EDP.AR[9:17] <= ARL[9:17];
 
-    if (CTL.AR12to17_CLR) begin
-      EDP.AR[12:17] <= '0;
-    end else if (CTL.AR09to17_LOAD) begin
-      EDP.AR[9:17] <= ARL[9:17];
-    end
-
-    if (CTL.ARR_CLR) begin
-      EDP.AR[18:35] <= '0;
-    end else if (CTL.ARR_LOAD) begin
-      unique case (CRAM.AR)
-      3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
-      3'b001: EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
-      3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
-      3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
-      3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
-      3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
-      3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
-      3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
-      endcase
-    end
-  end
+  always_ff @(posedge CLK.EDP) if (CTL.ARR_CLR) EDP.AR[18:35] <= '0;
+                               else if (CTL.ARR_LOAD)
+                                 unique case (CRAM.AR)
+                                 3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
+                                 3'b001: EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
+                                 3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
+                                 3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
+                                 3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
+                                 3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
+                                 3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
+                                 3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
+                                 endcase
 
   // ARX muxes p16.
-  always_comb begin
+  always_comb unique case (CTL.ARXL_SEL)
+              default: ARXL = '0;
+              3'b000: ARXL = '0;
+              3'b001: ARXL = MBOX.CACHE_DATA[0:17];
+              3'b010: ARXL = EDP.AD[0:17];
+              3'b011: ARXL = EDP.MQ[0:17];
+              3'b100: ARXL = SHM.SH[0:17];
+              3'b101: ARXL = EDP.ADX[1:18];
+              3'b110: ARXL = EDP.ADX[0:17];
+              3'b111: ARXL = {EDP.AD[34:35], EDP.ADX[0:15]};
+              endcase
 
-    unique case (CTL.ARXL_SEL)
-    default: ARXL = '0;
-    3'b000: ARXL = '0;
-    3'b001: ARXL = MBOX.CACHE_DATA[0:17];
-    3'b010: ARXL = EDP.AD[0:17];
-    3'b011: ARXL = EDP.MQ[0:17];
-    3'b100: ARXL = SHM.SH[0:17];
-    3'b101: ARXL = EDP.ADX[1:18];
-    3'b110: ARXL = EDP.ADX[0:17];
-    3'b111: ARXL = {EDP.AD[34:35], EDP.ADX[0:15]};
-    endcase
-
-    unique case (CTL.ARXR_SEL)
-    default: ARXR = '0;
-    3'b000: ARXR = '0;
-    3'b001: ARXR = MBOX.CACHE_DATA[18:35];
-    3'b010: ARXR = EDP.AD[18:35];
-    3'b011: ARXR = EDP.MQ[18:35];
-    3'b100: ARXR = SHM.SH[18:35];
-    3'b101: ARXR = {EDP.ADX[19:35], EDP.MQ[0]};
-    3'b110: ARXR = EDP.ADX[18:35];
-    3'b111: ARXR = EDP.ADX[16:33];
-    endcase
-  end
+  always_comb unique case (CTL.ARXR_SEL)
+              default: ARXR = '0;
+              3'b000: ARXR = '0;
+              3'b001: ARXR = MBOX.CACHE_DATA[18:35];
+              3'b010: ARXR = EDP.AD[18:35];
+              3'b011: ARXR = EDP.MQ[18:35];
+              3'b100: ARXR = SHM.SH[18:35];
+              3'b101: ARXR = {EDP.ADX[19:35], EDP.MQ[0]};
+              3'b110: ARXR = EDP.ADX[18:35];
+              3'b111: ARXR = EDP.ADX[16:33];
+              endcase
 
   // ARX
-  always_ff @(posedge CLK.EDP) begin
-    if (CTL.ARX_LOAD) EDP.ARX <= {ARXL, ARXR};
-  end
+  always_ff @(posedge CLK.EDP) if (CTL.ARX_LOAD) EDP.ARX <= {ARXL, ARXR};
 
   // MQM mux p16.
-  always_comb begin
-
-    if (CTL.MQM_EN) begin
-
-      unique case (CTL.MQM_SEL)
-      default: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
-      usrLOAD: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
-      usrSHL:  MQM = SHM.SH;
-      usrSHR:  MQM = EDP.AD[0:35];
-      usrHOLD: MQM = '1;
-      endcase
-    end else
-      MQM = '0;
-  end
+  always_comb if (CTL.MQM_EN) unique case (CTL.MQM_SEL)
+                              default: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
+                              usrLOAD: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
+                              usrSHL:  MQM = SHM.SH;
+                              usrSHR:  MQM = EDP.AD[0:35];
+                              usrHOLD: MQM = '1;
+                              endcase
+              else MQM = '0;
 
   // MQ mux and register
-  always_ff @(posedge CLK.EDP) begin
-
-    // MQ: 36-bit MC10141-ish universal shift register
-    unique case (CTL.MQ_SEL)
-    default: EDP.MQ <= '0;
-    usrLOAD: EDP.MQ <= MQM;
-    usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
-    usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
-    usrHOLD: EDP.MQ <= EDP.MQ;
-    endcase
-  end
+  // MQ: 36-bit MC10141-ish universal shift register
+  always_ff @(posedge CLK.EDP) unique case (CTL.MQ_SEL)
+                               default: EDP.MQ <= '0;
+                               usrLOAD: EDP.MQ <= MQM;
+                               usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
+                               usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
+                               usrHOLD: EDP.MQ <= EDP.MQ;
+                               endcase
 
   // Look-ahead carry network moved here from IR4 M8522 board.
   bit [0:35] ADEXxortmp;
 
   // Why is this necessary?
   bit [0:3] S;
-  always_comb S = CRAM.AD[2:5];
+  assign S = CRAM.AD[2:5];
 
   // AD
   genvar n;
@@ -328,33 +301,29 @@ module edp(iAPR APR,
   generate
     for (n = '0; n < 36; n = n + 6) begin : ADBmux
 
-      always_comb begin
-        // The irregular part of ADB mux: E22 and E21.
-        // When N==0, D4..D7 inputs are selected else D0..D3.
-        //
-        // In the real KL10 EDP the ADB[-2],ADB[-1] are handled by
-        // this bit. But when N > 0, they wire-OR with other signals.
-        // I am resolving this by forcing this logic only for N=0.
-        if (n == 0) begin
-          unique case(CRAM.ADB)
-          default: ADB[n-2:n-1] = '0;
-          adbFM:   ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
-          adbBRx2: ADB[n-2:n-1] = {2{n == 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
-          adbBR:   ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
-          adbARx4: ADB[n-2:n-1] = {n == 0 ? EDP.AR[n+0] : EDP.AR[n+2],
-                                   n == 0 ? EDP.AR[n+1] : EDP.AR[n+2]};
-          endcase
-        end
+      // The irregular part of ADB mux: E22 and E21.
+      // When N==0, D4..D7 inputs are selected else D0..D3.
+      //
+      // In the real KL10 EDP the ADB[-2],ADB[-1] are handled by
+      // this bit. But when N > 0, they wire-OR with other signals.
+      // I am resolving this by forcing this logic only for N=0.
+      always_comb if (n == 0) unique case(CRAM.ADB)
+                              default: ADB[n-2:n-1] = '0;
+                              adbFM:   ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
+                              adbBRx2: ADB[n-2:n-1] = {2{n == 0 ? EDP.BR[n+0] : EDP.BR[n+1]}};
+                              adbBR:   ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
+                              adbARx4: ADB[n-2:n-1] = {n == 0 ? EDP.AR[n+0] : EDP.AR[n+2],
+                                                       n == 0 ? EDP.AR[n+1] : EDP.AR[n+2]};
+                              endcase
 
-        // The regular part of ADB mux: E23, E26, and E19.
-        unique case(CRAM.ADB)
-        default: ADB[n:n+5] = '0;
-        adbFM:   ADB[n:n+5] = EDP.FM[n+0:n+5];
-        adbBRx2: ADB[n:n+5] = {EDP.BR[n+1:n+5], n < 30 ? EDP.BR[n+6] : EDP.BRX[0]};
-        adbBR:   ADB[n:n+5] = EDP.BR[n+0:n+5];
-        adbARx4: ADB[n:n+5] = {EDP.AR[n+2:n+5], n < 30 ? EDP.AR[n+6:n+7] : EDP.ARX[0:1]};
-        endcase
-      end
+      // The regular part of ADB mux: E23, E26, and E19.
+      always_comb unique case(CRAM.ADB)
+                  default: ADB[n:n+5] = '0;
+                  adbFM:   ADB[n:n+5] = EDP.FM[n+0:n+5];
+                  adbBRx2: ADB[n:n+5] = {EDP.BR[n+1:n+5], n < 30 ? EDP.BR[n+6] : EDP.BRX[0]};
+                  adbBR:   ADB[n:n+5] = EDP.BR[n+0:n+5];
+                  adbARx4: ADB[n:n+5] = {EDP.AR[n+2:n+5], n < 30 ? EDP.AR[n+6:n+7] : EDP.ARX[0:1]};
+                  endcase
     end
   endgenerate
 
@@ -371,14 +340,13 @@ module edp(iAPR APR,
   // ADXB mux
   generate
     for (n = '0; n < 36; n = n + 6) begin : ADXBmux
-      always_comb
-        unique case(CRAM.ADB)
-        default: ADXB[n+0:n+5] = '0;
-        adbFM:   ADXB[n+0:n+5] = hwOptions[n+0:n+5];
-        adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0};
-        adbBR:   ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
-        adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP.ARX[n+2:n+7] : {EDP.ARX[n+2:n+5], 2'b00};
-        endcase
+      always_comb unique case(CRAM.ADB)
+                  default: ADXB[n+0:n+5] = '0;
+                  adbFM:   ADXB[n+0:n+5] = hwOptions[n+0:n+5];
+                  adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0};
+                  adbBR:   ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
+                  adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP.ARX[n+2:n+7] : {EDP.ARX[n+2:n+5], 2'b00};
+                  endcase
     end
   endgenerate
 
@@ -393,30 +361,23 @@ module edp(iAPR APR,
   // ADA mux
   generate
     for (n = '0; n < 36; n = n + 6) begin : ADAmux
-      always_comb
-        if (~ADA_EN)
-          unique case(CRAM.ADA)
-          default: ADA[n+0:n+5] = '0;
-          adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
-          adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
-          adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
-          adaPC:  ADA[n+0:n+5] = VMA.HELD_OR_PC[n+0:n+5];
-          endcase
-        else
-          ADA[n+0:n+5] = '0;
+      always_comb if (~ADA_EN) unique case(CRAM.ADA)
+                               default: ADA[n+0:n+5] = '0;
+                               adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
+                               adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
+                               adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
+                               adaPC:  ADA[n+0:n+5] = VMA.HELD_OR_PC[n+0:n+5];
+                               endcase
+                  else ADA[n+0:n+5] = '0;
     end
   endgenerate
 
 
   // BRX
-  always_ff @(posedge CLK.EDP) begin
-    if (CRAM.BRX == brxARX) EDP.BRX <= EDP.ARX;
-  end
+  always_ff @(posedge CLK.EDP) if (CRAM.BRX == brxARX) EDP.BRX <= EDP.ARX;
 
   // BR
-  always_ff @(posedge CLK.EDP) begin
-    if (CRAM.BR == brAR) EDP.BR <= EDP.AR;
-  end
+  always_ff @(posedge CLK.EDP) if (CRAM.BR == brAR) EDP.BR <= EDP.AR;
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
@@ -429,22 +390,17 @@ module edp(iAPR APR,
   assign EDP.EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ?
                                       ebusR[18:35] : '0;
 
-  always_ff @(posedge CLK.EDP) begin
-
-    if (EDP.EBUSdriver.driving) begin
-
-      unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
-      default: ebusR <= '0;
-      3'b000: ebusR <= EDP.AR;
-      3'b001: ebusR <= EDP.BR;
-      3'b010: ebusR <= EDP.MQ;
-      3'b011: ebusR <= EDP.FM;
-      3'b100: ebusR <= EDP.BRX;
-      3'b101: ebusR <= EDP.ARX;
-      3'b110: ebusR <= EDP.ADX[0:35];
-      3'b111: ebusR <= EDP.AD[0:35];
-      endcase
-    end else
-      ebusR <= 'z;
-  end
+  always_ff @(posedge CLK.EDP)
+    if (EDP.EBUSdriver.driving) unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
+                                default: ebusR <= '0;
+                                3'b000: ebusR <= EDP.AR;
+                                3'b001: ebusR <= EDP.BR;
+                                3'b010: ebusR <= EDP.MQ;
+                                3'b011: ebusR <= EDP.FM;
+                                3'b100: ebusR <= EDP.BRX;
+                                3'b101: ebusR <= EDP.ARX;
+                                3'b110: ebusR <= EDP.ADX[0:35];
+                                3'b111: ebusR <= EDP.AD[0:35];
+                                endcase
+    else ebusR <= 'z;
 endmodule

@@ -93,11 +93,9 @@ module pma(iAPR APR,
              .D1(UBR[23:26]),
              .B(UEBR[23:26]));
 
-  always_comb begin
-    UEBR[14] = (UBR_SEL | EBR[14]) & (~UBR_SEL & UBR[14]);
-    VA[14:26] = VMA.VMA[14:26];
-    VA_19to21eq7 = VMA.VMA[19:21] == 3'b111;
-  end
+  assign UEBR[14] = (UBR_SEL | EBR[14]) & (~UBR_SEL & UBR[14]);
+  assign VA[14:26] = VMA.VMA[14:26];
+  assign VA_19to21eq7 = VMA.VMA[19:21] == 3'b111;
 
 
   // PMA2 p.85
@@ -105,13 +103,11 @@ module pma(iAPR APR,
   bit e36q15;
   bit unusedE40;
   bit [0:1] unusedE70;
-  always_comb begin
-    clock = CLK.PMA;
-    CCA_LOAD = ~(APR.EBOX_UBR & MBX.EBOX_LOAD_REG);
-    e65q2 = ~MBX.CCA_ALL_PAGES_CYC | (CCA[34:35] == 2'b00);
-    e36q15 = CCA[30:33] == 4'b0000;
-    PMA.CCA_CRY_OUT = &{e65q2, e36q15, CCA[27:29] == 3'b000};
-  end
+  assign clock = CLK.PMA;
+  assign CCA_LOAD = ~(APR.EBOX_UBR & MBX.EBOX_LOAD_REG);
+  assign e65q2 = ~MBX.CCA_ALL_PAGES_CYC | (CCA[34:35] == 2'b00);
+  assign e36q15 = CCA[30:33] == 4'b0000;
+  assign PMA.CCA_CRY_OUT = &{e65q2, e36q15, CCA[27:29] == 3'b000};
   
   USR4 e10(.S0('0),
            .D(VA[15:18]),
@@ -236,11 +232,9 @@ module pma(iAPR APR,
               {2{CCA[35]}}, VMA.VMA[35], 1'b0}),
           .q(PMA.PA[35]));
 
-  always_comb begin
-    PMA.ADR_PAR = ^PMA.PA[14:33] ^ 1'b1;
-    PMA._14_26_PAR = ^PMA.PA[14:26];
-    PMA.PMA[14:35] = PMA.PA[14:35];
-  end
+  assign PMA.ADR_PAR = ^PMA.PA[14:33] ^ 1'b1;
+  assign PMA._14_26_PAR = ^PMA.PA[14:26];
+  assign PMA.PMA[14:35] = PMA.PA[14:35];
 
 
   // PMA5 p.88
@@ -320,31 +314,29 @@ module pma(iAPR APR,
            .Q({_28to31_SEL[2], _32to33_SEL[0:2]}),
            .CLK(clock));
 
-  always_comb begin
-    PGRF_UBR_COND = MCL.VMA_USER | VMA_EXEC_PER_PROC;
-    PAGE_REFILL_5comma7 = CSH.PAGE_REFILL_T4 & (~MCL.VMA_USER & ~VA[18]);
-    PAGE_REFILL_3comma4 = ~(~MCL.VMA_USER & ~VA[18]) & CSH.PAGE_REFILL_T4;
-    PAGE_REFILL_T4 = CSH.PAGE_REFILL_T4;
-    PAGE_REFILL_7 = CSH.PAGE_REFILL_T4 & (~MCL.VMA_USER & ~VA[18]) & ~VMA_EXEC_PER_PROC;
-    PMA.CYC_TYPE_HOLD = ~CSH.READY_TO_GO & ~MBX.WRITEBACK_T2;
-    WRITEBACK_T2 = MBX.WRITEBACK_T2;
-    VMA_EXEC_PER_PROC = VA_19to21eq7 & ~VA[18];
+  assign PGRF_UBR_COND = MCL.VMA_USER | VMA_EXEC_PER_PROC;
+  assign PAGE_REFILL_5comma7 = CSH.PAGE_REFILL_T4 & (~MCL.VMA_USER & ~VA[18]);
+  assign PAGE_REFILL_3comma4 = ~(~MCL.VMA_USER & ~VA[18]) & CSH.PAGE_REFILL_T4;
+  assign PAGE_REFILL_T4 = CSH.PAGE_REFILL_T4;
+  assign PAGE_REFILL_7 = CSH.PAGE_REFILL_T4 & (~MCL.VMA_USER & ~VA[18]) & ~VMA_EXEC_PER_PROC;
+  assign PMA.CYC_TYPE_HOLD = ~CSH.READY_TO_GO & ~MBX.WRITEBACK_T2;
+  assign WRITEBACK_T2 = MBX.WRITEBACK_T2;
+  assign VMA_EXEC_PER_PROC = VA_19to21eq7 & ~VA[18];
 
-    _14to26_SEL[0] = e78SR[0] &
-                     (APR.EBOX_CCA | APR.EBOX_ERA | PMA.EBOX_PAGED |
-                      ~PMA.CSH_EBOX_CYC | ~PMA.CSH_EBOX_CYC);
-    _14to26_SEL[1] = e78SR[1] &
-                     (APR.EBOX_CCA | APR.EBOX_ERA | PMA.EBOX_PAGED |
-                      ~PMA.CSH_EBOX_CYC | ~PMA.CSH_EBOX_CYC);
-    _14to26_SEL[2] = e78SR[2] &
-                     (MCL.VMA_EPT | APR.EBOX_EBR | APR.EBOX_CCA | PMA.EBOX_PAGED |
-                      MCL.VMA_UPT | APR.EBOX_UBR | ~PMA.CSH_EBOX_CYC);
-    _27_SEL[0] = e78SR[3];
-    UBR_SEL = (MCL.VMA_UPT | APR.EBOX_UBR) & PMA.CSH_EBOX_CYC |
-              PMA.PAGE_REFILL_CYC & PGRF_UBR_COND;
-    _34to35_SEL[0] = _32to33_SEL[0] & ~PMA.CSH_WRITEBACK_CYC;
-    _34to35_SEL[1] = _32to33_SEL[1] & PMA.CSH_WRITEBACK_CYC;
-    _34to35_SEL[2] = _32to33_SEL[2] & ~PMA.CSH_WRITEBACK_CYC;
-    PMA.EBOX_PAGED = MCL.EBOX_MAY_BE_PAGED | MCL.EBOX_MAY_BE_PAGED & VA_19to21eq7;
-  end
-endmodule // pma
+  assign _14to26_SEL[0] = e78SR[0] &
+                          (APR.EBOX_CCA | APR.EBOX_ERA | PMA.EBOX_PAGED |
+                           ~PMA.CSH_EBOX_CYC | ~PMA.CSH_EBOX_CYC);
+  assign _14to26_SEL[1] = e78SR[1] &
+                          (APR.EBOX_CCA | APR.EBOX_ERA | PMA.EBOX_PAGED |
+                           ~PMA.CSH_EBOX_CYC | ~PMA.CSH_EBOX_CYC);
+  assign _14to26_SEL[2] = e78SR[2] &
+                          (MCL.VMA_EPT | APR.EBOX_EBR | APR.EBOX_CCA | PMA.EBOX_PAGED |
+                           MCL.VMA_UPT | APR.EBOX_UBR | ~PMA.CSH_EBOX_CYC);
+  assign _27_SEL[0] = e78SR[3];
+  assign UBR_SEL = (MCL.VMA_UPT | APR.EBOX_UBR) & PMA.CSH_EBOX_CYC |
+                   PMA.PAGE_REFILL_CYC & PGRF_UBR_COND;
+  assign _34to35_SEL[0] = _32to33_SEL[0] & ~PMA.CSH_WRITEBACK_CYC;
+  assign _34to35_SEL[1] = _32to33_SEL[1] & PMA.CSH_WRITEBACK_CYC;
+  assign _34to35_SEL[2] = _32to33_SEL[2] & ~PMA.CSH_WRITEBACK_CYC;
+  assign PMA.EBOX_PAGED = MCL.EBOX_MAY_BE_PAGED | MCL.EBOX_MAY_BE_PAGED & VA_19to21eq7;
+endmodule

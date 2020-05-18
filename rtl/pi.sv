@@ -42,29 +42,20 @@ module pi(iAPR APR,
   generate
 
     for (n = 1; n <= 7; ++n) begin: pic1
-      always_comb begin
-        ON[n] = ON_SET & IOB[n+10] |
-                ON_CLR & IOB[n+10] & SYS_CLR & ON[n];
-        GEN[n] = GEN_SET & IOB[n+10] |
-                 GEN_CLR & IOB[n+10] & SYS_CLR & GEN[n];
-        PIR_EN[n] = GEN[n] & ACTIVE |
-                    ON[n] & IO_REQ[n] & ACTIVE;
-        PI_REQ_SET[n] = PIH[n] & ~PI_CLR[n] | e88Q[n];
-      end
+      assign ON[n] = ON_SET & IOB[n+10] |
+                     ON_CLR & IOB[n+10] & SYS_CLR & ON[n];
+      assign GEN[n] = GEN_SET & IOB[n+10] |
+                      GEN_CLR & IOB[n+10] & SYS_CLR & GEN[n];
+      assign PIR_EN[n] = GEN[n] & ACTIVE |
+                         ON[n] & IO_REQ[n] & ACTIVE;
+      assign PI_REQ_SET[n] = PIH[n] & ~PI_CLR[n] | e88Q[n];
 
-      always_ff @(posedge clk) begin
-
-        if (SYS_CLR)
-          PIH[n] <= '0;
-        else
-          PIH[n] <= PI_REQ_SET[n];
-      end
+      always_ff @(posedge clk) if (SYS_CLR) PIH[n] <= '0;
+                               else PIH[n] <= PI_REQ_SET[n];
     end
   endgenerate
 
-  always_comb begin
-    ACTIVE = _ON | ~SYS_CLR & OFF & ~ACTIVE;
-  end
+  assign ACTIVE = _ON | ~SYS_CLR & OFF & ~ACTIVE;
 
   USR4 e79(.S0('0),
            .D(PIR_EN[1:4]),
@@ -85,33 +76,31 @@ module pi(iAPR APR,
   bit [0:2] e77Q, e78Q, e35Q, e40Q;
   bit e35ANY;
   bit [0:3] e2Q, e12Q, e15Q;
-  always_comb begin
-    clk = CLK.PIC;
-    PI_ON[0] = ~MR_RESET & ~PIC2_PI[0] & ~PIC2_PI[1] & ~PIC2_PI[2];
-    PIC2_PI[1] = e78Q[0] | e77Q[0];
-    PIC2_PI[2] = e78Q[1] | e77Q[1];
-    REQ = e78Q[2] | e77Q[2];
+  assign clk = CLK.PIC;
+  assign PI_ON[0] = ~MR_RESET & ~PIC2_PI[0] & ~PIC2_PI[1] & ~PIC2_PI[2];
+  assign PIC2_PI[1] = e78Q[0] | e77Q[0];
+  assign PIC2_PI[2] = e78Q[1] | e77Q[1];
+  assign REQ = e78Q[2] | e77Q[2];
 
-    PHY_FORCE = PHY_NO[0] | e35ANY;
-    SEL_PHY[0] = e35ANY & ~APR.EBOX_DISABLE_CS;
-    SEL_PHY[1:3] = e35Q | e40Q;
+  assign PHY_FORCE = PHY_NO[0] | e35ANY;
+  assign SEL_PHY[0] = e35ANY & ~APR.EBOX_DISABLE_CS;
+  assign SEL_PHY[1:3] = e35Q | e40Q;
 
-    TIM1_L = MR_RESET | TIM[1];
-    READY = DISABLE_RDY_ON_HALT & e12Q[1];
-    PIC.EXT_TRAN_REC = TRAN_REC;
+  assign TIM1_L = MR_RESET | TIM[1];
+  assign READY = DISABLE_RDY_ON_HALT & e12Q[1];
+  assign PIC.EXT_TRAN_REC = TRAN_REC;
 
-    EBUS_RETURN = APR.EBUS_RETURN | CTL.CONSOLE_CONTROL;
-    STATE_HOLD = EBUS_RETURN |
-                 ~TIMER_DONE & ~CYC_START |
-                 TIM[6] & DISABLE_RDY_ON_HALT & ~CON.PI_CYCLE;
-    DISABLE_RDY_ON_HALT = PI_DISABLE & ~OK_ON_HALT;
+  assign EBUS_RETURN = APR.EBUS_RETURN | CTL.CONSOLE_CONTROL;
+  assign STATE_HOLD = EBUS_RETURN |
+                      ~TIMER_DONE & ~CYC_START |
+                      TIM[6] & DISABLE_RDY_ON_HALT & ~CON.PI_CYCLE;
+  assign DISABLE_RDY_ON_HALT = PI_DISABLE & ~OK_ON_HALT;
 
-    TIM_5comma6 = TIM[5] | TIM[6];
-    EBUS.demand = (~HONOR_INTERNAL | TIM[2]) & (TIM_5comma6 | TIM[2] | TIM[6]) |
-                  APR.EBUS_DEMAND;
-    HONOR_INTERNAL = APR_REQUESTING | DK20_REQUESTING | GEN_INT;
-    TIMER_DONE = TIM[6] | e15Q[2];
-  end
+  assign TIM_5comma6 = TIM[5] | TIM[6];
+  assign EBUS.demand = (~HONOR_INTERNAL | TIM[2]) & (TIM_5comma6 | TIM[2] | TIM[6]) |
+                       APR.EBUS_DEMAND;
+  assign HONOR_INTERNAL = APR_REQUESTING | DK20_REQUESTING | GEN_INT;
+  assign TIMER_DONE = TIM[6] | e15Q[2];
 
   priority_encoder8 e78(.d({APR.EBOX_DISABLE_CS, PIR[0], PIH[1], PIR[1],
                             PIH[2], PIR[2], PIH[3], PIR[3]}),
@@ -159,12 +148,10 @@ module pi(iAPR APR,
            .CLK(clk),
            .Q({TIM[5:7], COMP}));
 
-  always_ff @(posedge TIM[3]) begin
-    // e31, e44, e34
-    PHY_NO <= EBUS.data[0:15];
-    DK20_REQUESTING <= DK20_PHY_NO;
-    APR_REQUESTING <= APR_PHY_NO;
-  end
+  // e31, e44, e34
+  always_ff @(posedge TIM[3]) PHY_NO <= EBUS.data[0:15];
+  always_ff @(posedge TIM[3]) DK20_REQUESTING <= DK20_PHY_NO;
+  always_ff @(posedge TIM[3]) APR_REQUESTING <= APR_PHY_NO;
 
   bit [1:3] ignoredE3;
   USR4  e3(.S0('0),
@@ -195,12 +182,10 @@ module pi(iAPR APR,
 
   // PIC3 p.211
   bit [0:7] e53Q, e52Q;
-  always_comb begin
-    DK20_PHY_NO = ~e53Q[0] | ~((PIC.MTR_PIA == PIC2_PI) & MTR.VECTOR_INTERRUPT);
-    APR_PHY_NO = ~e52Q[0] | ~(PIC.APR_PIA == PIC2_PI) & APR.APR_INTERRUPT;
-    PIC3_PI[1:7] = e53Q[1:7] | e52Q[1:7];
-    PIC.MTR_HONOR = DK20_REQUESTING & TIM[6];
-  end
+  assign DK20_PHY_NO = ~e53Q[0] | ~((PIC.MTR_PIA == PIC2_PI) & MTR.VECTOR_INTERRUPT);
+  assign APR_PHY_NO = ~e52Q[0] | ~(PIC.APR_PIA == PIC2_PI) & APR.APR_INTERRUPT;
+  assign PIC3_PI[1:7] = e53Q[1:7] | e52Q[1:7];
+  assign PIC.MTR_HONOR = DK20_REQUESTING & TIM[6];
 
   decoder e53(.en(MTR.VECTOR_INTERRUPT),
               .sel(PIC.MTR_PIA),
@@ -229,38 +214,34 @@ module pi(iAPR APR,
   // PIC4 p.212
   bit e4q3;
   bit [0:7] e29Q;
-  always_comb begin
-    e4q3 = CONO_DLY & ~CTL.CONSOLE_CONTROL;
-    GEN_CLR = EBUS.data[4] & e4q3;
-    GEN_SET = EBUS.data[6] & e4q3;
-    ON_SET = EBUS.data[7] & e4q3;
-    ON_CLR = EBUS.data[8] & e4q3;
-    OFF = EBUS.data[9] & e4q3;
-    _ON = EBUS.data[10] & e4q3;
+  assign e4q3 = CONO_DLY & ~CTL.CONSOLE_CONTROL;
+  assign GEN_CLR = EBUS.data[4] & e4q3;
+  assign GEN_SET = EBUS.data[6] & e4q3;
+  assign ON_SET = EBUS.data[7] & e4q3;
+  assign ON_CLR = EBUS.data[8] & e4q3;
+  assign OFF = EBUS.data[9] & e4q3;
+  assign _ON = EBUS.data[10] & e4q3;
 
-    SYS_CLR = EBUS.data[5] & ~CTL.CONSOLE_CONTROL & CON.CONO_PI | MR_RESET;
-    PIC.EBUSdriver.data[3:9] = PIH[1:7];
-    PIC.EBUSdriver.data[10] = ACTIVE;
-    PIC.EBUSdriver.driving = BUS_EN;
-    BUS_EN = EDP.DIAG_READ_FUNC_10x & ~CTL.DIAG[4];
-    DIAG = CTL.DIAG[5:6];
-    PIC.XOR_ON_BUS = BUS_EN | BUS_EN_5;
-    EBUS.func[2] = ~MR_RESET & ~COMP | TIM[4] | APR.EBOX_SEND_F02;
-    PIC.SEND_2H = e29Q[0] | e29Q[1] | e29Q[7];
-    OK_ON_HALT = |e29Q[3:6];
+  assign SYS_CLR = EBUS.data[5] & ~CTL.CONSOLE_CONTROL & CON.CONO_PI | MR_RESET;
+  assign PIC.EBUSdriver.data[3:9] = PIH[1:7];
+  assign PIC.EBUSdriver.data[10] = ACTIVE;
+  assign PIC.EBUSdriver.driving = BUS_EN;
+  assign BUS_EN = EDP.DIAG_READ_FUNC_10x & ~CTL.DIAG[4];
+  assign DIAG = CTL.DIAG[5:6];
+  assign PIC.XOR_ON_BUS = BUS_EN | BUS_EN_5;
+  assign EBUS.func[2] = ~MR_RESET & ~COMP | TIM[4] | APR.EBOX_SEND_F02;
+  assign PIC.SEND_2H = e29Q[0] | e29Q[1] | e29Q[7];
+  assign OK_ON_HALT = |e29Q[3:6];
 
-    IOB = EBUS.data[11:17];
-    IO_REQ = EBUS.pi[1:7] | PIC3_PI[1:7];
+  assign IOB = EBUS.data[11:17];
+  assign IO_REQ = EBUS.pi[1:7] | PIC3_PI[1:7];
 
-    // PIC2 NOTE 3: RESET is wire ORed to clear PI5 CYC START.
-    // But I cannot find any evidence of this....
+  // PIC2 NOTE 3: RESET is wire ORed to clear PI5 CYC START.
+  // But I cannot find any evidence of this....
 
-    MR_RESET = CLK.MR_RESET;
-  end
+  assign MR_RESET = CLK.MR_RESET;
 
-  always_ff @(posedge clk) begin
-    CONO_DLY <= CON.CONO_PI;
-  end
+  always_ff @(posedge clk) CONO_DLY <= CON.CONO_PI;
 
   mux2x4 e32(.EN(BUS_EN),
              .SEL(DIAG),
@@ -298,31 +279,24 @@ module pi(iAPR APR,
   // PIC5 p.213
   bit e6q14, e6SET;
   bit [0:3] e1Q;
-  always_comb begin
-    INHIBIT_REQ = EBUS_PI_GRANT | CON.PI_CYCLE;
-    CP_BUS_EN = ~CON.EBUS_REL & EBUS_CP_GRANT |
-                ~EBUS_PI_GRANT & APR.EBUS_REQ;
-    EBUS_REQ = (PI_ON[0] | ~PI_DISABLE & ACTIVE) &
-               TEST & REQ & ~CONO_DLY;
-    XFER_FORCE = ~e6q14 | HONOR_INTERNAL & EBUS_PI_GRANT;
-    e6SET = ~EBUS_CP_GRANT & ~TIM_5comma6;
+  assign INHIBIT_REQ = EBUS_PI_GRANT | CON.PI_CYCLE;
+  assign CP_BUS_EN = ~CON.EBUS_REL & EBUS_CP_GRANT |
+                     ~EBUS_PI_GRANT & APR.EBUS_REQ;
+  assign EBUS_REQ = (PI_ON[0] | ~PI_DISABLE & ACTIVE) &
+                    TEST & REQ & ~CONO_DLY;
+  assign XFER_FORCE = ~e6q14 | HONOR_INTERNAL & EBUS_PI_GRANT;
+  assign e6SET = ~EBUS_CP_GRANT & ~TIM_5comma6;
 
-    if (~EBUS_RETURN & TIM[6])  // e25
-      PIC.EBUSdriver.data[7:10] = SEL_PHY;
-    else
-      PIC.EBUSdriver.data[7:10] = '0;
+  // e25
+  always_comb if (~EBUS_RETURN & TIM[6]) PIC.EBUSdriver.data[7:10] = SEL_PHY;
+              else PIC.EBUSdriver.data[7:10] = '0;
 
-    GEN_INT = {PIC5_GEN ^ PIC2_PI, ~GEN_ON} != 4'b0000;
-    PIC.GATE_TTL_TO_ECL = EBUS_PI_GRANT & ~EBUS_RETURN;
-  end
+  assign GEN_INT = {PIC5_GEN ^ PIC2_PI, ~GEN_ON} != 4'b0000;
+  assign PIC.GATE_TTL_TO_ECL = EBUS_PI_GRANT & ~EBUS_RETURN;
 
-  always_ff @(posedge e1Q[0] or posedge e6SET) begin
-    // Modeling a SR DFF with D='0, async set, no clear
-    if (e6SET)
-      e6q14 <= '1;
-    else
-      e6q14 <= '0;
-  end
+  // Modeling a SR DFF with D='0, async set, no clear
+  always_ff @(posedge e1Q[0] or posedge e6SET) if (e6SET) e6q14 <= '1;
+                                               else e6q14 <= '0;
 
   UCR4  e1(.CIN(~TIM[2]),
            .SEL({EBUS.demand & ~TRAN_REC, 1'b0}),
@@ -331,9 +305,7 @@ module pi(iAPR APR,
            .COUT(),
            .Q(e1Q));
 
-  always_ff @(posedge clk) begin
-
-    if (RESET) begin
+  always_ff @(posedge clk) if (RESET) begin
       EBUS_CP_GRANT <= '0;
       EBUS_PI_GRANT <= '0;
     end else begin
@@ -342,16 +314,10 @@ module pi(iAPR APR,
                        ~CP_BUS_EN & ~EBUS_PI_GRANT & EBUS_REQ;
     end
 
-    PI_DISABLE <= CON.PI_DISABLE;
-  end
+  always_ff @(posedge clk) PI_DISABLE <= CON.PI_DISABLE;
 
-  always_ff @(posedge EBUS_PI_GRANT or posedge TIM[1]) begin
-
-    if (TIM[1])
-      CYC_START <= '1;
-    else
-      CYC_START <= '0;
-  end
+  always_ff @(posedge EBUS_PI_GRANT or posedge TIM[1]) if (TIM[1]) CYC_START <= '1;
+                                                       else CYC_START <= '0;
 
   USR4 e30(.S0(~LOAD & ~WAIT1 & ~WAIT2),
            .D(4'b0000),
