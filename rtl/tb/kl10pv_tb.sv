@@ -460,6 +460,8 @@ module kl10pv_tb(iAPR APR,
 
     $display("[loaded]");
     $display("[start instruction is %s]", octW(w));
+    $display("[start instruction also put in mem[0]]");
+    memory0.mem[0] = w;
     $display("[boot image minAddr: %06o]", minAddr);
     $display("[boot image maxAddr: %06o]", maxAddr);
     $display("");
