@@ -7,5 +7,5 @@ module mux
    input [0:N-1] d,
    output bit q);
 
-  always_comb q = en ? d[sel] : '0;
+  assign q = en ? d[sel] : '0;
 endmodule

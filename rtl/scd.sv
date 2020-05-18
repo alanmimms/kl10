@@ -156,10 +156,8 @@ module scd(iAPR APR,
   assign clk = CLK.SCD;
 
   bit [0:9] SCM;
-  always_ff @(posedge clk) begin
-    SCD.SC_SIGN <= SCM[0];
-    SCD.SC <= SCM;
-  end
+  always_ff @(posedge clk) SCD.SC_SIGN <= SCM[0];
+  always_ff @(posedge clk) SCD.SC <= SCM;
 
   // FE shift register
   bit RESET, ignoreE68;
@@ -374,40 +372,24 @@ module scd(iAPR APR,
                (SCD.OV | SCAD[1] & EXP_TEST | CRAM.MAGIC[0] & PCF_MAGIC) :
                 EDP.AR[0]);
 
-    SCD.CRY0 <= EDP.AD_CRY[-2] & SET_AD_FLAGS |
-                (LOAD_FLAGS ? SCD.CRY0 : EDP.AR[1]);
+    SCD.CRY0 <= EDP.AD_CRY[-2] & SET_AD_FLAGS | (LOAD_FLAGS ? SCD.CRY0 : EDP.AR[1]);
+    SCD.CRY1 <= EDP.AD_CRY[1] & SET_AD_FLAGS | (LOAD_FLAGS ? SCD.CRY1 : EDP.AR[2]);
 
-    SCD.CRY1 <= EDP.AD_CRY[1] & SET_AD_FLAGS |
-                (LOAD_FLAGS ? SCD.CRY1 : EDP.AR[2]);
-
-    SCD.FOV <= (LOAD_FLAGS | SCD.FOV |
-               (SCAD[1] & EXP_TEST | CRAM.MAGIC[0] & PCF_MAGIC)) &
+    SCD.FOV <= (LOAD_FLAGS | SCD.FOV | (SCAD[1] & EXP_TEST | CRAM.MAGIC[0] & PCF_MAGIC)) &
                (~LOAD_FLAGS | EDP.AR[3]);
 
-    SCD.FXU <= (LOAD_FLAGS | SCD.FXU |
-               (SCAD[0] & EXP_TEST | CRAM.MAGIC[5] & PCF_MAGIC)) &
+    SCD.FXU <= (LOAD_FLAGS | SCD.FXU | (SCAD[0] & EXP_TEST | CRAM.MAGIC[5] & PCF_MAGIC)) &
                (~LOAD_FLAGS | EDP.AR[11]);
 
-    SCD.DIV_CHK <= (LOAD_FLAGS | SCD.DIV_CHK | CRAM.MAGIC[6] & PCF_MAGIC) &
-                   (~LOAD_FLAGS | EDP.AR[12]);
-
-    TRAP_REQ_2 <= TRAP_REQ_2_EN;
-
-    SCD.TRAP_CYC_2 <= SCD.TRAP_CYC_2 & ~TRAP_CLEAR |
-                      TRAP_REQ_2 & e22p15;
-
-    TRAP_REQ_1 <= TRAP_REQ_1_EN;
-
-    SCD.TRAP_CYC_1 <= SCD.TRAP_CYC_1 & TRAP_CLEAR |
-                      TRAP_REQ_1 & e22p15;
-
-    SCD.FPD <= CLR_FPD & SCD.FPD |
-               EDP.AR[4] & LOAD_FLAGS |
-               CRAM.MAGIC[2] & PCF_MAGIC;
-
-    SCD.PCP <= (LOAD_PCP | SCD.PCP) &
-               (~LOAD_FLAGS | EDP.AR[0] | JFCL);
+    SCD.DIV_CHK <= (LOAD_FLAGS | SCD.DIV_CHK | CRAM.MAGIC[6] & PCF_MAGIC) & (~LOAD_FLAGS | EDP.AR[12]);
+    SCD.TRAP_CYC_2 <= SCD.TRAP_CYC_2 & ~TRAP_CLEAR | TRAP_REQ_2 & e22p15;
+    SCD.TRAP_CYC_1 <= SCD.TRAP_CYC_1 & TRAP_CLEAR | TRAP_REQ_1 & e22p15;
+    SCD.FPD <= CLR_FPD & SCD.FPD | EDP.AR[4] & LOAD_FLAGS | CRAM.MAGIC[2] & PCF_MAGIC;
+    SCD.PCP <= (LOAD_PCP | SCD.PCP) & (~LOAD_FLAGS | EDP.AR[0] | JFCL);
   end
+  
+  always_ff @(posedge clk) TRAP_REQ_2 <= TRAP_REQ_2_EN;
+  always_ff @(posedge clk) TRAP_REQ_1 <= TRAP_REQ_1_EN;
 
   bit e5out;
   assign e5out = SCD.USER | JFCL;
@@ -443,16 +425,14 @@ module scd(iAPR APR,
                             CON.CLR_PRIVATE_INSTR & e6pin14 |
                             INSTR_FETCH & CLK.MB_XFER & ~PUBLIC_PAGE;
 
-  always_ff @(posedge clk) begin
-    SCD.USER <= USER_EN;
-    SCD.USER_IOT <= USER_IOT_EN;
-    SCD.PUBLIC <= PUBLIC_EN;
-    SCD.ADR_BRK_INH <= SCD.ADR_BRK_INH & TRAP_CLEAR |
-                       LOAD_FLAGS & EDP.AR[8] |
-                       CON.COND_INSTR_ABORT & SCD.ADR_BRK_CYC;
-    SCD.ADR_BRK_CYC <= SCD.ADR_BRK_CYC & TRAP_CLEAR |
-                       SCD.ADR_BRK_INH & CTL.DISP_NICOND;
-  end
+  always_ff @(posedge clk) SCD.USER <= USER_EN;
+  always_ff @(posedge clk) SCD.USER_IOT <= USER_IOT_EN;
+  always_ff @(posedge clk) SCD.PUBLIC <= PUBLIC_EN;
+  always_ff @(posedge clk) SCD.ADR_BRK_INH <= SCD.ADR_BRK_INH & TRAP_CLEAR |
+                                              LOAD_FLAGS & EDP.AR[8] |
+                                              CON.COND_INSTR_ABORT & SCD.ADR_BRK_CYC;
+  always_ff @(posedge clk) SCD.ADR_BRK_CYC <= SCD.ADR_BRK_CYC & TRAP_CLEAR |
+                                              SCD.ADR_BRK_INH & CTL.DISP_NICOND;
 
   assign SCD.ADR_BRK_PREVENT = SCD.ADR_BRK_INH | SCD.ADR_BRK_CYC;
   assign SCD.KERNEL_USER_IOT = SCD.USER & SCD.USER_IOT | ~SCD.PUBLIC & ~SCD.USER;
@@ -471,4 +451,4 @@ module scd(iAPR APR,
   assign JFCL = CRAM.MAGIC[1] & DISP_FLAG_CTL;
   assign SPEC_PORTAL = CRAM.MAGIC[5] & DISP_FLAG_CTL;
   assign LOAD_FLAGS = RESET | CRAM.MAGIC[4] & DISP_FLAG_CTL;
-endmodule // scd
+endmodule

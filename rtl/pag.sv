@@ -142,135 +142,124 @@ module pag(iAPR APR,
        .wea({PT_WR & PT_LEFT_EN, PT_WR & PT_RIGHT_EN}));
 `endif
 
-  always_comb begin
-    PT_ACCESS_A = ptOut[0];
-    PT_ACCESS_B = ptOut[18];
-    PAG.PT_ACCESS = PT_MATCH & (PT_ACCESS_A | PT_ACCESS_B);
+  assign PT_ACCESS_A = ptOut[0];
+  assign PT_ACCESS_B = ptOut[18];
+  assign PAG.PT_ACCESS = PT_MATCH & (PT_ACCESS_A | PT_ACCESS_B);
 
-    PT_PUBLIC_A = ptOut[1];
-    PT_PUBLIC_B = ptOut[19];
-    PAG.PT_PUBLIC = PT_MATCH & (PT_PUBLIC_A | PT_PUBLIC_B);
+  assign PT_PUBLIC_A = ptOut[1];
+  assign PT_PUBLIC_B = ptOut[19];
+  assign PAG.PT_PUBLIC = PT_MATCH & (PT_PUBLIC_A | PT_PUBLIC_B);
 
-    PT_WRITABLE_A = ptOut[2];
-    PT_WRITABLE_B = ptOut[20];
-    PAG.PT_WRITABLE = PT_MATCH & (PT_WRITABLE_A | PT_WRITABLE_B);
+  assign PT_WRITABLE_A = ptOut[2];
+  assign PT_WRITABLE_B = ptOut[20];
+  assign PAG.PT_WRITABLE = PT_MATCH & (PT_WRITABLE_A | PT_WRITABLE_B);
 
-    PT_SOFTWARE_A = ptOut[3];
-    PT_SOFTWARE_B = ptOut[21];
-    PAG.PT_SOFTWARE = PT_MATCH & (PT_SOFTWARE_A | PT_SOFTWARE_B);
+  assign PT_SOFTWARE_A = ptOut[3];
+  assign PT_SOFTWARE_B = ptOut[21];
+  assign PAG.PT_SOFTWARE = PT_MATCH & (PT_SOFTWARE_A | PT_SOFTWARE_B);
 
-    PAG.PT_CACHE = ptOut[4] | ptOut[22];
-  end
+  assign PAG.PT_CACHE = ptOut[4] | ptOut[22];
 
 
   // PAG2 p.107
-  always_comb begin
-    for (int k = 14; k <= 26; ++k) begin
-      PAG.PT[k] = (PT_EN | PMA.PA[k]) & (ptOut[k-9] | ptOut[k+9] | ~PT_EN);
-    end
-  end
+  always_comb for (int k = 14; k <= 26; ++k)
+    PAG.PT[k] = (PT_EN | PMA.PA[k]) & (ptOut[k-9] | ptOut[k+9] | ~PT_EN);
 
 
   // PAG3 p.108
-  always_comb begin
-    PAG.PT_ADR[18] = VMA.VMA[18];
-    PAG.PT_ADR[19] = MCL.VMA_EXEC ^ VMA.VMA[19];
-    PAG.PT_ADR[20] = VMA.VMA[17] ^ VMA.VMA[20];
-    PAG.PT_ADR[21:23] = VMA.VMA[21:23];
+  assign PAG.PT_ADR[18] = VMA.VMA[18];
+  assign PAG.PT_ADR[19] = MCL.VMA_EXEC ^ VMA.VMA[19];
+  assign PAG.PT_ADR[20] = VMA.VMA[17] ^ VMA.VMA[20];
+  assign PAG.PT_ADR[21:23] = VMA.VMA[21:23];
 
-    PAG.PT_ADR[24] = (MBOX.SEL_2 | ~CSH.PGRF_CYC) & (VMA.VMA[24] | CSH.PGRF_CYC);
+  assign PAG.PT_ADR[24] = (MBOX.SEL_2 | ~CSH.PGRF_CYC) & (VMA.VMA[24] | CSH.PGRF_CYC);
 
-    PT_ADR_25_A_IN = VMA.VMA[25] & ~PT_WR_BOTH_HALVES;
-    PT_ADR_25_B_IN = MBOX.SEL_1 & CSH.PGRF_CYC;
-    PT_ADR_25_C_IN = APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1;
+  assign PT_ADR_25_A_IN = VMA.VMA[25] & ~PT_WR_BOTH_HALVES;
+  assign PT_ADR_25_B_IN = MBOX.SEL_1 & CSH.PGRF_CYC;
+  assign PT_ADR_25_C_IN = APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1;
 
-    PAG.PT_ADR[26] = VMA.VMA[26];
-    PT_WR_BOTH_HALVES = CSH.PGRF_CYC | APR.WR_PT_SEL_0;
-    PT_DIR_CLR = ~APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1 |
+  assign PAG.PT_ADR[26] = VMA.VMA[26];
+  assign PT_WR_BOTH_HALVES = CSH.PGRF_CYC | APR.WR_PT_SEL_0;
+  assign PT_DIR_CLR = ~APR.WR_PT_SEL_0 & APR.WR_PT_SEL_1 |
                  CSH.PAGE_FAIL_HOLD & CON.KI10_PAGING_MODE;
 
-    PT_LEFT_EN = ~PAG.PT_ADR[26] | PT_WR_BOTH_HALVES;
-    PT_RIGHT_EN = PAG.PT_ADR[26] | PT_WR_BOTH_HALVES;
+  assign PT_LEFT_EN = ~PAG.PT_ADR[26] | PT_WR_BOTH_HALVES;
+  assign PT_RIGHT_EN = PAG.PT_ADR[26] | PT_WR_BOTH_HALVES;
 
-    PT_WR = CLK.PT_WR | CSH.PAGE_REFILL_T12;
-    PT_EN = CSH.EBOX_CYC & PMA.EBOX_PAGED;
-  end
+  assign PT_WR = CLK.PT_WR | CSH.PAGE_REFILL_T12;
+  assign PT_EN = CSH.EBOX_CYC & PMA.EBOX_PAGED;
 
 
   // PAG4 p.109
   bit e67q14;
   bit e79q15;
   bit e85q6;
-  always_comb begin
-    PAGE_EXEC_PAGED_REF = ~MCL.PAGE_ILL_ENTRY & PAGE_EXEC_REF & PMA.EBOX_PAGED;
-    PAGE_EXEC_REF = ~MCL.VMA_USER & ~MCL.PAGE_UEBR_REF;
-    PAGE_USER_PAGED_REF = ~MCL.PAGE_UEBR_REF & ~MCL.PAGE_ILL_ENTRY & ~PAGE_EXEC_REF;
-    PAGE_UNPAGED_REF = ~MCL.PAGE_ILL_ENTRY & ~PMA.EBOX_PAGED;
-    e67q14 = ~PAGE_TEST_PRIVATE & PAGE_USER_PAGED_REF |
-             PMA.EBOX_PAGED & ~PAGE_TEST_PRIVATE & PAGE_EXEC_REF;
-    PAGE_TEST_WRITE = ~MCL.PAGE_ILL_ENTRY &
-                      (PAGE_EXEC_PAGED_REF | PAGE_USER_PAGED_REF | e67q14) &
-                      (PT_PUBLIC_A | PT_PUBLIC_B | e67q14) &
-                      PAG.PT_ACCESS;
-    PAG.PF_EBOX_HANDLE = ((~PT_MATCH | ~PAG.PT_ACCESS & PT_PAR_ODD) & PAGED_REF |
-                          ~PAGE_WRITE_OK & PAGE_TEST_WRITE & PT_PAR_ODD) &
-                         ~CON.KI10_PAGING_MODE;
-    PAGE_TEST_PRIVATE = MCL.PAGE_TEST_PRIVATE;
-    PAGED_REF = PAGE_USER_PAGED_REF | PAGE_EXEC_PAGED_REF;
-    PAG.PAGE_REFILL = PAGED_REF & ~PT_MATCH & ~PAGE_FAIL_A;
+  assign PAGE_EXEC_PAGED_REF = ~MCL.PAGE_ILL_ENTRY & PAGE_EXEC_REF & PMA.EBOX_PAGED;
+  assign PAGE_EXEC_REF = ~MCL.VMA_USER & ~MCL.PAGE_UEBR_REF;
+  assign PAGE_USER_PAGED_REF = ~MCL.PAGE_UEBR_REF & ~MCL.PAGE_ILL_ENTRY & ~PAGE_EXEC_REF;
+  assign PAGE_UNPAGED_REF = ~MCL.PAGE_ILL_ENTRY & ~PMA.EBOX_PAGED;
+  assign e67q14 = ~PAGE_TEST_PRIVATE & PAGE_USER_PAGED_REF |
+                  PMA.EBOX_PAGED & ~PAGE_TEST_PRIVATE & PAGE_EXEC_REF;
+  assign PAGE_TEST_WRITE = ~MCL.PAGE_ILL_ENTRY &
+                           (PAGE_EXEC_PAGED_REF | PAGE_USER_PAGED_REF | e67q14) &
+                           (PT_PUBLIC_A | PT_PUBLIC_B | e67q14) &
+                           PAG.PT_ACCESS;
+  assign PAG.PF_EBOX_HANDLE = ((~PT_MATCH | ~PAG.PT_ACCESS & PT_PAR_ODD) & PAGED_REF |
+                               ~PAGE_WRITE_OK & PAGE_TEST_WRITE & PT_PAR_ODD) &
+                              ~CON.KI10_PAGING_MODE;
+  assign PAGE_TEST_PRIVATE = MCL.PAGE_TEST_PRIVATE;
+  assign PAGED_REF = PAGE_USER_PAGED_REF | PAGE_EXEC_PAGED_REF;
+  assign PAG.PAGE_REFILL = PAGED_REF & ~PT_MATCH & ~PAGE_FAIL_A;
 
-    PAGE_WRITE_OK = PT_WRITABLE | ~MCL.VMA_WRITE;
-    PAG.PAGE_OK = MCL.PAGE_UEBR_REF & ~MCL.PAGE_ILL_ENTRY |
-                  PAGE_WRITE_OK & PAGE_TEST_WRITE & PT_PAR_ODD |
-                  PAG.PT_ACCESS & ~MCL.VMA_WRITE & PAGE_EXEC_PAGED_REF & PT_PAR_ODD |
-                  PAGE_EXEC_REF & PAGE_UNPAGED_REF & ~PAGE_TEST_PRIVATE;
-    PAGE_FAIL_A = (MCL.PAGE_ILL_ENTRY |
-                   PAGE_TEST_PRIVATE & PAGE_UNPAGED_REF & PAGE_EXEC_REF) |
-                  ~CON.KI10_PAGING_MODE & ~PT_MATCH & PAGED_REF |
-                  CSH.PAGE_REFILL_ERROR & PAGED_REF |
-                  PAGED_REF & ~PT_PAR_ODD & PT_MATCH;
-    e79q15 = MCL.VMA_WRITE & PAGE_EXEC_PAGED_REF & PAG.PT_ACCESS |
-             PAG.PT_ACCESS & PAGE_USER_PAGED_REF;
-    PAG.PAGE_FAIL = PAGED_REF & ~PAG.PT_ACCESS & PT_MATCH |
-                    PAGE_FAIL_A |
-                    ~PAGE_WRITE_OK & PAGE_TEST_WRITE |
-                    PAGE_TEST_PRIVATE & ~PAG.PT_PUBLIC &
-                    e79q15;
-    PF_CODE_2X = PAGE_TEST_PRIVATE & ~PAG.PT_PUBLIC & e79q15 |
-                 PAGE_FAIL_A;
-    e85q6 = PAGED_REF & ~PT_PAR_ODD & PT_MATCH;
-    PAG.PF_HOLD_01_IN = PF_CODE_2X;
-    PAG.PF_HOLD_02_IN = ~PF_CODE_2X & PAG.PT_ACCESS;
-    PAG.PF_HOLD_03_IN = (MCL.VMA_ADR_ERR | PAG.PT_WRITABLE | e85q6) &
-                        (MCL.VMA_ADR_ERR | ~PF_CODE_2X | e85q6);
-    PAG.PF_HOLD_04_IN = (PAG.PT_SOFTWARE | CSH.PAGE_REFILL_ERROR | MCL.PAGE_ADDRESS_COND) &
-                        (CSH.PAGE_REFILL_ERROR | MCL.PAGE_ADDRESS_COND | ~PF_CODE_2X);
-    PAG.PF_HOLD_05_IN = MCL.VMA_WRITE & ~CSH.PAGE_REFILL_ERROR |
-                        PF_CODE_2X & ~CSH.PAGE_REFILL_ERROR;
-  end
+  assign PAGE_WRITE_OK = PT_WRITABLE | ~MCL.VMA_WRITE;
+  assign PAG.PAGE_OK = MCL.PAGE_UEBR_REF & ~MCL.PAGE_ILL_ENTRY |
+                       PAGE_WRITE_OK & PAGE_TEST_WRITE & PT_PAR_ODD |
+                       PAG.PT_ACCESS & ~MCL.VMA_WRITE & PAGE_EXEC_PAGED_REF & PT_PAR_ODD |
+                       PAGE_EXEC_REF & PAGE_UNPAGED_REF & ~PAGE_TEST_PRIVATE;
+  assign PAGE_FAIL_A = (MCL.PAGE_ILL_ENTRY |
+                        PAGE_TEST_PRIVATE & PAGE_UNPAGED_REF & PAGE_EXEC_REF) |
+                       ~CON.KI10_PAGING_MODE & ~PT_MATCH & PAGED_REF |
+                       CSH.PAGE_REFILL_ERROR & PAGED_REF |
+                       PAGED_REF & ~PT_PAR_ODD & PT_MATCH;
+  assign e79q15 = MCL.VMA_WRITE & PAGE_EXEC_PAGED_REF & PAG.PT_ACCESS |
+                  PAG.PT_ACCESS & PAGE_USER_PAGED_REF;
+  assign PAG.PAGE_FAIL = PAGED_REF & ~PAG.PT_ACCESS & PT_MATCH |
+                         PAGE_FAIL_A |
+                         ~PAGE_WRITE_OK & PAGE_TEST_WRITE |
+                         PAGE_TEST_PRIVATE & ~PAG.PT_PUBLIC &
+                         e79q15;
+  assign PF_CODE_2X = PAGE_TEST_PRIVATE & ~PAG.PT_PUBLIC & e79q15 |
+                      PAGE_FAIL_A;
+  assign e85q6 = PAGED_REF & ~PT_PAR_ODD & PT_MATCH;
+  assign PAG.PF_HOLD_01_IN = PF_CODE_2X;
+  assign PAG.PF_HOLD_02_IN = ~PF_CODE_2X & PAG.PT_ACCESS;
+  assign PAG.PF_HOLD_03_IN = (MCL.VMA_ADR_ERR | PAG.PT_WRITABLE | e85q6) &
+                             (MCL.VMA_ADR_ERR | ~PF_CODE_2X | e85q6);
+  assign PAG.PF_HOLD_04_IN = (PAG.PT_SOFTWARE | CSH.PAGE_REFILL_ERROR | MCL.PAGE_ADDRESS_COND) &
+                             (CSH.PAGE_REFILL_ERROR | MCL.PAGE_ADDRESS_COND | ~PF_CODE_2X);
+  assign PAG.PF_HOLD_05_IN = MCL.VMA_WRITE & ~CSH.PAGE_REFILL_ERROR |
+                             PF_CODE_2X & ~CSH.PAGE_REFILL_ERROR;
 
 
   // PAG5 p.110
-  always_comb begin
-    PAG.MB_18to35_PAR = MB_00to05_PAR_ODD ^
-                        MB_06to11_PAR_ODD ^
-                        MB_12to17_PAR_ODD ^
-                        MB_PAR;
-    PAG.MB_00to17_PAR = MB_18to23_PAR_ODD ^
-                        MB_24to29_PAR_ODD ^
-                        MB_30to35_PAR_ODD ^
-                        MB_PAR;
-    MB_PAR_ODD = MB_00to05_PAR_ODD ^
-                 MB_06to11_PAR_ODD ^
-                 MB_12to17_PAR_ODD ^
-                 MB_18to23_PAR_ODD ^
-                 MB_24to29_PAR_ODD ^
-                 MB_30to35_PAR_ODD ^
-                 MB_PAR;
+  assign PAG.MB_18to35_PAR = MB_00to05_PAR_ODD ^
+                             MB_06to11_PAR_ODD ^
+                             MB_12to17_PAR_ODD ^
+                             MB_PAR;
+  assign PAG.MB_00to17_PAR = MB_18to23_PAR_ODD ^
+                             MB_24to29_PAR_ODD ^
+                             MB_30to35_PAR_ODD ^
+                             MB_PAR;
+  assign MB_PAR_ODD = MB_00to05_PAR_ODD ^
+                      MB_06to11_PAR_ODD ^
+                      MB_12to17_PAR_ODD ^
+                      MB_18to23_PAR_ODD ^
+                      MB_24to29_PAR_ODD ^
+                      MB_30to35_PAR_ODD ^
+                      MB_PAR;
 
-    PT_PAR_ODD = ^{PAG.PT_ACCESS, PAG.PT_PUBLIC, PAG.PT_WRITABLE, PAG.PT_SOFTWARE,
-                   PAG.PT_CACHE, PAG.PT[14:26], PT_PAR_LEFT, PT_PAR_RIGHT};
+  assign PT_PAR_ODD = ^{PAG.PT_ACCESS, PAG.PT_PUBLIC, PAG.PT_WRITABLE, PAG.PT_SOFTWARE,
+                        PAG.PT_CACHE, PAG.PT[14:26], PT_PAR_LEFT, PT_PAR_RIGHT};
 
-    PAG.PT_ADR[25] = PT_ADR_25_A_IN | PT_ADR_25_B_IN | PT_ADR_25_C_IN;
-  end
+  assign PAG.PT_ADR[25] = PT_ADR_25_A_IN | PT_ADR_25_B_IN | PT_ADR_25_C_IN;
 endmodule // pag

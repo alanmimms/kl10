@@ -8,18 +8,13 @@ module mux2x4
    output bit B0,
    output bit B1);
 
-  always_comb begin
-    B0 <= '0;
-    B1 <= '0;
+  assign B0 = '0;
+  assign B1 = '0;
 
-    if (EN) begin
-
-      unique case (SEL)
-      2'b00: begin B0 <= D0[0]; B1 <= D1[0]; end
-      2'b01: begin B0 <= D0[1]; B1 <= D1[1]; end
-      2'b10: begin B0 <= D0[2]; B1 <= D1[2]; end
-      2'b11: begin B0 <= D0[3]; B1 <= D1[3]; end
-      endcase
-    end
-  end
+  always_comb if (EN) unique case (SEL)
+                      2'b00: {B0, B1} = {D0[0], D1[0]};
+                      2'b01: {B0, B1} = {D0[1], D1[1]};
+                      2'b10: {B0, B1} = {D0[2], D1[2]};
+                      2'b11: {B0, B1} = {D0[3], D1[3]};
+                      endcase
 endmodule

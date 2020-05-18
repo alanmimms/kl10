@@ -23,64 +23,48 @@ module mt0(input CROBAR,
 
 
   // MT01 p.96
-  always_comb begin
-    SBUS.CROBAR = CROBAR;
+  assign SBUS.CROBAR = CROBAR;
 
-    MBOX.MEM_ACKN_A = SBUS.ACKN_A;
-    MBOX.MEM_ACKN_B = SBUS.ACKN_B;
-    MBOX.MEM_ERROR = SBUS.ERROR;
-    MBOX.MEM_ADR_PAR_ERR = SBUS.ADR_PAR_ERR;
-    SBUS.CLK_INT = CLK.SBUS_CLK;
-    SBUS.CLK_EXT = CLK.SBUS_CLK;
-    MBOX.MEM_DATA_VALID_A = SBUS.DATA_VALID_A;
-    MBOX.MEM_DATA_VALID_B = SBUS.DATA_VALID_B;
+  assign MBOX.MEM_ACKN_A = SBUS.ACKN_A;
+  assign MBOX.MEM_ACKN_B = SBUS.ACKN_B;
+  assign MBOX.MEM_ERROR = SBUS.ERROR;
+  assign MBOX.MEM_ADR_PAR_ERR = SBUS.ADR_PAR_ERR;
+  assign SBUS.CLK_INT = CLK.SBUS_CLK;
+  assign SBUS.CLK_EXT = CLK.SBUS_CLK;
+  assign MBOX.MEM_DATA_VALID_A = SBUS.DATA_VALID_A;
+  assign MBOX.MEM_DATA_VALID_B = SBUS.DATA_VALID_B;
 
-    if (DATA_TO_MEM_EN) begin
-      SBUS.DATA_VALID_A = MBOX.DATA_VALID_A_OUT;
-      SBUS.DATA_VALID_B = MBOX.DATA_VALID_B_OUT;
-    end else begin
-      MBOX.DATA_VALID_A_OUT = SBUS.DATA_VALID_A;
-      MBOX.DATA_VALID_B_OUT = SBUS.DATA_VALID_B;
-    end
-      
-    SBUS.START_A = MBOX.MEM_START_A;
-    SBUS.START_B = MBOX.MEM_START_B;
-    SBUS.RQ = MBOX.MEM_RQ;
-    SBUS.RD_RQ = MBOX.MEM_RD_RQ;
-    SBUS.WR_RQ = MBOX.MEM_WR_RQ;
-    SBUS.DIAG = MBOX.MEM_DIAG;
-    SBUS.ADR_PAR = MBOX.MEM_ADR_PAR;
+  always_comb if (DATA_TO_MEM_EN) begin
+    SBUS.DATA_VALID_A = MBOX.DATA_VALID_A_OUT;
+    SBUS.DATA_VALID_B = MBOX.DATA_VALID_B_OUT;
+  end else begin
+    MBOX.DATA_VALID_A_OUT = SBUS.DATA_VALID_A;
+    MBOX.DATA_VALID_B_OUT = SBUS.DATA_VALID_B;
   end
+  
+  assign SBUS.START_A = MBOX.MEM_START_A;
+  assign SBUS.START_B = MBOX.MEM_START_B;
+  assign SBUS.RQ = MBOX.MEM_RQ;
+  assign SBUS.RD_RQ = MBOX.MEM_RD_RQ;
+  assign SBUS.WR_RQ = MBOX.MEM_WR_RQ;
+  assign SBUS.DIAG = MBOX.MEM_DIAG;
+  assign SBUS.ADR_PAR = MBOX.MEM_ADR_PAR;
 
 
   // MT02 p.97
-  always_comb begin
-    if (DATA_TO_MEM_EN)
-      SBUS.D = MBOX.MB;
-    else
-      MBOX.MEM_DATA_IN = SBUS.D;
-  end
+  always_comb if (DATA_TO_MEM_EN) SBUS.D = MBOX.MB;
+              else MBOX.MEM_DATA_IN = SBUS.D;
 
 
   // MT03-MT04 p.98-99
-  always_latch begin
-
-    if (MBOX.SBUS_ADR_HOLD) begin
-      SBUS.ADR <= MBOX.PMA;
-    end
-  end
+  always_latch if (MBOX.SBUS_ADR_HOLD) SBUS.ADR <= MBOX.PMA;
 
 
   // MT05 p.100
-  always_comb begin
-    SBUS.MEM_RESET = MBOX.DIAG_MEM_RESET;
-    DATA_TO_MEM_EN = MBOX.MEM_DATA_TO_MEM;
+  assign SBUS.MEM_RESET = MBOX.DIAG_MEM_RESET;
+  assign DATA_TO_MEM_EN = MBOX.MEM_DATA_TO_MEM;
 
-    if (DATA_TO_MEM_EN) begin
-      SBUS.DATA_PAR = MBOX.MEM_PAR; // XXX MEM_PAR is not driven anywhere
-    end else begin
-      MBOX.MEM_PAR_IN = SBUS.DATA_PAR;
-    end
-  end
+  always_comb if (DATA_TO_MEM_EN) SBUS.DATA_PAR = MBOX.MEM_PAR; // XXX MEM_PAR is not driven anywhere
+              else MBOX.MEM_PAR_IN = SBUS.DATA_PAR;
 
 endmodule

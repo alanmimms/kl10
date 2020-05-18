@@ -12,11 +12,9 @@ module chx(iCSH CSH,
   end
 
   // From M8549-YF-CHSX cache substitute
-  always_comb begin
-    CSH.VALID_MATCH[0] = '0;
-    CSH.VALID_MATCH[1] = '0;
-    CSH.VALID_MATCH[2] = '0;
-    CSH.VALID_MATCH[3] = '0;
-    MBOX.CSH_ADR_PAR_BAD = '0;
-  end
+  assign CSH.VALID_MATCH[0] = '0;
+  assign CSH.VALID_MATCH[1] = '0;
+  assign CSH.VALID_MATCH[2] = '0;
+  assign CSH.VALID_MATCH[3] = '0;
+  assign MBOX.CSH_ADR_PAR_BAD = '0;
 endmodule // chx

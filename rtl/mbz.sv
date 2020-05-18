@@ -40,39 +40,35 @@ module mbz(iAPR APR,
   bit CHAN_MEM_REF, ERA_SEL, CH_REG_HOLD;
 
   // MBZ1 p.303
-  always_comb begin
-    clk = CLK.MBZ;
-    CHAN_CORE_BUSY_IN = MBOX.CCL_HOLD_MEM & CHAN_CORE_BUSY | MBOX.CSH_CHAN_CYC;
-    MBOX.MEM_BUSY = MEM_START_C | CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
-    MBOX.CSH_EN_CSH_DATA = ~(~EBUS.data[34] & CTL.DIAG_LOAD_FUNC_071 |
-                             ~EBUS.data[35] & CTL.DIAG_LOAD_FUNC_071 &
-                             MBOX.CSH_EN_CSH_DATA & ~RESET);
-    MBOX.MEM_TO_C_DIAG_EN = MBOX.CSH_EN_CSH_DATA | EBOX_DIAG_CYC;
-    CHAN_WR_MEM = CHAN_TO_MEM & CHAN_CORE_BUSY;
-    CHAN_STATUS_TO_MB = CHAN_WR_MEM & CHAN_EPT;
-    CHAN_BUF_TO_MB = CHAN_WR_MEM & ~CHAN_EPT;
-    MBOX.CHAN_READ = CHAN_CORE_BUSY & ~CHAN_TO_MEM;
-    CHAN_EPT = CCL.CHAN_EPT;
-    AR_TO_MB_SEL = PMA.CSH_EBOX_CYC & APR.EBOX_SBUS_DIAG &
-                   ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK |
-                   ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK & CSH.E_CACHE_WR_CYC;
-    EBOX_DIAG_CYC = AR_TO_MB_SEL;
-    CORE_RD_IN_PROG = ~RESET & MBOX.CORE_RD_IN_PROG;
-  end
+  assign clk = CLK.MBZ;
+  assign CHAN_CORE_BUSY_IN = MBOX.CCL_HOLD_MEM & CHAN_CORE_BUSY | MBOX.CSH_CHAN_CYC;
+  assign MBOX.MEM_BUSY = MEM_START_C | CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
+  assign MBOX.CSH_EN_CSH_DATA = ~(~EBUS.data[34] & CTL.DIAG_LOAD_FUNC_071 |
+                                  ~EBUS.data[35] & CTL.DIAG_LOAD_FUNC_071 &
+                                  MBOX.CSH_EN_CSH_DATA & ~RESET);
+  assign MBOX.MEM_TO_C_DIAG_EN = MBOX.CSH_EN_CSH_DATA | EBOX_DIAG_CYC;
+  assign CHAN_WR_MEM = CHAN_TO_MEM & CHAN_CORE_BUSY;
+  assign CHAN_STATUS_TO_MB = CHAN_WR_MEM & CHAN_EPT;
+  assign CHAN_BUF_TO_MB = CHAN_WR_MEM & ~CHAN_EPT;
+  assign MBOX.CHAN_READ = CHAN_CORE_BUSY & ~CHAN_TO_MEM;
+  assign CHAN_EPT = CCL.CHAN_EPT;
+  assign AR_TO_MB_SEL = PMA.CSH_EBOX_CYC & APR.EBOX_SBUS_DIAG &
+                        ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK |
+                        ~CHAN_CORE_BUSY & ~MTR.CCA_WRITEBACK & CSH.E_CACHE_WR_CYC;
+  assign EBOX_DIAG_CYC = AR_TO_MB_SEL;
+  assign CORE_RD_IN_PROG = ~RESET & MBOX.CORE_RD_IN_PROG;
 
   bit e51q14;
-  always_ff @(posedge clk) begin
-    CHAN_CORE_BUSY <= CHAN_CORE_BUSY_IN;
-    MBZ.RD_PSE_WR_REF <= MEM_RD_RQ & MEM_WR_RQ & MEM_START_C |
-                         // -MBZ4 CORE BUSY A L on MBZ1 B8 p.303. XXX
-                         ~MBOX.CORE_BUSY & MBZ.RD_PSE_WR_REF & ~RESET;
-    // <DH2> CORE BUSY L and <DM2> CORE BUSY H latched and driven on MBZ1 D3.
-    MBOX.CORE_BUSY <= CHAN_CORE_BUSY | MEM_START_C |
-                      CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
-    CHAN_TO_MEM <= CCL.CHAN_TO_MEM & MBOX.CSH_CHAN_CYC |
-                   ~MBOX.CSH_CHAN_CYC & CHAN_TO_MEM & ~RESET;
-    e51q14 <= CORE_RD_IN_PROG;
-  end
+  always_ff @(posedge clk) CHAN_CORE_BUSY <= CHAN_CORE_BUSY_IN;
+  always_ff @(posedge clk) MBZ.RD_PSE_WR_REF <= MEM_RD_RQ & MEM_WR_RQ & MEM_START_C |
+                                                // -MBZ4 CORE BUSY A L on MBZ1 B8 p.303. XXX
+                                                ~MBOX.CORE_BUSY & MBZ.RD_PSE_WR_REF & ~RESET;
+  // <DH2> CORE BUSY L and <DM2> CORE BUSY H latched and driven on MBZ1 D3.
+  always_ff @(posedge clk) MBOX.CORE_BUSY <= CHAN_CORE_BUSY | MEM_START_C |
+                                             CORE_BUSY_IN | CORE_RD_IN_PROG | MBOX.MB_REQ_HOLD;
+  always_ff @(posedge clk) CHAN_TO_MEM <= CCL.CHAN_TO_MEM & MBOX.CSH_CHAN_CYC |
+                                          ~MBOX.CSH_CHAN_CYC & CHAN_TO_MEM & ~RESET;
+  always_ff @(posedge clk) e51q14 <= CORE_RD_IN_PROG;
 
   bit [0:2] e47Q;
   priority_encoder8 e47(.d({2'b00,
@@ -84,9 +80,7 @@ module mbz(iAPR APR,
                             1'b0}),
                         .q(e47Q));
 
-  always_latch begin
-    if (e51q14) MBOX.MB_IN_SEL <= e47Q;
-  end
+  always_latch if (e51q14) MBOX.MB_IN_SEL <= e47Q;
 
 
   // MBZ2 p.304
@@ -209,11 +203,9 @@ module mbz(iAPR APR,
              .B0(EBUS.data[25]),
              .B1(EBUS.data[26]));
 
-  always_comb begin
-    EBUS.data[0:8]   = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[0:8]   : '0;
-    EBUS.data[14]    = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[14]    : '0;
-    EBUS.data[34:35] = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[34:35] : '0;
-  end
+  assign EBUS.data[0:8]   = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[0:8]   : '0;
+  assign EBUS.data[14]    = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[14]    : '0;
+  assign EBUS.data[34:35] = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[34:35] : '0;
 
 
   // MBZ3 p.305
@@ -228,36 +220,32 @@ module mbz(iAPR APR,
 
   bit e51q2, e71q7;
   bit e68q4, e57q3, e72q2;
-  always_comb begin
-    MBOX_NXM_ERR_CLR = APR.NXM_ERR;
-    MBOX.NXM_DATA_VAL = NXM_CLR_T0 & MEM_RD_RQ;
-    NXM_CLR_DONE = NXM_FLG & ~MEM_START_C;
-    MBOX.NXM_ANY = NXM_FLG;
-    MEM_START_C = MBOX.MEM_START_A | MBOX.MEM_START_B;
-    RESET = CLK.MR_RESET;
-    MBOX.CHAN_NXM_ERR = CHAN_MEM_REF & ~e51q2 & MBOX.NXM_ERR;
-    e71q7 = MBOX.MEM_START_A | MBOX.MEM_START_B | MBOX.RQ_HOLD_FF;
-    SEQUENTIAL_RQ = (e71q7 | CHAN_CORE_BUSY) &
-                    (SEQUENTIAL_RQ | ~RESET | CHAN_CORE_BUSY);
-    MBOX.HOLD_ERA = ~e71q7 | ERR_HOLD | RQ_HOLD_DLY | NXM_FLG;
-    ERR_HOLD = APR.ANY_EBOX_ERR_FLG | MBOX.NXM_ERR | MB_PAR_ERR | RESET | ADR_PAR_ERR_FLG;
-    HOLD_ERR_REG = ERR_HOLD | NXM_FLG;
-    e72q2 = e68q4 | RESET;
-  end
+  assign MBOX_NXM_ERR_CLR = APR.NXM_ERR;
+  assign MBOX.NXM_DATA_VAL = NXM_CLR_T0 & MEM_RD_RQ;
+  assign NXM_CLR_DONE = NXM_FLG & ~MEM_START_C;
+  assign MBOX.NXM_ANY = NXM_FLG;
+  assign MEM_START_C = MBOX.MEM_START_A | MBOX.MEM_START_B;
+  assign RESET = CLK.MR_RESET;
+  assign MBOX.CHAN_NXM_ERR = CHAN_MEM_REF & ~e51q2 & MBOX.NXM_ERR;
+  assign e71q7 = MBOX.MEM_START_A | MBOX.MEM_START_B | MBOX.RQ_HOLD_FF;
+  assign SEQUENTIAL_RQ = (e71q7 | CHAN_CORE_BUSY) &
+                         (SEQUENTIAL_RQ | ~RESET | CHAN_CORE_BUSY);
+  assign MBOX.HOLD_ERA = ~e71q7 | ERR_HOLD | RQ_HOLD_DLY | NXM_FLG;
+  assign ERR_HOLD = APR.ANY_EBOX_ERR_FLG | MBOX.NXM_ERR | MB_PAR_ERR | RESET | ADR_PAR_ERR_FLG;
+  assign HOLD_ERR_REG = ERR_HOLD | NXM_FLG;
+  assign e72q2 = e68q4 | RESET;
 
-  always_ff @(posedge clk) begin
-    NXM_FLG <= NXM_CRY_A & NXM_CRY_B & MEM_START_C |
-               ~NXM_CLR_DONE & NXM_FLG & ~RESET;
-    // <DH2> CORE BUSY L on MBZ3 B7.
-    CHAN_MEM_REF <= MEM_START_C & CHAN_CORE_BUSY | MBOX.CORE_BUSY & CHAN_MEM_REF & ~RESET;
-    A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
-    MBOX.NXM_ERR <= NXM_CLR_DONE |
-                    ~MBOX_NXM_ERR_CLR & MBOX.NXM_ERR & ~RESET;
-    e51q2 <= MBOX.NXM_ERR;
-    RQ_HOLD_DLY <= e71q7;
-    e68q4 <= MBOX.A_CHANGE_COMING_IN ^ e72q2;
-    e57q3 <= e72q2 & MBOX.A_CHANGE_COMING_IN;
-  end
+  always_ff @(posedge clk) NXM_FLG <= NXM_CRY_A & NXM_CRY_B & MEM_START_C |
+                                      ~NXM_CLR_DONE & NXM_FLG & ~RESET;
+  // <DH2> CORE BUSY L on MBZ3 B7.
+  always_ff @(posedge clk) CHAN_MEM_REF <= MEM_START_C & CHAN_CORE_BUSY | MBOX.CORE_BUSY & CHAN_MEM_REF & ~RESET;
+  always_ff @(posedge clk) A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
+  always_ff @(posedge clk) MBOX.NXM_ERR <= NXM_CLR_DONE |
+                                           ~MBOX_NXM_ERR_CLR & MBOX.NXM_ERR & ~RESET;
+  always_ff @(posedge clk) e51q2 <= MBOX.NXM_ERR;
+  always_ff @(posedge clk) RQ_HOLD_DLY <= e71q7;
+  always_ff @(posedge clk) e68q4 <= MBOX.A_CHANGE_COMING_IN ^ e72q2;
+  always_ff @(posedge clk) e57q3 <= e72q2 & MBOX.A_CHANGE_COMING_IN;
 
   UCR4 e53(.CIN(e57q3),
            .SEL({MEM_START_C, 1'b0}),
@@ -275,46 +263,42 @@ module mbz(iAPR APR,
 
   // MBZ4 p.306
   bit e57q2, e25q2, e25q15, e25q3, e30q13;
-  always_ff @(posedge clk) begin
-    e57q2 <= e57q2 & MEM_START_C |
-             MBOX.ACKN_PULSE & MEM_START_C;
-    e25q2 <= NXM_FLG;
-    NXM_T2 <= NXM_FLG & ~e25q2 |
-              ~e57q2 & ~NXM_FLG & MEM_START_C & MBOX.ACKN_PULSE;
-    NXM_T3 <= NXM_T2;
-    NXM_T4 <= NXM_T3;
-    NXM_T5 <= NXM_T4;
-    NXM_T6 <= NXM_T4;
-    e25q15 <= NXM_T6 & MEM_RD_RQ;
-    SBUS_ERR_FLG <= MBOX.MEM_ERROR & A_CHANGE_COMING |
-                    ~APR.SBUS_ERR & MBOX.SBUS_ERR & ~RESET;
-    MB_PAR_ERR <= ~MBOX.MB_PAR_ODD & MB_TEST_PAR_B_IN |
-                  ~MBOX.MB_PAR_ODD & MB_TEST_PAR_A_IN & ~APR.MB_PAR_ERR |
-                  MBOX.MB_PAR_ERR & ~RESET & ~APR.MB_PAR_ERR |
-                  ~MBOX.MB_PAR_ODD & MBOX.ACKN_PULSE & ~MEM_RD_RQ;
-    ADR_PAR_ERR_FLG <= MBOX.MEM_ADR_PAR_ERR & A_CHANGE_COMING |
-                       ~APR.S_ADR_P_ERR & MBOX.MBOX_ADR_PAR_ERR & ~RESET;
-    e25q3 <= ADR_PAR_ERR_FLG;
-    e30q13 <= MB_PAR_ERR;
-  end
+  always_ff @(posedge clk) e57q2 <= e57q2 & MEM_START_C |
+                                    MBOX.ACKN_PULSE & MEM_START_C;
+  always_ff @(posedge clk) e25q2 <= NXM_FLG;
+  always_ff @(posedge clk) NXM_T2 <= NXM_FLG & ~e25q2 |
+                                     ~e57q2 & ~NXM_FLG & MEM_START_C & MBOX.ACKN_PULSE;
+  always_ff @(posedge clk) NXM_T3 <= NXM_T2;
+  always_ff @(posedge clk) NXM_T4 <= NXM_T3;
+  always_ff @(posedge clk) NXM_T5 <= NXM_T4;
+  always_ff @(posedge clk) NXM_T6 <= NXM_T4;
+  always_ff @(posedge clk) e25q15 <= NXM_T6 & MEM_RD_RQ;
+  always_ff @(posedge clk) SBUS_ERR_FLG <= MBOX.MEM_ERROR & A_CHANGE_COMING |
+                                           ~APR.SBUS_ERR & MBOX.SBUS_ERR & ~RESET;
+  always_ff @(posedge clk) MB_PAR_ERR <= ~MBOX.MB_PAR_ODD & MB_TEST_PAR_B_IN |
+                                         ~MBOX.MB_PAR_ODD & MB_TEST_PAR_A_IN & ~APR.MB_PAR_ERR |
+                                         MBOX.MB_PAR_ERR & ~RESET & ~APR.MB_PAR_ERR |
+                                         ~MBOX.MB_PAR_ODD & MBOX.ACKN_PULSE & ~MEM_RD_RQ;
+  always_ff @(posedge clk) ADR_PAR_ERR_FLG <= MBOX.MEM_ADR_PAR_ERR & A_CHANGE_COMING |
+                                              ~APR.S_ADR_P_ERR & MBOX.MBOX_ADR_PAR_ERR & ~RESET;
+  always_ff @(posedge clk) e25q3 <= ADR_PAR_ERR_FLG;
+  always_ff @(posedge clk) e30q13 <= MB_PAR_ERR;
 
-  always_comb begin
-    MEM_RD_RQ = MBOX.MEM_RD_RQ;
-    MEM_WR_RQ = MBOX.MEM_WR_RQ;
-    NXM_T6comma7 = NXM_T6 | e25q15;
-    // <EA1> CORE BUSY A H on MBZ4 A5.
-    // Same signal drives MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.
-    CORE_BUSY_IN = NXM_T2 | NXM_T3 | NXM_T4 | NXM_T5 | MBC.CORE_BUSY;
-    LOAD_MB_MAGIC = ~ERR_HOLD & NXM_T6comma7 & NXM_FLG |
-                    MB_TEST_PAR_A_IN & ~HOLD_ERR_REG |
-                    MB_TEST_PAR_B_IN & ~HOLD_ERR_REG |
-                    ~HOLD_ERR_REG & MBOX.ACKN_PULSE & ~MEM_RD_RQ;
-    MBOX.SBUS_ERR = SBUS_ERR_FLG;
-    MBOX.MB_PAR_ERR = MB_PAR_ERR;
-    MBOX.MBOX_ADR_PAR_ERR = ADR_PAR_ERR_FLG;
-    MBOX.CHAN_ADR_PAR_ERR = ~e25q3 & MBOX.MBOX_ADR_PAR_ERR & CHAN_MEM_REF;
-    MBOX.CHAN_PAR_ERR = ~e30q13 & MBOX.MB_PAR_ERR & CHAN_MEM_REF;
-  end
+  assign MEM_RD_RQ = MBOX.MEM_RD_RQ;
+  assign MEM_WR_RQ = MBOX.MEM_WR_RQ;
+  assign NXM_T6comma7 = NXM_T6 | e25q15;
+  // <EA1> CORE BUSY A H on MBZ4 A5.
+  // Same signal drives MBZ4 CORE BUSY A L and MBZ4 CORE BUSY A H.
+  assign CORE_BUSY_IN = NXM_T2 | NXM_T3 | NXM_T4 | NXM_T5 | MBC.CORE_BUSY;
+  assign LOAD_MB_MAGIC = ~ERR_HOLD & NXM_T6comma7 & NXM_FLG |
+                         MB_TEST_PAR_A_IN & ~HOLD_ERR_REG |
+                         MB_TEST_PAR_B_IN & ~HOLD_ERR_REG |
+                         ~HOLD_ERR_REG & MBOX.ACKN_PULSE & ~MEM_RD_RQ;
+  assign MBOX.SBUS_ERR = SBUS_ERR_FLG;
+  assign MBOX.MB_PAR_ERR = MB_PAR_ERR;
+  assign MBOX.MBOX_ADR_PAR_ERR = ADR_PAR_ERR_FLG;
+  assign MBOX.CHAN_ADR_PAR_ERR = ~e25q3 & MBOX.MBOX_ADR_PAR_ERR & CHAN_MEM_REF;
+  assign MBOX.CHAN_PAR_ERR = ~e30q13 & MBOX.MB_PAR_ERR & CHAN_MEM_REF;
 
   USR4  e6(.S0('0),
            .D({MBOX.MB_DATA_CODE_2, MBOX.MB_DATA_CODE_1, MBOX.MB_SEL}),
@@ -340,39 +324,28 @@ module mbz(iAPR APR,
            .CLK(clk),
            .Q({MB_CH_BUF_00to17_PAR, MB_CH_BUF_18to35_PAR, e56Ignored}));
 
-  always_comb begin
-    CH_BUF_IN_00to17_PAR = CH_BUF_MB_SEL ? PAG.MB_00to17_PAR : CH_REG_00to17_PAR;
-    CH_BUF_IN_18to35_PAR = CH_BUF_MB_SEL ? PAG.MB_18to35_PAR : CH_REG_18to35_PAR;
-    CH_BUF_PAR_BIT = MB_CH_BUF_00to17_PAR ^ MB_CH_BUF_18to35_PAR;
-    CCW_PAR_BIT = CCL.ODD_WC_PAR ^ CCW.ODD_ADR_PAR;
-  end
+  assign CH_BUF_IN_00to17_PAR = CH_BUF_MB_SEL ? PAG.MB_00to17_PAR : CH_REG_00to17_PAR;
+  assign CH_BUF_IN_18to35_PAR = CH_BUF_MB_SEL ? PAG.MB_18to35_PAR : CH_REG_18to35_PAR;
+  assign CH_BUF_PAR_BIT = MB_CH_BUF_00to17_PAR ^ MB_CH_BUF_18to35_PAR;
+  assign CCW_PAR_BIT = CCL.ODD_WC_PAR ^ CCW.ODD_ADR_PAR;
 
-  always_latch begin
-
-    if (CH_REG_HOLD) begin
-      CH_REG_00to17_PAR <= CCL.DATA_REVERSE ?
-                           MBOX.CBUS_PAR_RIGHT_RE :
-                           MBOX.CBUS_PAR_LEFT_RE;
-      CH_REG_18to35_PAR <= CCL.DATA_REVERSE ?
-                           MBOX.CBUS_PAR_LEFT_RE :
-                           MBOX.CBUS_PAR_RIGHT_RE;
-    end
+  always_latch if (CH_REG_HOLD) begin
+    CH_REG_00to17_PAR <= CCL.DATA_REVERSE ?
+                         MBOX.CBUS_PAR_RIGHT_RE :
+                         MBOX.CBUS_PAR_LEFT_RE;
+    CH_REG_18to35_PAR <= CCL.DATA_REVERSE ?
+                         MBOX.CBUS_PAR_LEFT_RE :
+                         MBOX.CBUS_PAR_RIGHT_RE;
   end
 
   // e60,e55
   bit [0:1] chBufParRAM[0:127];
-  always_ff @(posedge clk) begin
-    CH_BUF_ADR <= CRC.CH_BUF_ADR; // Combine E54 hexff and E51q4 dff section
-    CH_REG_HOLD <= ~MBOX.CH_T2;
-    {CH_BUF_00to17_PAR, CH_BUF_18to35_PAR} = chBufParRAM[CH_BUF_ADR];
-  end
+  always_ff @(posedge clk) CH_BUF_ADR <= CRC.CH_BUF_ADR; // Combine E54 hexff and E51q4 dff section
+  always_ff @(posedge clk) CH_REG_HOLD <= ~MBOX.CH_T2;
+  always_ff @(posedge clk) {CH_BUF_00to17_PAR, CH_BUF_18to35_PAR} = chBufParRAM[CH_BUF_ADR];
 
-  always_ff @(MBOX.CH_BUF_WR) begin
-
-    if (MBOX.CH_BUF_WR) begin
-      chBufParRAM[CH_BUF_ADR] <= {CH_BUF_IN_00to17_PAR, CH_BUF_IN_18to35_PAR};
-    end
-  end
+  always_ff @(MBOX.CH_BUF_WR) if (MBOX.CH_BUF_WR)
+    chBufParRAM[CH_BUF_ADR] <= {CH_BUF_IN_00to17_PAR, CH_BUF_IN_18to35_PAR};
 
   mux2x4 e50(.EN(MBOX.MEM_TO_C_EN),
              .SEL(MBOX.MEM_TO_C_SEL),
@@ -396,29 +369,27 @@ module mbz(iAPR APR,
           .q(MBOX.MB_PAR_BIT_IN));
 
   // MBZ6 p.308
-  always_comb begin
-    CSH.PAR_BIT_A = MBOX.CSH_PAR_BIT_IN | (|MBOX.CSH_PAR_BIT_A);
-    CSH.PAR_BIT_B = |MBOX.CSH_PAR_BIT_B;
-    CSH_PAR_BIT =   |MBOX.CSH_PAR_BIT_A | CSH.PAR_BIT_B;
+  assign CSH.PAR_BIT_A = MBOX.CSH_PAR_BIT_IN | (|MBOX.CSH_PAR_BIT_A);
+  assign CSH.PAR_BIT_B = |MBOX.CSH_PAR_BIT_B;
+  assign CSH_PAR_BIT =   |MBOX.CSH_PAR_BIT_A | CSH.PAR_BIT_B;
 
-    ERA_SEL = APR.EBOX_ERA & CSH.EBOX_CYC;
-    EBUS_REG_IN = ERA_SEL ?
-                  {MB_WD_SEL,
-                   CCA_REF,
-                   CHAN_REF,
-                   MB_DATA_SOURCE,
-                   MEM_WRITE} :
-                  {MCL.VMA_USER,
-                   PAG.PF_HOLD_01_IN,
-                   PAG.PF_HOLD_02_IN,
-                   PAG.PF_HOLD_03_IN,
-                   PAG.PF_HOLD_04_IN,
-                   PAG.PF_HOLD_05_IN,
-                   PAG.PT_PUBLIC};
-    MB_TEST_PAR_B_IN = CCL.CH_TEST_MB_PAR |
-                       // MBZ4 CORE BUSY A L on MBZ6 A3.
-                       MBOX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
-  end
+  assign ERA_SEL = APR.EBOX_ERA & CSH.EBOX_CYC;
+  assign EBUS_REG_IN = ERA_SEL ?
+                       {MB_WD_SEL,
+                        CCA_REF,
+                        CHAN_REF,
+                        MB_DATA_SOURCE,
+                        MEM_WRITE} :
+                       {MCL.VMA_USER,
+                        PAG.PF_HOLD_01_IN,
+                        PAG.PF_HOLD_02_IN,
+                        PAG.PF_HOLD_03_IN,
+                        PAG.PF_HOLD_04_IN,
+                        PAG.PF_HOLD_05_IN,
+                        PAG.PT_PUBLIC};
+  assign MB_TEST_PAR_B_IN = CCL.CH_TEST_MB_PAR |
+                            // MBZ4 CORE BUSY A L on MBZ6 A3.
+                            MBOX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
 
   bit ignoredE18;
   USR4 e18(.S0('0),

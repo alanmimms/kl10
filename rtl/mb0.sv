@@ -27,26 +27,21 @@ module mb0(iCCL CCL,
   bit MB_HOLD[0:3];
 
   // MB01 p.74
-  always_comb begin
+  // e61, e55, e27, e50, e41, e22, e21, e16
+  always_comb if (MBOX.MEM_TO_C_EN) unique case (MEM_TO_C_SEL)
+                                    2'b00: MBOX.MEM_TO_CACHE = EDP.AR;
+                                    2'b01: MBOX.MEM_TO_CACHE = MBOX.MB;
+                                    2'b10: MBOX.MEM_TO_CACHE = MBOX.MEM_DATA_IN;
+                                    2'b11: MBOX.MEM_TO_CACHE = CH_REG;
+                                    endcase
 
-    // e61, e55, e27, e50, e41, e22, e21, e16
-    if (MBOX.MEM_TO_C_EN) begin
-      unique case (MEM_TO_C_SEL)
-      2'b00: MBOX.MEM_TO_CACHE = EDP.AR;
-      2'b01: MBOX.MEM_TO_CACHE = MBOX.MB;
-      2'b10: MBOX.MEM_TO_CACHE = MBOX.MEM_DATA_IN;
-      2'b11: MBOX.MEM_TO_CACHE = CH_REG;
-      endcase
-    end
+  // e50, e16
+  assign MBOX.MB_PAR_ODD = ^MBOX.MB;
 
-    // e50, e16
-    MBOX.MB_PAR_ODD = ^MBOX.MB;
+  assign PT_IN_SEL_AR = ~CON.KI10_PAGING_MODE;
 
-    PT_IN_SEL_AR = ~CON.KI10_PAGING_MODE;
-
-    // e65, e40, e26
-    PAG.PT_IN = PT_IN_SEL_AR ? EDP.AR : MBOX.MB;
-  end
+  // e65, e40, e26
+  assign PAG.PT_IN = PT_IN_SEL_AR ? EDP.AR : MBOX.MB;
 
   genvar k;
   generate
@@ -92,28 +87,24 @@ module mb0(iCCL CCL,
              .CLK(clk),
              .Q({MB_SEL, mbSelUnused}));
 
-  always_comb begin
-    MB_HOLD[0] = MBOX.MB0_HOLD_IN;
-    MB_HOLD[1] = MBOX.MB1_HOLD_IN;
-    MB_HOLD[2] = MBOX.MB2_HOLD_IN;
-    MB_HOLD[3] = MBOX.MB3_HOLD_IN;
+  assign MB_HOLD[0] = MBOX.MB0_HOLD_IN;
+  assign MB_HOLD[1] = MBOX.MB1_HOLD_IN;
+  assign MB_HOLD[2] = MBOX.MB2_HOLD_IN;
+  assign MB_HOLD[3] = MBOX.MB3_HOLD_IN;
 
     // e71, e52, e78, e8, e28, e3
-    unique case (MB_SEL)
-    2'b00: MBOX.MB = MBN[0];
-    2'b01: MBOX.MB = MBN[1];
-    2'b10: MBOX.MB = MBN[2];
-    2'b11: MBOX.MB = MBN[3];
-    endcase
-  end
+  always_comb unique case (MB_SEL)
+              2'b00: MBOX.MB = MBN[0];
+              2'b01: MBOX.MB = MBN[1];
+              2'b10: MBOX.MB = MBN[2];
+              2'b11: MBOX.MB = MBN[3];
+              endcase
 
 
   // MB03 p.76
-  always_comb begin
-    // e51, e32, e17
-    CH_BUF_IN = CH_BUF_MB_SEL ? MBOX.MB : CH_REG;
-    CH_BUF_MB_SEL = ~CRC.BUF_MB_SEL;
-  end
+  // e51, e32, e17
+  assign CH_BUF_IN = CH_BUF_MB_SEL ? MBOX.MB : CH_REG;
+  assign CH_BUF_MB_SEL = ~CRC.BUF_MB_SEL;
 
   // e69, e59, e49, e44, e64, e54,
   // e39, e35, e25, e15, e30, e20
@@ -139,57 +130,40 @@ module mb0(iCCL CCL,
 
   // MB04 p.77
   bit [0:35] ccwBuf[0:3];
-  always_comb begin
-    clk = CLK.MB;
-    MB_IN_EN = ~MBOX.NXM_ANY;
+  assign clk = CLK.MB;
+  assign MB_IN_EN = ~MBOX.NXM_ANY;
 
-    // e57, e38, e19
-    MB_IN_A = MBOX.MB_IN_SEL[2] ? MB_CH_BUF : EDP.AR;
+  // e57, e38, e19
+  assign MB_IN_A = MBOX.MB_IN_SEL[2] ? MB_CH_BUF : EDP.AR;
 
-    // e66, e37, e12, e70, e31, e11
-    MBOX.CCW_MIX = CCL.MIX_MB_SEL ? MBOX.MB : ccwBuf[MBOX.CCW_BUF_ADR];
+  // e66, e37, e12, e70, e31, e11
+  assign MBOX.CCW_MIX = CCL.MIX_MB_SEL ? MBOX.MB : ccwBuf[MBOX.CCW_BUF_ADR];
 
     // e62 e67, e36, e45, e13, e18
-    if (MB_IN_EN) begin
-      unique case (MBOX.MB_IN_SEL[0:1])
-      2'b00: MB_IN = MBOX.CACHE_DATA;
-      2'b01: MB_IN = MB_IN_A;
-      2'b10: MB_IN = MBOX.MEM_DATA_IN;
-      2'b11: MB_IN = MBOX.CCW_MIX;
-      endcase
-    end
-  end
+  always_comb if (MB_IN_EN) unique case (MBOX.MB_IN_SEL[0:1])
+                            2'b00: MB_IN = MBOX.CACHE_DATA;
+                            2'b01: MB_IN = MB_IN_A;
+                            2'b10: MB_IN = MBOX.MEM_DATA_IN;
+                            2'b11: MB_IN = MBOX.CCW_MIX;
+                            endcase
 
   // e70, e31, e11
-  always_ff @(posedge MBOX.CCW_BUF_WR) begin
-    ccwBuf[MBOX.CCW_BUF_ADR] = MBOX.CCW_BUF_IN;
-  end
+  always_ff @(posedge MBOX.CCW_BUF_WR) ccwBuf[MBOX.CCW_BUF_ADR] = MBOX.CCW_BUF_IN;
 
 
   // MB05 p.78
-  always_latch begin
+  // e24, e29, e23
+  always_latch if (CH_REG_HOLD) CH_REG <= MBOX.CH_REVERSE ?
+                                          {MBOX.CBUS_D_RE[18:35], MBOX.CBUS_D_RE[0:17]} :
+                                          {MBOX.CBUS_D_RE[0:17],  MBOX.CBUS_D_RE[18:35]};
 
-    // e24, e29, e23
-    if (CH_REG_HOLD) begin
-      CH_REG <= MBOX.CH_REVERSE ?
-                {MBOX.CBUS_D_RE[18:35], MBOX.CBUS_D_RE[0:17]} :
-                {MBOX.CBUS_D_RE[0:17],  MBOX.CBUS_D_RE[18:35]};
-    end
-  end
+  assign MB_CH_BUF_LOAD = MBOX.CH_T0;
 
-  always_comb begin
-    MB_CH_BUF_LOAD = MBOX.CH_T0;
-  end
+  // e74, e48, e10
+  always_ff @(posedge clk) CH_BUF_ADR <= CRC.CH_BUF_ADR;
+  always_ff @(posedge clk) CH_BUF_EN <= CCL.CH_BUF_EN;
+  always_ff @(posedge clk) CH_REG_HOLD <= ~MBOX.CH_T2;
 
-  always_ff @(posedge clk) begin
-    // e74, e48, e10
-    CH_BUF_ADR <= CRC.CH_BUF_ADR;
-    CH_BUF_EN <= CCL.CH_BUF_EN;
-    CH_REG_HOLD <= ~MBOX.CH_T2;
-
-    // e58, e43, e14
-    if (MB_CH_BUF_LOAD) begin
-      MB_CH_BUF <= CH_BUF;
-    end
-  end
+  // e58, e43, e14
+  always_ff @(posedge clk) if (MB_CH_BUF_LOAD) MB_CH_BUF <= CH_BUF;
 endmodule

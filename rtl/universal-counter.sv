@@ -9,39 +9,25 @@ module UCR4(input RESET,
             output bit [0:3] Q,
             output bit COUT);
 
-  always_ff @(posedge CLK or posedge RESET) begin
+  always_ff @(posedge CLK or posedge RESET) if (RESET) begin
+    Q <= '0;
+    COUT <= '0;
+  end else case (SEL)
+           2'b00: begin              // LOAD
+             Q <= D;
+             COUT <= '1;
+           end
+           
+           2'b01: if (CIN) begin     // DEC
+             Q <= Q - 4'b0001;
+             COUT <= Q == 4'b0000;
+           end else COUT <= '0;
 
-    if (RESET) begin
-      Q <= '0;
-      COUT <= '0;
-    end else begin
+           2'b10: if (CIN) begin     // INC
+             Q <= Q + 4'b0001;
+             COUT <= Q == 4'b1111;
+           end else COUT <= '0;
 
-      case (SEL)
-      2'b00: begin              // LOAD
-        Q <= D;
-        COUT <= '1;
-      end
-      
-      2'b01: begin              // DEC
-
-        if (CIN) begin
-          Q <= Q - 4'b0001;
-          COUT <= Q == 4'b0000;
-        end else
-          COUT <= '0;
-      end
-
-      2'b10: begin              // INC
-
-        if (CIN) begin
-          Q <= Q + 4'b0001;
-          COUT <= Q == 4'b1111;
-        end else
-          COUT <= '0;
-      end
-
-      2'b11: ;                  // HOLD
-      endcase
-    end
-  end
+           2'b11: ;                  // HOLD
+           endcase
 endmodule

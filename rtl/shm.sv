@@ -40,13 +40,10 @@ module shm(iCRAM CRAM,
               {SHIFT_36 | SHIFT_50, SHIFT_50, 1'b0, SHIFT_36, SHIFT_50, 1'b0};
   
   // SHM2 p.335
-  always_comb begin
-
-    case (CRAM.SH)
-    2'b00: SHM.SH = ({EDP.AR, EDP.ARX} << sc) >> 36;
-    2'b01: SHM.SH = EDP.AR;
-    2'b10: SHM.SH = EDP.ARX;
-    2'b11: SHM.SH = {EDP.AR[18:35], EDP.AR[0:17]};
-    endcase
-  end
-endmodule // shm
+  always_comb case (CRAM.SH)
+              2'b00: SHM.SH = ({EDP.AR, EDP.ARX} << sc) >> 36;
+              2'b01: SHM.SH = EDP.AR;
+              2'b10: SHM.SH = EDP.ARX;
+              2'b11: SHM.SH = {EDP.AR[18:35], EDP.AR[0:17]};
+              endcase
+endmodule

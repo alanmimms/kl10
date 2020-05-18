@@ -82,9 +82,7 @@ module ir(iIR IR,
   assign ioDRADR[3:5] = instr7XX ? (IR.IR[7:9] | {3{instr3thru6}}) : IR.IR[3:5];
   assign ioDRADR[6:8] = instr7XX ? IR.IR[6:8] : IR.IR[10:12];
 
-  always @(posedge CON.LOAD_DRAM) begin
-    DRADR <= {IR.IR[0:2], instr7XX ? IR.IR[3:8] : ioDRADR};
-  end
+  always @(posedge CON.LOAD_DRAM) DRADR <= {IR.IR[0:2], instr7XX ? IR.IR[3:8] : ioDRADR};
 
   bit [0:2] DRAM_A_X, DRAM_A_Y, DRAM_B_X, DRAM_B_Y;
   bit [7:10] DRAM_PAR_J;
@@ -105,23 +103,18 @@ module ir(iIR IR,
   end
 
   // Latch-mux
-  always @(posedge CON.LOAD_DRAM) begin
-
-    if (DRADR[8]) begin
-      IR.DRAM_A <= DRADR[8] ? DRAM_A_X : DRAM_A_Y;
-      IR.DRAM_B <= DRADR[8] ? DRAM_B_X : DRAM_B_Y;
-      DRAM_PAR_J[7] <= IR.DRAM_J[7];
-      DRAM_PAR_J[8:10] <= DRADR[8] ? DRAM_J_X[8:10] : DRAM_J_Y[8:10];
-    end
-
-    IR.DRAM_J[8:10] <= JRST ? DRAM_PAR_J[7:10] : IR.IR[9:12];
+  always @(posedge CON.LOAD_DRAM) if (DRADR[8]) begin
+    IR.DRAM_A <= DRADR[8] ? DRAM_A_X : DRAM_A_Y;
+    IR.DRAM_B <= DRADR[8] ? DRAM_B_X : DRAM_B_Y;
+    DRAM_PAR_J[7] <= IR.DRAM_J[7];
+    DRAM_PAR_J[8:10] <= DRADR[8] ? DRAM_J_X[8:10] : DRAM_J_Y[8:10];
   end
+
+  always @(posedge CON.LOAD_DRAM) IR.DRAM_J[8:10] <= JRST ? DRAM_PAR_J[7:10] : IR.IR[9:12];
 
   // Latch-mux
-  always_ff @(posedge CON.LOAD_IR) begin
-    IR.IR <= CLK.MB_XFER ? EDP.AD[0:12] : MBOX.CACHE_DATA[0:12];
-    IR.AC <= enableAC ? IR.IR[9:12] : 4'b0;
-  end
+  always_ff @(posedge CON.LOAD_IR) IR.IR <= CLK.MB_XFER ? EDP.AD[0:12] : MBOX.CACHE_DATA[0:12];
+  always_ff @(posedge CON.LOAD_IR) IR.AC <= enableAC ? IR.IR[9:12] : 4'b0;
 
   assign magic7eq8 = CRAM.MAGIC[7] ^ CRAM.MAGIC[8];
   assign AgtB = EDP.AD[0] ^ EDP.AD_CRY[-2];
@@ -139,44 +132,41 @@ module ir(iIR IR,
 
   // Inferred latch initialization
   initial begin
-    enAC <= 0;
-    enIO_JRST <= 0;
+    enAC = 0;
+    enIO_JRST = 0;
   end
 
-  always @(*) begin
-
-    if (CTL.DIAG_LOAD_FUNC_06x) begin
-      dramLoadXYeven <= 3'b000;
-      dramLoadXYodd <= 3'b001;
-      dramLoadJcommon <= 3'b010;
-      dramLoadJeven <= 3'b011;
-      dramLoadJodd <= 3'b100;
-      enJRST5 <= 3'b101;
-      enJRST6 <= 3'b110;
-      enJRST7 <= 3'b111;
-    end else begin
-      dramLoadXYeven <= 0;
-      dramLoadXYodd <= 0;
-      dramLoadJcommon <= 0;
-      dramLoadJeven <= 0;
-      dramLoadJodd <= 0;
-      enJRST5 <= 0;
-      enJRST6 <= 0;
-      enJRST7 <= 0;
-    end
-
-    enIO_JRST <= enJRST5 & (~enJRST7 | enIO_JRST);
-    enAC <= enJRST6 & (~enJRST7 | enAC);
+  always_comb if (CTL.DIAG_LOAD_FUNC_06x) begin
+    dramLoadXYeven = 3'b000;
+    dramLoadXYodd = 3'b001;
+    dramLoadJcommon = 3'b010;
+    dramLoadJeven = 3'b011;
+    dramLoadJodd = 3'b100;
+    enJRST5 = 3'b101;
+    enJRST6 = 3'b110;
+    enJRST7 = 3'b111;
+  end else begin
+    dramLoadXYeven = 0;
+    dramLoadXYodd = 0;
+    dramLoadJcommon = 0;
+    dramLoadJeven = 0;
+    dramLoadJodd = 0;
+    enJRST5 = 0;
+    enJRST6 = 0;
+    enJRST7 = 0;
   end
+
+  assign enIO_JRST = enJRST5 & (~enJRST7 | enIO_JRST);
+  assign enAC = enJRST6 & (~enJRST7 | enAC);
 
   // p.130 E67 priority encoder
-  always @(*) IR.NORM = EDP.AD[0] ? 3'b001 :
-                        |EDP.AD[0:5] || EDP.AD[6] ? 3'b010 :
-                        EDP.AD[7] ? 3'b011 :
-                        EDP.AD[8] ? 3'b100 :
-                        EDP.AD[9] ? 3'b101 :
-                        EDP.AD[10] ? 3'b110 :
-                        |EDP.AD[6:35];
+  assign IR.NORM = EDP.AD[0] ? 3'b001 :
+                   |EDP.AD[0:5] || EDP.AD[6] ? 3'b010 :
+                   EDP.AD[7] ? 3'b011 :
+                   EDP.AD[8] ? 3'b100 :
+                   EDP.AD[9] ? 3'b101 :
+                   EDP.AD[10] ? 3'b110 :
+                   |EDP.AD[6:35];
 
   assign IR.DRAM_ODD_PARITY = ^{IR.DRAM_A,
                                 IR.DRAM_B,
@@ -187,25 +177,22 @@ module ir(iIR IR,
   // Diagnostics to drive EBUS
   assign IR.EBUSdriver.driving = CTL.DIAG_READ_FUNC_13x;
 
-  always @(*) begin
-
-    if (IR.EBUSdriver.driving) begin
-
-      case (DIAG_FUNC[4:6])
-      3'b000: IR.EBUSdriver.data[0:5] = {IR.NORM, DRADR[0:2]};
-      3'b001: IR.EBUSdriver.data[0:5] = DRADR[3:8];
-      3'b010: IR.EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.AC};
-      3'b011: IR.EBUSdriver.data[0:5] = {IR.DRAM_A, IR.DRAM_B};
-      3'b100: IR.EBUSdriver.data[0:5] = {IR.TEST_SATISFIED, IR.JRST0, IR.DRAM_J[1:4]};
-      3'b101: IR.EBUSdriver.data[0:5] = {DRAM_PAR, IR.DRAM_ODD_PARITY, IR.DRAM_J[7:10]};
-      3'b110: IR.EBUSdriver.data[0:5] = {IR.ADeq0, IR.IO_LEGAL, CTL.INH_CRY_18,
-                                         CTL.SPEC_GEN_CRY_18, CTL.SPEC_GEN_CRY_18, EDP.AD_CRY[-2]};
-      3'b111: IR.EBUSdriver.data[0:5] = {EDP.AD_CRY[12], EDP.AD_CRY[18], EDP.AD_CRY[24],
-                                         EDP.AD_CRY[36], EDP.ADX_CRY[12], EDP.ADX_CRY[24]};
-      endcase
-    end else
-      IR.EBUSdriver.data = 'z;
-  end
+  always_comb
+    if (IR.EBUSdriver.driving) case (DIAG_FUNC[4:6])
+                               3'b000: IR.EBUSdriver.data[0:5] = {IR.NORM, DRADR[0:2]};
+                               3'b001: IR.EBUSdriver.data[0:5] = DRADR[3:8];
+                               3'b010: IR.EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.AC};
+                               3'b011: IR.EBUSdriver.data[0:5] = {IR.DRAM_A, IR.DRAM_B};
+                               3'b100: IR.EBUSdriver.data[0:5] = {IR.TEST_SATISFIED, IR.JRST0, IR.DRAM_J[1:4]};
+                               3'b101: IR.EBUSdriver.data[0:5] = {DRAM_PAR, IR.DRAM_ODD_PARITY, IR.DRAM_J[7:10]};
+                               3'b110: IR.EBUSdriver.data[0:5] = {IR.ADeq0, IR.IO_LEGAL,
+                                                                  CTL.INH_CRY_18, CTL.SPEC_GEN_CRY_18,
+                                                                  CTL.SPEC_GEN_CRY_18, EDP.AD_CRY[-2]};
+                               3'b111: IR.EBUSdriver.data[0:5] = {EDP.AD_CRY[12], EDP.AD_CRY[18],
+                                                                  EDP.AD_CRY[24], EDP.AD_CRY[36],
+                                                                  EDP.ADX_CRY[12], EDP.ADX_CRY[24]};
+                               endcase
+    else IR.EBUSdriver.data = 'z;
 
   // Look-ahead carry functions have been moved from IR to EDP.
 endmodule // ir

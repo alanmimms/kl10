@@ -6,5 +6,5 @@ module mux4x2
    input [0:3] D1,
    output bit [0:3] B);
 
-  always_comb B = SEL ? D1 : D0;
+  assign B = SEL ? D1 : D0;
 endmodule

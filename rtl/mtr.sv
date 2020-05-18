@@ -69,61 +69,49 @@ module mtr(iCHC CHC,
                             .carry());
 
 
-  always_comb begin
-    EBOX_COUNT = EBOX_COUNT0.count;
-    CACHE_COUNT = CACHE_COUNT0.count;
-    _TIME = TIME0.count;
-    PERF_COUNT = PERF_COUNT0.count;
-    INTERVAL = INTERVAL0.count;
-  end
+  assign EBOX_COUNT = EBOX_COUNT0.count;
+  assign CACHE_COUNT = CACHE_COUNT0.count;
+  assign _TIME = TIME0.count;
+  assign PERF_COUNT = PERF_COUNT0.count;
+  assign INTERVAL = INTERVAL0.count;
 
 
   // MTR2 p.325
   bit e5q2, e5q15;
   bit [0:3] e88Q;
-  always_comb begin
-    clk = CLK.MTR;
-    MBOX_CLK = clk;
-    RESET = CLK.MR_RESET;
-    PI_IN_PROG = |PI_LEVEL;
-    CACHE_CNT_EN = ACCT_ON &
-                   (~PI_IN_PROG | PI_ACCT_EN | SCD.USER) &
-                   (~PI_IN_PROG | EXEC_ACCT_EN | SCD.USER) &
-                   ~CON.UCODE_STATE3 & ~CON.PI_CYCLE;
-    e5q2 = e5q2 & ~TIME_CLK |
-           (CLR_TIME | TIME_ON) & MTR._1_MHZ;
-    e5q15 = e5q15 & ~INTERVAL_CLK |
-            (INTERVAL_ON | RESET_INTERVAL) & MTR._1_MHZ;
-    COUNT_TEN_USEC = e88Q[0] | e88Q[3];
+  assign clk = CLK.MTR;
+  assign MBOX_CLK = clk;
+  assign RESET = CLK.MR_RESET;
+  assign PI_IN_PROG = |PI_LEVEL;
+  assign CACHE_CNT_EN = ACCT_ON &
+                        (~PI_IN_PROG | PI_ACCT_EN | SCD.USER) &
+                        (~PI_IN_PROG | EXEC_ACCT_EN | SCD.USER) &
+                        ~CON.UCODE_STATE3 & ~CON.PI_CYCLE;
+  assign e5q2 = e5q2 & ~TIME_CLK |
+                (CLR_TIME | TIME_ON) & MTR._1_MHZ;
+  assign e5q15 = e5q15 & ~INTERVAL_CLK |
+                 (INTERVAL_ON | RESET_INTERVAL) & MTR._1_MHZ;
+  assign COUNT_TEN_USEC = e88Q[0] | e88Q[3];
+
+  always_ff @(posedge MBOX_CLK) CACHE_CNT_CLK <= CLR_CACHE_CNT |
+                                                 MBOX.CNT_MB_XFER & CACHE_CNT_EN;
+  always_ff @(posedge MBOX_CLK) EBOX_CNT_EN <= ~READ_MTR & ~EBOX_WAITING & CACHE_CNT_EN;
+  always_ff @(posedge MBOX_CLK) EBOX_HALF_COUNT <= ~((EBOX_CNT_EN ^ ~EBOX_HALF_COUNT) & ~RESET);
+  always_ff @(posedge MBOX_CLK) EBOX_CNT_CLK <= CLR_EBOX_CNT & ~EBOX_CNT_CLK |
+                                                EBOX_HALF_COUNT & EBOX_CNT_EN;
+
+  always_ff @(posedge MBOX_CLK) TIME_CLK <= ~READ_TIME & e5q2;
+  always_ff @(posedge MBOX_CLK) INTERVAL_CLK <= MTR._1_MHZ & RESET |
+                                                ~READ_INTERVAL & e5q15;
+
+  always_ff @(posedge MBOX_CLK) if ((CONO_MTR | RESET_PLSD) & (mtrEBUS[18] | RESET_PLSD)) begin
+    PI_ACCT_EN <= mtrEBUS[21];
+    EXEC_ACCT_EN <= mtrEBUS[22];
+    ACCT_ON <= mtrEBUS[23];      
   end
 
-  always_ff @(posedge MBOX_CLK) begin
-    CACHE_CNT_CLK <= CLR_CACHE_CNT |
-                     MBOX.CNT_MB_XFER & CACHE_CNT_EN;
-    EBOX_CNT_EN <= ~READ_MTR & ~EBOX_WAITING & CACHE_CNT_EN;
-    EBOX_HALF_COUNT <= ~((EBOX_CNT_EN ^ ~EBOX_HALF_COUNT) & ~RESET);
-    EBOX_CNT_CLK <= CLR_EBOX_CNT & ~EBOX_CNT_CLK |
-                    EBOX_HALF_COUNT & EBOX_CNT_EN;
-
-    TIME_CLK <= ~READ_TIME & e5q2;
-    INTERVAL_CLK <= MTR._1_MHZ & RESET |
-                    ~READ_INTERVAL & e5q15;
-
-    if ((CONO_MTR | RESET_PLSD) &
-        (mtrEBUS[18] | RESET_PLSD)) begin
-      PI_ACCT_EN <= mtrEBUS[21];
-      EXEC_ACCT_EN <= mtrEBUS[22];
-      ACCT_ON <= mtrEBUS[23];      
-    end
-  end
-
-  always_ff @(posedge CONO_MTR, posedge RESET) begin
-
-    if (RESET)
-      TIME_ON <= '0;
-    else
-      TIME_ON <= TIME_ON & ~mtrEBUS[24] | mtrEBUS[25];
-  end
+  always_ff @(posedge CONO_MTR, posedge RESET) if (RESET) TIME_ON <= '0;
+                                               else TIME_ON <= TIME_ON & ~mtrEBUS[24] | mtrEBUS[25];
 
   UCR4 e88(.RESET('0),
            .CIN('1),
@@ -155,96 +143,67 @@ module mtr(iCHC CHC,
   // MTR3 p.326
   bit e42q6;
   bit [0:7] e1Q;
-  always_comb begin
-    NO_MATCH_06to09 = PERIOD[6:9] != INTERVAL[6:9];
-    NO_MATCH_10to13 = PERIOD[10:13] != INTERVAL[10:13];
-    NO_MATCH_14to17 = PERIOD[14:17] != INTERVAL[14:17];
-    INTERVAL_MATCH = ~NO_MATCH_06to09 & ~NO_MATCH_10to13 & ~NO_MATCH_14to17 &
-                     ~INTERVAL_MATCH_INH;
-    INTERVAL_OFF = ~INTERVAL_ON;
-    CLR_INTERVAL = RESET_INTERVAL | INTERVAL_MATCH;
-    e42q6 = ~RESET_INTERVAL & ~INTERVAL_MATCH & INTERVAL_CRY;
-    MTR.VECTOR_INTERRUPT = ~INTERVAL_DONE;
-    MTR.CONO_MTR = CONO_MTR | RESET;
-    RESET_PERF = (LOAD_PA_RIGHT | e1Q[1]) &
-                 (mtrEBUS[30] & e1Q[1]);
-    CLR_EBOX_CNT = e1Q[2] | RESET;
-    CLR_CACHE_CNT = e1Q[3] & RESET_PLSD;
-    LOAD_PA_LEFT = e1Q[4] & RESET_PLSD;
-    LOAD_PA_RIGHT = e1Q[5] & RESET_PLSD;
-    CONO_MTR = e1Q[6];
-    CONO_TIM = e1Q[7] & RESET_PLSD;
-  end
+  assign NO_MATCH_06to09 = PERIOD[6:9] != INTERVAL[6:9];
+  assign NO_MATCH_10to13 = PERIOD[10:13] != INTERVAL[10:13];
+  assign NO_MATCH_14to17 = PERIOD[14:17] != INTERVAL[14:17];
+  assign INTERVAL_MATCH = ~NO_MATCH_06to09 & ~NO_MATCH_10to13 & ~NO_MATCH_14to17 &
+                          ~INTERVAL_MATCH_INH;
+  assign INTERVAL_OFF = ~INTERVAL_ON;
+  assign CLR_INTERVAL = RESET_INTERVAL | INTERVAL_MATCH;
+  assign e42q6 = ~RESET_INTERVAL & ~INTERVAL_MATCH & INTERVAL_CRY;
+  assign MTR.VECTOR_INTERRUPT = ~INTERVAL_DONE;
+  assign MTR.CONO_MTR = CONO_MTR | RESET;
+  assign RESET_PERF = (LOAD_PA_RIGHT | e1Q[1]) &
+                      (mtrEBUS[30] & e1Q[1]);
+  assign CLR_EBOX_CNT = e1Q[2] | RESET;
+  assign CLR_CACHE_CNT = e1Q[3] & RESET_PLSD;
+  assign LOAD_PA_LEFT = e1Q[4] & RESET_PLSD;
+  assign LOAD_PA_RIGHT = e1Q[5] & RESET_PLSD;
+  assign CONO_MTR = e1Q[6];
+  assign CONO_TIM = e1Q[7] & RESET_PLSD;
 
   decoder  e1(.en(CTL.SPEC_MTR_CTL & CLK.EBOX_SYNC),
               .sel(CRAM.MAGIC[6:8]),
               .q(e1Q));
 
-  always_ff @(posedge CONO_TIM, posedge RESET) begin
-    PERIOD <= mtrEBUS[24:35];
+  always_ff @(posedge CONO_TIM, posedge RESET) PERIOD <= mtrEBUS[24:35];
 
-    if (RESET)
-      INTERVAL_ON <= '0;
-    else
-      INTERVAL_ON <= mtrEBUS[21];
-  end
+  always_ff @(posedge CONO_TIM, posedge RESET) if (RESET) INTERVAL_ON <= '0;
+                                               else INTERVAL_ON <= mtrEBUS[21];
 
-  always_ff @(posedge INTERVAL_CLK) begin
+  always_ff @(posedge INTERVAL_CLK) if (CONO_TIM) INTERVAL_MATCH_INH <= '1;
+                                    else INTERVAL_MATCH_INH <= INTERVAL_OFF;
 
-    if (CONO_TIM)
-      INTERVAL_MATCH_INH <= '1;
-    else
-      INTERVAL_MATCH_INH <= INTERVAL_OFF;
+  always_ff @(posedge INTERVAL_CLK) if (CONO_TIM & mtrEBUS[18]) RESET_INTERVAL <= '1;
+                                    else RESET_INTERVAL <= RESET;
 
-    if (CONO_TIM & mtrEBUS[18])
-      RESET_INTERVAL <= '1;
-    else
-      RESET_INTERVAL <= RESET;
+  always_ff @(posedge INTERVAL_CLK) if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET)) INTERVAL_OVRFLO <= '0;
+                                    else INTERVAL_OVRFLO <= e42q6 | INTERVAL_OVRFLO;
 
-    if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET))
-      INTERVAL_OVRFLO <= '0;
-    else
-      INTERVAL_OVRFLO <= e42q6 | INTERVAL_OVRFLO;
+  always_ff @(posedge INTERVAL_CLK) if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET)) INTERVAL_DONE <= '0;
+                                    else INTERVAL_DONE <= INTERVAL_DONE | e42q6 | INTERVAL_MATCH;
 
-    if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET))
-      INTERVAL_DONE <= '0;
-    else
-      INTERVAL_DONE <= INTERVAL_DONE | e42q6 | INTERVAL_MATCH;
-  end
+  always @(posedge TIME_CLK | RESET_PLSD, posedge RESET_TIME) if (RESET_TIME) CLR_TIME <= '1;
+                                                              else CLR_TIME <= RESET;
 
-  always @(posedge TIME_CLK | RESET_PLSD, posedge RESET_TIME) begin
-
-    if (RESET_TIME)
-      CLR_TIME <= '1;
-    else
-      CLR_TIME <= RESET;
-  end
-
-  always @(posedge PERF_CNT_CLK | RESET_PLSD, posedge RESET_PERF) begin
-
-    if (RESET_PERF)
-      CLR_PERF_CNT <= '1;
-    else
-      CLR_PERF_CNT <= RESET;
-  end
+  always @(posedge PERF_CNT_CLK | RESET_PLSD, posedge RESET_PERF) if (RESET_PERF) CLR_PERF_CNT <= '1;
+                                                                  else CLR_PERF_CNT <= RESET;
 
 
   // MTR4 p.327
   bit e39q14, e39q2;
   bit [0:3] e36Q;
-  always_ff @(posedge LOAD_PA_RIGHT) begin
-    PI_PA_EN <= mtrEBUS[18:25];
-    NO_PI_PA_EN <= mtrEBUS[26];
-    USER_PA_EN <= mtrEBUS[27];
-    MODE_PA_DONT_CARE <= mtrEBUS[28];
-    PA_EVENT_MODE <= mtrEBUS[29];
+  always_ff @(posedge LOAD_PA_RIGHT) PI_PA_EN <= mtrEBUS[18:25];
+  always_ff @(posedge LOAD_PA_RIGHT) NO_PI_PA_EN <= mtrEBUS[26];
+  always_ff @(posedge LOAD_PA_RIGHT) USER_PA_EN <= mtrEBUS[27];
+  always_ff @(posedge LOAD_PA_RIGHT) MODE_PA_DONT_CARE <= mtrEBUS[28];
+  always_ff @(posedge LOAD_PA_RIGHT) PA_EVENT_MODE <= mtrEBUS[29];
 
-    CHAN_PA_EN <= mtrEBUS[18:25];
-    CHAN_PA_DONT_CARE <= mtrEBUS[26];
-    UCODE_PA_DONT_CARE <= mtrEBUS[27];
-    PROBE_LOW_PA_EN <= mtrEBUS[28];
-    PROBE_PA_DONT_CARE <= mtrEBUS[29];
-  end
+  always_ff @(posedge LOAD_PA_RIGHT) CHAN_PA_EN <= mtrEBUS[18:25];
+  always_ff @(posedge LOAD_PA_RIGHT) CHAN_PA_DONT_CARE <= mtrEBUS[26];
+  always_ff @(posedge LOAD_PA_RIGHT) UCODE_PA_DONT_CARE <= mtrEBUS[27];
+  always_ff @(posedge LOAD_PA_RIGHT) PROBE_LOW_PA_EN <= mtrEBUS[28];
+  always_ff @(posedge LOAD_PA_RIGHT) PROBE_PA_DONT_CARE <= mtrEBUS[29];
 
   mux e31(.en('1),
           .sel(PI_LEVEL),
@@ -257,52 +216,46 @@ module mtr(iCHC CHC,
              .B(e36Q));
 
   bit e54q3;
-  always_ff @(posedge MBOX_CLK) begin
-    e39q14 <= e36Q[0];
-    PI_LEVEL <= e36Q[1:3];
-    e39q2 <= MBOX.PROBE;
+  always_ff @(posedge MBOX_CLK) e39q14 <= e36Q[0];
+  always_ff @(posedge MBOX_CLK) PI_LEVEL <= e36Q[1:3];
+  always_ff @(posedge MBOX_CLK) e39q2 <= MBOX.PROBE;
 
-    // Note this is the ONLY place in all of KL10PV where I've found
-    // XXX H and XXX L signals not logically identical except in
-    // sense. I picked the PERF CNT CLK L logic and made PERF_CNT_CLK
-    // be the inverse of it.
-    PERF_CNT_CLK <= ~((e54q3 ^ ~RESET) & ~RESET);
-  end
+  // Note this is the ONLY place in all of KL10PV where I've found
+  // XXX H and XXX L signals not logically identical except in
+  // sense. I picked the PERF CNT CLK L logic and made PERF_CNT_CLK
+  // be the inverse of it.
+  always_ff @(posedge MBOX_CLK) PERF_CNT_CLK <= ~((e54q3 ^ ~RESET) & ~RESET);
 
-  always_ff @(posedge LOAD_PA_LEFT) begin
-    CACHE_REF_PA_EN <= mtrEBUS[30];
-    CACHE_FILL_PA_EN <= mtrEBUS[31];
-    CACHE_EWB_PA_EN <= mtrEBUS[32];
-    CACHE_SWB_PA_EN <= mtrEBUS[33];
-    CACHE_PA_DONT_CARE <= mtrEBUS[34];
-  end
+  always_ff @(posedge LOAD_PA_LEFT) CACHE_REF_PA_EN <= mtrEBUS[30];
+  always_ff @(posedge LOAD_PA_LEFT) CACHE_FILL_PA_EN <= mtrEBUS[31];
+  always_ff @(posedge LOAD_PA_LEFT) CACHE_EWB_PA_EN <= mtrEBUS[32];
+  always_ff @(posedge LOAD_PA_LEFT) CACHE_SWB_PA_EN <= mtrEBUS[33];
+  always_ff @(posedge LOAD_PA_LEFT) CACHE_PA_DONT_CARE <= mtrEBUS[34];
 
   bit e58q3, e72q3, e86q3;
-  always_comb begin
-    CSH.FILL_CACHE_RD = FILL_CACHE_RD;
-    CSH.E_WRITEBACK = E_WRITEBACK;
-    CSH.CCA_WRITEBACK = CCA_WRITEBACK;
+  assign CSH.FILL_CACHE_RD = FILL_CACHE_RD;
+  assign CSH.E_WRITEBACK = E_WRITEBACK;
+  assign CSH.CCA_WRITEBACK = CCA_WRITEBACK;
 
-    EBOX_WAITING = ~VMA.AC_REF & CLK.EBOX_SYNC & CON.MBOX_WAIT;
+  assign EBOX_WAITING = ~VMA.AC_REF & CLK.EBOX_SYNC & CON.MBOX_WAIT;
 
-    e58q3 = (((SCD.USER ^ ~USER_PA_EN) & ~RESET) | MODE_PA_DONT_CARE) &
-            (CON.UCODE_STATE1 | UCODE_PA_DONT_CARE) &
-            ((e39q2 ^ PROBE_LOW_PA_EN) & ~RESET) &
-            ~CLR_PERF_CNT;
+  assign e58q3 = (((SCD.USER ^ ~USER_PA_EN) & ~RESET) | MODE_PA_DONT_CARE) &
+                 (CON.UCODE_STATE1 | UCODE_PA_DONT_CARE) &
+                 ((e39q2 ^ PROBE_LOW_PA_EN) & ~RESET) &
+                 ~CLR_PERF_CNT;
 
-    e72q3 = (e86q3 | CACHE_PA_DONT_CARE) &
-            CURRENT_PI_PA_EN &
-            (PA_EVENT_MODE | ~PERF_CNT_CLK) &
-            (CHAN_BUSY[0] | CHAN_BUSY[1] | CHAN_PA_DONT_CARE);
+  assign e72q3 = (e86q3 | CACHE_PA_DONT_CARE) &
+                 CURRENT_PI_PA_EN &
+                 (PA_EVENT_MODE | ~PERF_CNT_CLK) &
+                 (CHAN_BUSY[0] | CHAN_BUSY[1] | CHAN_PA_DONT_CARE);
 
-    e86q3 = EBOX_WAITING & CACHE_REF_PA_EN |
-            CSH.FILL_CACHE_RD & CACHE_FILL_PA_EN & EBOX_WAITING |
-            CSH.E_WRITEBACK & CACHE_EWB_PA_EN & EBOX_WAITING |
-            CSH.CCA_WRITEBACK & CACHE_SWB_PA_EN & EBOX_WAITING;
+  assign e86q3 = EBOX_WAITING & CACHE_REF_PA_EN |
+                 CSH.FILL_CACHE_RD & CACHE_FILL_PA_EN & EBOX_WAITING |
+                 CSH.E_WRITEBACK & CACHE_EWB_PA_EN & EBOX_WAITING |
+                 CSH.CCA_WRITEBACK & CACHE_SWB_PA_EN & EBOX_WAITING;
 
-    e54q3 = ~PERF_CNT_CLK & CLR_PERF_CNT |
-            e58q3 & e72q3 & ~READ_PERF_CNT;
-  end
+  assign e54q3 = ~PERF_CNT_CLK & CLR_PERF_CNT |
+                 e58q3 & e72q3 & ~READ_PERF_CNT;
 
   bit e66Q;
   mux e66(.en(CHC.CBUS_READY),
@@ -320,21 +273,19 @@ module mtr(iCHC CHC,
 
   // MTR5 p.328
   bit [0:7] e18D;
-  always_comb begin
-    DS = CTL.DIAG[4:6];
-  end
+  assign DS = CTL.DIAG[4:6];
 
   always_ff @(posedge MBOX_CLK) begin
     mtrEBUS[18:19] = EBUS.data[18:19];
     mtrEBUS[20:35] = mtrEBUS_IN;
   end
 
-  always_latch begin
-
-    if (HOLD_INTERRUPT_SEL)
-      e18D <= {_TIME[2], PERF_COUNT[2], EBOX_COUNT[2], CACHE_COUNT[2],
-               PIC.MTR_HONOR, 3'b000};
-  end
+  always_latch if (HOLD_INTERRUPT_SEL) e18D <= {_TIME[2],
+                                                PERF_COUNT[2],
+                                                EBOX_COUNT[2],
+                                                CACHE_COUNT[2],
+                                                PIC.MTR_HONOR,
+                                                3'b000};
 
   bit [1:2] unusedE37a;
   bit [5:6] unusedE37b;
@@ -452,12 +403,6 @@ module MTRcounter
    output bit carry);
 
   bit [N:M] count;
-
-  always_ff @(posedge clk) begin
-
-    if (clear)
-      count <= '0;
-    else
-      count <= count + 1;
-  end
+  always_ff @(posedge clk) if (clear) count <= '0;
+                           else count <= count + 1;
 endmodule
