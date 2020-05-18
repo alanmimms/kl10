@@ -90,16 +90,14 @@ module memPhase(input CROBAR,
     mphIDLE: if (START) next = SBUS.RQ[0] ? mphACK1 : mphSHIFT;
                 // else stay
 
-    mphACK1: next = mphACK2;
-    mphACK2: next = mphREAD1;
-    mphREAD1: next = mphSHIFT;
-    mphWAITforIDLE: next = mphIDLE;
+    mphACK1:            next = mphACK2;
+    mphACK2:            next = mphREAD1;
+    mphREAD1:           next = mphSHIFT;
+    mphWAITforIDLE:     next = mphIDLE;
 
-    mphSHIFT: begin
-      if (toAck[1]) next = mphACK1;
-      else if (toAck[1:3] == '0) next = mphWAITforIDLE;
-      // else stay in mphSHIFT to shift intermediate zero bits through
-    end
+    mphSHIFT: if (toAck[1]) next = mphACK1;
+              else if (toAck[1:3] == '0) next = mphWAITforIDLE;
+           // else stay in mphSHIFT to shift intermediate zero bits through
     endcase
   end
 
@@ -107,12 +105,11 @@ module memPhase(input CROBAR,
   always_ff @(posedge clk) begin
 
     case (state)
-    mphIDLE:
-      if (START) begin
-        toAck <= SBUS.RQ;         // Addresses remaining to ACK
-        addr <= SBUS.ADR;         // Address of first word we do
-        wo <= SBUS.ADR[34:35];    // Word offset we increment mod 4
-      end
+    mphIDLE: if (START) begin
+      toAck <= SBUS.RQ;         // Addresses remaining to ACK
+      addr <= SBUS.ADR;         // Address of first word we do
+      wo <= SBUS.ADR[34:35];    // Word offset we increment mod 4
+    end
 
     mphACK1: ACKN <= '1;
 
