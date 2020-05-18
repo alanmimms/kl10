@@ -32,11 +32,9 @@ module mbc(iAPR APR,
   bit [27:35] PMA_HOLD;
 
   // MBC1 p.189
-  always_comb begin
-    clk = CLK.MBC;
-    RESET = CLK.MR_RESET;
+  assign clk = CLK.MBC;
+  assign RESET = CLK.MR_RESET;
     // NOTE use MBOX.PMA for local references to PMA.
-  end
 
   USR4  e6(.S0('0),
            .D(MBOX.CACHE_ADR[27:30]),
@@ -123,12 +121,10 @@ module mbc(iAPR APR,
            .Q({MATCH_HOLD, PMA_HOLD[34:35]}));
 
   bit WRITE_OK_IN_A, WRITE_OK_IN_B;
-  always_comb begin
-    MBOX.CAM_SEL = MATCH_HOLD;
-    WRITE_OK_IN_A = |(PMA.PA[27:30] ^ PMA_HOLD[27:30]);
-    WRITE_OK_IN_B = |(PMA.PA[31:33] ^ PMA_HOLD[31:33]);
-    MBC.WRITE_OK = WRITE_OK_IN_A | WRITE_OK_IN_B | ~MBX.REFILL_HOLD;
-  end
+  assign MBOX.CAM_SEL = MATCH_HOLD;
+  assign WRITE_OK_IN_A = |(PMA.PA[27:30] ^ PMA_HOLD[27:30]);
+  assign WRITE_OK_IN_B = |(PMA.PA[31:33] ^ PMA_HOLD[31:33]);
+  assign MBC.WRITE_OK = WRITE_OK_IN_A | WRITE_OK_IN_B | ~MBX.REFILL_HOLD;
 
 
   // MBC2 p.190
@@ -144,43 +140,56 @@ module mbc(iAPR APR,
            .CLK(clk),
            .Q({CSH_VAL_WR_PLS_FF, CSH_WR_WR_PLS_FF, CSH_ADR_WR_PLS_FF, CSH_WR_DATA_FF}));
 
-  always_comb begin
-    MBOX.CSH_VAL_WR_PULSE = CSH_VAL_WR_PLS_FF;
-    CSH_VAL_WR_PULSE = CSH_VAL_WR_PLS_FF;
+  assign MBOX.CSH_VAL_WR_PULSE = CSH_VAL_WR_PLS_FF;
+  assign CSH_VAL_WR_PULSE = CSH_VAL_WR_PLS_FF;
 
-    MBOX.CSH_WR_WR_PULSE = CSH_WR_WR_PLS_FF;
-    CSH_WR_WR_PULSE = CSH_WR_WR_PLS_FF;
+  assign MBOX.CSH_WR_WR_PULSE = CSH_WR_WR_PLS_FF;
+  assign CSH_WR_WR_PULSE = CSH_WR_WR_PLS_FF;
 
-    MBOX.CSH_ADR_WR_PULSE = CSH_ADR_WR_PLS_FF;
-    CSH_ADR_WR_PULSE = CSH_ADR_WR_PLS_FF;
+  assign MBOX.CSH_ADR_WR_PULSE = CSH_ADR_WR_PLS_FF;
+  assign CSH_ADR_WR_PULSE = CSH_ADR_WR_PLS_FF;
 
-    MBOX.CACHE_WR_00 = CSH_WR_DATA_FF;
-    CACHE_WR_00 = CSH_WR_DATA_FF;
+  assign MBOX.CACHE_WR_00 = CSH_WR_DATA_FF;
+  assign CACHE_WR_00 = CSH_WR_DATA_FF;
 
-    MBOX.CACHE_WR_09 = CSH_WR_DATA_FF;
-    CACHE_WR_09 = CSH_WR_DATA_FF;
+  assign MBOX.CACHE_WR_09 = CSH_WR_DATA_FF;
+  assign CACHE_WR_09 = CSH_WR_DATA_FF;
 
-    MBOX.CACHE_WR_18 = CSH_WR_DATA_FF;
-    CACHE_WR_18 = CSH_WR_DATA_FF;
+  assign MBOX.CACHE_WR_18 = CSH_WR_DATA_FF;
+  assign CACHE_WR_18 = CSH_WR_DATA_FF;
 
-    MBOX.CACHE_WR_27 = CSH_WR_DATA_FF;
-    CACHE_WR_27 = CSH_WR_DATA_FF;
+  assign MBOX.CACHE_WR_27 = CSH_WR_DATA_FF;
+  assign CACHE_WR_27 = CSH_WR_DATA_FF;
 
-    RQ_HOLD = MBOX.RQ_HOLD_FF | MBC.MEM_START;
-    MBOX.SBUS_ADR_HOLD = RQ_HOLD;
+  assign RQ_HOLD = MBOX.RQ_HOLD_FF | MBC.MEM_START;
+  assign MBOX.SBUS_ADR_HOLD = RQ_HOLD;
 
-    MBC.DATA_CLR_DONE_IN = MBC.CSH_DATA_CLR_T3 | CSH.DATA_CLR_DONE;
-  end
+  assign MBC.DATA_CLR_DONE_IN = MBC.CSH_DATA_CLR_T3 | CSH.DATA_CLR_DONE;
 
   always_ff @(posedge clk) begin
     MBOX.RQ_HOLD_FF <= MBX.CHAN_WR_CYC & CSH.CHAN_T3 |
                        ~MBC.MEM_START & MBOX.RQ_HOLD_FF & ~RESET;
+  end
+
+  always_ff @(posedge clk) begin
     FORCE_BAD_ADR_PAR <= APR.WR_BAD_ADR_PAR & ~MBC.MEM_START |
                          MBC.MEM_START & FORCE_BAD_ADR_PAR & ~RESET;
+  end
+
+  always_ff @(posedge clk) begin
     MBC.CSH_DATA_CLR_T1 <= CSH.CLEAR_WR_T0 & WRITE_OK |
                            CSH.EBOX_T3 & CSH.E_CORE_RD_RQ;
+  end
+
+  always_ff @(posedge clk) begin
     MBC.CSH_DATA_CLR_T2 <= MBC.CSH_DATA_CLR_T1;
+  end
+
+  always_ff @(posedge clk) begin
     MBC.CSH_DATA_CLR_T3 <= MBC.CSH_DATA_CLR_T2;
+  end
+
+  always_ff @(posedge clk) begin
     MBOX.CSH_SEL_LRU <= MBC.CSH_DATA_CLR_T1 & ~CSH.ANY_VAL_HOLD |
                         MBC.CSH_DATA_CLR_T2 & ~CSH.ANY_VAL_HOLD;
   end
@@ -188,97 +197,144 @@ module mbc(iAPR APR,
 
   // MBC3 p.191
   bit e20q15, e25q15, e56q13;
-  always_comb begin
-    MBOX.A_CHANGE_COMING_IN = ~MBOX.PHASE_CHANGE_COMING & CLK_A_PHASE_COMING;
+    // VERY STRANGE. At 19.978us into my sim, MBOX.PHASE_CHANGE_COMING
+    // is 0 and CLK_A_PHASE_COMING is 1 but MBOX.A_CHANGE_COMING_IN is
+    // not 1 at this point. I think this always_comb, which is a big
+    // group of signals needs to be broken up. I don't yet know why.
+  assign MBOX.A_CHANGE_COMING_IN = ~MBOX.PHASE_CHANGE_COMING & CLK_A_PHASE_COMING;
 
-    // Note the distinction between MBOX.CORE_BUSY and local CORE_BUSY here.
-    // MBOX.CORE_BUSY is <DS1> -CORE BUSY L on MBC3 B7 p.191.
-    // MBC's local CORE_BUSY is -MBC3 CORE BUSY L on same page and area.
-    // Local CORE_BUSY = MBC3 CORE BUSY H is generated on MBC3 A3.
-    // CORE BUSY A H <EE1> is generated there also.
-    // MBC5 CORE BUSY B is used on MBC5 D6 p.193.
-    // MBC5 CORE BUSY B is driven from MBC5 C7, derived from <EE1> CORE BUSY A H.
-    MEM_START_SET = CSH.E_CORE_RD_RQ & ~MBOX.CORE_BUSY |
-                    PMA.CSH_WRITEBACK_CYC            & MBOX.CACHE_TO_MB_T4 |
-                    ~CORE_BUSY & CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
-                    CCL.START_MEM |
-                    CSH.CHAN_RD_T5     & ANY_SBUS_RQ_IN |
-                    CSH.PAGE_REFILL_T9 & ANY_SBUS_RQ_IN;
+  // Note the distinction between MBOX.CORE_BUSY and local CORE_BUSY here.
+  // MBOX.CORE_BUSY is <DS1> -CORE BUSY L on MBC3 B7 p.191.
+  // MBC's local CORE_BUSY is -MBC3 CORE BUSY L on same page and area.
+  // Local CORE_BUSY = MBC3 CORE BUSY H is generated on MBC3 A3.
+  // CORE BUSY A H <EE1> is generated there also.
+  // MBC5 CORE BUSY B is used on MBC5 D6 p.193.
+  // MBC5 CORE BUSY B is driven from MBC5 C7, derived from <EE1> CORE BUSY A H.
+  assign MEM_START_SET = CSH.E_CORE_RD_RQ & ~MBOX.CORE_BUSY |
+                         PMA.CSH_WRITEBACK_CYC           & MBOX.CACHE_TO_MB_T4 |
+                         ~CORE_BUSY & CSH.E_CACHE_WR_CYC & MBOX.CACHE_TO_MB_T4 |
+                         CCL.START_MEM |
+                         CSH.CHAN_RD_T5     & ANY_SBUS_RQ_IN |
+                         CSH.PAGE_REFILL_T9 & ANY_SBUS_RQ_IN;
 
-    RD_PAUSE_2ND_HALF = CSH.RD_PAUSE_2ND_HALF;
-    MEM_START_CLR = MBC.MEM_START & MBOX.PHASE_CHANGE_COMING & LAST_ACKN_SEEN |
-                    MBOX.MEM_START_A & MBC.A_CHANGE_COMING & LAST_ACKN |
-                    MBOX.MEM_START_B & MBC.B_CHANGE_COMING & LAST_ACKN |
-                    RESET;
-    MBOX.PHASE_CHANGE_COMING = ~e25q15;
-    MBC.A_PHASE_COMING = e20q15 | e56q13 & ~RESET;
-    CLK_A_PHASE_COMING = MBC.A_PHASE_COMING;
-    MBOX.CSH_VAL_WR_DATA = MBOX.MEM_TO_C_EN;
-    MBOX.CSH_VAL_SEL_ALL = ~MBOX.MEM_TO_C_EN & ~CSH.CHAN_WR_CACHE;
-    MBC.CSH_WR_WR_DATA = CSH.DATA_CLR_DONE & CSH.E_CACHE_WR_CYC;
-    MBOX.CSH_WR_SEL_ALL = MBC.CSH_WR_WR_DATA & ~CSH.CHAN_WR_CACHE;
-    MBOX.MEM_TO_C_EN = CSH.DATA_CLR_DONE & MBX.MEM_TO_C_EN;
-    ANY_SBUS_RQ_IN = |MBX.RQ_IN;
-    MBC.CORE_BUSY = CORE_BUSY;
-  end
+  assign RD_PAUSE_2ND_HALF = CSH.RD_PAUSE_2ND_HALF;
+
+  assign MEM_START_CLR = MBC.MEM_START & MBOX.PHASE_CHANGE_COMING & LAST_ACKN_SEEN |
+                         MBOX.MEM_START_A & MBC.A_CHANGE_COMING & LAST_ACKN |
+                         MBOX.MEM_START_B & MBC.B_CHANGE_COMING & LAST_ACKN |
+                         RESET;
+
+  assign MBOX.PHASE_CHANGE_COMING = ~e25q15;
+  assign MBC.A_PHASE_COMING = e20q15 | e56q13 & ~RESET;
+  assign CLK_A_PHASE_COMING = MBC.A_PHASE_COMING;
+  assign MBOX.CSH_VAL_WR_DATA = MBOX.MEM_TO_C_EN;
+  assign MBOX.CSH_VAL_SEL_ALL = ~MBOX.MEM_TO_C_EN & ~CSH.CHAN_WR_CACHE;
+  assign MBC.CSH_WR_WR_DATA = CSH.DATA_CLR_DONE & CSH.E_CACHE_WR_CYC;
+  assign MBOX.CSH_WR_SEL_ALL = MBC.CSH_WR_WR_DATA & ~CSH.CHAN_WR_CACHE;
+  assign MBOX.MEM_TO_C_EN = CSH.DATA_CLR_DONE & MBX.MEM_TO_C_EN;
+  assign ANY_SBUS_RQ_IN = |MBX.RQ_IN;
+  assign MBC.CORE_BUSY = CORE_BUSY;
 
   always_ff @(posedge clk) begin
     MBC.A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
-    MBC.B_CHANGE_COMING <= ~MBOX.PHASE_CHANGE_COMING & ~CLK_A_PHASE_COMING;
-    e56q13 <= RESET;
-    e20q15 <= ~A_PHASE | e56q13 & ~RESET;
-    e25q15 <= (~A_PHASE | e56q13 & ~RESET) ^ MBC.A_PHASE_COMING;
-    A_PHASE <= MBC.A_PHASE_COMING;
-    MBC.INH_1ST_MB_REQ <= CSH.E_CORE_RD_RQ | ~CSH_VAL_WR_PULSE & MBC.INH_1ST_MB_REQ & ~RESET;
-    FIRST_WD_ADR_SEL <= MBC.INH_1ST_MB_REQ;
+  end
 
+  always_ff @(posedge clk) begin
+    MBC.B_CHANGE_COMING <= ~MBOX.PHASE_CHANGE_COMING & ~CLK_A_PHASE_COMING;
+  end
+  
+  always_ff @(posedge clk) begin
+    e56q13 <= RESET;
+  end
+  
+  always_ff @(posedge clk) begin
+    e20q15 <= ~A_PHASE | e56q13 & ~RESET;
+  end
+  
+  always_ff @(posedge clk) begin
+    e25q15 <= (~A_PHASE | e56q13 & ~RESET) ^ CLK_A_PHASE_COMING;
+  end
+  
+  always_ff @(posedge clk) begin
+    A_PHASE <= MBC.A_PHASE_COMING;
+  end
+  
+  always_ff @(posedge clk) begin
+    MBC.INH_1ST_MB_REQ <= CSH.E_CORE_RD_RQ | ~CSH_VAL_WR_PULSE & MBC.INH_1ST_MB_REQ & ~RESET;
+  end
+  
+  always_ff @(posedge clk) begin
+    FIRST_WD_ADR_SEL <= MBC.INH_1ST_MB_REQ;
+  end
+  
+  always_ff @(posedge clk) begin
     MBOX.DATA_VALID_A_OUT <= (MBOX.DATA_VALID_A_OUT | MBC.A_CHANGE_COMING) &
                              (~MBC.A_CHANGE_COMING |
                               MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF);
+  end
+  
+  always_ff @(posedge clk) begin
     MBOX.DATA_VALID_B_OUT <= (MBOX.DATA_VALID_B_OUT | MBC.B_CHANGE_COMING) &
                               (~MBC.B_CHANGE_COMING |
                                MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF);
+  end
+  
+  always_ff @(posedge clk) begin
     // This drives <EE1> CORE BUSY A H as well.
     CORE_BUSY <= (CORE_BUSY & ~MBC.CORE_DATA_VALID |
                   MBX.CACHE_TO_MB_T2 & CSH.RD_PAUSE_2ND_HALF) &
                  ~RESET;
   end
-  
+
 
   // MBC4 p.192
   bit [1:3] e69SR;
-  always_comb begin
-    MBC.MEM_START = MBOX.MEM_START_A | MBOX.MEM_START_B;
-    LAST_ACKN = RQ_A[1:3] == '0 && MBOX.ACKN_PULSE;
-    MBOX.ACKN_PULSE = (MBOX.MEM_ACKN_A | MBOX.NXM_ACKN) & MBC.A_CHANGE_COMING |
-                      (MBOX.MEM_ACKN_B | MBOX.NXM_ACKN) & MBC.B_CHANGE_COMING & ~RESET;
-    MBC.CORE_DATA_VALminus2 = MBOX.NXM_DATA_VAL & MBC.A_CHANGE_COMING |
-                              MBOX.MEM_DATA_VALID_A & MBC.A_CHANGE_COMING |
-                              MBOX.MEM_DATA_VALID_B & MBC.B_CHANGE_COMING |
-                              MBOX.NXM_DATA_VAL & MBC.B_CHANGE_COMING;
-    CORE_DATA_VALIDminus2 = MBC.CORE_DATA_VALminus2;
-    MBOX.CORE_RD_IN_PROG = ~RESET & CORE_RD_IN_PROG;
-    ANY_REQUEST = |(e69SR[1:3]);
-    MBOX.MEM_ADR_PAR = PMA_ADR_PAR_HOLD ^
-                       MBOX.MEM_RD_RQ ^ 
-                       MBOX.MEM_WR_RQ ^
-                       (^MBOX.MEM_RQ) ^
-                       (^ADR) ^
-                       FORCE_BAD_ADR_PAR;
-    ANY_RQS_LEFT = ANY_REQUEST | ~MBC.CORE_DATA_VALID;
-    INIT_COMP = ANY_RQS_LEFT & CORE_RD_IN_PROG |
-                ~MBOX.NXM_ACKN & ~LAST_ACKN_SEEN & ~MBC.CORE_ADR[34] & ~MBC.CORE_ADR[35] & MEM_START_RD;
-    MEM_START_RD = (MBOX.MEM_START_A | MBOX.MEM_START_B) & MBOX.MEM_RD_RQ;
-  end
+  assign MBC.MEM_START = MBOX.MEM_START_A | MBOX.MEM_START_B;
+  assign LAST_ACKN = RQ_A[1:3] == '0 && MBOX.ACKN_PULSE;
+  assign MBOX.ACKN_PULSE = (MBOX.MEM_ACKN_A | MBOX.NXM_ACKN) & MBC.A_CHANGE_COMING |
+                           (MBOX.MEM_ACKN_B | MBOX.NXM_ACKN) & MBC.B_CHANGE_COMING & ~RESET;
+  assign MBC.CORE_DATA_VALminus2 = MBOX.NXM_DATA_VAL & MBC.A_CHANGE_COMING |
+                                   MBOX.MEM_DATA_VALID_A & MBC.A_CHANGE_COMING |
+                                   MBOX.MEM_DATA_VALID_B & MBC.B_CHANGE_COMING |
+                                   MBOX.NXM_DATA_VAL & MBC.B_CHANGE_COMING;
+  assign CORE_DATA_VALIDminus2 = MBC.CORE_DATA_VALminus2;
+  assign MBOX.CORE_RD_IN_PROG = ~RESET & CORE_RD_IN_PROG;
+  assign ANY_REQUEST = |(e69SR[1:3]);
+  assign MBOX.MEM_ADR_PAR = PMA_ADR_PAR_HOLD ^
+                            MBOX.MEM_RD_RQ ^ 
+                            MBOX.MEM_WR_RQ ^
+                            (^MBOX.MEM_RQ) ^
+                            (^ADR) ^
+                            FORCE_BAD_ADR_PAR;
+  assign ANY_RQS_LEFT = ANY_REQUEST | ~MBC.CORE_DATA_VALID;
+  assign INIT_COMP = ANY_RQS_LEFT & CORE_RD_IN_PROG |
+                     ~MBOX.NXM_ACKN & ~LAST_ACKN_SEEN
+                     & ~MBC.CORE_ADR[34] & ~MBC.CORE_ADR[35] & MEM_START_RD;
+  assign MEM_START_RD = (MBOX.MEM_START_A | MBOX.MEM_START_B) & MBOX.MEM_RD_RQ;
 
   always_ff @(posedge clk) begin
     MBOX.MEM_START_A <= MBOX.MEM_START_A & ~MEM_START_CLR |
                        ~MBOX.MEM_START_B & MBC.A_CHANGE_COMING & MEM_START_SET;
+  end
+  
+  always_ff @(posedge clk) begin
     MBOX.MEM_START_B <= MBOX.MEM_START_B & ~MEM_START_CLR |
                        ~MBOX.MEM_START_A & MBC.B_CHANGE_COMING & MEM_START_SET;
+  end
+  
+  always_ff @(posedge clk) begin
     LAST_ACKN_SEEN <= LAST_ACKN | ~MBOX.PHASE_CHANGE_COMING & LAST_ACKN_SEEN;
+  end
+  
+  always_ff @(posedge clk) begin
     MBC.CORE_DATA_VALminus1 <= CORE_DATA_VALIDminus2;
+  end
+  
+  always_ff @(posedge clk) begin
     MBC.CORE_DATA_VALID <= MBC.CORE_DATA_VALminus1;
+  end
+  
+  always_ff @(posedge clk) begin
     CORE_RD_IN_PROG <= INIT_COMP;
   end
 
@@ -331,19 +387,17 @@ module mbc(iAPR APR,
 
   // MBC5 p.193
   bit e56q4;
-  always_comb begin
-    MBC.EBUSdriver.driving = CTL.DIAG_READ_FUNC_16x;
-    HOLD_MATCH = e56q4 |
-                 CSH.DATA_CLR_DONE & CSH.E_CACHE_WR_CYC & ~RESET;
-    MBOX.FORCE_VALID_MATCH[0] = MBOX.CSH_WR_EN[0] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
-                                ~MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
-    MBOX.FORCE_VALID_MATCH[1] = MBOX.CSH_WR_EN[1] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
-                                ~MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
-    MBOX.FORCE_VALID_MATCH[2] = MBOX.CSH_WR_EN[2] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
-                                MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
-    MBOX.FORCE_VALID_MATCH[3] = MBOX.CSH_WR_EN[3] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
-                                MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
-  end
+  assign MBC.EBUSdriver.driving = CTL.DIAG_READ_FUNC_16x;
+  assign HOLD_MATCH = e56q4 |
+                      CSH.DATA_CLR_DONE & CSH.E_CACHE_WR_CYC & ~RESET;
+  assign MBOX.FORCE_VALID_MATCH[0] = MBOX.CSH_WR_EN[0] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
+                                     ~MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
+  assign MBOX.FORCE_VALID_MATCH[1] = MBOX.CSH_WR_EN[1] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
+                                     ~MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
+  assign MBOX.FORCE_VALID_MATCH[2] = MBOX.CSH_WR_EN[2] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
+                                     MBOX.PMA[34] & ~MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
+  assign MBOX.FORCE_VALID_MATCH[3] = MBOX.CSH_WR_EN[3] & CSH.DATA_CLR_DONE | MBX.FORCE_MATCH_EN |
+                                     MBOX.PMA[34] &  MBOX.PMA[35] & MBX.CCA_ALL_PAGES_CYC;
 
   always_ff @(posedge clk) begin
     e56q4 <= MBC.CSH_DATA_CLR_T1 & CSH.E_CACHE_WR_CYC |

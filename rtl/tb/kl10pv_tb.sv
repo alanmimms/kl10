@@ -50,7 +50,7 @@ module kl10pv_tb(iAPR APR,
 
   // 62MHz clock source
   initial masterClk <= 0;
-  always #8.064516 masterClk = ~masterClk;
+  always #(1000.0/31.0/2.0) masterClk = ~masterClk; // 31MHz master clock
 
   initial $readmemh("../../../../images/DRAM.mem", ebox0.ir0.dram.mem);
   initial $readmemh("../../../../images/CRAM.mem", ebox0.crm0.cram.mem);
