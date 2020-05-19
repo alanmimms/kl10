@@ -16,7 +16,7 @@ module edp(iAPR APR,
            iVMA VMA,
            iEBUS.mod EBUS,
            iMBOX MBOX
-);
+           );
 
   // Universal shift register function selector values
   enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
@@ -40,6 +40,9 @@ module edp(iAPR APR,
 
 `include "cram-aliases.svh"
   
+  bit clk;
+  assign clk = CLK.EDP;         // Saves typing
+
   // XXX wrong?
   assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
 
@@ -50,12 +53,12 @@ module edp(iAPR APR,
   sim_mem
     #(.SIZE(128), .WIDTH(36), .NBYTES(2))
   fm
-  (.clk(EDP.FM_WRITE),
-   .din(EDP.AR),
-   .dout(EDP.FM),
-   .addr({APR.FM_BLOCK, APR.FM_ADR}),
-   .oe('1),
- .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
+    (.clk(EDP.FM_WRITE),
+     .din(EDP.AR),
+     .dout(EDP.FM),
+     .addr({APR.FM_BLOCK, APR.FM_ADR}),
+     .oe('1),
+     .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
   // halfword writes by writing two "bytes" at a time.
@@ -95,24 +98,24 @@ module edp(iAPR APR,
               endcase
   
   // EDP.AR
-  always_ff @(posedge CLK.EDP) if (CTL.AR00to11_CLR) EDP.AR[0:11] <= '0;
-                               else if (CTL.AR00to08_LOAD) EDP.AR[0:8] <= ARL[0:8];
+  always_ff @(posedge clk) if (CTL.AR00to11_CLR) EDP.AR[0:11] <= '0;
+                           else if (CTL.AR00to08_LOAD) EDP.AR[0:8] <= ARL[0:8];
 
-  always_ff @(posedge CLK.EDP) if (CTL.AR12to17_CLR) EDP.AR[12:17] <= '0;
-                               else if (CTL.AR09to17_LOAD) EDP.AR[9:17] <= ARL[9:17];
+  always_ff @(posedge clk) if (CTL.AR12to17_CLR) EDP.AR[12:17] <= '0;
+                           else if (CTL.AR09to17_LOAD) EDP.AR[9:17] <= ARL[9:17];
 
-  always_ff @(posedge CLK.EDP) if (CTL.ARR_CLR) EDP.AR[18:35] <= '0;
-                               else if (CTL.ARR_LOAD)
-                                 unique case (CRAM.AR)
-                                 3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
-                                 3'b001: EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
-                                 3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
-                                 3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
-                                 3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
-                                 3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
-                                 3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
-                                 3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
-                                 endcase
+  always_ff @(posedge clk) if (CTL.ARR_CLR) EDP.AR[18:35] <= '0;
+                           else if (CTL.ARR_LOAD)
+                             unique case (CRAM.AR)
+                             3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
+                             3'b001: EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
+                             3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
+                             3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
+                             3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
+                             3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
+                             3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
+                             3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
+                             endcase
 
   // ARX muxes p16.
   always_comb unique case (CTL.ARXL_SEL)
@@ -140,7 +143,7 @@ module edp(iAPR APR,
               endcase
 
   // ARX
-  always_ff @(posedge CLK.EDP) if (CTL.ARX_LOAD) EDP.ARX <= {ARXL, ARXR};
+  always_ff @(posedge clk) if (CTL.ARX_LOAD) EDP.ARX <= {ARXL, ARXR};
 
   // MQM mux p16.
   always_comb if (CTL.MQM_EN) unique case (CTL.MQM_SEL)
@@ -154,13 +157,13 @@ module edp(iAPR APR,
 
   // MQ mux and register
   // MQ: 36-bit MC10141-ish universal shift register
-  always_ff @(posedge CLK.EDP) unique case (CTL.MQ_SEL)
-                               default: EDP.MQ <= '0;
-                               usrLOAD: EDP.MQ <= MQM;
-                               usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
-                               usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
-                               usrHOLD: EDP.MQ <= EDP.MQ;
-                               endcase
+  always_ff @(posedge clk) unique case (CTL.MQ_SEL)
+                           default: EDP.MQ <= '0;
+                           usrLOAD: EDP.MQ <= MQM;
+                           usrSHL:  EDP.MQ <= {MQM[1:35], EDP.AD_CRY[-2]};
+                           usrSHR:  EDP.MQ <= {MQM[1], MQM[1:35]};
+                           usrHOLD: EDP.MQ <= EDP.MQ;
+                           endcase
 
   // Look-ahead carry network moved here from IR4 M8522 board.
   bit [0:35] ADEXxortmp;
@@ -188,7 +191,7 @@ module edp(iAPR APR,
                    .F({EDP.AD_EX[n-2:n-1], EDP.AD[n:n+1]}),
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0])/*,
-                   .COUT(EDP.AD_CRY[n-2])*/); // XXX multi-drives EDP.AD_CRY[-2] w/E11 below
+                                   .COUT(EDP.AD_CRY[n-2])*/); // XXX multi-drives EDP.AD_CRY[-2] w/E11 below
       mc10181 alu1(.M(AD_BOOL),
                    .S(S),
                    .A(ADA[n+2:n+5]),
@@ -374,10 +377,10 @@ module edp(iAPR APR,
 
 
   // BRX
-  always_ff @(posedge CLK.EDP) if (CRAM.BRX == brxARX) EDP.BRX <= EDP.ARX;
+  always_ff @(posedge clk) if (CRAM.BRX == brxARX) EDP.BRX <= EDP.ARX;
 
   // BR
-  always_ff @(posedge CLK.EDP) if (CRAM.BR == brAR) EDP.BR <= EDP.AR;
+  always_ff @(posedge clk) if (CRAM.BR == brAR) EDP.BR <= EDP.AR;
 
   // DIAG or AD driving EBUS
   // If either CTL_adToEBUS_{L,R} is lit we force AD as the source
@@ -390,7 +393,7 @@ module edp(iAPR APR,
   assign EDP.EBUSdriver.data[18:35] = (CTL.DIAG_READ_FUNC_12x || CTL.AD_TO_EBUS_R) ?
                                       ebusR[18:35] : '0;
 
-  always_ff @(posedge CLK.EDP)
+  always_ff @(posedge clk)
     if (EDP.EBUSdriver.driving) unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
                                 default: ebusR <= '0;
                                 3'b000: ebusR <= EDP.AR;
