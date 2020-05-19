@@ -20,6 +20,8 @@ module memory(input CROBAR,
   bit [0:35] mem[`MEM_SIZE];
 
   bit aClk, bClk;
+  bit [0:35] aD, bD;
+  bit aParity, bParity;
 
   always @(posedge SBUS.START_A) aClk <= '0;
   always @(negedge SBUS.CLK_INT) aClk <= ~aClk;
@@ -27,17 +29,24 @@ module memory(input CROBAR,
   always @(posedge SBUS.START_B) bClk <= '0;
   always @(posedge SBUS.CLK_INT) bClk <= ~bClk;
 
+  assign SBUS.D = aClk ? aD : bD;
+  assign SBUS.DATA_PAR = aClk ? aParity : bParity;
+
   memPhase aPhase(.clk(aClk),
                   .memory(mem),
                   .START(SBUS.START_A),
                   .ACKN(SBUS.ACKN_A),
                   .VALID(SBUS.DATA_VALID_A),
+                  .D(aD),
+                  .PARITY(aParity),
                   .*);
   memPhase bPhase(.clk(bClk),
                   .memory(mem),
                   .START(SBUS.START_B),
                   .ACKN(SBUS.ACKN_B),
                   .VALID(SBUS.DATA_VALID_B),
+                  .D(bD),
+                  .PARITY(bParity),
                   .*);
 `else
 `endif
@@ -53,6 +62,8 @@ module memPhase(input CROBAR,
                 input clk,
                 ref bit [0:35] memory[`MEM_SIZE],
                 iSBUS.memory SBUS,
+                output bit [0:35] D,
+                output bit PARITY,
                 input START,
                 output bit ACKN,
                 output bit VALID);
@@ -65,11 +76,11 @@ module memPhase(input CROBAR,
   assign VALID = toAck[0];
 
   always_comb if (VALID) begin
-    SBUS.D = memory[{addr[12:33], wo}];
-    SBUS.DATA_PAR = ^memory[{addr[12:33], wo}];
+    D = memory[{addr[12:33], wo}];
+    PARITY = ^memory[{addr[12:33], wo}];
   end else begin
-    SBUS.D = 'z;
-    SBUS.DATA_PAR = 'z;
+    D = '0;
+    PARITY = '0;
   end
 
   always_ff @(posedge clk) if (CROBAR) begin
