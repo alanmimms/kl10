@@ -47,7 +47,7 @@ endmodule
 // This is one phase of the MB20 core memory. For now, we implement
 // only read cycles and only non-interleaved organization.
 //
-// Note START may already be asserted for subsequent cycle while we
+// NOTE: START may already be asserted for subsequent cycle while we
 // are still finishing up the VALID pulses for the current one.
 module memPhase(input CROBAR,
                 input clk,
@@ -64,7 +64,7 @@ module memPhase(input CROBAR,
   assign ACKN = toAck[0];
   assign VALID = toAck[0];
 
-  always_comb if (toAck[0]) begin
+  always_comb if (VALID) begin
     SBUS.D = memory[{addr[12:33], wo}];
     SBUS.DATA_PAR = ^memory[{addr[12:33], wo}];
   end else begin
