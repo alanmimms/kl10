@@ -498,6 +498,7 @@ module clk(input clk,
   assign CLK.MBOX_RESP = e32Q3 | e32Q13;
   assign CLK.MB_XFER = e32Q3 | e32Q13;
   assign CLK.RESP_SIM = CSH.MBOX_RESP_IN & CLK.SYNC_EN;
+  assign CLK.RESP_MBOX = e32Q3 | e32Q13;
 
   // Negative logic Wire AND
   always_ff @(posedge MBOX_CLK)
