@@ -236,28 +236,28 @@ module mbz(iAPR APR,
   assign e72q2 = e68q4 | RESET;
 
   always_ff @(posedge clk) NXM_FLG <= NXM_CRY_A & NXM_CRY_B & MEM_START_C |
-                                      ~NXM_CLR_DONE & NXM_FLG & ~RESET;
+                                      NXM_FLG & ~NXM_CLR_DONE & ~RESET;
   // <DH2> CORE BUSY L on MBZ3 B7.
   always_ff @(posedge clk) CHAN_MEM_REF <= MEM_START_C & CHAN_CORE_BUSY | MBOX.CORE_BUSY & CHAN_MEM_REF & ~RESET;
   always_ff @(posedge clk) A_CHANGE_COMING <= MBOX.A_CHANGE_COMING_IN;
   always_ff @(posedge clk) MBOX.NXM_ERR <= NXM_CLR_DONE |
-                                           ~MBOX_NXM_ERR_CLR & MBOX.NXM_ERR & ~RESET;
+                                           MBOX.NXM_ERR & ~MBOX_NXM_ERR_CLR & ~RESET;
   always_ff @(posedge clk) e51q2 <= MBOX.NXM_ERR;
   always_ff @(posedge clk) RQ_HOLD_DLY <= e71q7;
   always_ff @(posedge clk) e68q4 <= MBOX.A_CHANGE_COMING_IN ^ e72q2;
   always_ff @(posedge clk) e57q3 <= e72q2 & MBOX.A_CHANGE_COMING_IN;
 
-  UCR4 e53(.CIN(e57q3),
-           .SEL({MEM_START_C, 1'b0}),
+  UCR4 e53(.SEL({MEM_START_C, 1'b0}),
            .D('0),
            .CLK(clk),
+           .CIN(e57q3),
            .COUT(NXM_CRY_A),
            .Q());
   
-  UCR4 e48(.CIN(NXM_CRY_A),
-           .SEL({MEM_START_C, 1'b0}),
+  UCR4 e48(.SEL({MEM_START_C, 1'b0}),
            .D('0),
            .CLK(clk),
+           .CIN(NXM_CRY_A),
            .COUT(NXM_CRY_B),
            .Q());
 
