@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 // This is like MC10136 ECL universal up-down counter but all positive logic
-module UCR4(input RESET,
+module UCR4(input RESET = '0,
             input [0:3] D,
             input CIN,
             input [0:1] SEL,
@@ -9,25 +9,27 @@ module UCR4(input RESET,
             output bit [0:3] Q,
             output bit COUT);
 
-  always_ff @(posedge CLK or posedge RESET) if (RESET) begin
+  // Not LOAD or HOLD
+  bit incOrDec = SEL[0] ^ SEL[1];
+
+  // CIN overrides CLK when in INC or DEC mode. This signal is the
+  // real clock we have to pay attention to as a result.
+  bit carryClk;
+  assign carryClk = incOrDec ? CIN : CLK;
+
+  always_comb unique case (SEL)
+              2'b00: COUT = '1;           // LOAD
+              2'b01: COUT = Q == '0;      // DEC
+              2'b10: COUT = Q == 4'b1111; // INC
+              2'b11: COUT = '0;           // HOLD
+              endcase
+  
+  always_ff @(posedge carryClk or posedge RESET) if (RESET) begin
     Q <= '0;
-    COUT <= '0;
-  end else case (SEL)
-           2'b00: begin              // LOAD
-             Q <= D;
-             COUT <= '1;
-           end
-           
-           2'b01: if (CIN) begin     // DEC
-             Q <= Q - 4'b0001;
-             COUT <= Q == 4'b0000;
-           end else COUT <= '0;
-
-           2'b10: if (CIN) begin     // INC
-             Q <= Q + 4'b0001;
-             COUT <= Q == 4'b1111;
-           end else COUT <= '0;
-
+  end else unique case (SEL)
+           2'b00: Q <= D;                    // LOAD
+           2'b01: if (CIN) Q <= Q - 4'b0001; // DEC
+           2'b10: if (CIN) Q <= Q + 4'b0001; // INC
            2'b11: ;                  // HOLD
            endcase
 endmodule
