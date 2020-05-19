@@ -44,14 +44,8 @@ module memory(input CROBAR,
 endmodule
 
 
-// This is one phase of the MB20 core memory. Control signals are
-// driven on the edge of the phase they apply to, but they are latched
-// by the other side of the SBUS on the NEXT edge of that phase. This
-// was done to allow synchronous operation with cabling (etc.)
-// propagation delays always less than the clock cycle time.
-//
-// For now, we implement only read cycles and only non-interleaved
-// organization.
+// This is one phase of the MB20 core memory. For now, we implement
+// only read cycles and only non-interleaved organization.
 //
 // Note START may already be asserted for subsequent cycle while we
 // are still finishing up the VALID pulses for the current one.
@@ -67,67 +61,31 @@ module memPhase(input CROBAR,
   bit [34:35] wo;               // Word offset of quadword
   bit [0:3] toAck;              // Words we have not yet ACKed
 
-  enum {
-        mphIDLE,
-        mphACK1,
-        mphACK2,
-        mphREAD1,
-        mphSHIFT,
-        mphWAITforIDLE
-        } state, next;
+  assign ACKN = toAck[0];
+  assign VALID = toAck[0];
 
-  always_ff @(posedge clk) begin
-    if (CROBAR) state <= mphIDLE; // Initialize state machine
-    else state <= next;           // Advance state machine
+  always_comb if (toAck[0]) begin
+    SBUS.D = memory[{addr[12:33], wo}];
+    SBUS.DATA_PAR = ^memory[{addr[12:33], wo}];
+  end else begin
+    SBUS.D = 'z;
+    SBUS.DATA_PAR = 'z;
   end
 
-  // Generate state machine next state
-  always_comb begin
-
-    case (state)
-    default: next <= state;
-
-    mphIDLE: if (START) next = SBUS.RQ[0] ? mphACK1 : mphSHIFT;
-                // else stay
-
-    mphACK1:            next = mphACK2;
-    mphACK2:            next = mphREAD1;
-    mphREAD1:           next = mphSHIFT;
-    mphWAITforIDLE:     next = mphIDLE;
-
-    mphSHIFT: if (toAck[1]) next = mphACK1;
-              else if (toAck[1:3] == '0) next = mphWAITforIDLE;
-           // else stay in mphSHIFT to shift intermediate zero bits through
-    endcase
+  always_ff @(posedge clk) if (CROBAR) begin
+    addr <= '0;
+    wo <= '0;
+    toAck <= '0;
+    ACKN <= '0;
+    VALID <= '0;
+  end else if (START) begin     // A transfer is starting or continuing
+    addr <= SBUS.ADR;           // Address of first word we do
+    wo <= SBUS.ADR[34:35];      // Word offset we increment mod 4
+    toAck <= SBUS.RQ;           // Addresses remaining to ACK
   end
 
-  // Generate state machine outputs and set up internal registers.
-  always_ff @(posedge clk) begin
-
-    case (state)
-    mphIDLE: if (START) begin
-      toAck <= SBUS.RQ;         // Addresses remaining to ACK
-      addr <= SBUS.ADR;         // Address of first word we do
-      wo <= SBUS.ADR[34:35];    // Word offset we increment mod 4
-    end
-
-    mphACK1: ACKN <= '1;
-
-    mphREAD1: begin
-      ACKN <= '0;
-      VALID <= '1;
-      SBUS.D <= memory[{addr[12:33], wo}];
-      SBUS.DATA_PAR <= ^memory[{addr[12:33], wo}];
-      wo <= wo + 2'b01;
-    end
-
-    mphSHIFT: begin
-      ACKN <= '0;
-      VALID <= '0;
-      toAck <<= '1;
-    end
-
-    default: ;
-    endcase
+  always_ff @(posedge clk) if (toAck) begin
+    wo <= wo + '1;
+    toAck <= toAck << '1;
   end
 endmodule
