@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="18163916fs"></ZoomStartTime>
-      <ZoomEndTime time="18731917fs"></ZoomEndTime>
-      <Cursor1Time time="18384000fs"></Cursor1Time>
+      <ZoomStartTime time="18117780fs"></ZoomStartTime>
+      <ZoomEndTime time="18921017fs"></ZoomEndTime>
+      <Cursor1Time time="18261000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="98"></ValueColumnWidth>
+      <ValueColumnWidth column_width="142"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="44" />
+   <WVObjectSize size="49" />
    <wvobject type="logic" fp_name="/top/MCL/VMA_READ">
       <obj_property name="ElementShortName">VMA_READ</obj_property>
       <obj_property name="ObjectShortName">VMA_READ</obj_property>
@@ -268,11 +268,35 @@
       <obj_property name="Radix">BINARYRADIX</obj_property>
       <obj_property name="LABELRADIX">false</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/CLK/SBUS_CLK">
+      <obj_property name="ElementShortName">SBUS_CLK</obj_property>
+      <obj_property name="ObjectShortName">SBUS_CLK</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/EDP">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">EDP</obj_property>
       <obj_property name="ObjectShortName">EDP</obj_property>
       <obj_property name="label">CLK.EDP</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/edp0/ADA">
+      <obj_property name="ElementShortName">ADA[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADA[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/edp0/ADB">
+      <obj_property name="ElementShortName">ADB[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">ADB[-2:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRAM/AD">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">AD[0:5]</obj_property>
+      <obj_property name="ObjectShortName">AD[0:5]</obj_property>
+      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="label">CRAM.AD[0:5]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/EDP/AD">
+      <obj_property name="ElementShortName">AD[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">AD[-2:35]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/CTL/AR00to11_CLR">
       <obj_property name="ElementShortName">AR00to11_CLR</obj_property>
@@ -347,6 +371,7 @@
       <obj_property name="ObjectShortName">AR[0:35]</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/CTL/ARX_CLR">
       <obj_property name="ElementShortName">ARX_CLR</obj_property>
@@ -421,6 +446,7 @@
    <wvobject type="group" fp_name="group1262">
       <obj_property name="label">CRAM</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="array" fp_name="/top/CRAM/J">
          <obj_property name="ElementShortName">J[0:10]</obj_property>
          <obj_property name="ObjectShortName">J[0:10]</obj_property>
