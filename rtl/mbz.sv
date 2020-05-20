@@ -137,8 +137,8 @@ module mbz(iAPR APR,
                   MBOX.CBUS_PAR_LEFT_TE,
                   MBOX.CBUS_PAR_RIGHT_TE,
                   EBUS_REG[16]}),
-             .B0(EBUS.data[15]),
-             .B1(EBUS.data[16]));
+             .B0(MBZ.EBUSdriver.data[15]),
+             .B1(MBZ.EBUSdriver.data[16]));
 
   mux2x4 e39(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
@@ -150,8 +150,8 @@ module mbz(iAPR APR,
                   CSH_PAR_BIT,
                   1'b0,
                   EBUS_REG[18]}),
-             .B0(EBUS.data[17]),
-             .B1(EBUS.data[18]));
+             .B0(MBZ.EBUSdriver.data[17]),
+             .B1(MBZ.EBUSdriver.data[18]));
 
   mux2x4 e34(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
@@ -161,8 +161,8 @@ module mbz(iAPR APR,
                   EBUS_REG[19]}),
              .D1({MBOX.MB_IN_SEL,
                   EBUS_REG[20]}),
-             .B0(EBUS.data[19]),
-             .B1(EBUS.data[20]));
+             .B0(MBZ.EBUSdriver.data[19]),
+             .B1(MBZ.EBUSdriver.data[20]));
 
   mux2x4 e35(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
@@ -174,8 +174,8 @@ module mbz(iAPR APR,
                   ~MBOX.NXM_ERR,
                   ~MBOX.HOLD_ERA,
                   EBUS_REG[22]}),
-             .B0(EBUS.data[21]),
-             .B1(EBUS.data[22]));
+             .B0(MBZ.EBUSdriver.data[21]),
+             .B1(MBZ.EBUSdriver.data[22]));
 
   mux2x4 e32(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
@@ -187,8 +187,8 @@ module mbz(iAPR APR,
                   ~MBOX.SBUS_ERR,
                   ~MBOX.MB_PAR_ERR,
                   EBUS_REG[24]}),
-             .B0(EBUS.data[23]),
-             .B1(EBUS.data[24]));
+             .B0(MBZ.EBUSdriver.data[23]),
+             .B1(MBZ.EBUSdriver.data[24]));
 
   mux2x4 e44(.EN(CTL.DIAG_READ_FUNC_16x),
              .SEL(CTL.DIAG[5:6]),
@@ -200,12 +200,13 @@ module mbz(iAPR APR,
                   CSH.PAR_BIT_A,
                   CSH.PAR_BIT_B,
                   EBUS_REG[26]}),
-             .B0(EBUS.data[25]),
-             .B1(EBUS.data[26]));
+             .B0(MBZ.EBUSdriver.data[25]),
+             .B1(MBZ.EBUSdriver.data[26]));
 
-  assign EBUS.data[0:8]   = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[0:8]   : '0;
-  assign EBUS.data[14]    = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[14]    : '0;
-  assign EBUS.data[34:35] = CTL.DIAG_READ_FUNC_16x ? EBUS_REG[34:35] : '0;
+  assign MBZ.EBUSdriver.driving = CTL.DIAG_READ_FUNC_16x;
+  assign MBZ.EBUSdriver.data[0:8]   = EBUS_REG[0:8];
+  assign MBZ.EBUSdriver.data[14]    = EBUS_REG[14];
+  assign MBZ.EBUSdriver.data[34:35] = EBUS_REG[34:35];
 
 
   // MBZ3 p.305
