@@ -1484,9 +1484,9 @@ interface iMBOX;
   bit [0:3] FORCE_VALID_MATCH;
   bit [0:3] MEM_RQ;
   bit [0:6] CCW_BUF_ADR;
+  bit [0:1] MEM_TO_C_SEL;
   bit [14:35] PMA;
   bit [2:1] MB_SEL;
-  bit [2:1] MEM_TO_C_SEL;
   bit [27:35] CACHE_ADR;
   bit [27:35] MBOX_GATE_VMA;
   bit [34:35] SBUS_ADR;
@@ -1665,6 +1665,7 @@ endinterface
 interface iMBZ;
   bit RD_PSE_WR;
   bit RD_PSE_WR_REF;
+  tEBUSdriver EBUSdriver;
 endinterface
 
 interface iPAG;
