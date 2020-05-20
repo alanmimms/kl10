@@ -29,6 +29,7 @@ module kl10pv_tb(iAPR APR,
 
                  iEBUS.dte EBUS,
                  iMBOX MBOX,
+                 input [18:35] hwOptions,
 
                  output bit CROBAR,
                  output bit clk,
@@ -76,7 +77,7 @@ module kl10pv_tb(iAPR APR,
     // Suck out field from microcode in well known address to retrieve
     // microcode edit number.
     cram137 <= ebox0.crm0.cram.mem['o137];
-    #100 KLBootDialog(cram137.MAGIC[0:8], EDP.hwOptions);
+    #100 KLBootDialog(cram137.MAGIC[0:8], hwOptions);
   end
 
 
