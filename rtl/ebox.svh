@@ -1102,23 +1102,25 @@ endinterface
 
 
 interface iEDP;
-  bit [-2:35] AD;
-  bit [0:35] ADX;
-  bit [0:35] BR;
-  bit [0:35] BRX;
-  bit [0:35] MQ;
-  bit [0:35] AR;
-  bit [0:35] ARX;
-  bit [-2:35] AD_EX;
-  bit [-2:36] AD_CRY;
-  bit [0:36] ADX_CRY;
-  bit [0:35] AD_OV;
-  bit GEN_CRY_36;
   bit DIAG_READ_FUNC_10x;
-  bit [0:35] FM;
   bit FM_PARITY;
   bit FM_WRITE;
+  bit GEN_CRY_36;
+  bit [-2:35] AD;
+  bit [-2:35] AD_EX;
+  bit [-2:36] AD_CRY;
+  bit [0:35] ADX;
+  bit [0:35] AD_OV;
+  bit [0:35] AR;
+  bit [0:35] ARX;
+  bit [0:35] BR;
+  bit [0:35] BRX;
+  bit [0:35] FM;
+  bit [0:35] MQ;
   bit [0:35] hwOptions;
+  bit [0:36] ADX_CRY;
+  bit [0:8] ARMM_SCD;
+  bit [13:17] ARMM_VMA;
   tEBUSdriver EBUSdriver;
 endinterface
 
@@ -1299,8 +1301,6 @@ endinterface
 interface iSCD;
   bit SC_GE_36;
   bit SC_36_TO_63;
-  bit [0:8] ARMM_UPPER;
-  bit [13:17] ARMM_LOWER;
   bit [0:9] FE;
   bit [0:9] SC;
   bit [0:35] SCADA;

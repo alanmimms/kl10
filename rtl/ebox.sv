@@ -7,6 +7,7 @@ module ebox(input clk,
             input EXTERNAL_CLK,
             input CROBAR,
             input PWR_WARN,
+            input [0:35] hwOptions,
 
             iAPR APR,
             iCCL CCL,
