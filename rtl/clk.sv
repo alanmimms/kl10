@@ -141,9 +141,9 @@ module clk(input clk,
   always @((~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK))
     CLK_ON = #3 ((~CLK.ERROR_STOP | DESKEW_CLK) & (SOURCE_DELAYED | DESKEW_CLK));
 
-  always @(CLK_ON) ODD <= #2.25 CLK_ON;
-  always @(~CLK_ON) MBOX <= #(2.65+2.25) CLK_ON;
-  always @(MBOX) CLK_OUT <= #(3+2.25) MBOX;
+  always @(CLK_ON) ODD <= #(2.25 + 7.75) CLK_ON;
+  always @(~CLK_ON) MBOX <= #(2.65 + 2.25) CLK_ON;
+  always @(MBOX) CLK_OUT <= #(3 + 2.25) MBOX;
 
   assign CLK.CCL = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CRC = CLK_OUT | DIAG_CHANNEL_CLK_STOP;
