@@ -16,7 +16,7 @@ module edp(iAPR APR,
            iVMA VMA,
            iEBUS.mod EBUS,
            iMBOX MBOX,
-           input [0:35] hwOptions
+           input [18:35] hwOptions
            );
 
   assign EDP.hwOptions = hwOptions;
@@ -108,7 +108,7 @@ module edp(iAPR APR,
                              // [0:8] and [13:17] (driven by SCD and
                              // VMA, respectively). The low half comes
                              // from this wirewrapped strapping.
-                             arAR:     EDP.AR[18:35] <= hwOptions[18:35];
+                             arAR:     EDP.AR[18:35] <= hwOptions;
                              arCACHE:  EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
                              arAD:     EDP.AR[18:35] <= EDP.AD[18:35];
                              arEBUS:   EDP.AR[18:35] <= EBUS.data[18:35];
