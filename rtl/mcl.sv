@@ -113,7 +113,8 @@ module mcl(iAPR APR,
           .q(MCL.EBUSdriver.data[23]));
 
   // MCL2 p.372
-  bit [0:3] gatedMagic, gatedAD, e13SR;
+  bit [0:3] gatedMagic, e13SR;
+  bit [1:4] gatedAD;
 
   assign gatedMagic = {4{MEM_EA_CALC}} & CRAM.MAGIC[0:3];
   assign gatedAD = {4{MEM_AD_FUNC}} & EDP.AD[1:4];
@@ -126,10 +127,10 @@ module mcl(iAPR APR,
   assign MCL.STORE_AR = e13SR[2] & ~MCL.LOAD_AR & ~MCL.LOAD_ARX & MCL.VMA_WRITE;
 
   always_ff @(posedge clk) if (MCL.REQ_EN) begin
-    e13SR[0] <= gatedMagic[0] | gatedAD[0] | AREAD_1xx | MEM_LOAD_AR | RW_OR_RPW_CYCLE;
-    e13SR[1] <= gatedMagic[1] | gatedAD[1] | FETCH_EN | MEM_LOAD_ARX;
-    e13SR[2] <= gatedMagic[2] | gatedAD[2] | AREAD_x11 | MEM_RPW_CYCLE;
-    e13SR[3] <= gatedMagic[3] | gatedAD[3] | AREAD_3_6_7 | MEM_B_WRITE |
+    e13SR[0] <= gatedMagic[0] | gatedAD[1] | AREAD_1xx   | MEM_LOAD_AR | RW_OR_RPW_CYCLE;
+    e13SR[1] <= gatedMagic[1] | gatedAD[2] | FETCH_EN    | MEM_LOAD_ARX;
+    e13SR[2] <= gatedMagic[2] | gatedAD[3] | AREAD_x11   | MEM_RPW_CYCLE;
+    e13SR[3] <= gatedMagic[3] | gatedAD[4] | AREAD_3_6_7 | MEM_B_WRITE |
                 RW_OR_RPW_CYCLE | MEM_WRITE;
   end
 
