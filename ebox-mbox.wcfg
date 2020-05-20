@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="18099167fs"></ZoomStartTime>
-      <ZoomEndTime time="19070168fs"></ZoomEndTime>
-      <Cursor1Time time="18261000fs"></Cursor1Time>
+      <ZoomStartTime time="18193600fs"></ZoomStartTime>
+      <ZoomEndTime time="18415601fs"></ZoomEndTime>
+      <Cursor1Time time="18378600fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="132"></ValueColumnWidth>
+      <ValueColumnWidth column_width="124"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="53" />
+   <WVObjectSize size="61" />
    <wave_markers>
       <marker label="" time="18261000" />
    </wave_markers>
@@ -239,6 +239,44 @@
    <wvobject type="logic" fp_name="/top/memory0/SBUS/DATA_PAR">
       <obj_property name="ElementShortName">DATA_PAR</obj_property>
       <obj_property name="ObjectShortName">DATA_PAR</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CTL/DIAG_LOAD_FUNC_071">
+      <obj_property name="ElementShortName">DIAG_LOAD_FUNC_071</obj_property>
+      <obj_property name="ObjectShortName">DIAG_LOAD_FUNC_071</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/kl10pv_tb0/EBUSdriver">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">EBUSdriver</obj_property>
+      <obj_property name="ObjectShortName">EBUSdriver</obj_property>
+      <obj_property name="label">tbEBUSdriver</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/EBUS/data">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">data[0:35]</obj_property>
+      <obj_property name="ObjectShortName">data[0:35]</obj_property>
+      <obj_property name="label">EBUS.data[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/mbox0/mbx0/e48SR">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">e48SR[0:3]</obj_property>
+      <obj_property name="ObjectShortName">e48SR[0:3]</obj_property>
+      <obj_property name="label">mbx0.e48SR[0:3]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbx0/E_CORE_RD_RQ">
+      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
+      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/MBOX/MEM_TO_C_EN">
+      <obj_property name="ElementShortName">MEM_TO_C_EN</obj_property>
+      <obj_property name="ObjectShortName">MEM_TO_C_EN</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/MBOX/MEM_TO_C_SEL">
+      <obj_property name="ElementShortName">MEM_TO_C_SEL[0:1]</obj_property>
+      <obj_property name="ObjectShortName">MEM_TO_C_SEL[0:1]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/MBOX/MEM_TO_CACHE">
+      <obj_property name="ElementShortName">MEM_TO_CACHE[0:35]</obj_property>
+      <obj_property name="ObjectShortName">MEM_TO_CACHE[0:35]</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/RESP_MBOX">
       <obj_property name="DisplayName">label</obj_property>
