@@ -244,7 +244,7 @@ module vma(iAPR APR,
   // E12 bottom half, E17, E19
   generate
     for (k = 13; k < 18; k += 2) begin: vmaIN
-
+      assign EDP.ARMM_VMA[k] = VMA_IN[k];
       always_comb if (VMAX_EN) case (MCL.VMAX_SEL)
                                2'b00: VMA_IN[k] = VMA.VMA[k];
                                2'b01: VMA_IN[k] = VMA.PC[k];

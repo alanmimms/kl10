@@ -15,8 +15,11 @@ module edp(iAPR APR,
            iSHM SHM,
            iVMA VMA,
            iEBUS.mod EBUS,
-           iMBOX MBOX
+           iMBOX MBOX,
+           input [0:35] hwOptions
            );
+
+  assign EDP.hwOptions = hwOptions;
 
   // Universal shift register function selector values
   enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
@@ -73,21 +76,11 @@ module edp(iAPR APR,
 
   assign EDP.FM_PARITY = ^EDP.FM;
 
-  // Initial states for our registers
-  initial begin
-    EDP.AR = '0;
-    EDP.ARX = '0;
-    EDP.BR = '0;
-    EDP.BRX = '0;
-    EDP.MQ = '0;
-  end
-
-
   // AR including ARL, ARR, and ARM p15.
   // ARL mux
   always_comb unique case (CTL.ARL_SEL)
               default: ARL = '0;
-              3'b000: ARL = {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER};
+              3'b000: ARL = {EDP.ARMM_SCD, 5'b0, EDP.ARMM_VMA};
               3'b001: ARL = MBOX.CACHE_DATA[0:17];
               3'b010: ARL = EDP.AD[0:17];
               3'b011: ARL = EBUS.data[0:17];
@@ -107,15 +100,24 @@ module edp(iAPR APR,
   always_ff @(posedge clk) if (CTL.ARR_CLR) EDP.AR[18:35] <= '0;
                            else if (CTL.ARR_LOAD)
                              unique case (CRAM.AR)
-                             3'b000: EDP.AR[18:35] <= {SCD.ARMM_UPPER, 5'b0, SCD.ARMM_LOWER}; // XXX?
-                             3'b001: EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
-                             3'b010: EDP.AR[18:35] <= EDP.AD[18:35];
-                             3'b011: EDP.AR[18:35] <= EBUS.data[18:35];
-                             3'b100: EDP.AR[18:35] <= SHM.SH[18:35];
-                             3'b101: EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
-                             3'b110: EDP.AR[18:35] <= EDP.ADX[18:35];
-                             3'b111: EDP.AR[18:35] <= EDP.AD[16:33];
+                             // These hwOptions bits were actually
+                             // wirewrapped onto the backplane for
+                             // each machine's serial number and
+                             // hardware options. This is listed in
+                             // schematics as ARMM but ARMM is only
+                             // [0:8] and [13:17] (driven by SCD and
+                             // VMA, respectively). The low half comes
+                             // from this wirewrapped strapping.
+                             arAR:     EDP.AR[18:35] <= hwOptions[18:35];
+                             arCACHE:  EDP.AR[18:35] <= MBOX.CACHE_DATA[18:35];
+                             arAD:     EDP.AR[18:35] <= EDP.AD[18:35];
+                             arEBUS:   EDP.AR[18:35] <= EBUS.data[18:35];
+                             arSH:     EDP.AR[18:35] <= SHM.SH[18:35];
+                             arADx2:   EDP.AR[18:35] <= {EDP.AD[19:35], EDP.ADX[0]};
+                             arADX:    EDP.AR[18:35] <= EDP.ADX[18:35];
+                             arADdiv4: EDP.AR[18:35] <= EDP.AD[16:33];
                              endcase
+                        // else HOLD
 
   // ARX muxes p16.
   always_comb unique case (CTL.ARXL_SEL)
@@ -330,22 +332,20 @@ module edp(iAPR APR,
     end
   endgenerate
 
-  bit [0:35] hwOptions = {18'b0,     // Domain of the Microcode
-                          1'b0,      // [18] 50Hz
-                          1'b1,      // [19] Cache
-                          1'b1,      // [20] Internal channels
-                          1'b1,      // [21] Extended KL
-                          1'b1,      // [22] Has master oscillator
-                          13'd4001}; // [23:35] Serial number
 
-  assign EDP.hwOptions = hwOptions;
-
+  // This simplifies the mostly unused bits of the `adbFM` case for
+  // ADXB. The schematics show this as # [N+0] H\#400\ (the H\#400\
+  // just means to use a certain type of wire (coax?)). But the
+  // CRAM.MAGIC field is only nine bits. I think the remaining pins of
+  // ADXB for this case are just floating (i.e., ECL 0).
+  bit [0:35] adxbMagic;
+  assign adxbMagic = {CRAM.MAGIC, 27'b0};
   // ADXB mux
   generate
     for (n = '0; n < 36; n = n + 6) begin : ADXBmux
       always_comb unique case(CRAM.ADB)
                   default: ADXB[n+0:n+5] = '0;
-                  adbFM:   ADXB[n+0:n+5] = hwOptions[n+0:n+5];
+                  adbFM:   ADXB[n+0:n+5] = adxbMagic[n+0:n+5];
                   adbBRx2: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0};
                   adbBR:   ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
                   adbARx4: ADXB[n+0:n+5] = n < 30 ? EDP.ARX[n+2:n+7] : {EDP.ARX[n+2:n+5], 2'b00};

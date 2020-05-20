@@ -56,6 +56,14 @@ module top(input clk,
   iMBOX MBOX();
   iSBUS SBUS();
 
+  bit [0:35] hwOptions = {18'b0,     // Domain of the Microcode
+                          1'b0,      // [18] 50Hz
+                          1'b1,      // [19] Cache
+                          1'b1,      // [20] Internal channels
+                          1'b1,      // [21] Extended KL
+                          1'b1,      // [22] Has master oscillator
+                          13'd4001}; // [23:35] Serial number
+
   ebox ebox0(.*);
   mbox mbox0(.SBUS(SBUS.mbox), .*);
   memory memory0(.SBUS(SBUS.memory), .*);
