@@ -1,6 +1,5 @@
+// XXX TODO: Schematic review against this code
 `timescale 1ns/1ns
-// XXX TODO: Refactor this into six instances of the same module wired
-// together in ebox.v?
 `include "ebox.svh"
 
 module edp(iAPR APR,
@@ -18,8 +17,6 @@ module edp(iAPR APR,
            iMBOX MBOX,
            input [18:35] hwOptions
            );
-
-  assign EDP.hwOptions = hwOptions;
 
   // Universal shift register function selector values
   enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;

@@ -1120,7 +1120,6 @@ interface iEDP;
   bit [0:36] ADX_CRY;
   bit [0:8] ARMM_SCD;
   bit [13:17] ARMM_VMA;
-  bit [18:35] hwOptions;
   tEBUSdriver EBUSdriver;
 endinterface
 
