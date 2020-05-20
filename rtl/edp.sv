@@ -15,8 +15,7 @@ module edp(iAPR APR,
            iVMA VMA,
            iEBUS.mod EBUS,
            iMBOX MBOX,
-           input [18:35] hwOptions
-           );
+           input [18:35] hwOptions);
 
   // Universal shift register function selector values
   enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
