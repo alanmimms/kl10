@@ -71,18 +71,23 @@ module top(input clk,
   kl10pv_tb kl10pv_tb0(.*);
 `endif
 
-  always_comb begin
-    if (APR.EBUSdriver.driving)       EBUS.data = APR.EBUSdriver.data;
-    else if (CON.EBUSdriver.driving)  EBUS.data = CON.EBUSdriver.data;
-    else if (CRA.EBUSdriver.driving)  EBUS.data = CRA.EBUSdriver.data;
-    else if (CTL.EBUSdriver.driving)  EBUS.data = CTL.EBUSdriver.data;
-    else if (EDP.EBUSdriver.driving)  EBUS.data = EDP.EBUSdriver.data;
-    else if (IR.EBUSdriver.driving)   EBUS.data = IR.EBUSdriver.data;
-    else if (MTR.EBUSdriver.driving)  EBUS.data = MTR.EBUSdriver.data;
-    else if (PIC.EBUSdriver.driving)   EBUS.data = PIC.EBUSdriver.data;
-    else if (SCD.EBUSdriver.driving)  EBUS.data = SCD.EBUSdriver.data;
-    else if (SHM.EBUSdriver.driving)  EBUS.data = SHM.EBUSdriver.data;
-    else if (VMA.EBUSdriver.driving)  EBUS.data = VMA.EBUSdriver.data;
-    else EBUS.data = '0;
-  end
+  // Mux for EBUS data lines
+  always_comb unique case ('1)
+              default: EBUS.data = '0;
+              APR.EBUSdriver.driving:        EBUS.data = APR.EBUSdriver.data;
+              CON.EBUSdriver.driving:        EBUS.data = CON.EBUSdriver.data;
+              CRA.EBUSdriver.driving:        EBUS.data = CRA.EBUSdriver.data;
+              CTL.EBUSdriver.driving:        EBUS.data = CTL.EBUSdriver.data;
+              EDP.EBUSdriver.driving:        EBUS.data = EDP.EBUSdriver.data;
+              IR.EBUSdriver.driving:         EBUS.data =  IR.EBUSdriver.data;
+              MBZ.EBUSdriver.driving:        EBUS.data = MBZ.EBUSdriver.data;
+              MTR.EBUSdriver.driving:        EBUS.data = MTR.EBUSdriver.data;
+              PIC.EBUSdriver.driving:        EBUS.data = PIC.EBUSdriver.data;
+              SCD.EBUSdriver.driving:        EBUS.data = SCD.EBUSdriver.data;
+              SHM.EBUSdriver.driving:        EBUS.data = SHM.EBUSdriver.data;
+              VMA.EBUSdriver.driving:        EBUS.data = VMA.EBUSdriver.data;
+`ifdef KL10PV_TB
+              kl10pv_tb0.EBUSdriver.driving: EBUS.data = kl10pv_tb0.EBUSdriver.data;
+`endif
+              endcase
 endmodule
