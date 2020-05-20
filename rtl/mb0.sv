@@ -15,7 +15,7 @@ module mb0(iCCL CCL,
 
   bit clk;
   bit PT_IN_SEL_AR, CH_BUF_MB_SEL;
-  bit [2:1] MEM_TO_C_SEL, MB_SEL;
+  bit [2:1] MB_SEL;
   bit [0:35] CH_BUF, CH_BUF_IN, MB_IN_A, MB_IN, MB_CH_BUF, CH_REG;
   bit MB_CH_BUF_LOAD, CH_REG_HOLD, MB_IN_EN, CH_BUF_EN;
   bit [0:6] CH_BUF_ADR;
@@ -28,7 +28,7 @@ module mb0(iCCL CCL,
 
   // MB01 p.74
   // e61, e55, e27, e50, e41, e22, e21, e16
-  always_comb if (MBOX.MEM_TO_C_EN) unique case (MEM_TO_C_SEL)
+  always_comb if (MBOX.MEM_TO_C_EN) unique case (MBOX.MEM_TO_C_SEL)
                                     2'b00: MBOX.MEM_TO_CACHE = EDP.AR;
                                     2'b01: MBOX.MEM_TO_CACHE = MBOX.MB;
                                     2'b10: MBOX.MEM_TO_CACHE = MBOX.MEM_DATA_IN;

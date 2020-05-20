@@ -214,7 +214,6 @@ module mbx(iAPR APR,
            .CLK(clk));
            
   bit e70q14;
-  bit [0:3] e48SR;
   always_comb begin
     case (MBOX.MB_SEL)
     2'b00: MBOX.MB_PAR = MB0_PAR;
@@ -254,9 +253,13 @@ module mbx(iAPR APR,
   assign MBOX.MEM_DIAG = SBUS_DIAG_0 & ~SBUS_DIAG_1;
   assign DIAG_CYC_DONE = SBUS_DIAG_3 & MBC.A_CHANGE_COMING;
 
-  assign MBOX.MEM_TO_C_SEL[2] = ~e48SR[0] & ~e48SR[2] | (E_CORE_RD_RQ |  EBOX_DIAG_CYC) & ~e48SR[3];
-  assign MBOX.MEM_TO_C_SEL[1] = ~e48SR[1] & ~e48SR[2] | (E_CORE_RD_RQ | ~EBOX_DIAG_CYC) & ~e48SR[3] &
+  // e48
+  bit [0:3] e48SR;
+  always_ff @(posedge CTL.DIAG_LOAD_FUNC_071) e48SR[0:3] <= EBUS.data[30:33];
+  assign MBOX.MEM_TO_C_SEL[0] = ~e48SR[0] & ~e48SR[2] |  (E_CORE_RD_RQ | EBOX_DIAG_CYC) & ~e48SR[3];
+  assign MBOX.MEM_TO_C_SEL[1] = ~e48SR[1] & ~e48SR[2] | ~(E_CORE_RD_RQ | EBOX_DIAG_CYC) & ~e48SR[3] &
                                 ~CSH.E_CACHE_WR_CYC;
+
   assign MBX.SBUS_DIAG_3 = SBUS_DIAG_3;
 
   always_ff @(posedge clk) MB_REQ_ALLOW_FF <= MB_REQ_ALLOW;
@@ -268,13 +271,6 @@ module mbx(iAPR APR,
            .SEL({~MBC.A_CHANGE_COMING & e70q14, e70q14}),
            .CLK(clk),
            .Q({SBUS_DIAG_0, SBUS_DIAG_1, SBUS_DIAG_2, SBUS_DIAG_3}));
-
-  USR4 e48(.S0('0),
-           .D(EBUS.data[30:33]),
-           .S3('0),
-           .SEL(2'b00),
-           .CLK(~CTL.DIAG_LOAD_FUNC_071),
-           .Q(e48SR));
 
   
   // MBX4 p.181
@@ -400,7 +396,7 @@ module mbx(iAPR APR,
               ~MBOX.MEM_DIAG,
               MBX.MEM_RD_RQ_IN,
               MBOX.MEM_TO_C_SEL[1],
-              MBOX.MEM_TO_C_SEL[2],
+              MBOX.MEM_TO_C_SEL[0],
               MBX.MEM_WR_RQ_IN,
               MBX.REFILL_HOLD,
               MBX.RQ_IN[0]}),
