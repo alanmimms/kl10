@@ -44,6 +44,8 @@ module kl10pv_tb(iAPR APR,
   var string indent = "";
   var int nSteps;
 
+  tEBUSdriver EBUSdriver;       // The DTE drives the EBUS too
+
   assign clk = masterClk;
   assign EXTERNAL_CLK = masterClk;
   assign clk30 = masterClk;
@@ -111,7 +113,7 @@ module kl10pv_tb(iAPR APR,
     
     //   .LDSEL(044) Clock load func #044
     //          (use DMRMOS MOS defaults = 0,,10 = EXTERNAL CLOCK, no divider)
-    doDiagFunc(diagfCLR_CLK_SRC_RATE, 18'o000010);
+    doDiagFunc(diagfCLR_CLK_SRC_RATE, 18'o000010, '1);
 
     //   .STPCL(EXEFN:000) Stop the clock
     doDiagFunc(diagfSTOP_CLOCK);
@@ -171,8 +173,8 @@ module kl10pv_tb(iAPR APR,
     //   .MEMRS(076) Set KL10 mem reset flop
     doDiagFunc(diagfEBUS_LOAD);
 
-    //   .WRMBX(071) Write M-BOX to do a memory reset
-    doDiagFunc(diagfWRITE_MBOX, 18'o000012);
+    //   .WRMBX(071) Write MBOX
+    doDiagFunc(diagfWRITE_MBOX, 18'o001402, '1);
 
     $display($time, " DONE");
     indent = "";
@@ -327,11 +329,11 @@ module kl10pv_tb(iAPR APR,
 
     // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK2)
     // FE loads 3 and calls .LDCK2
-    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP, 4'b0011);
+    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP, 4'b0011, '1);
 
     // (046) Load clock parity check and FS check (.LDCK1)
     // FE loads 0o16 (#FM!CM!DM) and calls .LDCK1
-    doDiagFunc(diagfRESET_PAR_REGS, 4'b1110);
+    doDiagFunc(diagfRESET_PAR_REGS, 4'b1110, '1);
 
     // Start clocks (.STRCL=001)
     doDiagFunc(diagfSTART_CLOCK);
@@ -478,16 +480,20 @@ module kl10pv_tb(iAPR APR,
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
   task doDiagFunc(input tDiagFunction func,
-                  input [18:35] ebusRH = '0);
+                  input [18:35] ebusRH = '0,
+                  input setEBUS = '0);
+
     @(negedge CLK.MHZ16_FREE) begin
       string shortName;
       shortName = replace(func.name, "diagf", "");
-      EBUS.data[18:35] <= ebusRH;
+      EBUSdriver.data[18:35] = ebusRH;
       EBUS.ds <= func;
       EBUS.diagStrobe <= '1;            // Strobe this
+      EBUSdriver.driving <= setEBUS;
 
-      if (func !== diagfSTEP_CLOCK) 
-        $display($time, " %sASSERT EBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
+      if (func !== diagfSTEP_CLOCK)
+        if (setEBUS)  $display($time, " %sASSERT ds=%s [EBUS.data.rh=%06o]", indent, shortName, ebusRH);
+        else $display($time, " %sASSERT ds=%s", indent, shortName);
     end
 
     repeat (8) @(negedge CLK.MHZ16_FREE) ;
@@ -495,17 +501,15 @@ module kl10pv_tb(iAPR APR,
     @(negedge CLK.MHZ16_FREE) begin
       string shortName;
       shortName = replace(func.name, "diagf", "");
-      EBUS.data[18:35] <= '0;
       EBUS.diagStrobe <= '0;
       EBUS.ds <= diagfIdle;
-//      EBUS.ds <= tDiagFunction'('0);
+      EBUSdriver.driving <= '0;
 
       if (func !== diagfSTEP_CLOCK) 
-        $display($time, " %sDEASSERT EBUS.data.rh=%06o and ds=%s", indent, ebusRH, shortName);
+        $display($time, " %sDEASSERT ds=%s", indent, shortName);
     end
 
     repeat(4) @(posedge CLK.MHZ16_FREE) ;
-    //    $display($time, " %s[done]", indent);
   endtask
 
 
