@@ -23,45 +23,15 @@ module con(iAPR APR,
   bit clk;
   bit DIAG_READ;
 
-  bit NICOND, CONO_APR;
-  bit WR_EVEN_PAR_DATA;
-  bit WR_EVEN_PAR_DIR;
-  bit INSTR_GO;
-  bit INT_DISABLE;
-  bit INT_REQ;
-  bit MTR_INT_REQ;
-  bit MEM_CYCLE;
-  bit FETCH_CYCLE;
-  bit DIAG_IR_STROBE;
-  bit KERNEL_MODE;
-  bit KERNEL_CYCLE;
-  bit DIAG_DRAM_STROBE;
-  bit NICOND_OR_LOAD_IR_DELAYED;
-  bit KL10_PAGING_EN;
-  bit PI_XFER;
-  bit XFER;
-  bit PXCT;
-  bit SPEC8;
-  bit MBOX_DATA;
-  bit FM_DATA;
-  bit FM_BIT_36;
-  bit CSH_BIT_36;
-  bit EBUS_BIT_36;
-  bit AR_FROM_MEM;
-  bit LOAD_AR_EN;
-
-  bit DIAG_CLR_RUN;
-  bit DIAG_SET_RUN;
-  bit DIAG_CONTINUE;
-  bit MAGIC_FUNC_02x;
-  bit LOAD_AC_BLOCKS;
-  bit LOAD_PREV_CONTEXT;
-  bit MAGIC_FUNC_01x;
-  bit MAGIC_FUNC_04x;
-  bit MAGIC_FUNC_05x;
-  bit MAGIC_FUNC_010;
-  bit MAGIC_FUNC_011;
-
+  bit NICOND, CONO_APR, WR_EVEN_PAR_DATA, WR_EVEN_PAR_DIR, INSTR_GO;
+  bit INT_DISABLE, INT_REQ, MTR_INT_REQ, MEM_CYCLE, FETCH_CYCLE;
+  bit DIAG_IR_STROBE, KERNEL_MODE, KERNEL_CYCLE, DIAG_DRAM_STROBE;
+  bit NICOND_OR_LOAD_IR_DELAYED, KL10_PAGING_EN, PI_XFER, XFER, PXCT;
+  bit SPEC8, MBOX_DATA, FM_DATA, FM_BIT_36, CSH_BIT_36, EBUS_BIT_36;
+  bit AR_FROM_MEM, LOAD_AR_EN;
+  bit DIAG_CLR_RUN, DIAG_SET_RUN, DIAG_CONTINUE, MAGIC_FUNC_02x;
+  bit LOAD_AC_BLOCKS, LOAD_PREV_CONTEXT;
+  bit MAGIC_FUNC_01x, MAGIC_FUNC_04x, MAGIC_FUNC_05x, MAGIC_FUNC_010, MAGIC_FUNC_011;
 
   assign clk = CLK.CON;
   assign CON.RESET = CLK.MR_RESET;
@@ -313,7 +283,7 @@ module con(iAPR APR,
                             ~CON.PI_CYCLE}),
                         .any(),
                         .q(e33Q));
-
+  
   always_ff @(posedge clk) CON.NICOND_TRAP_EN <= e33Q[0];
   always_ff @(posedge clk) CON.NICOND[7:9] = e33Q[0:2];
   always_ff @(posedge clk) CON.EBUS_GRANT <= PIC.EBUS_CP_GRANT;
@@ -463,7 +433,7 @@ module con(iAPR APR,
 
   bit e57q3, e57q2, e57q13, e57q14;
   always_ff @(posedge clk) e57q3 <= CON.COND_SPEC_INSTR & CRAM.MAGIC[0];
-  always_ff @(posedge clk) e57q2 <= ~MCL.SKIP_SATISFIED & ~CLR_PI_CYCLE & ~CON.RESET & CON.PI_CYCLE;
+  always_ff @(posedge clk) e57q2 <= CON.PI_CYCLE & ~MCL.SKIP_SATISFIED & ~CLR_PI_CYCLE & ~CON.RESET;
   always_ff @(posedge clk) e57q13 <= MCL.MBOX_CYC_REQ;
   always_ff @(posedge clk) e57q14 <= MEM_CYCLE & ~XFER & ~CLK.PAGE_ERROR & ~CON.RESET;
 
