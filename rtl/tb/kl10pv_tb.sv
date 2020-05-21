@@ -83,99 +83,27 @@ module kl10pv_tb(iAPR APR,
   end
 
 
+  // Functions from KLINIT.L20 $KLMR (DO A MASTER RESET ON THE KL)
   task KLMasterReset;
     $display($time, " KLMasterReset() START");
     indent = "  ";
 
-    // Functions from KLINIT.L20 $KLMR (DO A MASTER RESET ON THE KL)
-
-    /*
-   6570	001310	022000 	000000'		DMRMRT:	.WORD	.LDSEL/2,.ZERO	; CLOCK LOAD FUNC #44
-   6571	001314	100000 				.WORD	.STPCL/2+BIT15	; STOP THE CLOCK
-   6572	001316	103400 				.WORD	.SETMR/2+BIT15	; SET RESET
-   6573	001320	023000 	000000'			.WORD	.LDCK1/2,.ZERO	; LOAD CLK PARITY CHECK & FS CHECK
-   6574	001324	023400 	000000'			.WORD	.LDCK2/2,.ZERO	; LOAD CLK MBOX CYCLE DISABLES,
-   6575									; PARITY CHECK, ERROR STOP ENABLE
-   6576	001330	021000 	000000'			.WORD	.LDBRR/2,.ZERO	; LOAD BURST COUNTER (8,4,2,1)
-   6577	001334	021400 	000000'			.WORD	.LDBRL/2,.ZERO	; LOAD BURST COUNTER (128,64,32,16)
-   6578	001340	022400 	000000'			.WORD	.LDDIS/2,.ZERO	; LOAD EBOX CLOCK DISABLE
-   6579	001344	100400 				.WORD	.STRCL/2+BIT15	; START THE CLOCK
-   6580	001346	034000 	000000'			.WORD	.INICL/2,.ZERO	; INIT CHANNELS
-   6581	001352	021000 	000000'			.WORD	.LDBRR/2,.ZERO	; LOAD BURST COUNTER (8,4,2,1)
-   6582	001356	000000 				.WORD	0
-   6583	001360	102000 				.WORD	.CECLK/2+BIT15	; CONDITIONAL SINGLE STEP
-   6584	001362	103000 				.WORD	.CLRMR/2+BIT15	; CLEAR RESET
-   6585	001364	033400 	000000'			.WORD	.EIOJA/2,.ZERO	; ENABLE KL STL DECODING OF CODES & AC'S
-   6586	001370	037000 	000000'			.WORD	.MEMRS/2,.ZERO	; SET KL10 MEM RESET FLOP
-   6587	001374	034400 	001402'			.WORD	.WRMBX/2,DMRMMR	; WRITE M-BOX
-   6588	001400	000000 				.WORD	0
-   6589	001402				DMRMMR:	WD36$	0 12		; FOR MEMORY RESET
-	001402	   012 	   000 	   000 		 .BYTE	BY$$0,BY$$1,BY$$2
-	001405	   000 	   000 			 .BYTE	BY$$3,BY$$4
-   6590						.EVEN
-   6591
-   6592	001410	007000 			DMRSRT:	.WORD	.SETMR		; SET RESET.
-   6593	001412	001000 				.WORD	.STRCL		; START THE CLOCK.
-   6594	001414	000000 				.WORD	.STPCL		; STOP THE CLOCK.
-   6595	001416	004000 				.WORD	.CECLK		; CONDITIONAL SINGLE STEP.
-   6596	001420	006000 				.WORD	.CLRMR		; CLEAR RESET.
-     */
-    
     // $DFXC(.CLRUN=010)    ; Clear run
     doDiagFunc(diagfCLR_RUN);
 
-    // $DTRW2(DRESET=100)   ; Reset bit to .DTEDT via DTE-20 diag 2
-    // With no DTE20, resetting the DTE is not very useful.
-    // XXX TODO
-
-    // $DTRWS(DON10C|ERR10C|INT11C|PERCLR|DON11C|ERR11C)        ; Clear DTE-20 status
-    // With no DTE20, resetting the DTE error flags is not very useful.
-    // XXX TODO
-
-    // The codes below are either WRITE (no annotation) or EXECUTE
-    // FUNCTIONS (EXEFN). The former is a simple diagnostic write. The
-    // latter uses the equivalent of KLINIT.L20 $DFXC which is more
-    // complex than a simple write and does some special things based
-    // on which operation it is asked to perform.
-    //
-    // Execute first block of functions in DMRMRT:
-
-    //         (072) Select KW20/22 (external clock oscillator) for MOS systems
-    // Not necessary in this implementation
-    
-    //   .LDSEL(044) Clock load func #044
-    //          (use DMRMOS MOS defaults = 0,,10 = EXTERNAL CLOCK, no divider)
-    doDiagFunc(diagfCLR_CLK_SRC_RATE, 18'o000010, '1);
-
-    //   .STPCL(EXEFN:000) Stop the clock
-    doDiagFunc(diagfSTOP_CLOCK);
-
-    //   .SETMR(EXEFN:007) Set reset
-    doDiagFunc(diagfSET_RESET);
-
-    //   .ldck1(046) Load CLK partity check and FS check
-    doDiagFunc(diagfRESET_PAR_REGS);
-
-    //   .LDCK2(047) Load CLK MBOX cycle disables, parity check, error stop enable
-    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP);
-
-    //   .LDBRR(042) Load burst counter 8,4,2,1
-    doDiagFunc(diagfCLR_BURST_CTR_RH);
-
-    //   .LDBRL(043) Load burst counter 128,64,32,16
-    doDiagFunc(diagfCLR_BURST_CTR_LH);
-
-    //   .LDDIS(045) Load EBOX clock disable
-    doDiagFunc(diagfSET_EBOX_CLK_DISABLES);
-
-    //   .STRCL(EXEFN:001) Start the clock
-    doDiagFunc(diagfSTART_CLOCK);
-
-    //   .INICL(070) Init channels
-    doDiagFunc(diagfINIT_CHANNELS);
-
-    //   .LDBRR(042) Load burst counter 8,4,2,1
-    doDiagFunc(diagfCLR_BURST_CTR_RH);
+    // This is the first phase of DMRMRT table operations.
+    doDiagWrite(diagfCLR_CLK_SRC_RATE, '0);           // CLOCK LOAD FUNC #44
+    doDiagFunc(diagfSTOP_CLOCK);                      // STOP THE CLOCK
+    doDiagFunc(diagfSET_RESET);                       // SET RESET
+    doDiagWrite(diagfRESET_PAR_REGS, '0);             // LOAD CLK PARITY CHECK & FS CHECK
+    doDiagWrite(diagfCLR_MBOXDIS_PARCHK_ERRSTOP, '0); // LOAD CLK MBOX CYCLE DISABLES,
+    // PARITY CHECK, ERROR STOP ENABLE
+    doDiagWrite(diagfCLR_BURST_CTR_RH, '0);           // LOAD BURST COUNTER (8,4,2,1)
+    doDiagWrite(diagfCLR_BURST_CTR_LH, '0);           // LOAD BURST COUNTER (128,64,32,16)
+    doDiagWrite(diagfSET_EBOX_CLK_DISABLES, '0);      // LOAD EBOX CLOCK DISABLE
+    doDiagFunc(diagfSTART_CLOCK);                     // START THE CLOCK
+    doDiagWrite(diagfINIT_CHANNELS, '0);              // INIT CHANNELS
+    doDiagWrite(diagfCLR_BURST_CTR_RH, '0);           // LOAD BURST COUNTER (8,4,2,1)
 
     // Loop up to three times:
     //   Do diag function 162 via $DFRD test (A CHANGE COMING A L)=EBUS[32]
@@ -192,27 +120,29 @@ module kl10pv_tb(iAPR APR,
       $display($time, " ERROR: STEP of MBOX five times did not clear MBC.A_CHANGE_COMING");
     end
 
-    // Execute second set of functions in DMRMRT:
-    //   .CECLK(EXEFN:004) Conditional single step
-    doDiagFunc(diagfCOND_STEP);
-
-    //   .CLRMR(EXEFN:006) Clear reset
-    doDiagFunc(diagfCLR_RESET);
-
-    //   .EIOJA(067) Enable KL STL decoding of codes and ACs
-    doDiagFunc(diagfENABLE_KL);
-
-    //   .MEMRS(076) Set KL10 mem reset flop
-    doDiagFunc(diagfEBUS_LOAD);
-
-    //   .WRMBX(071) Write MBOX
-    doDiagFunc(diagfWRITE_MBOX);
+    // Phase 2 from DMRMRT table operations.
+    doDiagFunc(diagfCOND_STEP);          // CONDITIONAL SINGLE STEP
+    doDiagFunc(diagfCLR_RESET);          // CLEAR RESET
+    doDiagWrite(diagfENABLE_KL, '0);     // ENABLE KL STL DECODING OF CODES & AC'S
+    doDiagWrite(diagfEBUS_LOAD, '0);     // SET KL10 MEM RESET FLOP
+    doDiagWrite(diagfWRITE_MBOX, 'o120); // WRITE M-BOX
 
     $display($time, " DONE");
     indent = "";
   endtask
-  
 
+
+  ////////////////////////////////////////////////////////////////
+  // Analogue of $KLSR routine (SOFT RESET FOR RAM LOADERS).
+  task KLSoftReset();
+    doDiagFunc(diagfSET_RESET);   // SET RESET.
+    doDiagFunc(diagfSTART_CLOCK); // START THE CLOCK.
+    doDiagFunc(diagfSTOP_CLOCK);  // STOP THE CLOCK.
+    doDiagFunc(diagfCOND_STEP);   // CONDITIONAL SINGLE STEP.
+    doDiagFunc(diagfCLR_RESET);   // CLEAR RESET.
+  endtask
+
+  
   ////////////////////////////////////////////////////////////////
   task KLBootDialog(input int microcodeEditNumber, input [0:35] hwo);
     // Time to pretend a little...
@@ -284,7 +214,7 @@ module kl10pv_tb(iAPR APR,
       ebox0.apr0.NXM_ERR_EN <= '0;
       APR.SET_IO_PF_ERR <= '0;
       ebox0.apr0.IO_PF_ERR_EN <= '0;
-      
+
       // MB parity, cache dir, addr parity
       MBOX.MB_PAR_ERR <= '0;
       ebox0.apr0.MB_PAR_ERR_EN <= '0;
@@ -302,7 +232,7 @@ module kl10pv_tb(iAPR APR,
       // PI interrupt level #0
       ebox0.pi0.PIC.APR_PIA <= '0;
     end
-    
+
     ////////////
     // CONO PI,10000            ; Reset PI
     begin
@@ -331,13 +261,13 @@ module kl10pv_tb(iAPR APR,
       APR.PREV_BLOCK <= '0;
       APR.CURRENT_BLOCK <= '0;
       APR.CURRENT_BLOCK <= '0;
-      
+
       // Set current section context to zero.
-      // XXX Not 100% certain this is what this is supposed to do. 
+      // XXX Not 100% certain this is what this is supposed to do.
       VMA.PREV_SEC <= '0;
 
       // Load UPT page number with zero.
-      // XXX Not 100% certain this is what this is supposed to do. 
+      // XXX Not 100% certain this is what this is supposed to do.
       mbox0.pma0.UBR <= '0;
 
       // Invalidate the entire page table by setting the invalid bits in all lines.
@@ -361,11 +291,11 @@ module kl10pv_tb(iAPR APR,
 
     // (047) Load clock MBOX cycle disables, parity check, error stop enable (.LDCK2)
     // FE loads 3 and calls .LDCK2
-    doDiagFunc(diagfCLR_MBOXDIS_PARCHK_ERRSTOP, 4'b0011, '1);
+    doDiagWrite(diagfCLR_MBOXDIS_PARCHK_ERRSTOP, 4'b0011);
 
     // (046) Load clock parity check and FS check (.LDCK1)
     // FE loads 0o16 (#FM!CM!DM) and calls .LDCK1
-    doDiagFunc(diagfRESET_PAR_REGS, 4'b1110, '1);
+    doDiagWrite(diagfRESET_PAR_REGS, 4'b1110);
 
     // Start clocks (.STRCL=001)
     doDiagFunc(diagfSTART_CLOCK);
@@ -449,7 +379,7 @@ module kl10pv_tb(iAPR APR,
   endfunction
 
 
-  // Load the BOOT.EXE bootstrap into our fake memory 
+  // Load the BOOT.EXE bootstrap into our fake memory
   function void loadBootstrap();
     automatic int fd;
     automatic int nRead;
@@ -511,21 +441,14 @@ module kl10pv_tb(iAPR APR,
   ////////////////////////////////////////////////////////////////
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
-  task doDiagFunc(input tDiagFunction func,
-                  input [18:35] ebusRH = '0,
-                  input setEBUS = '0);
+  task doDiagFunc(input tDiagFunction func);
 
     @(negedge CLK.MHZ16_FREE) begin
       string shortName;
       shortName = replace(func.name, "diagf", "");
-      EBUSdriver.data[18:35] = ebusRH;
       EBUS.ds <= func;
       EBUS.diagStrobe <= '1;            // Strobe this
-      EBUSdriver.driving <= setEBUS;
-
-      if (func !== diagfSTEP_CLOCK)
-        if (setEBUS)  $display($time, " %sASSERT ds=%s [EBUS.data.rh=%06o]", indent, shortName, ebusRH);
-        else $display($time, " %sASSERT ds=%s", indent, shortName);
+      if (func !== diagfSTEP_CLOCK) $display($time, " %sASSERT ds=%s", indent, shortName);
     end
 
     repeat (8) @(negedge CLK.MHZ16_FREE) ;
@@ -533,12 +456,39 @@ module kl10pv_tb(iAPR APR,
     @(negedge CLK.MHZ16_FREE) begin
       string shortName;
       shortName = replace(func.name, "diagf", "");
-      EBUS.diagStrobe <= '0;
       EBUS.ds <= diagfIdle;
-      EBUSdriver.driving <= '0;
+      EBUS.diagStrobe <= '0;
+      if (func !== diagfSTEP_CLOCK) $display($time, " %sDEASSERT ds=%s", indent, shortName);
+    end
 
-      if (func !== diagfSTEP_CLOCK) 
-        $display($time, " %sDEASSERT ds=%s", indent, shortName);
+    repeat(4) @(posedge CLK.MHZ16_FREE) ;
+  endtask
+
+
+  ////////////////////////////////////////////////////////////////
+  // Request the specified CLK diagnostic function as if we were the
+  // front-end setting up a KL10pv.
+  task doDiagWrite(input tDiagFunction func, input [18:35] ebusRH);
+
+    @(negedge CLK.MHZ16_FREE) begin
+      string shortName;
+      shortName = replace(func.name, "diagf", "");
+      EBUSdriver.data[18:35] = ebusRH;
+      EBUS.ds <= func;
+      EBUS.diagStrobe <= '1;            // Strobe this
+      EBUSdriver.driving <= '1;
+      $display($time, " %sASSERT ds=%s [EBUS.data.rh=%06o]", indent, shortName, ebusRH);
+    end
+
+    repeat (8) @(negedge CLK.MHZ16_FREE) ;
+
+    @(negedge CLK.MHZ16_FREE) begin
+      string shortName;
+      shortName = replace(func.name, "diagf", "");
+      EBUS.ds <= diagfIdle;
+      EBUS.diagStrobe <= '0;
+      EBUSdriver.driving <= '0;
+      $display($time, " %sDEASSERT ds=%s", indent, shortName);
     end
 
     repeat(4) @(posedge CLK.MHZ16_FREE) ;
@@ -569,6 +519,6 @@ module kl10pv_tb(iAPR APR,
     end
 
     return s;                   // Not found, return s unmodified
-  endfunction  
+  endfunction
 
 endmodule
