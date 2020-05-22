@@ -8,9 +8,6 @@ module mux2x4
    output bit B0,
    output bit B1);
 
-  assign B0 = '0;
-  assign B1 = '0;
-
   always_comb if (EN) unique case (SEL)
                       2'b00: {B0, B1} = {D0[0], D1[0]};
                       2'b01: {B0, B1} = {D0[1], D1[1]};
