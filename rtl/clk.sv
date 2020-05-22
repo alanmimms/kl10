@@ -290,7 +290,7 @@ module clk(input clk,
   // CLK1 CLK DELAYED according to EBOX-UD Logical Delays and Skew,
   // Figure 3-25. In KL10B this signal is called CLK_OUT when it
   // leaves the CLK board (see CLK1 A1 E72 pin 3 <FR2>).
-  assign CLK_OUT = MBOX;
+//  assign CLK_OUT = MBOX;
 
   // 125ns is a guess for round trip delay of clock signal across backplane.
   always @(CLK_OUT) CLK_DELAYED <= #125 CLK_OUT;
@@ -381,8 +381,9 @@ module clk(input clk,
 
   // CLK3 p.170
   bit [0:5] e58FF;
+  bit e58Ignored;
   assign {CLK.DRAM_PAR_ERR, CLK.CRAM_PAR_ERR, CLK.FM_PAR_ERR,
-          EBOX_SOURCE, CLK.FS_ERROR, EBOX_CLK_ERROR} = e58FF;
+          e58Ignored, CLK.FS_ERROR, EBOX_CLK_ERROR} = e58FF;
 
   bit e45FF4, e45FF13, e45FF14;
   assign CLK.ERROR_HOLD_A = ~IR.DRAM_ODD_PARITY & ~CON.LOAD_DRAM & DRAM_PAR_CHECK;

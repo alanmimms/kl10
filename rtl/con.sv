@@ -229,20 +229,21 @@ module con(iAPR APR,
               .q(e39Q));
 */
 
-  assign DIAG_CLR_RUN = '0;
-  assign DIAG_SET_RUN = '0;
-  assign DIAG_CONTINUE = '0;
-  assign DIAG_IR_STROBE = '0;
-  assign DIAG_DRAM_STROBE = '0;
+  always_comb begin
+    DIAG_CLR_RUN = '0;
+    DIAG_SET_RUN = '0;
+    DIAG_CONTINUE = '0;
+    DIAG_IR_STROBE = '0;
+    DIAG_DRAM_STROBE = '0;
 
-  always_comb unique case({CTL.DIAG_CTL_FUNC_01x, EBUS.ds[4:6]})
-              4'b1000: DIAG_CLR_RUN = '1;
-              4'b1001: DIAG_SET_RUN = '1;
-              4'b1010: DIAG_CONTINUE = '1;
-              4'b1100: DIAG_IR_STROBE = '1;
-              4'b1101: DIAG_DRAM_STROBE = '1;
-              default: ;
-              endcase
+    unique case({CTL.DIAG_CTL_FUNC_01x, EBUS.ds[4:6]})
+    4'b1000: DIAG_CLR_RUN = '1;
+    4'b1001: DIAG_SET_RUN = '1;
+    4'b1010: DIAG_CONTINUE = '1;
+    4'b1100: DIAG_IR_STROBE = '1;
+    4'b1101: DIAG_DRAM_STROBE = '1;
+    endcase
+  end
 
   bit e19Q, e27Q;
   mux e19(.sel(CRAM.COND[3:5]),
@@ -283,7 +284,7 @@ module con(iAPR APR,
                             ~CON.PI_CYCLE}),
                         .any(),
                         .q(e33Q));
-  
+
   always_ff @(posedge clk) CON.NICOND_TRAP_EN <= e33Q[0];
   always_ff @(posedge clk) CON.NICOND[7:9] = e33Q[0:2];
   always_ff @(posedge clk) CON.EBUS_GRANT <= PIC.EBUS_CP_GRANT;
