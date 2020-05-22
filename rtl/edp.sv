@@ -56,7 +56,7 @@ module edp(iAPR APR,
      .din(EDP.AR),
      .dout(EDP.FM),
      .addr({APR.FM_BLOCK, APR.FM_ADR}),
-     .oe('1),
+     .oe(1),
      .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
@@ -149,7 +149,7 @@ module edp(iAPR APR,
                               usrLOAD: MQM = {EDP.ADX[34:35], EDP.MQ[0:33]};
                               usrSHL:  MQM = SHM.SH;
                               usrSHR:  MQM = EDP.AD[0:35];
-                              usrHOLD: MQM = '1;
+                              usrHOLD: MQM = 1;
                               endcase
               else MQM = '0;
 
@@ -173,7 +173,7 @@ module edp(iAPR APR,
   // AD
   genvar n;
   generate
-    for (n = '0; n < 36; n = n + 6) begin : ADaluE1E2
+    for (n = 0; n < 36; n = n + 6) begin : ADaluE1E2
 
       // Misc carry logic, top p.17
       assign ADEXxortmp[n] = EDP.AD[n+0] ^ EDP.AD_EX[n-1];
@@ -204,7 +204,7 @@ module edp(iAPR APR,
   
   // ADX
   generate
-    for (n = '0; n < 36; n = n + 6) begin : ADXaluE3E4
+    for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
       bit x1, x2;
 
       mc10181 alu2(.M(AD_BOOL),
@@ -300,7 +300,7 @@ module edp(iAPR APR,
 
   // ADB mux
   generate
-    for (n = '0; n < 36; n = n + 6) begin : ADBmux
+    for (n = 0; n < 36; n = n + 6) begin : ADBmux
 
       // The irregular part of ADB mux: E22 and E21.
       // When N==0, D4..D7 inputs are selected else D0..D3.
@@ -338,7 +338,7 @@ module edp(iAPR APR,
   assign adxbMagic = {CRAM.MAGIC, 27'b0};
   // ADXB mux
   generate
-    for (n = '0; n < 36; n = n + 6) begin : ADXBmux
+    for (n = 0; n < 36; n = n + 6) begin : ADXBmux
       always_comb unique case(CRAM.ADB)
                   default: ADXB[n+0:n+5] = '0;
                   adbFM:   ADXB[n+0:n+5] = adxbMagic[n+0:n+5];
@@ -351,7 +351,7 @@ module edp(iAPR APR,
 
   // ADXA mux
   generate
-    for (n = '0; n < 36; n = n + 6) begin : ADXAmux
+    for (n = 0; n < 36; n = n + 6) begin : ADXAmux
       always_comb ADXA[n+0:n+5] = ADA_EN ? 6'b0 : EDP.ARX[n+0:n+5];
     end
   endgenerate
@@ -359,7 +359,7 @@ module edp(iAPR APR,
 
   // ADA mux
   generate
-    for (n = '0; n < 36; n = n + 6) begin : ADAmux
+    for (n = 0; n < 36; n = n + 6) begin : ADAmux
       always_comb if (~ADA_EN) unique case(CRAM.ADA)
                                default: ADA[n+0:n+5] = '0;
                                adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];

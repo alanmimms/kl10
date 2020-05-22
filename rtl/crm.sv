@@ -23,14 +23,14 @@ module crm(iCLK CLK,
      .din('0),                    // XXX
      .dout(CRAMdata),
      .addr(CRA.CRADR),
-     .oe('1),
-     .wea('0));                   // XXX
+     .oe(1),
+     .wea(0));                   // XXX
 `else
   cram_mem cram(.clka(CLK.CRM),
                 .addra(CRADR),
                 .dina('0),
                 .douta(CRAMdata),
-                .wea('0));
+                .wea(0));
 `endif
 
   assign CRAM.J = tJ'(CRAMdata[1:11]);

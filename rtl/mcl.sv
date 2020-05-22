@@ -203,7 +203,7 @@ module mcl(iAPR APR,
 
   bit e46pin3;
   bit e48B0, e48B1;
-  mux2x4 e48(.EN('1),
+  mux2x4 e48(.EN(1),
              .SEL(SR[1:2]),
              .D0({RESET, PXCT_B10, PXCT_B11, PXCT_B12}),
              .D1({PXCT_B09, PXCT_B11, PXCT_B12, PXCT_B12}),
@@ -254,7 +254,7 @@ module mcl(iAPR APR,
                             EA_PREVIOUS & CRAM.MAGIC[7] |
                             PXCT_B12 & CRAM.MAGIC[8]);
 
-  mux e47(.en('1),
+  mux e47(.en(1),
           .sel({PXCT_B09, SR[1:2]}),
           .d({3'b000, PXCT_B11, PXCT_B09, PXCT_B11, PXCT_B12, PXCT_B11}),
           .q(MCL.XR_PREVIOUS));

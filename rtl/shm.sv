@@ -20,7 +20,7 @@ module shm(iCRAM CRAM,
   // XXX temporary
   initial begin
     SHM.SH = '0;
-    SHM.EBUSdriver.driving = '0;
+    SHM.EBUSdriver.driving = 0;
   end
 
   // SHM1 p.334

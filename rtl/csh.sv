@@ -106,10 +106,10 @@ module csh(iAPR APR,
   always_ff @(posedge clk) CSH.CCA_REQ_EN <= ~WRITEBACK_T1 & ~PAGE_REFILL_T4_IN & ~MBOX.CORE_BUSY;
 
   // Note active low symbol
-  USR4 e72(.S0('0),
+  USR4 e72(.S0(0),
            .D({CSH.EBOX_REQ_GRANT, CSH.MB_REQ_GRANT,
                CSH.CHAN_REQ_GRANT, CSH.CCA_REQ_GRANT}),
-           .S3('0),
+           .S3(0),
            .Q({EBOX_CYC, CSH.MB_CYC, CSH.CHAN_CYC, CSH.CCA_CYC}),
            .SEL({2{CYC_TYPE_HOLD}}),
            .CLK(clk));
@@ -195,7 +195,7 @@ module csh(iAPR APR,
   always_ff @(posedge clk) CSH.GATE_VMA_27_33 <= CSH.EBOX_T0_IN | CSH.EBOX_CYC & ~MBX.REFILL_ADR_EN_NXT;
   always_ff @(posedge clk) CSH.ADR_PMA_EN <= ~CSH.EBOX_CYC & ~CSH.EBOX_T0_IN & ~MBX.REFILL_ADR_EN_NXT;
 
-  mux2x4 e26(.EN('1),
+  mux2x4 e26(.EN(1),
              .SEL({CSH.LRU_2, CSH.LRU_1}),
              .D0(CSH.ANY_WR),
              .D1('0),

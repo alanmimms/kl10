@@ -77,17 +77,17 @@ module mbx(iAPR APR,
                                      (~CCA_CYC_DONE | ~PMA.CCA_CRY_OUT);
   always_ff @(posedge clk) CCA_HOLD_ADR <= ~READY_TO_GO & (CSH.CCA_INVAL_T4 | CCA_HOLD_ADR);
 
-  USR4 e77(.S0('0),
+  USR4 e77(.S0(0),
            .D(MBOX.CSH_WD_VAL),
-           .S3('0),
+           .S3(0),
            .SEL({2{ANY_VAL_HOLD}}),
            .Q(e77SR),
            .CLK(clk));
 
   bit unusedE78;
-  USR4 e78(.S0('0),
+  USR4 e78(.S0(0),
            .D({IR.AC[10:12], 1'b0}),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBX.CCA_SEL[1]}}),
            .Q({CSH_CCA_ONE_PAGE, MBX.CSH_CCA_VAL_CORE, MBX.CSH_CCA_INVAL_CSH, unusedE78}),
            .CLK(clk));
@@ -145,14 +145,14 @@ module mbx(iAPR APR,
               .q({CORE_WD_COMING, ignoredE18}));
   
   bit unusedE12a, unusedE12b;
-  USR4 e12(.S0('0),
+  USR4 e12(.S0(0),
            .D({{2{MBOX.MB_SEL_2_EN}}, {2{MBOX.MB_SEL_1_EN}}}),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBOX.MB_SEL_HOLD}}),
            .Q({MBOX.MB_SEL[2], unusedE12a, MBOX.MB_SEL[1], unusedE12b}),
            .CLK(clk));
 
-  USR4  e9(.S0('0),
+  USR4  e9(.S0(0),
            .D({(CORE_WD_COMING[0] | CSH_TO_MB_WD[0] | MB_WR_RQ[0]) &
                (MBOX.MB_SEL[2] | MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
                (CORE_WD_COMING[1] | CSH_TO_MB_WD[1] | MB_WR_RQ[1]) &
@@ -161,7 +161,7 @@ module mbx(iAPR APR,
                (~MBOX.MB_SEL[2] | MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
                (CORE_WD_COMING[3] | CSH_TO_MB_WD[3] | MB_WR_RQ[3]) &
                (~MBOX.MB_SEL[2] | ~MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR)}),
-              .S3('0),
+              .S3(0),
               .SEL({1'b0, RESET}),
               .Q(MB_WR_RQ),
               .CLK(clk));
@@ -185,30 +185,30 @@ module mbx(iAPR APR,
                               ~MB_IN_SEL[0] & ~MB_IN_SEL[2],
                               ~MB_IN_SEL[0] & ~MB_IN_SEL[2] |
                               ~MB_IN_SEL[0] & ~MB_IN_SEL[2] & ~MB_IN_SEL[1]};
-  USR4 e22(.S0('0),
+  USR4 e22(.S0(0),
            .D(e22_e21_e26_e31in),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBOX.MB0_HOLD_IN & (CTOMB_LOAD | MBX.WRITEBACK_T2 | RESET)}}),
            .Q({MB0_PAR, CTOMB_WD_RQ[0], MB0_DATA_CODE_2, MB0_DATA_CODE_1}),
            .CLK(clk));
            
-  USR4 e21(.S0('0),
+  USR4 e21(.S0(0),
            .D(e22_e21_e26_e31in),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBOX.MB1_HOLD_IN & (CTOMB_LOAD | MBX.WRITEBACK_T2 | RESET)}}),
            .Q({MB1_PAR, CTOMB_WD_RQ[1], MB1_DATA_CODE_2, MB1_DATA_CODE_1}),
            .CLK(clk));
            
-  USR4 e26(.S0('0),
+  USR4 e26(.S0(0),
            .D(e22_e21_e26_e31in),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBOX.MB2_HOLD_IN & (CTOMB_LOAD | MBX.WRITEBACK_T2 | RESET)}}),
            .Q({MB2_PAR, CTOMB_WD_RQ[2], MB2_DATA_CODE_2, MB2_DATA_CODE_1}),
            .CLK(clk));
            
-  USR4 e31(.S0('0),
+  USR4 e31(.S0(0),
            .D(e22_e21_e26_e31in),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBOX.MB3_HOLD_IN & (CTOMB_LOAD | MBX.WRITEBACK_T2 | RESET)}}),
            .Q({MB3_PAR, CTOMB_WD_RQ[3], MB3_DATA_CODE_2, MB3_DATA_CODE_1}),
            .CLK(clk));
@@ -265,9 +265,9 @@ module mbx(iAPR APR,
   always_ff @(posedge clk) MB_REQ_ALLOW_FF <= MB_REQ_ALLOW;
   always_ff @(posedge clk) SBUS_DIAG_CYC <= e70q14;
 
-  USR4 e67(.S0('0),
+  USR4 e67(.S0(0),
            .D(4'b0000),
-           .S3('0),
+           .S3(0),
            .SEL({~MBC.A_CHANGE_COMING & e70q14, e70q14}),
            .CLK(clk),
            .Q({SBUS_DIAG_0, SBUS_DIAG_1, SBUS_DIAG_2, SBUS_DIAG_3}));
@@ -415,7 +415,7 @@ module mbx(iAPR APR,
   always_ff @(posedge clk) CORE_DATA_VALID <= CORE_DATA_VALIDminus1;
   always_ff @(posedge clk) e61q14 <= e56Q;
 
-  mux e32(.en('1),
+  mux e32(.en(1),
           .sel(MBOX.MB_IN_SEL),
           .d({MBX.CACHE_TO_MB[34],
               1'b0,
@@ -427,7 +427,7 @@ module mbx(iAPR APR,
               1'b0}),
           .q(e32Q));
 
-  mux e46(.en('1),
+  mux e46(.en(1),
           .sel(MBOX.MB_IN_SEL),
           .d({MBX.CACHE_TO_MB[35],
               1'b0,
@@ -439,7 +439,7 @@ module mbx(iAPR APR,
               1'b0}),
           .q(e46Q));
 
-  mux e56(.en('1),
+  mux e56(.en(1),
           .sel(MBOX.MB_IN_SEL),
           .d({~CACHE_TO_MB_T3,
               1'b0,

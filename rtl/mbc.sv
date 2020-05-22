@@ -36,59 +36,59 @@ module mbc(iAPR APR,
   assign RESET = CLK.MR_RESET;
     // NOTE use MBOX.PMA for local references to PMA.
 
-  USR4  e6(.S0('0),
+  USR4  e6(.S0(0),
            .D(MBOX.CACHE_ADR[27:30]),
-           .S3('0),
+           .S3(0),
            .SEL({2{~MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[27:30]));
 
   bit ignoreE1;
-  USR4  e1(.S0('0),
+  USR4  e1(.S0(0),
            .D({MBOX.CACHE_ADR[31:33], 1'b0}),
-           .S3('0),
+           .S3(0),
            .SEL({2{~MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q({EBUS_REG[31:33], ignoreE1}));
 
-  USR4  e4(.S0('0),
+  USR4  e4(.S0(0),
            .D(PMA.PA[27:30]),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBX.REFILL_HOLD}}),
            .CLK(clk),
            .Q(PMA_HOLD[27:30]));
 
   bit ignoredE10;
-  USR4 e10(.S0('0),
+  USR4 e10(.S0(0),
            .D({PMA.PA[31:33], 1'b0}),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBX.REFILL_HOLD}}),
            .CLK(clk),
            .Q({PMA_HOLD[31:33], ignoredE10}));
 
 
-  mux2x4 e13(.EN('1),
+  mux2x4 e13(.EN(1),
              .D0({1'b0, PMA.PA[27], PMA_HOLD[27], 1'b0}),
              .D1({1'b0, PMA.PA[28], PMA_HOLD[28], 1'b0}),
              .SEL({MBX.REFILL_ADR_EN, CSH.ADR_PMA_EN}),
              .B0(MBX.CSH_ADR[27]),
              .B1(MBX.CSH_ADR[28]));
 
-  mux2x4 e14(.EN('1),
+  mux2x4 e14(.EN(1),
              .D0({1'b0, PMA.PA[29], PMA_HOLD[29], 1'b0}),
              .D1({1'b0, PMA.PA[30], PMA_HOLD[30], 1'b0}),
              .SEL({MBX.REFILL_ADR_EN, CSH.ADR_PMA_EN}),
              .B0(MBX.CSH_ADR[29]),
              .B1(MBX.CSH_ADR[30]));
 
-  mux2x4  e7(.EN('1),
+  mux2x4  e7(.EN(1),
              .D0({1'b0, PMA.PA[31], PMA_HOLD[31], 1'b0}),
              .D1({1'b0, PMA.PA[32], PMA_HOLD[32], 1'b0}),
              .SEL({MBX.REFILL_ADR_EN, CSH.ADR_PMA_EN}),
              .B0(MBX.CSH_ADR[31]),
              .B1(MBX.CSH_ADR[32]));
 
-  mux2x4  e2(.EN('1),
+  mux2x4  e2(.EN(1),
              .D0({1'b0, PMA.PA[33], PMA_HOLD[33], 1'b0}),
              .D1('0),
              .SEL({MBX.REFILL_ADR_EN, CSH.ADR_PMA_EN}),
@@ -106,16 +106,16 @@ module mbc(iAPR APR,
              .D1({MBC.PMA_HOLD[31:33], 1'b0}),
              .B({MBOX.CACHE_ADR[31:33], ignoredE3}));
 
-  mux2x4 e23(.EN('1),
+  mux2x4 e23(.EN(1),
              .SEL({MBX.REFILL_ADR_EN, ~MBC.FIRST_WD_ADR_SEL}),
              .D0({{2{MBOX.PMA[34]}}, PMA_HOLD[34], MBOX.MB_SEL[2]}),
              .D1({{2{MBOX.PMA[35]}}, PMA_HOLD[35], MBOX.MB_SEL[1]}),
              .B0(MBOX.CACHE_ADR[34]),
              .B1(MBOX.CACHE_ADR[35]));
 
-  USR4 e18(.S0('0),
+  USR4 e18(.S0(0),
            .D({CSH.MATCH_HOLD_IN, MBOX.PMA[34:35]}),
-           .S3('0),
+           .S3(0),
            .SEL({2{MBX.REFILL_HOLD}}),
            .CLK(clk),
            .Q({MATCH_HOLD, PMA_HOLD[34:35]}));
@@ -128,14 +128,14 @@ module mbc(iAPR APR,
 
 
   // MBC2 p.190
-  USR4 e58(.S0('0),
+  USR4 e58(.S0(0),
            .D({CSH.WR_FROM_MEM_NXT | MBX.CCA_INVAL_T4 | CSH.EBOX_WR_T4_IN | CSH.CHAN_WR_T5_IN |
                MBC.CSH_DATA_CLR_T1 & ~CSH.ANY_VAL_HOLD & ~CSH.ONE_WORD_RD,
                MBX.WRITEBACK_T2    | MBX.CCA_INVAL_T4 | CSH.EBOX_WR_T4_IN | CSH.CHAN_WR_T5_IN |
                MBC.CSH_DATA_CLR_T1 & ~CSH.ANY_VAL_HOLD & ~CSH.ONE_WORD_RD,
                MBC.CSH_DATA_CLR_T1 & ~CSH.ANY_VAL_HOLD & ~CSH.ONE_WORD_RD,
                CSH.CACHE_WR_IN}),
-           .S3('0),
+           .S3(0),
            .SEL(2'b00),
            .CLK(clk),
            .Q({CSH_VAL_WR_PLS_FF, CSH_WR_WR_PLS_FF, CSH_ADR_WR_PLS_FF, CSH_WR_DATA_FF}));
@@ -294,7 +294,7 @@ module mbc(iAPR APR,
   always_ff @(posedge clk) CORE_RD_IN_PROG <= INIT_COMP;
 
   bit [0:1] ignoredE76;
-  UCR4 e76(.CIN('1),
+  UCR4 e76(.CIN(1),
            .CLK(clk),
            .SEL({INIT_COMP & CORE_RD_IN_PROG,
                  CORE_RD_IN_PROG & ~MBC.CORE_DATA_VALID & RQ_0B & INIT_COMP |
@@ -303,21 +303,21 @@ module mbc(iAPR APR,
            .COUT(),
            .Q({ignoredE76, MBC.CORE_ADR}));
 
-  USR4 e57(.S0('0),
+  USR4 e57(.S0(0),
            .D(MBX.RQ_IN),
-           .S3('0),
+           .S3(0),
            .SEL({2{RQ_HOLD}}),
            .CLK(clk),
            .Q(MBOX.MEM_RQ));
 
-  USR4 e63(.S0('0),
+  USR4 e63(.S0(0),
            .D(MBX.RQ_IN),
-           .S3('0),
+           .S3(0),
            .SEL({RQ_HOLD, RQ_HOLD & ~MBOX.ACKN_PULSE & RQ_A[0]}),
            .CLK(clk),
            .Q(RQ_A));
 
-  USR4 e69(.S0('0),
+  USR4 e69(.S0(0),
            .D(MBX.RQ_IN),
            .S3(~INIT_COMP & RQ_0B),
            .SEL({MEM_START_RD | INIT_COMP, INIT_COMP & ~MBC.CORE_DATA_VALID & RQ_0B}),
@@ -325,9 +325,9 @@ module mbc(iAPR APR,
            .Q({RQ_0B, e69SR}));
 
   bit ignoredE62;
-  USR4 e62(.S0('0),
+  USR4 e62(.S0(0),
            .D({MBX.MEM_RD_RQ_IN, PMA.ADR_PAR, {2{MBX.MEM_WR_RQ_IN}}}),
-           .S3('0),
+           .S3(0),
            .SEL({2{RQ_HOLD}}),
            .CLK(clk),
            .Q({MBOX.MEM_RD_RQ, PMA_ADR_PAR_HOLD, ignoredE62, MBOX.MEM_WR_RQ}));
