@@ -30,7 +30,6 @@ module cra(iAPR APR,
 
   tCRADR dispMux;
   tCRADR diagAdr;
-  tCRADR stack[15:0];
   tCRADR SBR_RET;
 
   bit dispEn00_03, dispEn00_07, dispEn30_37;
@@ -67,20 +66,19 @@ module cra(iAPR APR,
 
   assign SHORT_INDIR_WORD = ~CON.LONG_EN | ~EDP.ARX[1];
   assign CALL_FORCE_1777 = CRAM.CALL | CLK.FORCE_1777;
-  assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
 
   // CRA2 p.344
   always_comb begin
+    dispMux = '0;
 
-    if (dispEn00_03) case (CRAM.DISP[3:4])
+    if (dispEn00_03) unique case (CRAM.DISP[3:4])
                      2'b00: dispMux[0:6] = diagAdr[0:6];
                      2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
                      2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
-                     2'b11: dispMux[0:6] = SBR_RET;
+                     2'b11: dispMux[0:6] = SBR_RET[0:6];
                      endcase
-    else dispMux[0:6] = '0;
 
-    if (dispEn00_07) case (CRAM.DISP[2:4])
+    if (dispEn00_07) unique case (CRAM.DISP[2:4])
                      3'b000: dispMux[7:10] = diagAdr[7:10];
                      3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
                      3'b010: dispMux[7:10] = CRA.AREAD[7:10];
@@ -90,7 +88,7 @@ module cra(iAPR APR,
                      3'b110: dispMux[7:10] = CON.NICOND[7:10];
                      3'b111: dispMux[7:10] = SHM.SH[0:3];
                      endcase
-    else if (dispEn30_37) case (CRAM.DISP[2:4])
+    else if (dispEn30_37) unique case (CRAM.DISP[2:4])
                           3'b000: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.MQ[34:35]};
                           3'b001: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2]};
                           3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0]};
@@ -102,10 +100,9 @@ module cra(iAPR APR,
                           3'b111: dispMux[7:10] = eaType[7:10];
                           endcase
     else begin
-      dispMux[7:9] = '0;
 
-      if (CON.SKIP_EN_40_47) case (CRAM.COND[3:5])
-                             3'b000: dispMux[10] = '0; // XXX? CRA2 SPARE H is backplane signal unknown value
+      if (CON.SKIP_EN_40_47) unique case (CRAM.COND[3:5])
+                             3'b000: dispMux[10] = 0; // XXX? CRA2 SPARE H is backplane signal unknown value
                              3'b001: dispMux[10] = ~SHM.AR_PAR_ODD;
                              3'b010: dispMux[10] = EDP.BR[0];
                              3'b011: dispMux[10] = EDP.ARX[0];
@@ -114,7 +111,7 @@ module cra(iAPR APR,
                              3'b110: dispMux[10] = IR.ACeq0;
                              3'b111: dispMux[10] = SCD.SC_SIGN;
                              endcase
-      else if (CON.SKIP_EN_50_57) case (CRAM.COND[3:5])
+      else if (CON.SKIP_EN_50_57) unique case (CRAM.COND[3:5])
                                   3'b000: dispMux[10] = MCL.PC_SECTION_0;
                                   3'b001: dispMux[10] = SCD.SCAD_SIGN;
                                   3'b010: dispMux[10] = ~SCD.SCADeq0;
@@ -124,7 +121,6 @@ module cra(iAPR APR,
                                   3'b110: dispMux[10] = ~IR.ADeq0;
                                   3'b111: dispMux[10] = ~VMA.LOCAL_AC_ADDRESS;
                                   endcase
-      else dispMux[10] = '0;
     end
   end
 
@@ -138,11 +134,19 @@ module cra(iAPR APR,
 
   assign CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : '0;
 
+  bit RET_AND_not1777, CALL_RESET, CALL_RESET_1777;
+  assign RET_AND_not1777 = CTL.DISP_RETURN & ~CLK.FORCE_1777;
+  assign CALL_RESET = RESET | CRAM.CALL;
+  assign CALL_RESET_1777 = CALL_RESET | CLK.FORCE_1777;
+
+  `ifdef THIS_IS_BAROQUE_AND_BROKE
+
   tCRADR LOC;
+  // E67, E72, E76 combined
   always_ff @(posedge clk) LOC <= CRA.CRADR;
 
   ////////////////////////////////////////////////////////////////
-  // The amazingly baroque call/return stack implementation
+  // The opaque, baroque, tedious, and painful call/return stack implementation
   //
   // STACK ADDRESS SEQUENCE
   // Y  ABCD EFGH  Z  |  WRITE  READ
@@ -172,11 +176,6 @@ module cra(iAPR APR,
   bit stackAdrY, stackAdrZ;
   bit SEL_CALL, STACK_WRITE;
 
-  bit RET_AND_not1777, CALL_RESET, CALL_RESET_1777;
-  assign RET_AND_not1777 = ret & ~CLK.FORCE_1777;
-  assign CALL_RESET = RESET | CRAM.CALL;
-  assign CALL_RESET_1777 = CALL_RESET | CLK.FORCE_1777;
-
   assign SEL_CALL = STACK_WRITE & RET_AND_not1777; // NOTE wire-AND
 
   // XXX STACK_WRITE is delayed 13ns in CRA4 from CRA3 CLK A H by DL1.
@@ -199,17 +198,45 @@ module cra(iAPR APR,
   assign stackAdrY = stackAdrA ^ stackAdrD;
   assign stackAdrZ = stackAdrF ^ stackAdrE;
 
+  `define SP e62Q
   bit [0:3] e62Q;
   assign e62Q = SEL_CALL ?
                 {stackAdrB, stackAdrC, stackAdrD, stackAdrE} :
                 {stackAdrD, stackAdrE, stackAdrF, stackAdrG};
 
-  // E67, E72, E76 combined
-  always @(posedge STACK_WRITE) stack[e62Q] <= LOC;
-
   // E66, E71, E81 combined
   always @(posedge clk) if (~CALL_FORCE_1777 && ~RET_AND_not1777) SBR_RET <= stack[e62Q];
 
+  `else                         // MUCH simpler
+
+  // NOTE: CLK FORCE 1777 is done for page faults as a synthetic call
+  // (by asserting CTL SPEC CALL) to 1777 or 3777 depending on which
+  // half of the microcode address space is currently running. The
+  // first microinstruction of the handler is duplicated in both
+  // locations to allow this to work properly. When the PF handler
+  // microsubroutine is done, it just does a RETURN to re-execute the
+  // microinstruction (???) that was running when the fault was
+  // detected. See EK-EBOX-UD-004-OCR "3.4.5.1 CLK FORCE 1777" p.256.
+  //
+  // Stack discipline:
+  // * SP points to next empty loc, overwritten on CALL before SP increment.
+  // * SP pushes toward increasing addresses and pops back to decreasing ones.
+  tCRADR stack[15:0];
+  `define SP realSP
+  bit [0:3] realSP;
+  initial `SP = '0;
+
+  // If this is a CALL or a synthetic call caused by page fail
+  // (FORCE_1777), save current CRADR at TOS and increment SP.
+  // NOTE: This is using the NEGATIVE edge.
+  always @(negedge clk) if (CRAM.CALL || CLK.FORCE_1777) begin
+    stack[`SP] <= CRA.CRADR;
+    `SP <= `SP + 1;
+  end else if (RET_AND_not1777) begin // Pop if returning and no new page fault.
+    SBR_RET <= stack[`SP - 1];
+    `SP <= `SP - 1;
+  end
+  `endif
 
   ////////////////////////////////////////////////////////////////
   // Diagnostics stuff
@@ -228,8 +255,8 @@ module cra(iAPR APR,
 
   always_comb
     if (CRA.EBUSdriver.driving) case (CTL.DIAG[4:6])
-                                3'b000: CRA.EBUSdriver.data[0:5] = {dispEn00_07, dispEn00_03, e62Q};
-                                3'b001: CRA.EBUSdriver.data[0:5] = {CRAM.CALL, CRAM.DISP[0:4], e62Q};
+                                3'b000: CRA.EBUSdriver.data[0:5] = {dispEn00_07, dispEn00_03, `SP};
+                                3'b001: CRA.EBUSdriver.data[0:5] = {CRAM.CALL, CRAM.DISP[0:4], `SP};
                                 3'b010: CRA.EBUSdriver.data[0:5] = SBR_RET[5:10];
                                 3'b011: CRA.EBUSdriver.data[0:5] = {dispEn30_37, SBR_RET[0:4]};
                                 3'b100: CRA.EBUSdriver.data[0:5] = CRA.CRADR[5:10];
