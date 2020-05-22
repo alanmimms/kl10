@@ -1,3 +1,4 @@
+// Schematic review 2020-05-21 CRA1, CRA2
 `timescale 1ns/1ns
 `include "ebox.svh"
 
@@ -25,9 +26,9 @@ module cra(iAPR APR,
            iSHM SHM,
            iVMA VMA,
            iEBUS.mod EBUS
-);
+           );
 
-  bit [0:11] dispMux;
+  bit [0:10] dispMux;
   bit [0:10] diagAdr;
 
   bit [0:10] stack[15:0];
@@ -44,9 +45,7 @@ module cra(iAPR APR,
   assign RESET = CLK.MR_RESET;
 
   // Required to get CLK to run
-  initial begin
-    CRA.CRADR = '0;
-  end
+  initial CRA.CRADR = '0;
   
   // TEMPORARY? This looks like it belongs to an incompletely
   // implemented feature that might have been called DISP/EA TYPE
@@ -58,82 +57,84 @@ module cra(iAPR APR,
   // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
   // they are simple CRAM storage mapping to logical fields.
 
+  // CRA1 p.343
+
   // Remaining features of E47,E35 are CRAM DISP field decoding.
   assign dispEn00_03 = CRAM.DISP[0:4] == 5'b00011;
   assign dispEn00_07 = CRAM.DISP[0:4] == 5'b00111;
   assign dispEn30_37 = CRAM.DISP[0:4] == 5'b11111;
 
-  assign shortIndirWord = ~CON.LONG_EN | EDP.ARX[1];
+  assign shortIndirWord = ~CON.LONG_EN | ~EDP.ARX[1];
   assign CALL_FORCE_1777 = CRAM.CALL | CLK.FORCE_1777;
   assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
   assign retNotForce1777 = ret & ~CLK.FORCE_1777;
 
-  always_comb
+  // CRA2 p.344
+  always_comb begin
+    dispMux = '0;
 
-    if (CON.DISP_EN_00_03) begin
-      case (CRAM.DISP[3:4])
-      2'b00: dispMux[0:6] = diagAdr[0:6];
-      2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
-      2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
-      2'b11: dispMux[0:6] = sbrRet;
-      endcase
-    end else if (CON.DISP_EN_00_07) begin
-      case (CRAM.DISP[2:4])
-      3'b000: dispMux[7:10] = diagAdr[7:10];
-      3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
-      3'b010: dispMux[7:10] = CRA.AREAD[7:10];
-      3'b011: dispMux[7:10] = sbrRet[7:10];
-      3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
-      3'b101: dispMux[7:10] = CON.SR[0:3];
-      3'b110: dispMux[7:10] = CON.NICOND[7:10];
-      3'b111: dispMux[7:10] = SHM.SH[0:3];
-      endcase
-    end else if (CON.DISP_EN_30_37) begin
-      case (CRAM.DISP[2:4])
-      3'b000: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.MQ[34:35], MCL.PC_SECTION_0};
-      3'b001: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2], SCD.SCAD_SIGN};
-      3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCD.SCADeq0};
-      3'b011: dispMux[7:10] = {1'b0, IR.DRAM_B[0:2], EDP.ADX[0]};
-      3'b100: dispMux[7:10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN, EDP.AD_CRY[-2]};
-      3'b101: dispMux[7:10] = {1'b0, IR.NORM[8:10], EDP.AD[0]};
-      3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
-                               EDP.ARX[13], SHM.INDEXED, ~IR.ADeq0};
-      3'b111: dispMux[7:10] = {eaType[7:10], VMA.LOCAL_AC_ADDRESS};
-      endcase
-    end else if (CON.SKIP_EN_40_47) begin
-      case (CRAM.COND[3:5])
-      3'b000: dispMux[10] = 0;
-      3'b001: dispMux[10] = SHM.AR_PAR_ODD;
-      3'b010: dispMux[10] = EDP.BR[0];
-      3'b011: dispMux[10] = EDP.ARX[0];
-      3'b100: dispMux[10] = EDP.AR[18];
-      3'b101: dispMux[10] = EDP.AR[0];
-      3'b110: dispMux[10] = IR.ACeq0;
-      3'b111: dispMux[10] = SCD.SC_SIGN;
-      endcase
-    end else if (CON.SKIP_EN_50_57) begin
-      case (CRAM.COND[3:5])
-      3'b000: dispMux[10] = MCL.PC_SECTION_0;
-      3'b001: dispMux[10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2], SCD.SCAD_SIGN};
-      3'b010: dispMux[10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0], SCD.SCADeq0};
-      3'b011: dispMux[10] = {1'b0, IR.DRAM_B[0:2], EDP.ADX[0]};
-      3'b100: dispMux[10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN, EDP.AD_CRY[-2]};
-      3'b101: dispMux[10] = {1'b0, IR.NORM[8:10], EDP.AD[0]};
-      3'b110: dispMux[10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
-                             EDP.ARX[13], SHM.INDEXED, ~IR.ADeq0};
-      3'b111: dispMux[10] = {eaType[7:10], VMA.LOCAL_AC_ADDRESS};
-      endcase
-    end else
-      dispMux = 0;
+    if (CON.DISP_EN_00_03) case (CRAM.DISP[3:4])
+                           2'b00: dispMux[0:6] = diagAdr[0:6];
+                           2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
+                           2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
+                           2'b11: dispMux[0:6] = sbrRet;
+                           endcase    
 
+    if (CON.DISP_EN_00_07) case (CRAM.DISP[2:4])
+                           3'b000: dispMux[7:10] = diagAdr[7:10];
+                           3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
+                           3'b010: dispMux[7:10] = CRA.AREAD[7:10];
+                           3'b011: dispMux[7:10] = sbrRet[7:10];
+                           3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
+                           3'b101: dispMux[7:10] = CON.SR[0:3];
+                           3'b110: dispMux[7:10] = CON.NICOND[7:10];
+                           3'b111: dispMux[7:10] = SHM.SH[0:3];
+                           endcase
+    else if (CON.DISP_EN_30_37) case (CRAM.DISP[2:4])
+                                3'b000: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.MQ[34:35]};
+                                3'b001: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2]};
+                                3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0]};
+                                3'b011: dispMux[7:10] = {1'b0, IR.DRAM_B[0:2]};
+                                3'b100: dispMux[7:10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN};
+                                3'b101: dispMux[7:10] = {1'b0, IR.NORM[8:10]};
+                                3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
+                                                         EDP.ARX[13], SHM.INDEXED};
+                                3'b111: dispMux[7:10] = eaType[7:10];
+                                endcase
+    else dispMux[7:10] = '0;
+
+    if (CON.SKIP_EN_40_47) case (CRAM.COND[3:5])
+                                3'b000: dispMux[10] = '0; // XXX? CRA2 SPARE H is backplane signal unknown value
+                                3'b001: dispMux[10] = ~SHM.AR_PAR_ODD;
+                                3'b010: dispMux[10] = EDP.BR[0];
+                                3'b011: dispMux[10] = EDP.ARX[0];
+                                3'b100: dispMux[10] = EDP.AR[18];
+                                3'b101: dispMux[10] = EDP.AR[0];
+                                3'b110: dispMux[10] = IR.ACeq0;
+                                3'b111: dispMux[10] = SCD.SC_SIGN;
+                                endcase
+     else if (CON.SKIP_EN_50_57) case (CRAM.COND[3:5])
+                                 3'b000: dispMux[10] = MCL.PC_SECTION_0;
+                                 3'b001: dispMux[10] = SCD.SCAD_SIGN;
+                                 3'b010: dispMux[10] = ~SCD.SCADeq0;
+                                 3'b011: dispMux[10] = EDP.ADX[0];
+                                 3'b100: dispMux[10] = EDP.AD_CRY[-2];
+                                 3'b101: dispMux[10] = ~EDP.AD[0];
+                                 3'b110: dispMux[10] = ~IR.ADeq0;
+                                 3'b111: dispMux[10] = ~VMA.LOCAL_AC_ADDRESS;
+                                 endcase
+  end
 
   // CRA.CRADR
   always @(posedge CLK.CRA) if (RESET) CRA.CRADR <= '0;
-                            else CRA.CRADR <= CRAM.J | {11{CLK.FORCE_1777}} | dispMux;
+                            else CRA.CRADR <= CRAM.J |
+                                              {1'b0, {9{CLK.FORCE_1777}}, 1'b0} |
+                                              dispMux |
+                                              {10'b0, CON.COND_ADR_10};
   
 
   ////////////////////////////////////////////////////////////////
-  // The incredibly baroque call/return stack implementation
+  // The amazingly baroque call/return stack implementation
   //
   // STACK ADDRESS SEQUENCE
   // Y  ABCD EFGH  Z  |  WRITE  READ
@@ -183,14 +184,14 @@ module cra(iAPR APR,
     stackAdrEH <= 4'b0000;
   end else if (CALL_FORCE_1777) begin           // 0in+0
     stackAdrAD <= {stackAdrY, {3{retNotForce1777}}};
-    stackAdrEH <= {stackAdrD, 3'b000};
-  end else if (retNotForce1777) begin         // 3in+3
-    stackAdrAD <= {{3{retNotForce1777}}, stackAdrE};
-    stackAdrEH <= {3'b000, stackAdrZ};
-  end else begin                              // HOLD
-    stackAdrAD <= stackAdrAD;
-    stackAdrEH <= stackAdrEH;
-  end
+           stackAdrEH <= {stackAdrD, 3'b000};
+         end else if (retNotForce1777) begin         // 3in+3
+           stackAdrAD <= {{3{retNotForce1777}}, stackAdrE};
+           stackAdrEH <= {3'b000, stackAdrZ};
+         end else begin                              // HOLD
+           stackAdrAD <= stackAdrAD;
+           stackAdrEH <= stackAdrEH;
+         end
 
   always @(posedge CLK.CRA) if (~CALL_FORCE_1777 && ~retNotForce1777) sbrRet <= stack[stackAdr];
   always @(posedge stackWrite) stack[stackAdr] <= CRA.CRADR;
