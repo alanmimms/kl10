@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="98731201fs"></ZoomStartTime>
-      <ZoomEndTime time="100253760fs"></ZoomEndTime>
-      <Cursor1Time time="98848321fs"></Cursor1Time>
+      <ZoomStartTime time="18081450fs"></ZoomStartTime>
+      <ZoomEndTime time="18642451fs"></ZoomEndTime>
+      <Cursor1Time time="18548950fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+      <ValueColumnWidth column_width="112"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="33" />
+   <WVObjectSize size="30" />
    <wave_markers>
       <marker label="" time="18228950" />
    </wave_markers>
@@ -215,36 +215,11 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="label">CLK.CRA</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/CRAM/CALL">
-      <obj_property name="ElementShortName">CALL</obj_property>
-      <obj_property name="ObjectShortName">CALL</obj_property>
-      <obj_property name="CustomSignalColor">#FF0080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/DISP_RET">
-      <obj_property name="ElementShortName">DISP_RET</obj_property>
-      <obj_property name="ObjectShortName">DISP_RET</obj_property>
-      <obj_property name="CustomSignalColor">#FF0080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/DISP_RETURN">
-      <obj_property name="ElementShortName">DISP_RETURN</obj_property>
-      <obj_property name="ObjectShortName">DISP_RETURN</obj_property>
-      <obj_property name="CustomSignalColor">#FF0080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
       <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/ebox0/cra0/dispMux">
-      <obj_property name="ElementShortName">dispMux[0:10]</obj_property>
-      <obj_property name="ObjectShortName">dispMux[0:10]</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/CRAM/MEM">
       <obj_property name="ElementShortName">MEM[0:3]</obj_property>
@@ -455,6 +430,89 @@
          <obj_property name="ObjectShortName">DRAM_PAR_ERR</obj_property>
          <obj_property name="CustomSignalColor">#FF0000</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1135">
+      <obj_property name="label">CRA-stack</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/top/ebox0/cra0/stack">
+         <obj_property name="ElementShortName">stack[15:0][0:10]</obj_property>
+         <obj_property name="ObjectShortName">stack[15:0][0:10]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/ebox0/cra0/realSP">
+         <obj_property name="ElementShortName">realSP[0:3]</obj_property>
+         <obj_property name="ObjectShortName">realSP[0:3]</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/ebox0/cra0/SBR_RET">
+         <obj_property name="ElementShortName">SBR_RET[0:10]</obj_property>
+         <obj_property name="ObjectShortName">SBR_RET[0:10]</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CLK/FORCE_1777">
+         <obj_property name="ElementShortName">FORCE_1777</obj_property>
+         <obj_property name="ObjectShortName">FORCE_1777</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CRAM/CALL">
+         <obj_property name="ElementShortName">CALL</obj_property>
+         <obj_property name="ObjectShortName">CALL</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/DISP_RET">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">DISP_RET</obj_property>
+         <obj_property name="ObjectShortName">DISP_RET</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="label">CTL.DISP_RET</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/DISP_RETURN">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">DISP_RETURN</obj_property>
+         <obj_property name="ObjectShortName">DISP_RETURN</obj_property>
+         <obj_property name="CustomSignalColor">#FF0080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="label">CTL.DISP_RETURN</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CRAM/DISP">
+         <obj_property name="ElementShortName">DISP[0:4]</obj_property>
+         <obj_property name="ObjectShortName">DISP[0:4]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+         <obj_property name="LABELRADIX">false</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/cra0/dispEn00_03">
+         <obj_property name="ElementShortName">dispEn00_03</obj_property>
+         <obj_property name="ObjectShortName">dispEn00_03</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/cra0/dispEn00_07">
+         <obj_property name="ElementShortName">dispEn00_07</obj_property>
+         <obj_property name="ObjectShortName">dispEn00_07</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/ebox0/cra0/dispEn30_37">
+         <obj_property name="ElementShortName">dispEn30_37</obj_property>
+         <obj_property name="ObjectShortName">dispEn30_37</obj_property>
+         <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/ebox0/cra0/dispMux">
+         <obj_property name="ElementShortName">dispMux[0:10]</obj_property>
+         <obj_property name="ObjectShortName">dispMux[0:10]</obj_property>
+         <obj_property name="CustomSignalColor">#800080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="Radix">OCTALRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="group" fp_name="group1262">
