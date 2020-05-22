@@ -23,10 +23,10 @@ module memory(input CROBAR,
   bit [0:35] aD, bD;
   bit aParity, bParity;
 
-  always @(posedge SBUS.START_A) aClk <= '0;
+  always @(posedge SBUS.START_A) aClk <= 0;
   always @(negedge SBUS.CLK_INT) aClk <= ~aClk;
 
-  always @(posedge SBUS.START_B) bClk <= '0;
+  always @(posedge SBUS.START_B) bClk <= 0;
   always @(posedge SBUS.CLK_INT) bClk <= ~bClk;
 
   assign SBUS.D = aClk ? aD : bD;
@@ -80,15 +80,15 @@ module memPhase(input CROBAR,
     PARITY = ^memory[{addr[12:33], wo}];
   end else begin
     D = '0;
-    PARITY = '0;
+    PARITY = 0;
   end
 
   always_ff @(posedge clk) if (CROBAR) begin
     addr <= '0;
     wo <= '0;
     toAck <= '0;
-    ACKN <= '0;
-    VALID <= '0;
+    ACKN <= 0;
+    VALID <= 0;
   end else if (START) begin     // A transfer is starting or continuing
     addr <= SBUS.ADR;           // Address of first word we do
     wo <= SBUS.ADR[34:35];      // Word offset we increment mod 4
@@ -96,7 +96,7 @@ module memPhase(input CROBAR,
   end
 
   always_ff @(posedge clk) if (toAck) begin
-    wo <= wo + '1;
-    toAck <= toAck << '1;
+    wo <= wo + 1;
+    toAck <= toAck << 1;
   end
 endmodule

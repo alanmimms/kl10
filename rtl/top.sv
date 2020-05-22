@@ -72,7 +72,7 @@ module top(input clk,
 `endif
 
   // Mux for EBUS data lines
-  always_comb unique case ('1)
+  always_comb unique case (1)
               default: EBUS.data = '0;
               APR.EBUSdriver.driving:        EBUS.data = APR.EBUSdriver.data;
               CON.EBUSdriver.driving:        EBUS.data = CON.EBUSdriver.data;

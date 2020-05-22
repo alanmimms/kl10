@@ -1,6 +1,6 @@
 `timescale 1ns/1ns
 // This is like MC10136 ECL universal up-down counter but all positive logic
-module UCR4(input RESET = '0,
+module UCR4(input RESET = 0,
             input [0:3] D,
             input CIN,
             input [0:1] SEL,
@@ -18,10 +18,10 @@ module UCR4(input RESET = '0,
   assign carryClk = incOrDec ? CIN : CLK;
 
   always_comb unique case (SEL)
-              2'b00: COUT = '1;           // LOAD
+              2'b00: COUT = 1;            // LOAD
               2'b01: COUT = Q == '0;      // DEC
               2'b10: COUT = Q == 4'b1111; // INC
-              2'b11: COUT = '0;           // HOLD
+              2'b11: COUT = 0;            // HOLD
               endcase
   
   always_ff @(posedge carryClk or posedge RESET) if (RESET) begin

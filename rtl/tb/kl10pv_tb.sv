@@ -66,13 +66,13 @@ module kl10pv_tb(iAPR APR,
     for (int a = 0; a < $size(ebox0.edp0.fm.mem); ++a) ebox0.edp0.fm.mem[a] <= '0;
     for (int a = 0; a < $size(memory0.mem); ++a) memory0.mem[a] <= '0;
 
-    CON.CONO_200000 <= '0;
+    CON.CONO_200000 <= 0;
   end
 
   tCRAM cram137;
   initial begin
-    #10 CROBAR <= '1;     // CROBAR stays asserted for a long time
-    #1000 CROBAR <= '0;   // 1us CROBAR for the 21st century (and sims)
+    #10 CROBAR <= 1;     // CROBAR stays asserted for a long time
+    #1000 CROBAR <= 0;   // 1us CROBAR for the 21st century (and sims)
 
     #100 KLMasterReset();
 
@@ -186,7 +186,7 @@ module kl10pv_tb(iAPR APR,
     // XXX TBD
 
     // Turn off the NXM bit (FE uses CONO APR,,22000).
-    MBOX.NXM_ERR <= '0;
+    MBOX.NXM_ERR <= 0;
 
     ////////////////////////////////////////////////////////////////
     // Falls through into LXBRC 10$ symbol for end of boot loader
@@ -208,49 +208,49 @@ module kl10pv_tb(iAPR APR,
 
       // Clear/disable selected flags
       // SBUS error, NXM, IO page fail
-      MBOX.SBUS_ERR <= '0;
-      ebox0.apr0.SBUS_ERR_EN <= '0;
-      MBOX.NXM_ERR <= '0;
-      ebox0.apr0.NXM_ERR_EN <= '0;
-      APR.SET_IO_PF_ERR <= '0;
-      ebox0.apr0.IO_PF_ERR_EN <= '0;
+      MBOX.SBUS_ERR <= 0;
+      ebox0.apr0.SBUS_ERR_EN <= 0;
+      MBOX.NXM_ERR <= 0;
+      ebox0.apr0.NXM_ERR_EN <= 0;
+      APR.SET_IO_PF_ERR <= 0;
+      ebox0.apr0.IO_PF_ERR_EN <= 0;
 
       // MB parity, cache dir, addr parity
-      MBOX.MB_PAR_ERR <= '0;
-      ebox0.apr0.MB_PAR_ERR_EN <= '0;
-      MBOX.CSH_ADR_PAR_ERR <= '0;
-      ebox0.apr0.C_DIR_P_ERR_EN <= '0;
-      ebox0.apr0.MBOX.MBOX_ADR_PAR_ERR <= '0;
-      ebox0.apr0.S_ADR_P_ERR_EN <= '0;
+      MBOX.MB_PAR_ERR <= 0;
+      ebox0.apr0.MB_PAR_ERR_EN <= 0;
+      MBOX.CSH_ADR_PAR_ERR <= 0;
+      ebox0.apr0.C_DIR_P_ERR_EN <= 0;
+      ebox0.apr0.MBOX.MBOX_ADR_PAR_ERR <= 0;
+      ebox0.apr0.S_ADR_P_ERR_EN <= 0;
 
       // power fail, sweep done
-      PWR_WARN <= '0;
-      ebox0.apr0.PWR_FAIL <= '0;
-      APR.SWEEP_BUSY <= '0;
-      ebox0.apr0.SWEEP_DONE_EN <= '0;
+      PWR_WARN <= 0;
+      ebox0.apr0.PWR_FAIL <= 0;
+      APR.SWEEP_BUSY <= 0;
+      ebox0.apr0.SWEEP_DONE_EN <= 0;
 
       // PI interrupt level #0
-      ebox0.pi0.PIC.APR_PIA <= '0;
+      ebox0.pi0.PIC.APR_PIA <= 0;
     end
 
     ////////////
     // CONO PI,10000            ; Reset PI
     begin
-      ebox0.pi0.ON <= '0;
-      ebox0.pi0.GEN <= '0;
-      ebox0.pi0.PIR_EN <= '0;
-      ebox0.pi0.PI_REQ_SET <= '0;
-      ebox0.pi0.PIH <= '0;
-      ebox0.pi0.ACTIVE <= '0;
+      ebox0.pi0.ON <= 0;
+      ebox0.pi0.GEN <= 0;
+      ebox0.pi0.PIR_EN <= 0;
+      ebox0.pi0.PI_REQ_SET <= 0;
+      ebox0.pi0.PIH <= 0;
+      ebox0.pi0.ACTIVE <= 0;
     end
 
     ////////////
     // CONO PAG, 0              ; Paging system clear
     begin
-      CON.CACHE_LOOK_EN <= '0;
-      CON.CACHE_LOAD_EN <= '0;
-      ebox0.con0.WR_EVEN_PAR_DATA <= '0;
-      ebox0.con0.WR_EVEN_PAR_DIR <= '0;
+      CON.CACHE_LOOK_EN <= 0;
+      CON.CACHE_LOAD_EN <= 0;
+      ebox0.con0.WR_EVEN_PAR_DATA <= 0;
+      ebox0.con0.WR_EVEN_PAR_DIR <= 0;
     end
 
     ////////////
@@ -399,7 +399,7 @@ module kl10pv_tb(iAPR APR,
 
     fd = $fopen("../../../../images/boot/boot.exe", "rb");
 
-    while ('1) begin
+    while (1) begin
       nRead = $fread(iowd, fd);
       w = fileWordToWord(iowd);
       nww = w[0:17];
@@ -447,7 +447,7 @@ module kl10pv_tb(iAPR APR,
       string shortName;
       shortName = replace(func.name, "diagf", "");
       EBUS.ds <= func;
-      EBUS.diagStrobe <= '1;            // Strobe this
+      EBUS.diagStrobe <= 1;            // Strobe this
       if (func !== diagfSTEP_CLOCK) $display($time, " %sASSERT ds=%s", indent, shortName);
     end
 
@@ -457,7 +457,7 @@ module kl10pv_tb(iAPR APR,
       string shortName;
       shortName = replace(func.name, "diagf", "");
       EBUS.ds <= diagfIdle;
-      EBUS.diagStrobe <= '0;
+      EBUS.diagStrobe <= 0;
       if (func !== diagfSTEP_CLOCK) $display($time, " %sDEASSERT ds=%s", indent, shortName);
     end
 
@@ -475,8 +475,8 @@ module kl10pv_tb(iAPR APR,
       shortName = replace(func.name, "diagf", "");
       EBUSdriver.data[18:35] = ebusRH;
       EBUS.ds <= func;
-      EBUS.diagStrobe <= '1;            // Strobe this
-      EBUSdriver.driving <= '1;
+      EBUS.diagStrobe <= 1;            // Strobe this
+      EBUSdriver.driving <= 1;
       $display($time, " %sASSERT ds=%s [EBUS.data.rh=%06o]", indent, shortName, ebusRH);
     end
 
@@ -486,8 +486,8 @@ module kl10pv_tb(iAPR APR,
       string shortName;
       shortName = replace(func.name, "diagf", "");
       EBUS.ds <= diagfIdle;
-      EBUS.diagStrobe <= '0;
-      EBUSdriver.driving <= '0;
+      EBUS.diagStrobe <= 0;
+      EBUSdriver.driving <= 0;
       $display($time, " %sDEASSERT ds=%s", indent, shortName);
     end
 

@@ -41,15 +41,15 @@ module ir(iIR IR,
      .din('0),                    // XXX
      .dout(DRAMdata),
      .addr(DRADR),
-     .oe('1),
-     .wea('0));                   // XXX
+     .oe(1),
+     .wea(0));                   // XXX
 `else
   dram_mem dram(.clka(IR_CLK),
                 .addra(DRADR),
                 .douta(DRAMdata),
                 .dina('0),
-                .wea('0),
-                .ena('1));
+                .wea(0),
+                .ena(1));
 `endif
 
   // p.210 shows older KL10 DRAM addressing.

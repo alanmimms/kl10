@@ -110,11 +110,11 @@ module mtr(iCHC CHC,
     ACCT_ON <= mtrEBUS[23];      
   end
 
-  always_ff @(posedge CONO_MTR, posedge RESET) if (RESET) TIME_ON <= '0;
+  always_ff @(posedge CONO_MTR, posedge RESET) if (RESET) TIME_ON <= 0;
                                                else TIME_ON <= TIME_ON & ~mtrEBUS[24] | mtrEBUS[25];
 
-  UCR4 e88(.RESET('0),
-           .CIN('1),
+  UCR4 e88(.RESET(0),
+           .CIN(1),
            .SEL({1'b0, COUNT_TEN_USEC}),
            .D({4{~RESET}}),
            .CLK(INTERVAL_CLK),
@@ -122,8 +122,8 @@ module mtr(iCHC CHC,
            .COUT(TEN_USEC));
 
   bit e60COUT;
-  UCR4 e60(.RESET('0),
-           .CIN('1),
+  UCR4 e60(.RESET(0),
+           .CIN(1),
            .CLK(MBOX_CLK),
            .SEL({RESET | MTR._1_MHZ, 1'b0}),
            .D(4'b0000),         // Note assumes MBOX_CLK of 33MHz
@@ -131,7 +131,7 @@ module mtr(iCHC CHC,
            .COUT(e60COUT));
 
   bit [1:3] e59Unused;
-  UCR4 e59(.RESET('0),
+  UCR4 e59(.RESET(0),
            .CIN(e60COUT),
            .COUT(),
            .SEL({RESET | MTR._1_MHZ, 1'b0}),
@@ -168,25 +168,25 @@ module mtr(iCHC CHC,
 
   always_ff @(posedge CONO_TIM, posedge RESET) PERIOD <= mtrEBUS[24:35];
 
-  always_ff @(posedge CONO_TIM, posedge RESET) if (RESET) INTERVAL_ON <= '0;
+  always_ff @(posedge CONO_TIM, posedge RESET) if (RESET) INTERVAL_ON <= 0;
                                                else INTERVAL_ON <= mtrEBUS[21];
 
-  always_ff @(posedge INTERVAL_CLK) if (CONO_TIM) INTERVAL_MATCH_INH <= '1;
+  always_ff @(posedge INTERVAL_CLK) if (CONO_TIM) INTERVAL_MATCH_INH <= 1;
                                     else INTERVAL_MATCH_INH <= INTERVAL_OFF;
 
-  always_ff @(posedge INTERVAL_CLK) if (CONO_TIM & mtrEBUS[18]) RESET_INTERVAL <= '1;
+  always_ff @(posedge INTERVAL_CLK) if (CONO_TIM & mtrEBUS[18]) RESET_INTERVAL <= 1;
                                     else RESET_INTERVAL <= RESET;
 
-  always_ff @(posedge INTERVAL_CLK) if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET)) INTERVAL_OVRFLO <= '0;
+  always_ff @(posedge INTERVAL_CLK) if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET)) INTERVAL_OVRFLO <= 0;
                                     else INTERVAL_OVRFLO <= e42q6 | INTERVAL_OVRFLO;
 
-  always_ff @(posedge INTERVAL_CLK) if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET)) INTERVAL_DONE <= '0;
+  always_ff @(posedge INTERVAL_CLK) if ((CONO_TIM | RESET) & (mtrEBUS[22] & RESET)) INTERVAL_DONE <= 0;
                                     else INTERVAL_DONE <= INTERVAL_DONE | e42q6 | INTERVAL_MATCH;
 
-  always @(posedge TIME_CLK | RESET_PLSD, posedge RESET_TIME) if (RESET_TIME) CLR_TIME <= '1;
+  always @(posedge TIME_CLK | RESET_PLSD, posedge RESET_TIME) if (RESET_TIME) CLR_TIME <= 1;
                                                               else CLR_TIME <= RESET;
 
-  always @(posedge PERF_CNT_CLK | RESET_PLSD, posedge RESET_PERF) if (RESET_PERF) CLR_PERF_CNT <= '1;
+  always @(posedge PERF_CNT_CLK | RESET_PLSD, posedge RESET_PERF) if (RESET_PERF) CLR_PERF_CNT <= 1;
                                                                   else CLR_PERF_CNT <= RESET;
 
 
@@ -205,7 +205,7 @@ module mtr(iCHC CHC,
   always_ff @(posedge LOAD_PA_RIGHT) PROBE_LOW_PA_EN <= mtrEBUS[28];
   always_ff @(posedge LOAD_PA_RIGHT) PROBE_PA_DONT_CARE <= mtrEBUS[29];
 
-  mux e31(.en('1),
+  mux e31(.en(1),
           .sel(PI_LEVEL),
           .d({e39q14, PI_PA_EN[1:7]}),
           .q(CURRENT_PI_PA_EN));
@@ -264,7 +264,7 @@ module mtr(iCHC CHC,
           .q(e66Q));
 
   bit [2:3] unusedE71;
-  UCR4 e71(.CIN('1),
+  UCR4 e71(.CIN(1),
            .SEL({e66Q | |CHAN_BUSY[0:1], e66Q | RESET}),
            .CLK(MBOX.CH_T1),
            .D({4{e66Q}}),
@@ -403,6 +403,6 @@ module MTRcounter
    output bit carry);
 
   bit [N:M] count;
-  always_ff @(posedge clk) if (clear) count <= '0;
+  always_ff @(posedge clk) if (clear) count <= 0;
                            else count <= count + 1;
 endmodule

@@ -124,7 +124,7 @@ module apr(iAPR APR,
      .din({SHM.AR_EXTENDED, SHM.AR_PAR_ODD ^ SHM.AR_EXTENDED}),
      .dout({APR.FM_EXTENDED, fm36XORin}),
      .addr({APR.FM_BLOCK, APR.FM_ADR}),
-     .oe('1),
+     .oe(1),
      .wea(~clk & CON.FM_WRITE_PAR & APR.SPARE)); // ??? WTF ???
 `else
   fm_ext_mem fm_ext(.addra({APR.FM_BLOCK, APR.FM_ADR}),
@@ -150,25 +150,25 @@ module apr(iAPR APR,
   
   bit [9:12] ACplus1, ACplus2, ACplus3, ACplusMAGIC;
 
-  mux e49(.en('1),
+  mux e49(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.AC[9], ACplus1[9], SHM.XR[10], VMA.VMA[32],
               ACplus2[9], ACplus3[9], ACplusMAGIC[9], CRAM.MAGIC[5]}),
           .q(APR.FM_ADR[0]));
 
-  mux e54(.en('1),
+  mux e54(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.AC[10], ACplus1[10], SHM.XR[4], VMA.VMA[33],
               ACplus2[10], ACplus3[10], ACplusMAGIC[10], CRAM.MAGIC[6]}),
           .q(APR.FM_ADR[1]));
 
-  mux e65(.en('1),
+  mux e65(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.AC[11], ACplus1[11], SHM.XR[2], VMA.VMA[34],
               ACplus2[11], ACplus3[11], ACplusMAGIC[11], CRAM.MAGIC[7]}),
           .q(APR.FM_ADR[2]));
 
-  mux e59(.en('1),
+  mux e59(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.AC[12], ACplus1[12], SHM.XR[1], VMA.VMA[35],
               ACplus2[12], ACplus3[12], ACplusMAGIC[12], CRAM.MAGIC[8]}),
@@ -199,7 +199,7 @@ module apr(iAPR APR,
 
   mc10181 e61(.S(CRAM.MAGIC[1:4]),
               .M(CRAM.MAGIC[0]),
-              .CIN('0),
+              .CIN(0),
               .A(APR.AC),
               .B(CRAM.MAGIC[5:8]),
               .COUT(),
@@ -214,21 +214,21 @@ module apr(iAPR APR,
              .D1({1'bX, APR.PREV_BLOCK}),
              .B({ignoredE67, APR.XR_BLOCK}));
 
-  mux e73(.en('1),
+  mux e73(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.CURRENT_BLOCK[0], APR.CURRENT_BLOCK[0], APR.XR_BLOCK[0],
               APR.VMA_BLOCK[0], APR.CURRENT_BLOCK[0], APR.CURRENT_BLOCK[0],
               APR.CURRENT_BLOCK[0], CRAM.MAGIC[2]}),
           .q(APR.FM_BLOCK[0]));
 
-  mux e72(.en('1),
+  mux e72(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.CURRENT_BLOCK[1], APR.CURRENT_BLOCK[1], APR.XR_BLOCK[1],
               APR.VMA_BLOCK[1], APR.CURRENT_BLOCK[1], APR.CURRENT_BLOCK[1],
               APR.CURRENT_BLOCK[1], CRAM.MAGIC[3]}),
           .q(APR.FM_BLOCK[1]));
 
-  mux e71(.en('1),
+  mux e71(.en(1),
           .sel(CRAM.FMADR),
           .d({APR.CURRENT_BLOCK[2], APR.CURRENT_BLOCK[2], APR.XR_BLOCK[2],
               APR.VMA_BLOCK[2], APR.CURRENT_BLOCK[2], APR.CURRENT_BLOCK[2],
@@ -351,16 +351,16 @@ module apr(iAPR APR,
   assign magic = CRAM.MAGIC[6:7] ^ {2{~RESET}};
   bit [0:3] e4out, e7out;
   bit ignoreE6a, ignoreE6b, ignoreE6c;
-  USR4  e4(.S0('0),
+  USR4  e4(.S0(0),
            .D({CRAM.MAGIC[1:2], {2{MCL.MEM_REG_FUNC}}}),
-           .S3('0),
+           .S3(0),
            .SEL({2{MCL.REQ_EN}}),
            .CLK(clk),
            .Q(e4out));
 
-  USR4  e7(.S0('0),
+  USR4  e7(.S0(0),
            .D({magic[7], magic[6], ~CRAM.MAGIC[7], ~CRAM.MAGIC[8]}),
-           .S3('0),
+           .S3(0),
            .SEL({2{MCL.REQ_EN}}),
            .Q(e7out),
            .CLK(clk));

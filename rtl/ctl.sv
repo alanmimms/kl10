@@ -152,7 +152,7 @@ module ctl(iAPR APR,
   assign CTL.AR00to08_LOAD = CTL.COND_ARLL_LOAD | CTL.REG_CTL[0] | load1 |
                              CRAM.MAGIC[0] & CTL.ARL_IND;
 
-  assign CTL.MQ_CLR = CTL.ARL_IND ? CRAM.MAGIC[2] : '0;
+  assign CTL.MQ_CLR = CTL.ARL_IND ? CRAM.MAGIC[2] : 0;
   assign CTL.ARX_CLR = CTL.ARL_IND ? CRAM.MAGIC[3] : CTL.COND_ARX_CLR;
   assign d2 = CTL.ARL_IND ? CRAM.MAGIC[4] : CTL.COND_AR_CLR;
   assign d3 = CTL.ARL_IND ? CRAM.MAGIC[5] : CTL.COND_AR_CLR;

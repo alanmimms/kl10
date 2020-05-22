@@ -47,7 +47,7 @@ module scd(iAPR APR,
 
   bit ignoredE82;
   mc10181 e82(.S({CRAM.SCAD[2], CRAM.SCAD[1], SCAD_S1, SCAD_S0}),
-              .M('0),
+              .M(0),
               .A({1'b0, SCD.SCADA[0], SCD.SCADA[0], SCD.SCADA[1]}),
               .B({1'b0, SCD.SCADB[0], SCD.SCADB[0], SCD.SCADB[1]}),
               .CIN(SCAD_CRY_02_OUT),
@@ -55,7 +55,7 @@ module scd(iAPR APR,
               .F({ignoredE82, SCD.SCAD_SIGN, SCAD[0], SCAD[1]}));
 
   mc10181 e84(.S({CRAM.SCAD[2], CRAM.SCAD[1], SCAD_S1, SCAD_S0}),
-              .M('0),
+              .M(0),
               .A(SCD.SCADA[2:5]),
               .B(SCD.SCADB[2:5]),
               .CIN(SCAD_CRY_06_OUT),
@@ -64,7 +64,7 @@ module scd(iAPR APR,
               .F(SCAD[2:5]));
 
   mc10181 e66(.S({CRAM.SCAD[2], CRAM.SCAD[1], SCAD_S1, SCAD_S0}),
-              .M('0),
+              .M(0),
               .A(SCD.SCADA[6:9]),
               .B(SCD.SCADB[6:9]),
               .CIN(SCAD_CRY_IN),
@@ -77,35 +77,35 @@ module scd(iAPR APR,
   assign SCADA_EXP[2:9] = EDP.AR[1:8] ^ EDP.AR[0];
 
   mux2x4 E83(.SEL(CRAM.SCADB),
-             .EN('0),
+             .EN(0),
              .D0({SCD.SC[0], 3'b0}),
              .D1({SCD.SC[1], 1'b0, EDP.AR[0], CRAM.MAGIC[0]}),
              .B0(SCD.SCADB[0]),
              .B1(SCD.SCADB[1]));
 
   mux2x4 E79(.SEL(CRAM.SCADB),
-             .EN('0),
+             .EN(0),
              .D0({SCD.SC[2], 1'b0, EDP.AR[1], CRAM.MAGIC[1]}),
              .D1({SCD.SC[3], 1'b0, EDP.AR[2], CRAM.MAGIC[2]}),
              .B0(SCD.SCADB[2]),
              .B1(SCD.SCADB[3]));
 
   mux2x4 E75(.SEL(CRAM.SCADB),
-             .EN('0),
+             .EN(0),
              .D0({SCD.SC[4], EDP.AR[6], EDP.AR[3], CRAM.MAGIC[3]}),
              .D1({SCD.SC[5], EDP.AR[7], EDP.AR[4], CRAM.MAGIC[4]}),
              .B0(SCD.SCADB[4]),
              .B1(SCD.SCADB[5]));
 
   mux2x4 E52(.SEL(CRAM.SCADB),
-             .EN('0),
+             .EN(0),
              .D0({SCD.SC[6], EDP.AR[8], EDP.AR[5], CRAM.MAGIC[5]}),
              .D1({SCD.SC[7], EDP.AR[9], EDP.AR[6], CRAM.MAGIC[6]}),
              .B0(SCD.SCADB[6]),
              .B1(SCD.SCADB[7]));
 
   mux2x4 E56(.SEL(CRAM.SCADB),
-             .EN('0),
+             .EN(0),
              .D0({SCD.SC[8], EDP.AR[10], EDP.AR[7], CRAM.MAGIC[7]}),
              .D1({SCD.SC[9], EDP.AR[11], EDP.AR[8], CRAM.MAGIC[8]}),
              .B0(SCD.SCADB[8]),
@@ -165,21 +165,21 @@ module scd(iAPR APR,
   assign feSEL = {CRAM.FE | CON.COND_FE_SHRT, CRAM.FE | RESET};
   USR4 e68(.S0(SCD.FE_SIGN),
            .D({{3{SCAD[0]}}, SCAD[1]}),
-           .S3('0),
+           .S3(0),
            .SEL(feSEL),
            .CLK(clk),
            .Q({SCD.FE_SIGN, ignoreE68, SCD.FE[0:1]}));
 
   USR4 e69(.S0(SCD.FE[1] | CRAM.FE),
            .D(SCAD[2:5]),
-           .S3('0),
+           .S3(0),
            .SEL(feSEL),
            .CLK(clk),
            .Q(SCD.FE[2:5]));
 
   USR4 e55(.S0(SCD.FE[5] | CRAM.FE),
            .D(SCAD[6:9]),
-           .S3('0),
+           .S3(0),
            .SEL(feSEL),
            .CLK(clk),
            .Q(SCD.FE[6:9]));
@@ -298,35 +298,35 @@ module scd(iAPR APR,
   assign SCD.TRAP_MIX[35] = (CRAM.VMA[0] | mix35out) &
                             (~CON.PCplus1_INH | mix35out);
 
-  mux2x4 e48(.EN('1),
+  mux2x4 e48(.EN(1),
              .SEL(CRAM.SH),
              .D0({CRAM.MAGIC[0], EDP.AR[0], CTL.COND_AR_EXP ? SCAD[1] : EDP.AR[0], SCAD[4]}),
              .D1({CRAM.MAGIC[1], EDP.AR[0], SCAD[2], SCAD[5]}),
              .B0(EDP.ARMM_SCD[0]),
              .B1(EDP.ARMM_SCD[1]));
 
-  mux2x4 e49(.EN('1),
+  mux2x4 e49(.EN(1),
              .SEL(CRAM.SH),
              .D0({CRAM.MAGIC[2], EDP.AR[0], SCAD[3], SCAD[6]}),
              .D1({CRAM.MAGIC[3], EDP.AR[0], SCAD[4], SCAD[7]}),
              .B0(EDP.ARMM_SCD[2]),
              .B1(EDP.ARMM_SCD[3]));
 
-  mux2x4 e50(.EN('1),
+  mux2x4 e50(.EN(1),
              .SEL(CRAM.SH),
              .D0({CRAM.MAGIC[4], EDP.AR[0], SCAD[5], SCAD[8]}),
              .D1({CRAM.MAGIC[5], EDP.AR[0], SCAD[6], SCAD[9]}),
              .B0(EDP.ARMM_SCD[4]),
              .B1(EDP.ARMM_SCD[5]));
 
-  mux2x4 e46(.EN('1),
+  mux2x4 e46(.EN(1),
              .SEL(CRAM.SH),
              .D0({CRAM.MAGIC[6], EDP.AR[0], SCAD[7], EDP.AR[6]}),
              .D1({CRAM.MAGIC[7], EDP.AR[0], SCAD[8], EDP.AR[7]}),
              .B0(EDP.ARMM_SCD[6]),
              .B1(EDP.ARMM_SCD[7]));
 
-  mux2x4 e41(.EN('1),
+  mux2x4 e41(.EN(1),
              .SEL(CRAM.SH),
              .D0({CRAM.MAGIC[8], EDP.AR[0], SCAD[9], EDP.AR[8]}),
              .D1(),
