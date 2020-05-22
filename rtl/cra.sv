@@ -28,11 +28,10 @@ module cra(iAPR APR,
            iEBUS.mod EBUS
            );
 
-  bit [0:10] dispMux;
-  bit [0:10] diagAdr;
-
-  bit [0:10] stack[15:0];
-  bit [0:10] sbrRet;
+  tCRADR dispMux;
+  tCRADR diagAdr;
+  tCRADR stack[15:0];
+  tCRADR sbrRet;
 
   bit dispEn00_03, dispEn00_07, dispEn30_37;
   bit shortIndirWord;
@@ -60,9 +59,9 @@ module cra(iAPR APR,
   // CRA1 p.343
 
   // Remaining features of E47,E35 are CRAM DISP field decoding.
-  assign dispEn00_03 = CRAM.DISP[0:4] == 5'b00011;
-  assign dispEn00_07 = CRAM.DISP[0:4] == 5'b00111;
-  assign dispEn30_37 = CRAM.DISP[0:4] == 5'b11111;
+  assign dispEn00_03 = CRAM.DISP[0:2] == 3'b000;
+  assign dispEn00_07 = CRAM.DISP[0:1] == 2'b00;
+  assign dispEn30_37 = CRAM.DISP[0:1] == 2'b11;
 
   assign shortIndirWord = ~CON.LONG_EN | ~EDP.ARX[1];
   assign CALL_FORCE_1777 = CRAM.CALL | CLK.FORCE_1777;
@@ -71,58 +70,61 @@ module cra(iAPR APR,
 
   // CRA2 p.344
   always_comb begin
-    dispMux = '0;
 
-    if (CON.DISP_EN_00_03) case (CRAM.DISP[3:4])
-                           2'b00: dispMux[0:6] = diagAdr[0:6];
-                           2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
-                           2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
-                           2'b11: dispMux[0:6] = sbrRet;
-                           endcase    
+    if (dispEn00_03) case (CRAM.DISP[3:4])
+                     2'b00: dispMux[0:6] = diagAdr[0:6];
+                     2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
+                     2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
+                     2'b11: dispMux[0:6] = sbrRet;
+                     endcase
+    else dispMux[0:6] = '0;
 
-    if (CON.DISP_EN_00_07) case (CRAM.DISP[2:4])
-                           3'b000: dispMux[7:10] = diagAdr[7:10];
-                           3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
-                           3'b010: dispMux[7:10] = CRA.AREAD[7:10];
-                           3'b011: dispMux[7:10] = sbrRet[7:10];
-                           3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
-                           3'b101: dispMux[7:10] = CON.SR[0:3];
-                           3'b110: dispMux[7:10] = CON.NICOND[7:10];
-                           3'b111: dispMux[7:10] = SHM.SH[0:3];
-                           endcase
-    else if (CON.DISP_EN_30_37) case (CRAM.DISP[2:4])
-                                3'b000: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.MQ[34:35]};
-                                3'b001: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2]};
-                                3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0]};
-                                3'b011: dispMux[7:10] = {1'b0, IR.DRAM_B[0:2]};
-                                3'b100: dispMux[7:10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN};
-                                3'b101: dispMux[7:10] = {1'b0, IR.NORM[8:10]};
-                                3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
-                                                         EDP.ARX[13], SHM.INDEXED};
-                                3'b111: dispMux[7:10] = eaType[7:10];
-                                endcase
-    else dispMux[7:10] = '0;
+    if (dispEn00_07) case (CRAM.DISP[2:4])
+                     3'b000: dispMux[7:10] = diagAdr[7:10];
+                     3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
+                     3'b010: dispMux[7:10] = CRA.AREAD[7:10];
+                     3'b011: dispMux[7:10] = sbrRet[7:10];
+                     3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
+                     3'b101: dispMux[7:10] = CON.SR[0:3];
+                     3'b110: dispMux[7:10] = CON.NICOND[7:10];
+                     3'b111: dispMux[7:10] = SHM.SH[0:3];
+                     endcase
+    else if (dispEn30_37) case (CRAM.DISP[2:4])
+                          3'b000: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.MQ[34:35]};
+                          3'b001: dispMux[7:10] = {1'b0, SCD.FE_SIGN, EDP.BR[0], EDP.AD_CRY[-2]};
+                          3'b010: dispMux[7:10] = {EDP.ARX[0], EDP.AR[0], EDP.BR[0], EDP.AD[0]};
+                          3'b011: dispMux[7:10] = {1'b0, IR.DRAM_B[0:2]};
+                          3'b100: dispMux[7:10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN};
+                          3'b101: dispMux[7:10] = {1'b0, IR.NORM[8:10]};
+                          3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
+                                                   EDP.ARX[13], SHM.INDEXED};
+                          3'b111: dispMux[7:10] = eaType[7:10];
+                          endcase
+    else begin
+      dispMux[7:9] = '0;
 
-    if (CON.SKIP_EN_40_47) case (CRAM.COND[3:5])
-                                3'b000: dispMux[10] = '0; // XXX? CRA2 SPARE H is backplane signal unknown value
-                                3'b001: dispMux[10] = ~SHM.AR_PAR_ODD;
-                                3'b010: dispMux[10] = EDP.BR[0];
-                                3'b011: dispMux[10] = EDP.ARX[0];
-                                3'b100: dispMux[10] = EDP.AR[18];
-                                3'b101: dispMux[10] = EDP.AR[0];
-                                3'b110: dispMux[10] = IR.ACeq0;
-                                3'b111: dispMux[10] = SCD.SC_SIGN;
-                                endcase
-     else if (CON.SKIP_EN_50_57) case (CRAM.COND[3:5])
-                                 3'b000: dispMux[10] = MCL.PC_SECTION_0;
-                                 3'b001: dispMux[10] = SCD.SCAD_SIGN;
-                                 3'b010: dispMux[10] = ~SCD.SCADeq0;
-                                 3'b011: dispMux[10] = EDP.ADX[0];
-                                 3'b100: dispMux[10] = EDP.AD_CRY[-2];
-                                 3'b101: dispMux[10] = ~EDP.AD[0];
-                                 3'b110: dispMux[10] = ~IR.ADeq0;
-                                 3'b111: dispMux[10] = ~VMA.LOCAL_AC_ADDRESS;
-                                 endcase
+      if (CON.SKIP_EN_40_47) case (CRAM.COND[3:5])
+                             3'b000: dispMux[10] = '0; // XXX? CRA2 SPARE H is backplane signal unknown value
+                             3'b001: dispMux[10] = ~SHM.AR_PAR_ODD;
+                             3'b010: dispMux[10] = EDP.BR[0];
+                             3'b011: dispMux[10] = EDP.ARX[0];
+                             3'b100: dispMux[10] = EDP.AR[18];
+                             3'b101: dispMux[10] = EDP.AR[0];
+                             3'b110: dispMux[10] = IR.ACeq0;
+                             3'b111: dispMux[10] = SCD.SC_SIGN;
+                             endcase
+      else if (CON.SKIP_EN_50_57) case (CRAM.COND[3:5])
+                                  3'b000: dispMux[10] = MCL.PC_SECTION_0;
+                                  3'b001: dispMux[10] = SCD.SCAD_SIGN;
+                                  3'b010: dispMux[10] = ~SCD.SCADeq0;
+                                  3'b011: dispMux[10] = EDP.ADX[0];
+                                  3'b100: dispMux[10] = EDP.AD_CRY[-2];
+                                  3'b101: dispMux[10] = ~EDP.AD[0];
+                                  3'b110: dispMux[10] = ~IR.ADeq0;
+                                  3'b111: dispMux[10] = ~VMA.LOCAL_AC_ADDRESS;
+                                  endcase
+      else dispMux[10] = '0;
+    end
   end
 
   // CRA.CRADR
@@ -225,5 +227,5 @@ module cra(iAPR APR,
                                 3'b110: CRA.EBUSdriver.data = CRA.CRADR[5:10];
                                 3'b111: CRA.EBUSdriver.data = {1'b0, CRA.CRADR[0:4]};
                                 endcase
-    else CRA.EBUSdriver.data = 'z;
+    else CRA.EBUSdriver.data = '0;
 endmodule
