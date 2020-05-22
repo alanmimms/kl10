@@ -6,7 +6,7 @@ module priority_encoder8
    output bit any);
 
   bit found;
-  always_comb casex (d)
+  always_comb case (d) inside
               8'b1xxxxxxx: {any, q} = 4'b1000;
               8'b01xxxxxx: {any, q} = 4'b1001;
               8'b001xxxxx: {any, q} = 4'b1010;
