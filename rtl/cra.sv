@@ -31,14 +31,16 @@ module cra(iAPR APR,
   tCRADR dispMux;
   tCRADR diagAdr;
   tCRADR stack[15:0];
-  tCRADR sbrRet;
+  tCRADR SBR_RET;
 
   bit dispEn00_03, dispEn00_07, dispEn30_37;
-  bit shortIndirWord;
+  bit SHORT_INDIR_WORD;
   bit CALL_FORCE_1777;
-  bit retNotForce1777;
   bit ret;
   bit WRITE_00_19, WRITE_20_39, WRITE_40_59, WRITE_60_79;
+
+  bit clk;
+  assign clk = CLK.CRA;
 
   bit RESET;
   assign RESET = CLK.MR_RESET;
@@ -63,10 +65,9 @@ module cra(iAPR APR,
   assign dispEn00_07 = CRAM.DISP[0:1] == 2'b00;
   assign dispEn30_37 = CRAM.DISP[0:1] == 2'b11;
 
-  assign shortIndirWord = ~CON.LONG_EN | ~EDP.ARX[1];
+  assign SHORT_INDIR_WORD = ~CON.LONG_EN | ~EDP.ARX[1];
   assign CALL_FORCE_1777 = CRAM.CALL | CLK.FORCE_1777;
   assign ret = dispEn00_03 && CRAM.DISP[3] & CRAM.DISP[4];
-  assign retNotForce1777 = ret & ~CLK.FORCE_1777;
 
   // CRA2 p.344
   always_comb begin
@@ -75,7 +76,7 @@ module cra(iAPR APR,
                      2'b00: dispMux[0:6] = diagAdr[0:6];
                      2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
                      2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
-                     2'b11: dispMux[0:6] = sbrRet;
+                     2'b11: dispMux[0:6] = SBR_RET;
                      endcase
     else dispMux[0:6] = '0;
 
@@ -83,7 +84,7 @@ module cra(iAPR APR,
                      3'b000: dispMux[7:10] = diagAdr[7:10];
                      3'b001: dispMux[7:10] = IR.DRAM_J[7:10];
                      3'b010: dispMux[7:10] = CRA.AREAD[7:10];
-                     3'b011: dispMux[7:10] = sbrRet[7:10];
+                     3'b011: dispMux[7:10] = SBR_RET[7:10];
                      3'b100: dispMux[7:10] = CLK.PF_DISP[7:10];
                      3'b101: dispMux[7:10] = CON.SR[0:3];
                      3'b110: dispMux[7:10] = CON.NICOND[7:10];
@@ -96,7 +97,7 @@ module cra(iAPR APR,
                           3'b011: dispMux[7:10] = {1'b0, IR.DRAM_B[0:2]};
                           3'b100: dispMux[7:10] = {1'b0, SCD.FPD, EDP.AR[12], SCD.SCAD_SIGN};
                           3'b101: dispMux[7:10] = {1'b0, IR.NORM[8:10]};
-                          3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], shortIndirWord,
+                          3'b110: dispMux[7:10] = {~CON.LONG_EN | EDP.ARX[0], SHORT_INDIR_WORD,
                                                    EDP.ARX[13], SHM.INDEXED};
                           3'b111: dispMux[7:10] = eaType[7:10];
                           endcase
@@ -128,12 +129,17 @@ module cra(iAPR APR,
   end
 
   // CRA.CRADR
-  always @(posedge CLK.CRA) if (RESET) CRA.CRADR <= '0;
-                            else CRA.CRADR <= CRAM.J |
-                                              {1'b0, {9{CLK.FORCE_1777}}, 1'b0} |
-                                              dispMux |
-                                              {10'b0, CON.COND_ADR_10};
+  always @(posedge clk) if (RESET) CRA.CRADR <= '0;
+                        else CRA.CRADR <= CRAM.J |
+                                          {1'b0, {9{CLK.FORCE_1777}}, 1'b0} |
+                                          dispMux |
+                                          {10'b0, CON.COND_ADR_10};
   
+
+  assign CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : '0;
+
+  tCRADR LOC;
+  always_ff @(posedge clk) LOC <= CRA.CRADR;
 
   ////////////////////////////////////////////////////////////////
   // The amazingly baroque call/return stack implementation
@@ -161,42 +167,48 @@ module cra(iAPR APR,
   // 1  1110 0010  0  |   14    01
   // 0  1111 0001  0  |   16    10
 
-  // E56,E57
-  bit [0:7] stackAdrAD, stackAdrEH;
+  bit stackAdrA, stackAdrB, stackAdrC, stackAdrD;
+  bit stackAdrE, stackAdrF, stackAdrG, stackAdrH;
+  bit stackAdrY, stackAdrZ;
+  bit SEL_CALL, STACK_WRITE;
 
-  bit stackAdrA = stackAdrAD[0];
-  bit stackAdrB = stackAdrAD[1];
-  bit stackAdrC = stackAdrAD[2];
-  bit stackAdrD = stackAdrAD[3];
+  bit RET_AND_not1777, CALL_RESET, CALL_RESET_1777;
+  assign RET_AND_not1777 = ret & ~CLK.FORCE_1777;
+  assign CALL_RESET = RESET | CRAM.CALL;
+  assign CALL_RESET_1777 = CALL_RESET | CLK.FORCE_1777;
 
-  bit stackAdrE = stackAdrEH[0];
-  bit stackAdrF = stackAdrEH[1];
-  bit stackAdrG = stackAdrEH[2];
-  bit stackAdrH = stackAdrEH[3];
+  assign SEL_CALL = STACK_WRITE & RET_AND_not1777; // NOTE wire-AND
 
-  bit stackAdrY = stackAdrA ^ stackAdrD;
-  bit stackAdrZ = stackAdrF ^ stackAdrE;
+  // XXX STACK_WRITE is delayed 13ns in CRA4 from CRA3 CLK A H by DL1.
+  assign STACK_WRITE = clk;
 
-  bit stackAdr = {stackAdrAD, stackAdrEH};
-  bit stackWrite = CLK.CRA & ~retNotForce1777;
-  bit selCall = stackWrite | ~retNotForce1777;
+  USR4 e56SR(.S0(stackAdrY),
+             .D({4{RET_AND_not1777 | RESET}}),
+             .Q({stackAdrA, stackAdrB, stackAdrC, stackAdrD}),
+             .S3(stackAdrE),
+             .SEL({CALL_RESET_1777, CALL_RESET_1777 | RESET}),
+             .CLK(clk));
 
-  always @(posedge CLK.CRA) if (CALL_FORCE_1777 && retNotForce1777) begin // LOAD
-    stackAdrAD <= 4'b1111;
-    stackAdrEH <= 4'b0000;
-  end else if (CALL_FORCE_1777) begin           // 0in+0
-    stackAdrAD <= {stackAdrY, {3{retNotForce1777}}};
-           stackAdrEH <= {stackAdrD, 3'b000};
-         end else if (retNotForce1777) begin         // 3in+3
-           stackAdrAD <= {{3{retNotForce1777}}, stackAdrE};
-           stackAdrEH <= {3'b000, stackAdrZ};
-         end else begin                              // HOLD
-           stackAdrAD <= stackAdrAD;
-           stackAdrEH <= stackAdrEH;
-         end
+  USR4 e57SR(.S0(stackAdrD),
+             .D('0),
+             .S3(stackAdrZ),
+             .Q({stackAdrE, stackAdrF, stackAdrG, stackAdrH}),
+             .SEL({CALL_RESET_1777, CALL_RESET_1777 | RESET}),
+             .CLK(clk));             
 
-  always @(posedge CLK.CRA) if (~CALL_FORCE_1777 && ~retNotForce1777) sbrRet <= stack[stackAdr];
-  always @(posedge stackWrite) stack[stackAdr] <= CRA.CRADR;
+  assign stackAdrY = stackAdrA ^ stackAdrD;
+  assign stackAdrZ = stackAdrF ^ stackAdrE;
+
+  bit [0:3] e62Q;
+  assign e62Q = SEL_CALL ?
+                {stackAdrB, stackAdrC, stackAdrD, stackAdrE} :
+                {stackAdrD, stackAdrE, stackAdrF, stackAdrG};
+
+  // E67, E72, E76 combined
+  always @(posedge STACK_WRITE) stack[e62Q] <= LOC;
+
+  // E66, E71, E81 combined
+  always @(posedge clk) if (~CALL_FORCE_1777 && ~RET_AND_not1777) SBR_RET <= stack[e62Q];
 
 
   ////////////////////////////////////////////////////////////////
@@ -205,8 +217,6 @@ module cra(iAPR APR,
 
   always_comb if (CRA.DIA_FUNC_051) diagAdr[5:10] = EBUS.data[0:5];
               else if (CRA.DIA_FUNC_052) diagAdr[0:4] = EBUS.data[1:5];
-
-  assign CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : 0;
 
   decoder e1(.en(CTL.DIAG_LOAD_FUNC_05x),
              .sel(CTL.DIAG[4:6]),
@@ -218,14 +228,14 @@ module cra(iAPR APR,
 
   always_comb
     if (CRA.EBUSdriver.driving) case (CTL.DIAG[4:6])
-                                3'b000: CRA.EBUSdriver.data = {dispEn00_07, dispEn00_03, stackAdr};
-                                3'b001: CRA.EBUSdriver.data = {CRAM.CALL, CRAM.DISP[0:4], stackAdr};
-                                3'b010: CRA.EBUSdriver.data = sbrRet[5:10];
-                                3'b011: CRA.EBUSdriver.data = {dispEn30_37, sbrRet[0:4]};
-                                3'b100: CRA.EBUSdriver.data = CRA.CRADR[5:10];
-                                3'b101: CRA.EBUSdriver.data = {CRA.DISP_PARITY, CRA.CRADR[0:4]};
-                                3'b110: CRA.EBUSdriver.data = CRA.CRADR[5:10];
-                                3'b111: CRA.EBUSdriver.data = {1'b0, CRA.CRADR[0:4]};
+                                3'b000: CRA.EBUSdriver.data[0:5] = {dispEn00_07, dispEn00_03, e62Q};
+                                3'b001: CRA.EBUSdriver.data[0:5] = {CRAM.CALL, CRAM.DISP[0:4], e62Q};
+                                3'b010: CRA.EBUSdriver.data[0:5] = SBR_RET[5:10];
+                                3'b011: CRA.EBUSdriver.data[0:5] = {dispEn30_37, SBR_RET[0:4]};
+                                3'b100: CRA.EBUSdriver.data[0:5] = CRA.CRADR[5:10];
+                                3'b101: CRA.EBUSdriver.data[0:5] = {CRA.DISP_PARITY, CRA.CRADR[0:4]};
+                                3'b110: CRA.EBUSdriver.data[0:5] = CRA.CRADR[5:10];
+                                3'b111: CRA.EBUSdriver.data[0:5] = {1'b0, CRA.CRADR[0:4]};
                                 endcase
     else CRA.EBUSdriver.data = '0;
 endmodule
