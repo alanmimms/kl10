@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="17975191fs"></ZoomStartTime>
-      <ZoomEndTime time="19497750fs"></ZoomEndTime>
-      <Cursor1Time time="18228950fs"></Cursor1Time>
+      <ZoomStartTime time="98731201fs"></ZoomStartTime>
+      <ZoomEndTime time="100253760fs"></ZoomEndTime>
+      <Cursor1Time time="98848321fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
       <ValueColumnWidth column_width="116"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="77" />
+   <WVObjectSize size="33" />
    <wave_markers>
       <marker label="" time="18228950" />
    </wave_markers>
@@ -38,55 +38,6 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="label">SBUS.CLK_INT</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/memory0/aPhase/clk">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-      <obj_property name="label">aClk</obj_property>
-      <obj_property name="CustomSignalColor">#00FF7F</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/memory0/bPhase/clk">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-      <obj_property name="label">bClk</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/MCL/REQ_EN">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">REQ_EN</obj_property>
-      <obj_property name="ObjectShortName">REQ_EN</obj_property>
-      <obj_property name="label">MCL.REQ_EN</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/MCL/MBOX_CYC_REQ">
-      <obj_property name="ElementShortName">MBOX_CYC_REQ</obj_property>
-      <obj_property name="ObjectShortName">MBOX_CYC_REQ</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/MBOX_WAIT">
-      <obj_property name="ElementShortName">MBOX_WAIT</obj_property>
-      <obj_property name="ObjectShortName">MBOX_WAIT</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/MBOX/CORE_BUSY">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
-      <obj_property name="label">MBOX.CORE_BUSY</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbc0/CORE_BUSY">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
-      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
-      <obj_property name="label">mbc0.CORE_BUSY</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/mbox0/mbx0/WD_NEEDED">
-      <obj_property name="ElementShortName">WD_NEEDED[0:3]</obj_property>
-      <obj_property name="ObjectShortName">WD_NEEDED[0:3]</obj_property>
-      <obj_property name="CustomSignalColor">#808000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/top/SBUS/RQ">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">RQ[0:3]</obj_property>
@@ -95,6 +46,30 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="label">SBUS.RQ[0:3]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/SBUS/ADR">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">ADR[14:35]</obj_property>
+      <obj_property name="ObjectShortName">ADR[14:35]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="label">SBUS.ADR[14:35]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/SBUS/D">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">D[0:35]</obj_property>
+      <obj_property name="ObjectShortName">D[0:35]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="label">SBUS.D[0:35]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/memory0/aPhase/clk">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+      <obj_property name="label">aClk</obj_property>
+      <obj_property name="CustomSignalColor">#00FF7F</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="group" fp_name="group1719">
       <obj_property name="label">aPhase</obj_property>
@@ -160,6 +135,14 @@
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/memory0/bPhase/clk">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+      <obj_property name="label">bClk</obj_property>
+      <obj_property name="CustomSignalColor">#008000</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
    <wvobject type="group" fp_name="group1211">
       <obj_property name="label">bPhase</obj_property>
       <obj_property name="DisplayName">label</obj_property>
@@ -224,77 +207,6 @@
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject type="array" fp_name="/top/SBUS/ADR">
-      <obj_property name="ElementShortName">ADR[14:35]</obj_property>
-      <obj_property name="ObjectShortName">ADR[14:35]</obj_property>
-      <obj_property name="CustomSignalColor">#FFA500</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/SBUS/D">
-      <obj_property name="ElementShortName">D[0:35]</obj_property>
-      <obj_property name="ObjectShortName">D[0:35]</obj_property>
-      <obj_property name="CustomSignalColor">#FFA500</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/memory0/SBUS/DATA_PAR">
-      <obj_property name="ElementShortName">DATA_PAR</obj_property>
-      <obj_property name="ObjectShortName">DATA_PAR</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/DIAG_LOAD_FUNC_071">
-      <obj_property name="ElementShortName">DIAG_LOAD_FUNC_071</obj_property>
-      <obj_property name="ObjectShortName">DIAG_LOAD_FUNC_071</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/kl10pv_tb0/EBUSdriver">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">EBUSdriver</obj_property>
-      <obj_property name="ObjectShortName">EBUSdriver</obj_property>
-      <obj_property name="label">tbEBUSdriver</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/EBUS/data">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">data[0:35]</obj_property>
-      <obj_property name="ObjectShortName">data[0:35]</obj_property>
-      <obj_property name="label">EBUS.data[0:35]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/mbox0/mbx0/e48SR">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">e48SR[0:3]</obj_property>
-      <obj_property name="ObjectShortName">e48SR[0:3]</obj_property>
-      <obj_property name="label">mbx0.e48SR[0:3]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/mbox0/mbx0/E_CORE_RD_RQ">
-      <obj_property name="ElementShortName">E_CORE_RD_RQ</obj_property>
-      <obj_property name="ObjectShortName">E_CORE_RD_RQ</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/MBOX/MEM_TO_C_EN">
-      <obj_property name="ElementShortName">MEM_TO_C_EN</obj_property>
-      <obj_property name="ObjectShortName">MEM_TO_C_EN</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/MBOX/MEM_TO_C_SEL">
-      <obj_property name="ElementShortName">MEM_TO_C_SEL[0:1]</obj_property>
-      <obj_property name="ObjectShortName">MEM_TO_C_SEL[0:1]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/MBOX/MEM_TO_CACHE">
-      <obj_property name="ElementShortName">MEM_TO_CACHE[0:35]</obj_property>
-      <obj_property name="ObjectShortName">MEM_TO_CACHE[0:35]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CLK/RESP_MBOX">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">RESP_MBOX</obj_property>
-      <obj_property name="ObjectShortName">RESP_MBOX</obj_property>
-      <obj_property name="label">CLK.RESP_MBOX</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/csh0/MBOX_RESP">
-      <obj_property name="ElementShortName">MBOX_RESP</obj_property>
-      <obj_property name="ObjectShortName">MBOX_RESP</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/mbox0/mbc0/RQ_A">
-      <obj_property name="ElementShortName">RQ_A[0:3]</obj_property>
-      <obj_property name="ObjectShortName">RQ_A[0:3]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/CRA">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">CRA</obj_property>
@@ -303,10 +215,22 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="label">CLK.CRA</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/J">
-      <obj_property name="ElementShortName">J[0:10]</obj_property>
-      <obj_property name="ObjectShortName">J[0:10]</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
+   <wvobject type="logic" fp_name="/top/CRAM/CALL">
+      <obj_property name="ElementShortName">CALL</obj_property>
+      <obj_property name="ObjectShortName">CALL</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CTL/DISP_RET">
+      <obj_property name="ElementShortName">DISP_RET</obj_property>
+      <obj_property name="ObjectShortName">DISP_RET</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/CTL/DISP_RETURN">
+      <obj_property name="ElementShortName">DISP_RETURN</obj_property>
+      <obj_property name="ObjectShortName">DISP_RETURN</obj_property>
+      <obj_property name="CustomSignalColor">#FF0080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
@@ -322,91 +246,10 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">OCTALRADIX</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/DISP_EN_00_03">
-      <obj_property name="ElementShortName">DISP_EN_00_03</obj_property>
-      <obj_property name="ObjectShortName">DISP_EN_00_03</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/DISP_EN_00_07">
-      <obj_property name="ElementShortName">DISP_EN_00_07</obj_property>
-      <obj_property name="ObjectShortName">DISP_EN_00_07</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/DISP_EN_30_37">
-      <obj_property name="ElementShortName">DISP_EN_30_37</obj_property>
-      <obj_property name="ObjectShortName">DISP_EN_30_37</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/SKIP_EN_40_47">
-      <obj_property name="ElementShortName">SKIP_EN_40_47</obj_property>
-      <obj_property name="ObjectShortName">SKIP_EN_40_47</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/SKIP_EN_50_57">
-      <obj_property name="ElementShortName">SKIP_EN_50_57</obj_property>
-      <obj_property name="ObjectShortName">SKIP_EN_50_57</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/SKIP_EN_60_67">
-      <obj_property name="ElementShortName">SKIP_EN_60_67</obj_property>
-      <obj_property name="ObjectShortName">SKIP_EN_60_67</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CON/SKIP_EN_70_77">
-      <obj_property name="ElementShortName">SKIP_EN_70_77</obj_property>
-      <obj_property name="ObjectShortName">SKIP_EN_70_77</obj_property>
-      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/cra0/dispEn00_03">
-      <obj_property name="ElementShortName">dispEn00_03</obj_property>
-      <obj_property name="ObjectShortName">dispEn00_03</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/cra0/dispEn00_07">
-      <obj_property name="ElementShortName">dispEn00_07</obj_property>
-      <obj_property name="ObjectShortName">dispEn00_07</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/cra0/dispEn30_37">
-      <obj_property name="ElementShortName">dispEn30_37</obj_property>
-      <obj_property name="ObjectShortName">dispEn30_37</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/DISP">
-      <obj_property name="ElementShortName">DISP[0:4]</obj_property>
-      <obj_property name="ObjectShortName">DISP[0:4]</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="LABELRADIX">false</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CON/NICOND">
-      <obj_property name="ElementShortName">NICOND[7:10]</obj_property>
-      <obj_property name="ObjectShortName">NICOND[7:10]</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">OCTALRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/ebox0/con0/e33Q">
-      <obj_property name="ElementShortName">e33Q[0:2]</obj_property>
-      <obj_property name="ObjectShortName">e33Q[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/top/CRAM/MEM">
       <obj_property name="ElementShortName">MEM[0:3]</obj_property>
       <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/CRAM/_TIME">
@@ -414,38 +257,14 @@
       <obj_property name="ObjectShortName">_TIME[0:1]</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
       <obj_property name="LABELRADIX">false</obj_property>
-      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CLK/SBUS_CLK">
-      <obj_property name="ElementShortName">SBUS_CLK</obj_property>
-      <obj_property name="ObjectShortName">SBUS_CLK</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/top/CLK/EDP">
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="ElementShortName">EDP</obj_property>
       <obj_property name="ObjectShortName">EDP</obj_property>
       <obj_property name="label">CLK.EDP</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/ebox0/edp0/ADA">
-      <obj_property name="ElementShortName">ADA[0:35]</obj_property>
-      <obj_property name="ObjectShortName">ADA[0:35]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/ebox0/edp0/ADB">
-      <obj_property name="ElementShortName">ADB[-2:35]</obj_property>
-      <obj_property name="ObjectShortName">ADB[-2:35]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/AD">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">AD[0:5]</obj_property>
-      <obj_property name="ObjectShortName">AD[0:5]</obj_property>
-      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="label">CRAM.AD[0:5]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/EDP/AD">
-      <obj_property name="ElementShortName">AD[-2:35]</obj_property>
-      <obj_property name="ObjectShortName">AD[-2:35]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/VMA/PC">
       <obj_property name="ElementShortName">PC[12:35]</obj_property>
@@ -459,116 +278,18 @@
       <obj_property name="ElementShortName">IR[0:12]</obj_property>
       <obj_property name="ObjectShortName">IR[0:12]</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/AR00to11_CLR">
-      <obj_property name="ElementShortName">AR00to11_CLR</obj_property>
-      <obj_property name="ObjectShortName">AR00to11_CLR</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
+   <wvobject type="array" fp_name="/top/EDP/AD">
+      <obj_property name="ElementShortName">AD[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">AD[-2:35]</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/AR12to17_CLR">
-      <obj_property name="ElementShortName">AR12to17_CLR</obj_property>
-      <obj_property name="ObjectShortName">AR12to17_CLR</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/AR00to08_LOAD">
-      <obj_property name="ElementShortName">AR00to08_LOAD</obj_property>
-      <obj_property name="ObjectShortName">AR00to08_LOAD</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/AR09to17_LOAD">
-      <obj_property name="ElementShortName">AR09to17_LOAD</obj_property>
-      <obj_property name="ObjectShortName">AR09to17_LOAD</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/AR_CLR">
-      <obj_property name="ElementShortName">AR_CLR</obj_property>
-      <obj_property name="ObjectShortName">AR_CLR</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/ARR_CLR">
-      <obj_property name="ElementShortName">ARR_CLR</obj_property>
-      <obj_property name="ObjectShortName">ARR_CLR</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/ARR_LOAD">
-      <obj_property name="ElementShortName">ARR_LOAD</obj_property>
-      <obj_property name="ObjectShortName">ARR_LOAD</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/ebox0/mcl0/MEM_UNCOND_FETCH">
-      <obj_property name="ElementShortName">MEM_UNCOND_FETCH</obj_property>
-      <obj_property name="ObjectShortName">MEM_UNCOND_FETCH</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/SH">
-      <obj_property name="ElementShortName">SH[0:1]</obj_property>
-      <obj_property name="ObjectShortName">SH[0:1]</obj_property>
-      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CTL/ARL_SEL">
-      <obj_property name="ElementShortName">ARL_SEL[0:2]</obj_property>
-      <obj_property name="ObjectShortName">ARL_SEL[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CTL/ARR_SEL">
-      <obj_property name="ElementShortName">ARR_SEL[0:2]</obj_property>
-      <obj_property name="ObjectShortName">ARR_SEL[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/AR">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">AR[0:2]</obj_property>
-      <obj_property name="ObjectShortName">AR[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="label">CRAM.AR[0:2]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/EDP/AR">
       <obj_property name="ElementShortName">AR[0:35]</obj_property>
       <obj_property name="ObjectShortName">AR[0:35]</obj_property>
-      <obj_property name="CustomSignalColor">#008080</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">OCTALRADIX</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/ARX_CLR">
-      <obj_property name="ElementShortName">ARX_CLR</obj_property>
-      <obj_property name="ObjectShortName">ARX_CLR</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/top/CTL/ARX_LOAD">
-      <obj_property name="ElementShortName">ARX_LOAD</obj_property>
-      <obj_property name="ObjectShortName">ARX_LOAD</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CTL/ARXL_SEL">
-      <obj_property name="ElementShortName">ARXL_SEL[0:2]</obj_property>
-      <obj_property name="ObjectShortName">ARXL_SEL[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CTL/ARXR_SEL">
-      <obj_property name="ElementShortName">ARXR_SEL[0:2]</obj_property>
-      <obj_property name="ObjectShortName">ARXR_SEL[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/top/CRAM/ARX">
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="ElementShortName">ARX[0:2]</obj_property>
-      <obj_property name="ObjectShortName">ARX[0:2]</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="label">CRAM.ARX[0:2]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/EDP/ARX">
       <obj_property name="ElementShortName">ARX[0:35]</obj_property>
@@ -576,6 +297,134 @@
       <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">OCTALRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/edp0/ADA">
+      <obj_property name="ElementShortName">ADA[0:35]</obj_property>
+      <obj_property name="ObjectShortName">ADA[0:35]</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/edp0/ADB">
+      <obj_property name="ElementShortName">ADB[-2:35]</obj_property>
+      <obj_property name="ObjectShortName">ADB[-2:35]</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRAM/AD">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">AD[0:5]</obj_property>
+      <obj_property name="ObjectShortName">AD[0:5]</obj_property>
+      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="label">CRAM.AD[0:5]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CRAM/SH">
+      <obj_property name="ElementShortName">SH[0:1]</obj_property>
+      <obj_property name="ObjectShortName">SH[0:1]</obj_property>
+      <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group1139">
+      <obj_property name="label">ARcontrol</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="array" fp_name="/top/CTL/ARL_SEL">
+         <obj_property name="ElementShortName">ARL_SEL[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ARL_SEL[0:2]</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CTL/ARR_SEL">
+         <obj_property name="ElementShortName">ARR_SEL[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ARR_SEL[0:2]</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/AR00to11_CLR">
+         <obj_property name="ElementShortName">AR00to11_CLR</obj_property>
+         <obj_property name="ObjectShortName">AR00to11_CLR</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/AR12to17_CLR">
+         <obj_property name="ElementShortName">AR12to17_CLR</obj_property>
+         <obj_property name="ObjectShortName">AR12to17_CLR</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/AR00to08_LOAD">
+         <obj_property name="ElementShortName">AR00to08_LOAD</obj_property>
+         <obj_property name="ObjectShortName">AR00to08_LOAD</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/AR09to17_LOAD">
+         <obj_property name="ElementShortName">AR09to17_LOAD</obj_property>
+         <obj_property name="ObjectShortName">AR09to17_LOAD</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/AR_CLR">
+         <obj_property name="ElementShortName">AR_CLR</obj_property>
+         <obj_property name="ObjectShortName">AR_CLR</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/ARR_CLR">
+         <obj_property name="ElementShortName">ARR_CLR</obj_property>
+         <obj_property name="ObjectShortName">ARR_CLR</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/ARR_LOAD">
+         <obj_property name="ElementShortName">ARR_LOAD</obj_property>
+         <obj_property name="ObjectShortName">ARR_LOAD</obj_property>
+         <obj_property name="CustomSignalColor">#008080</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CRAM/AR">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">AR[0:2]</obj_property>
+         <obj_property name="ObjectShortName">AR[0:2]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="label">CRAM.AR[0:2]</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group1140">
+      <obj_property name="label">ARXcontrol</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/top/CTL/ARX_CLR">
+         <obj_property name="ElementShortName">ARX_CLR</obj_property>
+         <obj_property name="ObjectShortName">ARX_CLR</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/top/CTL/ARX_LOAD">
+         <obj_property name="ElementShortName">ARX_LOAD</obj_property>
+         <obj_property name="ObjectShortName">ARX_LOAD</obj_property>
+         <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CTL/ARXL_SEL">
+         <obj_property name="ElementShortName">ARXL_SEL[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ARXL_SEL[0:2]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CTL/ARXR_SEL">
+         <obj_property name="ElementShortName">ARXR_SEL[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ARXR_SEL[0:2]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CRAM/ARX">
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="ElementShortName">ARX[0:2]</obj_property>
+         <obj_property name="ObjectShortName">ARX[0:2]</obj_property>
+         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+         <obj_property name="label">CRAM.ARX[0:2]</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="logic" fp_name="/top/MBOX/NXM_ERR">
       <obj_property name="ElementShortName">NXM_ERR</obj_property>
