@@ -12,15 +12,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="18193600fs"></ZoomStartTime>
-      <ZoomEndTime time="18415601fs"></ZoomEndTime>
-      <Cursor1Time time="18378600fs"></Cursor1Time>
+      <ZoomStartTime time="17376151fs"></ZoomStartTime>
+      <ZoomEndTime time="18898710fs"></ZoomEndTime>
+      <Cursor1Time time="18644950fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="124"></ValueColumnWidth>
+      <ValueColumnWidth column_width="116"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="61" />
+   <WVObjectSize size="63" />
    <wave_markers>
       <marker label="" time="18261000" />
    </wave_markers>
@@ -298,6 +298,19 @@
    <wvobject type="array" fp_name="/top/ebox0/CRA/CRADR">
       <obj_property name="ElementShortName">CRADR[0:10]</obj_property>
       <obj_property name="ObjectShortName">CRADR[0:10]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/CON/NICOND">
+      <obj_property name="ElementShortName">NICOND[7:10]</obj_property>
+      <obj_property name="ObjectShortName">NICOND[7:10]</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/top/ebox0/con0/e33Q">
+      <obj_property name="ElementShortName">e33Q[0:2]</obj_property>
+      <obj_property name="ObjectShortName">e33Q[0:2]</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/top/CRAM/MEM">
       <obj_property name="ElementShortName">MEM[0:3]</obj_property>
