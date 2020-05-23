@@ -16,8 +16,6 @@ module ir(iIR IR,
   localparam DRAM_SIZE=512;
   localparam DRAM_ADDR_BITS=$clog2(DRAM_SIZE);
 
-`include "cram-aliases.svh"
-
   bit [0:DRAM_WIDTH-1] DRAMdata;
   bit [0:DRAM_ADDR_BITS - 1] DRADR;
 
@@ -178,7 +176,7 @@ module ir(iIR IR,
   assign IR.EBUSdriver.driving = CTL.DIAG_READ_FUNC_13x;
 
   always_comb
-    if (IR.EBUSdriver.driving) case (DIAG_FUNC[4:6])
+    if (IR.EBUSdriver.driving) case (CTL.DIAG[4:6])
                                3'b000: IR.EBUSdriver.data[0:5] = {IR.NORM, DRADR[0:2]};
                                3'b001: IR.EBUSdriver.data[0:5] = DRADR[3:8];
                                3'b010: IR.EBUSdriver.data[0:5] = {enIO_JRST, enAC, IR.AC};

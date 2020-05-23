@@ -5,29 +5,41 @@ module edptb;
   bit masterClk;
   bit [0:35] cacheDataRead;
   
-  tCRADR CRADR;
+  bit [18:35] hwOptions = {1'b0,      // [18] 50Hz
+                           1'b0,      // [19] Cache (XXX note this is ZERO for now)
+                           1'b1,      // [20] Internal channels
+                           1'b1,      // [21] Extended KL
+                           1'b0,      // [22] Has master oscillator (not needed here)
+                           13'd4001}; // [23:35] Serial number
 
-`include "cram-aliases.svh"
+  iAPR APR();
+  iCLK CLK();
+  iCON CON();
+  iCRAM CRAM();
+  iCTL CTL();
+  iEDP EDP();
+  iIR  IR();
+  iPI  PIC();
+  iSCD SCD();
+  iSHM SHM();
+  iVMA VMA();
 
   iEBUS EBUS();
+  iMBOX MBOX();
 
-  iCRAM CRAM();
-  iEDP EDP();
   edp edp0(.*);
-//  crm crm0(.*);
 
   // 50MHz
   always #10 masterClk = ~masterClk;
 
   initial begin
-    $monitor($time, " CLK.EBOX_RESET=%b AD=%09x AR=%09x BR=%09x CRAM.AD=%06b",
-             CLK.EBOX_RESET, EDP.AD, EDP.AR, EDP.BR, CRAM.AD);
+    $monitor($time, " AD=%09x AR=%09x BR=%09x CRAM.AD=%06b",
+             EDP.AD, EDP.AR, EDP.BR, CRAM.AD);
 
     $display("Start EDP test bench; reset EBOX>");
 
     masterClk = 0;
 
-    CRADR = 0;
     cacheDataRead = 0;
 
     CTL.AD_CRY_36 = 0;
@@ -71,14 +83,10 @@ module edptb;
     CON.FM_WRITE00_17 = 0;       // No writing to FM
     CON.FM_WRITE18_35 = 0;
 
-    SCD.ARMM_UPPER = 0;
-    SCD.ARMM_LOWER = 0;
+    EDP.ARMM_SCD = 0;
+    EDP.ARMM_VMA = 0;
 
-    VMA.VMA_HELD_OR_PC = 0;        // Reset PC for now
-
-
-    #75 $display($time, "<<<<<<<<<<<<<<<<<< Release EBOX reset >>");
-    CLK.EBOX_RESET = 0;
+    VMA.HELD_OR_PC = 0;         // Reset PC for now
 
     // Load AR with 123456789
     @(negedge masterClk)

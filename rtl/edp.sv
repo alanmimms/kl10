@@ -37,8 +37,6 @@ module edp(iAPR APR,
   bit AD_CP24_35, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35;
   bit ADX_CP00_11, ADX_CP12_23, ADX_CP24_35;
 
-`include "cram-aliases.svh"
-  
   bit clk;
   assign clk = CLK.EDP;         // Saves typing
 
@@ -46,7 +44,7 @@ module edp(iAPR APR,
   assign EDP.AD_CRY[36] = CTL.AD_CRY_36;
 
   // FM. No static at all!
-`ifdef KL10PV_TB
+`ifdef TB
   // Simulated fake memory can have "bytes" of 18 bits for simple
   // LH/RH byte write enable.
   sim_mem
@@ -56,7 +54,7 @@ module edp(iAPR APR,
      .din(EDP.AR),
      .dout(EDP.FM),
      .addr({APR.FM_BLOCK, APR.FM_ADR}),
-     .oe(1),
+     .oe(1'b1),
      .wea({CON.FM_WRITE00_17, CON.FM_WRITE18_35}));
 `else
   // NOTE: fm_mem is byte writable with 9-bit bytes so we can do
@@ -180,7 +178,7 @@ module edp(iAPR APR,
       assign EDP.AD_CRY[n+1] = EDP.AD_CRY[n-2] ^ ADEXxortmp[n];
       assign EDP.AD_OV[n] = EDP.AD_EX[n-2]  ^ ADEXxortmp[n];
 
-      mc10181 alu0(.M(AD_BOOL),
+      mc10181 alu0(.M(CRAM.AD_BOOL),
                    .S(S),
                    .A({{3{ADA[n+0]}}, ADA[n+1]}),
                    .B(ADB[n-2:n+1]),
@@ -190,7 +188,7 @@ module edp(iAPR APR,
                    .CG(AD_CG[n+0]),
                    .CP(AD_CP[n+0])/*,
                                    .COUT(EDP.AD_CRY[n-2])*/); // XXX multi-drives EDP.AD_CRY[-2] w/E11 below
-      mc10181 alu1(.M(AD_BOOL),
+      mc10181 alu1(.M(CRAM.AD_BOOL),
                    .S(S),
                    .A(ADA[n+2:n+5]),
                    .B(ADB[n+2:n+5]),
@@ -207,7 +205,7 @@ module edp(iAPR APR,
     for (n = 0; n < 36; n = n + 6) begin : ADXaluE3E4
       bit x1, x2;
 
-      mc10181 alu2(.M(AD_BOOL),
+      mc10181 alu2(.M(CRAM.AD_BOOL),
                    .S(S),
                    .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                    .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
@@ -215,7 +213,7 @@ module edp(iAPR APR,
                    .F({x1, EDP.ADX[n:n+2]}),
                    .CG(ADX_CG[n+0]),
                    .CP(ADX_CP[n+0]));
-      mc10181 alu3(.M(AD_BOOL),
+      mc10181 alu3(.M(CRAM.AD_BOOL),
                    .S(S),
                    .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                    .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
@@ -352,7 +350,7 @@ module edp(iAPR APR,
   // ADXA mux
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADXAmux
-      always_comb ADXA[n+0:n+5] = ADA_EN ? 6'b0 : EDP.ARX[n+0:n+5];
+      always_comb ADXA[n+0:n+5] = CRAM.ADA_EN ? 6'b0 : EDP.ARX[n+0:n+5];
     end
   endgenerate
 
@@ -360,13 +358,13 @@ module edp(iAPR APR,
   // ADA mux
   generate
     for (n = 0; n < 36; n = n + 6) begin : ADAmux
-      always_comb if (~ADA_EN) unique case(CRAM.ADA)
-                               default: ADA[n+0:n+5] = '0;
-                               adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
-                               adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
-                               adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
-                               adaPC:  ADA[n+0:n+5] = VMA.HELD_OR_PC[n+0:n+5];
-                               endcase
+      always_comb if (~CRAM.ADA_EN) unique case(CRAM.ADA)
+                                    default: ADA[n+0:n+5] = '0;
+                                    adaAR:  ADA[n+0:n+5] = EDP.AR[n+0:n+5];
+                                    adaARX: ADA[n+0:n+5] = EDP.ARX[n+0:n+5];
+                                    adaMQ:  ADA[n+0:n+5] = EDP.MQ[n+0:n+5];
+                                    adaPC:  ADA[n+0:n+5] = VMA.HELD_OR_PC[n+0:n+5];
+                                    endcase
                   else ADA[n+0:n+5] = '0;
     end
   endgenerate
@@ -390,7 +388,7 @@ module edp(iAPR APR,
                                       ebusR[18:35] : '0;
 
   always_ff @(posedge clk)
-    if (EDP.EBUSdriver.driving) unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : DIAG_FUNC[4:6])
+    if (EDP.EBUSdriver.driving) unique case ((CTL.AD_TO_EBUS_L | CTL.AD_TO_EBUS_R) ?  3'b111 : CTL.DIAG[4:6])
                                 default: ebusR <= '0;
                                 3'b000: ebusR <= EDP.AR;
                                 3'b001: ebusR <= EDP.BR;

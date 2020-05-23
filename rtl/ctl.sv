@@ -21,8 +21,6 @@ module ctl(iAPR APR,
   bit RESET;
   bit SPEC_MTR_CTL;
 
-`include "cram-aliases.svh"
-
   // p.364: Decode all the things.
   // Dispatches
   assign CTL.DISP_AREAD = CRAM.DISP == dispDRAM_A_RD;
@@ -34,22 +32,22 @@ module ctl(iAPR APR,
   assign CTL.DISP_EA_MOD = CRAM.DISP == dispEA_MOD;
   
   // Special functions
-  assign CTL.SPEC_INH_CRY_18 = SPEC == specINH_CRY18;
-  assign CTL.SPEC_MQ_SHIFT = SPEC == specMQ_SHIFT;
-  assign CTL.SPEC_SCM_ALT = SPEC == specSCM_ALT;
-  assign CTL.SPEC_CLR_FPD = SPEC == specCLR_FPD;
-  assign CTL.SPEC_LOAD_PC = SPEC == specLOAD_PC;
-  assign CTL.SPEC_XCRY_AR0 = SPEC == specXCRY_AR0;
-  assign CTL.SPEC_GEN_CRY_18 = SPEC == specGEN_CRY18;
-  assign CTL.SPEC_STACK_UPDATE = SPEC == specSTACK_UPDATE;
-  assign CTL.SPEC_ARL_IND = SPEC == specARL_IND;
-  assign CTL.SPEC_FLAG_CTL = SPEC == specFLAG_CTL;
-  assign CTL.SPEC_SAVE_FLAGS = SPEC == specSAVE_FLAGS;
-  assign CTL.SPEC_SP_MEM_CYCLE = SPEC == specSP_MEM_CYCLE;
-  assign CTL.SPEC_AD_LONG = SPEC == specAD_LONG;
+  assign CTL.SPEC_INH_CRY_18 = CRAM.SPEC == specINH_CRY18;
+  assign CTL.SPEC_MQ_SHIFT = CRAM.SPEC == specMQ_SHIFT;
+  assign CTL.SPEC_SCM_ALT = CRAM.SPEC == specSCM_ALT;
+  assign CTL.SPEC_CLR_FPD = CRAM.SPEC == specCLR_FPD;
+  assign CTL.SPEC_LOAD_PC = CRAM.SPEC == specLOAD_PC;
+  assign CTL.SPEC_XCRY_AR0 = CRAM.SPEC == specXCRY_AR0;
+  assign CTL.SPEC_GEN_CRY_18 = CRAM.SPEC == specGEN_CRY18;
+  assign CTL.SPEC_STACK_UPDATE = CRAM.SPEC == specSTACK_UPDATE;
+  assign CTL.SPEC_ARL_IND = CRAM.SPEC == specARL_IND;
+  assign CTL.SPEC_FLAG_CTL = CRAM.SPEC == specFLAG_CTL;
+  assign CTL.SPEC_SAVE_FLAGS = CRAM.SPEC == specSAVE_FLAGS;
+  assign CTL.SPEC_SP_MEM_CYCLE = CRAM.SPEC == specSP_MEM_CYCLE;
+  assign CTL.SPEC_AD_LONG = CRAM.SPEC == specAD_LONG;
 
   // This one is internal because of reclock with APR_CLK below.
-  assign SPEC_MTR_CTL = SPEC == specMTR_CTL;
+  assign SPEC_MTR_CTL = CRAM.SPEC == specMTR_CTL;
 
   // EBUS
   assign CTL.EBUSdriver.driving = CTL.DIAG_READ;
