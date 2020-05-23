@@ -52,8 +52,6 @@ module cra(iAPR APR,
   // (37). This dispatch is never used in microcode.
   bit [7:10] eaType = 0;
 
-`include "cram-aliases.svh"
-
   // Note E43,E3,E23 and parts of E47(Q3),E35(Q3) are in crm.v since
   // they are simple CRAM storage mapping to logical fields.
 
