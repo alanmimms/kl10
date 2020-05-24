@@ -1,0 +1,9 @@
+# compile verilog/system verilog design source files
+sv xil_defaultlib  --include "../../../../rtl" --include "../../../../kl10.ip_user_files/ipstatic/hdl" --include "../../../../kl10.srcs/sources_1/ip/ebox_clocks_1" --include "../../../../kl10.srcs/sources_1/ip/kl_delays" --include "/opt/Xilinx/Vivado/2019.2/data/xilinx_vip/include" \
+"../../../../doc/bug001.sv" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
