@@ -19,16 +19,15 @@
 //  1  1  0  1    A&~B        (A&~B)-1     A&~B
 //  1  1  1  0    A&B         (A&B)-1      A&B
 //  1  1  1  1    A           A-1          A
-module mc10181(input [3:0] S,
+module mc10181(input [0:3] S,
                input M,
-               input [3:0] A,
-               input [3:0] B,
+               input [0:3] A,
+               input [0:3] B,
                input CIN,
-               output [3:0] F,
-               output CG,
-               output CP,
-               output COUT
-               );
+               output bit [0:3] F,
+               output bit CG,
+               output bit CP,
+               output bit COUT);
 
   bit [3:0] G, P;
   bit notGG;
