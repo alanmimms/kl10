@@ -1,13 +1,12 @@
 `timescale 1ns/1ns
-module mc10179(input [3:0] G,
-               input [3:0] P,
+module mc10179(input [0:3] G,
+               input [0:3] P,
                input CIN,
 
-               output GG,
-               output PG,
-               output C8OUT,
-               output C2OUT
-               );
+               output bit GG,
+               output bit PG,
+               output bit C8OUT,
+               output bit C2OUT);
 
   assign C8OUT = ~|{~G[3],
                     ~|{P[3], G[2]},

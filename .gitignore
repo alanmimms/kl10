@@ -23,3 +23,5 @@ kl10.ip_user_files
 *.bak
 *.pb
 *.sdb
+kl10.sim/edp/behav/xsim/EDPtb_top.tcl
+kl10.sim/edp/behav/xsim/EDPtb_top_vlog.prj

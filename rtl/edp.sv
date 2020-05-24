@@ -5,7 +5,7 @@
 module edp(iAPR APR,
            iCLK CLK,
            iCON CON,
-           iCRAM CRAM,
+           iCRAM.mod CRAM,
            iCTL CTL,
            iEDP EDP,
            iIR IR,
@@ -155,10 +155,13 @@ module edp(iAPR APR,
   // DP03 p.17
   // Aliases for simplified access
   bit ADA_EN, AD_BOOL;
-  assign ADA_EN = CRAM.ADA[0];
+  assign ADA_EN = ~CRAM.ADA[0];
   assign AD_BOOL = CRAM.AD[1];
 
   assign EDP.AD_CRY[-1:35] = AD_CRY[-1:35];
+
+  bit [2:5] adOp;
+  assign adOp = CRAM.AD;
 
   // AD
   generate
@@ -171,7 +174,8 @@ module edp(iAPR APR,
       assign EDP.AD_OVERFLOW[n] = (AD_EX[n-2] ^ AD_EX[n-1]) | e33q10;
 
       mc10181 e1(.M(AD_BOOL),
-                 .S(CRAM.AD[2:5]),
+//                 .S(CRAM.AD[2:5]),
+                 .S(adOp),
                  .A({{3{ADA[n+0]}}, ADA[n+1]}),
                  .B(ADB[n-2:n+1]),
                  .CIN(AD_CRY[n+2]),
@@ -182,7 +186,8 @@ module edp(iAPR APR,
                  .COUT(AD_CRY[n-2]));
 
       mc10181 e2(.M(AD_BOOL),
-                 .S(CRAM.AD[2:5]),
+//                 .S(CRAM.AD[2:5]),
+                 .S(adOp),
                  .A(ADA[n+2:n+5]),
                  .B(ADB[n+2:n+5]),
                  .CIN(AD_CRY[n+6]), // Assigned AD_CRY_36 to AD_CRY[36] so this works
@@ -199,7 +204,7 @@ module edp(iAPR APR,
       bit unusedE3, unusedE4;
 
       mc10181 e3(.M(AD_BOOL),
-                 .S(CRAM.AD[2:5]),
+                 .S(adOp),
                  .A({ADXA[n+0], ADXA[n+0], ADXA[n+1:n+2]}),
                  .B({ADXB[n+0], ADXB[n+0], ADXB[n+1:n+2]}),
                  .CIN(ADX_CRY[n+3]),
@@ -208,7 +213,7 @@ module edp(iAPR APR,
                  .CP(ADX_CP[n+0]),
                  .COUT());
       mc10181 e4(.M(AD_BOOL),
-                 .S(CRAM.AD[2:5]),
+                 .S(adOp),
                  .A({ADXA[n+3], ADXA[n+3], ADXA[n+4:n+5]}),
                  .B({ADXB[n+3], ADXB[n+3], ADXB[n+4:n+5]}),
                  .CIN(ADX_CRY[n+6]), // Assigned ADX_CRY_36 to ADX_CRY[36] so this works
@@ -224,6 +229,8 @@ module edp(iAPR APR,
   mc10179 e11(.G({AD_CG[0], AD_CG[2], AD_CG06_11, AD_CG12_35}),
               .P({AD_CP[0], AD_CP[2], AD_CP06_11, AD_CP12_35}),
               .CIN(AD_CRY[36]),
+              .GG(),
+              .PG(),
               .C8OUT(EDP.AD_CRY[-2]),
               .C2OUT(EDP.AD_CRY[6]));
 
@@ -267,6 +274,8 @@ module edp(iAPR APR,
   mc10179 e22(.G({ GEN_CRY_36, ADX_CG00_11, ADX_CG12_23, ADX_CG24_35}),
               .P({PROP_CRY_36, ADX_CP00_11, ADX_CP12_23, ADX_CP24_35}),
               .CIN(CTL.ADX_CRY_36),
+              .GG(),
+              .PG(),
               .C8OUT(EDP.AD_CRY[36]),
               .C2OUT());
 
@@ -281,6 +290,8 @@ module edp(iAPR APR,
   mc10179 e26(.G({ADX_CG[12], ADX_CG[15], ADX_CG[18], ADX_CG[21]}),
               .P({ADX_CP[12], ADX_CP[15], ADX_CP[18], ADX_CP[21]}),
               .CIN(ADX_CRY[24]),
+              .GG(),
+              .PG(),
               .C8OUT(EDP.ADX_CRY[12]),
               .C2OUT(EDP.ADX_CRY[18]));
 
