@@ -254,3 +254,14 @@ Designation   Designation   Backplane    Model
 
 # Backplane wire-wrap and etch listing info
 * LCG_GoodStuffNewsletters.pdf p.97-100
+
+
+# Xilinx bugs
+
+## Select subset of bits of an enum typed vector
+Define a multi-bit enum type (e.g., tAD in iCRAM, which is six bits
+wide). Pass a subrange of the bits of a vector of that type as the
+actual parameter to a module instantiation. So CRAM.AD[2:5] selects
+right-most four bits of the six bit CRAM.AD field (tAD type). The
+module formal parmaeter is type `bit [0:3] S` in this case. The module
+will receive zero no matter what the value of `CRAM.AD` is.
