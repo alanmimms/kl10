@@ -29,14 +29,11 @@ module edptb;
 
   edp edp0(.*);
 
-  // 50MHz
-  always #10 masterClk = ~masterClk;
+  // 100MHz
+  always #5 masterClk = ~masterClk;
 
   initial begin
-    $monitor($time, " AD=%09x AR=%09x BR=%09x CRAM.AD=%06b",
-             EDP.AD, EDP.AR, EDP.BR, CRAM.AD);
-
-    $display("Start EDP test bench; reset EBOX>");
+    $display($time, " [Start EDP test bench]");
 
     masterClk = 0;
 
@@ -74,13 +71,11 @@ module edptb;
 
     SHM.SH = 0;
 
-//    CRAM = '{default: 0};
-
     CRAM.FMADR = fmadrAC0;
-    APR.FM_BLOCK = 0;              // Select a good block number
-    APR.FM_ADR = 7;              // And a good FM AC #
+    APR.FM_BLOCK = 0;           // Select a good block number
+    APR.FM_ADR = 7;             // And a good FM AC #
 
-    CON.FM_WRITE00_17 = 0;       // No writing to FM
+    CON.FM_WRITE00_17 = 0;      // No writing to FM
     CON.FM_WRITE18_35 = 0;
 
     EDP.ARMM_SCD = 0;
@@ -89,26 +84,15 @@ module edptb;
     VMA.HELD_OR_PC = 0;         // Reset PC for now
 
     // Load AR with 123456789
-    @(negedge masterClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=555555555, BR/AR >>");
-    cacheDataRead = 36'h555555555;
-    CRAM.AD = adA;
-    CRAM.ADA = adaAR;
-    CRAM.ADB = adbBR;          // Not used yet
-    CRAM.AR = arCACHE;
-    CTL.ARL_SEL = 4'b0001; // CACHE
-    CTL.ARR_SEL = 4'b0001; // CACHE
-    CTL.AR00to08_LOAD = 1;  // Load ARL pieces
-    CTL.AR09to17_LOAD = 1;
-    CTL.ARR_LOAD = 1;       // Load ARR
-    CRAM.BR = brAR;
-    CRAM.ARX = arxARX;
+    @(negedge masterClk) $display($time, " set AR=h555555555");
+    edp0.EDP.AR = 36'h555555555;
+
+    @(posedge masterClk) ;
 
 
     // Try AD/A first
-    @(negedge masterClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A, ADA/AR, AR/CACHE=555555555, BR/AR >>");
-    cacheDataRead = 36'h555555555;
+    @(negedge masterClk) ;
+    MBOX.CACHE_DATA = 36'hFFFFFFFFF;
     CRAM.AD = adA;
     CRAM.ADA = adaAR;
     CRAM.ADB = adbBR;          // Not used yet
@@ -120,11 +104,13 @@ module edptb;
     CTL.ARR_LOAD = 1;       // Load ARR
     CRAM.BR = brAR;
     CRAM.ARX = arxARX;
+    @(posedge masterClk) ;
+     @(negedge masterClk) $display($time, " AD/A, ADA/AR, AR/CACHE result: AD=h%09x", EDP.AD);
 
 
     // Try AD/B
     @(negedge masterClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
+    $display($time, " AD/B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
     cacheDataRead = 36'h987654321;
     CRAM.AD = adA;
     CRAM.ADA = adaAR;
