@@ -5,6 +5,7 @@ sv xil_defaultlib  -i "../../../../rtl/include" --include "../../../../rtl" --in
 "../../../../rtl/tb/sim-mem.sv" \
 "../../../../rtl/mc10181.sv" \
 "../../../../rtl/edp.sv" \
+"../../../../rtl/universal-shift-register.sv" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"
