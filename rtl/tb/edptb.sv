@@ -86,81 +86,48 @@ module edptb;
     // Load AR with 123456789
     @(negedge masterClk) $display($time, " set AR=h555555555");
     edp0.EDP.AR = 36'h555555555;
-
+    CRAM.AR = arAR;
+    CRAM.BR = tBR'('0);
+    CRAM.ARX = arxARX;
+    CRAM.BRX = tBRX'('0);
     @(posedge masterClk) ;
-
+    @(negedge masterClk) $display($time, " AR=h%09X S.B h555555555", EDP.AR);
 
     // Try AD/A first
     @(negedge masterClk) ;
-    MBOX.CACHE_DATA = 36'hFFFFFFFFF;
+    MBOX.CACHE_DATA = 36'h123456789;
     CRAM.AD = adA;
+    CRAM.AR = arAR;
     CRAM.ADA = adaAR;
-    CRAM.ADB = adbBR;          // Not used yet
-    CRAM.AR = arCACHE;
-    CTL.ARL_SEL = 4'b0001; // CACHE
-    CTL.ARR_SEL = 4'b0001; // CACHE
-    CTL.AR00to08_LOAD = 1;  // Load ARL pieces
-    CTL.AR09to17_LOAD = 1;
-    CTL.ARR_LOAD = 1;       // Load ARR
-    CRAM.BR = brAR;
+    CRAM.AR = arAR;
+    CRAM.BR = tBR'('0);
     CRAM.ARX = arxARX;
+    CRAM.BRX = tBRX'('0);
     @(posedge masterClk) ;
-     @(negedge masterClk) $display($time, " AD/A, ADA/AR, AR/CACHE result: AD=h%09x", EDP.AD);
+    @(negedge masterClk) $display($time, " result: AD/A, ADA/AR, AR/AR AD=h%09x", EDP.AD[-2:35]);
 
+
+    // Load BR with 987654321
+    @(negedge masterClk) $display($time, " set BR=h987654321");
+    edp0.EDP.BR = 36'h987654321;
+    CRAM.AR = arAR;
+    CRAM.BR = tBR'('0);
+    CRAM.ARX = arxARX;
+    CRAM.BRX = tBRX'('0);
+    @(posedge masterClk) ;
+    @(negedge masterClk) $display($time, " BR=h%09X S.B h987654321", EDP.BR);
 
     // Try AD/B
     @(negedge masterClk)
-    $display($time, " AD/B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
-    cacheDataRead = 36'h987654321;
-    CRAM.AD = adA;
+    CRAM.AD = adB;
     CRAM.ADA = adaAR;
     CRAM.ADB = adbBR;
-    CRAM.AR = arCACHE;
-    CTL.ARL_SEL = 4'b0001; // CACHE
-    CTL.ARR_SEL = 4'b0001; // CACHE
-    CTL.AR00to08_LOAD = 1;  // Load ARL pieces
-    CTL.AR09to17_LOAD = 1;
-    CTL.ARR_LOAD = 1;       // Load ARR
-    CRAM.BR = brAR;
+    CRAM.AR = arAR;
+    CRAM.BR = tBR'('0);
     CRAM.ARX = arxARX;
-
-    // Try AD/0S
-    @(negedge masterClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/0S, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
-    cacheDataRead = 36'h987654321;
-    CRAM.AD = adZEROS;          // AD/0S
-    CRAM.ADA = adaAR;
-    CRAM.ADB = adbBR;
-    CRAM.AR = arCACHE;
-    CTL.ARL_SEL = 4'b0001; // CACHE
-    CTL.ARR_SEL = 4'b0001; // CACHE
-    CTL.AR00to08_LOAD = 1;  // Load ARL pieces
-    CTL.AR09to17_LOAD = 1;
-    CTL.ARR_LOAD = 1;       // Load ARR
-    CRAM.BR = brAR;
-    CRAM.ARX = arxARX;
-
-    // Now add 987654321 and 123456789
-    @(negedge masterClk)
-    $display($time, "<<<<<<<<<<<<<<<<<< AD/A+B, ADA/AR, ADB/BR, AR/CACHE=987654321 >>");
-    cacheDataRead = 36'h987654321;
-    CRAM.AD = adAplusB;         // AD/A+B
-    CRAM.ADA = adaAR;
-    CRAM.ADB = adbBR;
-    CRAM.AR = arCACHE;
-    CTL.ARL_SEL = 4'b0001; // CACHE
-    CTL.ARR_SEL = 4'b0001; // CACHE
-    CTL.AR00to08_LOAD = 1;  // Load ARL pieces
-    CTL.AR09to17_LOAD = 1;
-    CTL.ARR_LOAD = 1;       // Load ARR
-    CRAM.BR = brAR;
-    CRAM.ARX = arxARX;
-
-    @(negedge masterClk);
-
-    @(negedge masterClk);
-
-    @(negedge masterClk);
+    CRAM.BRX = tBRX'('0);
+    @(posedge masterClk) ;
+    @(negedge masterClk) $display($time, " result: AD/B, ADA/AR, ADB/BR AD=h%09x", EDP.AD[-2:35]);
 
     $display($time, "DONE");
 //    $stop;
