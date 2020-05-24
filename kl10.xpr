@@ -21,7 +21,7 @@
     <Option Name="BoardPart" Val=""/>
     <Option Name="BoardPartRepoPaths" Val="$PPRDIR/../.Xilinx/Vivado/2019.2/xhub/board_store"/>
     <Option Name="SourceMgmtMode" Val="DisplayOnly"/>
-    <Option Name="ActiveSimSet" Val="edp"/>
+    <Option Name="ActiveSimSet" Val="bug001"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
@@ -33,7 +33,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="cora-z7-10"/>
-    <Option Name="WTXSimLaunchSim" Val="3290"/>
+    <Option Name="WTXSimLaunchSim" Val="3310"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -1463,6 +1463,28 @@
         <Option Name="TopModule" Val="ptDir_128x6_mem"/>
         <Option Name="VerilogDir" Val="$PPRDIR/rtl/include"/>
         <Option Name="UseBlackboxStub" Val="1"/>
+      </Config>
+    </FileSet>
+    <FileSet Name="bug001" Type="SimulationSrcs" RelSrcDir="$PSRCDIR/bug001">
+      <Filter Type="Srcs"/>
+      <File Path="$PPRDIR/doc/bug001.sv">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="implementation"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <Config>
+        <Option Name="DesignMode" Val="RTL"/>
+        <Option Name="TopModule" Val="top"/>
+        <Option Name="TopLib" Val="xil_defaultlib"/>
+        <Option Name="TransportPathDelay" Val="0"/>
+        <Option Name="TransportIntDelay" Val="0"/>
+        <Option Name="SelectedSimModel" Val="rtl"/>
+        <Option Name="SrcSet" Val=""/>
+        <Option Name="xsim.compile.xvlog.relax" Val="false"/>
+        <Option Name="xsim.elaborate.relax" Val="false"/>
+        <Option Name="xsim.simulate.log_all_signals" Val="true"/>
       </Config>
     </FileSet>
   </FileSets>
