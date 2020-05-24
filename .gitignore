@@ -21,3 +21,5 @@ doc/MP00622_MF20_Oct82-OCR.pdf
 *.log
 kl10.ip_user_files
 *.bak
+*.pb
+*.sdb
