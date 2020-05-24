@@ -136,7 +136,7 @@ module edp(iAPR APR,
 
       USR4 e13(.S0(MQM[n+1]),
                .D(MQM[n:n+3]),
-               .S3(EDP.MQ[N+4]),
+               .S3(EDP.MQ[n+4]),
                .SEL(CTL.MQ_SEL),
                .CLK(clk),
                .Q({EDP.MQ[n:n+2], unusedE13}));
@@ -144,7 +144,7 @@ module edp(iAPR APR,
 
       USR4 e15(.S0(MQM[n+3]),
                .D(MQM[n+2:n+5]),
-               .S3(n <= 30 ? EDP.MQ[N+6] : AD_CRY[-2]),
+               .S3(n < 30 ? EDP.MQ[n+6] : AD_CRY[-2]),
                .SEL(CTL.MQ_SEL),
                .CLK(clk),
                .Q({unusedE15, EDP.MQ[n+3:n+5]}));
@@ -294,40 +294,18 @@ module edp(iAPR APR,
 
   // DP03 p.17
   // ADB mux
-  generate
-    for (n = 0; n < 36; n = n + 6) begin : ADBmux
+  // This was way more complex in the schematics, but it boils down to this.
+  always_comb begin
+    ADB = '0;
 
-      // The irregular part of ADB mux: E22 and E21.
-      // When N==0, D4..D7 inputs are selected else D0..D3.
-      //
-      // In the real KL10 EDP the ADB[-2],ADB[-1] are handled by
-      // this bit. But when N > 0, they wire-OR with other signals.
-      // I am resolving this by forcing this logic only for N=0.
-      always_comb begin
-        ADB = '0;
-        unique case({n == 0, CRAM.ADB})
-        3'b000: ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
-        3'b001: ADB[n-2:n-1] = {2{EDP.BR[n+1]}};
-        3'b010: ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
-        3'b011: ADB[n-2:n-1] = {2{EDP.AR[n+2]}};
-        3'b100: ADB[n-2:n-1] = {2{EDP.FM[n+0]}};
-        3'b101: ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
-        3'b110: ADB[n-2:n-1] = {2{EDP.BR[n+0]}};
-        3'b111: ADB[n-2:n-1] = {2{EDP.AR[n+0]}};
-        endcase
-
-        // The regular part of ADB mux: E23, E26, and E19.
-        unique case(CRAM.ADB)
-        2'b00: ADB[n:n+5] = EDP.FM[n+0:n+5];
-        2'b01: ADB[n:n+5] = n < 30 ? EDP.BR[n+1:n+6] : {EDP.BR[n+1:n+5], EDP.BRX[0]};
-        2'b10: ADB[n:n+5] = EDP.BR[n+0:n+5];
-        2'b11: ADB[n:n+5] = n < 30 ? EDP.AR[n+2:n+7] : {EDP.AR[n+2:n+5], EDP.ARX[0:1]};
-        endcase
-      end
-    end
-  endgenerate
-
-
+    unique case(CRAM.ADB)
+    2'b00: ADB[0:35] = {{2{EDP.FM[0]}}, EDP.FM[0:35]};
+    2'b01: ADB[0:35] = {{2{EDP.BR[0]}}, EDP.BR[1:35], EDP.BRX[0]};
+    2'b10: ADB[0:35] = {{2{EDP.BR[0]}}, EDP.BR[0:35]};
+    2'b11: ADB[0:35] = {EDP.AR[0:35], EDP.ARX[0:1]};
+    endcase
+  end
+  
   // This simplifies the mostly unused bits of the `adbFM` case for
   // ADXB. The schematics show this as # [N+0] H\#400\ (the H\#400\
   // just means to use a certain type of backplane wire (coax for
@@ -337,20 +315,16 @@ module edp(iAPR APR,
   bit [0:35] adxbMagic;
   assign adxbMagic = {CRAM.MAGIC, 27'b0};
   // ADXB mux
-  generate
-    for (n = 0; n < 36; n = n + 6) begin : ADXBmux
-      always_comb begin
-        ADXB = '0;
+  always_comb begin
+    ADXB = '0;
 
-        unique case(CRAM.ADB)
-        2'b00: ADXB[n+0:n+5] = adxbMagic[n+0:n+5];
-        2'b01: ADXB[n+0:n+5] = n < 30 ? EDP.BRX[n+1:n+6] : {EDP.BRX[n+1:n+5], 1'b0}; // There is no BRX[36]
-        2'b10: ADXB[n+0:n+5] = EDP.BRX[n+0:n+5];
-        2'b11: ADXB[n+0:n+5] = n < 30 ? EDP.ARX[n+2:n+7] : {EDP.ARX[n+2:n+5], 2'b00}; // There is no ARX[36:37]
-        endcase
-      end
-    end
-  endgenerate
+    unique case(CRAM.ADB)
+    2'b00: ADXB[0:35] = adxbMagic[0:35];
+    2'b01: ADXB[0:35] = {EDP.BRX[1:35], 1'b0};
+    2'b10: ADXB[0:35] = EDP.BRX[0:35];
+    2'b11: ADXB[0:35] = {EDP.ARX[2:35], 2'b00};
+    endcase
+  end
 
   // ADA mux E16,E18
   always_comb begin
