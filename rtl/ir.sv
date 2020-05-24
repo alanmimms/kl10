@@ -120,7 +120,7 @@ module ir(iIR IR,
   assign IR.TEST_SATISFIED = |{IR.DRAM_B[1] & IR.ADeq0,                  // EQ
                                IR.DRAM_B[2] & AgtB & CRAM.MAGIC[7],      // GT
                                IR.DRAM_B[2] & EDP.AD[0] & CRAM.MAGIC[8], // LT
-                               ~magic7eq8 & EDP.AD_CRY[-2]           // X
+                               ~magic7eq8 & EDP.AD_CRY[-2]               // X
                                } ^ IR.DRAM_B[0];
 
   // p.130 E57 and friends

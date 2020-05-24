@@ -1,6 +1,10 @@
 `ifndef _EBOX_SVH_
  `define _EBOX_SVH_ 1
 
+// Universal shift register function selector values
+enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
+
+  
 ///////////////////////////////////////////////////////////////
 // EBUS
 typedef enum bit [0:2] {
@@ -1102,12 +1106,10 @@ interface iEDP;
   bit DIAG_READ_FUNC_10x;
   bit FM_PARITY;
   bit FM_WRITE;
-  bit GEN_CRY_36;
   bit [-2:35] AD;
-  bit [-2:35] AD_EX;
   bit [-2:36] AD_CRY;
   bit [0:35] ADX;
-  bit [0:35] AD_OV;
+  bit [0:35] AD_OVERFLOW;
   bit [0:35] AR;
   bit [0:35] ARX;
   bit [0:35] BR;
