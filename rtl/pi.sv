@@ -57,16 +57,16 @@ module pi(iAPR APR,
 
   assign ACTIVE = _ON | ~SYS_CLR & OFF & ~ACTIVE;
 
-  USR4 e79(.S0(0),
+  USR4 e79(.S0(1'b0),
            .D(PIR_EN[1:4]),
-           .S3(0),
+           .S3(1'b0),
            .SEL('0),
            .CLK(LOAD),
            .Q(PIR[1:4]));
   
-  USR4 e76(.S0(0),
+  USR4 e76(.S0(1'b0),
            .D({PIR_EN[5:7], EBUS.pi[0]}), // EBUS PI00 E H (should be a PIC enable?)
-           .S3(0),
+           .S3(1'b0),
            .SEL('0),
            .CLK(LOAD),
            .Q({PIR[5:7], PIR[0]}));
@@ -136,14 +136,14 @@ module pi(iAPR APR,
 
   USR4  e2(.S0(CYC_START),
            .D(4'b0000),
-           .S3(0),
+           .S3(1'b0),
            .SEL({STATE_HOLD, ~MR_RESET}),
            .CLK(clk),
            .Q(TIM[1:4]));
 
   USR4 e12(.S0(TIM[4]),
            .D(4'b0000),
-           .S3(0),
+           .S3(1'b0),
            .SEL({STATE_HOLD, ~MR_RESET}),
            .CLK(clk),
            .Q({TIM[5:7], COMP}));
@@ -154,7 +154,7 @@ module pi(iAPR APR,
   always_ff @(posedge TIM[3]) APR_REQUESTING <= APR_PHY_NO;
 
   bit [1:3] ignoredE3;
-  USR4  e3(.S0(0),
+  USR4  e3(.S0(1'b0),
            .D('0),
            .S3(EBUS.xfer | XFER_FORCE),
            .CLK(clk),
@@ -196,16 +196,16 @@ module pi(iAPR APR,
               .q(e52Q));    
 
   bit ignoredE51, ignoredE56;
-  USR4 e56(.S0(0),
+  USR4 e56(.S0(1'b0),
            .D({IOB[15:17], 1'b0}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({~CON.CONO_APR, ~CON.CONO_APR & ~MR_RESET}),
            .CLK(clk),
            .Q({PIC.APR_PIA, ignoredE56}));
 
-  USR4 e51(.S0(0),
+  USR4 e51(.S0(1'b0),
            .D({IOB[15:17], 1'b0}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({~MTR.CONO_MTR, ~MTR.CONO_MTR & ~MR_RESET}),
            .CLK(clk),
            .Q({PIC.MTR_PIA, ignoredE51}));
@@ -321,7 +321,7 @@ module pi(iAPR APR,
 
   USR4 e30(.S0(~LOAD & ~WAIT1 & ~WAIT2),
            .D(4'b0000),
-           .S3(0),
+           .S3(1'b0),
            .SEL({EBUS_REQ, ~INHIBIT_REQ & ~CONO_DLY}),
            .CLK(clk),
            .Q({LOAD, WAIT1, WAIT2, TEST}));

@@ -19,11 +19,11 @@
 //  1  1  0  1    A&~B        (A&~B)-1     A&~B
 //  1  1  1  0    A&B         (A&B)-1      A&B
 //  1  1  1  1    A           A-1          A
-module mc10181(input [0:3] S,
-               input M,
-               input [0:3] A,
-               input [0:3] B,
-               input CIN,
+module mc10181(input bit [0:3] S,
+               input bit M,
+               input bit [0:3] A,
+               input bit [0:3] B,
+               input bit CIN,
                output bit [0:3] F,
                output bit CG,
                output bit CP,

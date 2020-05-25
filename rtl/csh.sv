@@ -106,10 +106,10 @@ module csh(iAPR APR,
   always_ff @(posedge clk) CSH.CCA_REQ_EN <= ~WRITEBACK_T1 & ~PAGE_REFILL_T4_IN & ~MBOX.CORE_BUSY;
 
   // Note active low symbol
-  USR4 e72(.S0(0),
+  USR4 e72(.S0(1'b0),
            .D({CSH.EBOX_REQ_GRANT, CSH.MB_REQ_GRANT,
                CSH.CHAN_REQ_GRANT, CSH.CCA_REQ_GRANT}),
-           .S3(0),
+           .S3(1'b0),
            .Q({EBOX_CYC, CSH.MB_CYC, CSH.CHAN_CYC, CSH.CCA_CYC}),
            .SEL({2{CYC_TYPE_HOLD}}),
            .CLK(clk));
@@ -195,7 +195,7 @@ module csh(iAPR APR,
   always_ff @(posedge clk) CSH.GATE_VMA_27_33 <= CSH.EBOX_T0_IN | CSH.EBOX_CYC & ~MBX.REFILL_ADR_EN_NXT;
   always_ff @(posedge clk) CSH.ADR_PMA_EN <= ~CSH.EBOX_CYC & ~CSH.EBOX_T0_IN & ~MBX.REFILL_ADR_EN_NXT;
 
-  mux2x4 e26(.EN(1),
+  mux2x4 e26(.EN(1'b1),
              .SEL({CSH.LRU_2, CSH.LRU_1}),
              .D0(CSH.ANY_WR),
              .D1('0),
@@ -291,7 +291,6 @@ module csh(iAPR APR,
 
   assign T2_IN = T1 & ~CSH.WR_FROM_MEM_NXT;
   assign CCA_T3 = T3 & CSH.CCA_CYC;
-  assign PAGE_REFILL_T7 = PMA.PAGE_REFILL_CYC & T3;
   assign CSH.CHAN_WR_T5_IN = CCL.CHAN_TO_MEM & CSH.CHAN_T4;
   assign CSH.CHAN_T3 = CSH.CHAN_CYC & T3;
 

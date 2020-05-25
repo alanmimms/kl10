@@ -6,11 +6,11 @@
 // HUGE thanks to Rich Alderson of Living Computers Museum for a
 // gorgeous 600 DPI scan of the MP00301 p. 170 in which original scan
 // was obscured in a few places.
-module clk(input clk,
-           input CROBAR,
-           input EXTERNAL_CLK,
-           input clk30,
-           input clk31,
+module clk(input bit clk,
+           input bit CROBAR,
+           input bit EXTERNAL_CLK,
+           input bit clk30,
+           input bit clk31,
 
            iAPR APR,
            iCLK CLK,
@@ -73,7 +73,7 @@ module clk(input clk,
   assign DIAG_READ = EDP.DIAG_READ_FUNC_10x;
 
   // CLK1 p.168
-  mux e67(.en(1),
+  mux e67(.en(1'b1),
           .sel({CROBAR, CLK.SOURCE_SEL}),
           .d({clk30, clk31, EXTERNAL_CLK, {5{clk30}}}),
           .q(MAIN_SOURCE));
@@ -193,9 +193,9 @@ module clk(input clk,
   bit [0:3] rateSelSR;
   assign RATE_SELECTED = ~(rateSelSR[0] | rateSelSR[2]);
   
-  USR4 e5(.S0(0),
+  USR4 e5(.S0(1'b0),
           .D({CLK.RATE_SEL[0], CLK.RATE_SEL[0], CLK.RATE_SEL[1], 1'b0}),
-          .S3(0),
+          .S3(1'b0),
           .SEL({~RATE_SELECTED, 1'b0}),
           .CLK(MAIN_SOURCE),
           .Q(rateSelSR));
@@ -227,7 +227,7 @@ module clk(input clk,
 
   bit [0:3] e42SR;
   // NOTE: Active-low schematic symbol
-  USR4 e42(.S0(1),
+  USR4 e42(.S0(1'b1),
            .D({CLK.FUNC_SINGLE_STEP,
                CLK.FUNC_EBOX_SS,
                CLK.FUNC_EBOX_SS & ~CLK.SYNC,
@@ -247,7 +247,7 @@ module clk(input clk,
   bit [0:3] e60FF;
   assign CLK.MHZ16_FREE = e64SR[3];
 
-  USR4 e64(.S0(0),
+  USR4 e64(.S0(1'b0),
            .D({e64SR[0:1], ~(CTL.DIAG_CTL_FUNC_00x | CTL.DIAG_LD_FUNC_04x), 1'b1}),
            .S3(SYNCHRONIZE_CLK),
            .SEL({CLK.MHZ16_FREE, 1'b0}),
@@ -310,7 +310,7 @@ module clk(input clk,
   bit e52COUT;
   assign CLK.EBUS_RESET = e52Count[0];
 
-  UCR4 e52(.CIN(1),            // Always count
+  UCR4 e52(.CIN(1'b1),            // Always count
            .SEL({1'b0, ~e52COUT | CROBAR | CON.CONO_200000}),
            .CLK(CLK.MHZ16_FREE),
            .D('0),
@@ -320,9 +320,9 @@ module clk(input clk,
   bit ncE37;
   // CLK.GO is derived from CLK.FUNC_START, which means "Start the KL clock".
   // NOTE: Active-low schematic symbol
-  USR4 e37(.S0(0),
+  USR4 e37(.S0(1'b0),
            .D({CLK.FUNC_START, CLK.FUNC_BURST, CLK.FUNC_EBOX_SS, 1'b0}),
-           .S3(0),
+           .S3(1'b0),
            .SEL(~{2{CLK.FUNC_GATE | CROBAR}}),
            .CLK(MAIN_SOURCE),
            .Q({CLK.GO, BURST, EBOX_SS, ncE37}));
@@ -415,7 +415,7 @@ module clk(input clk,
   bit [0:3] e25Count;
   bit e25COUT;
   // NOTE: Active-low schematic symbol
-  UCR4 e25(.CIN(1),
+  UCR4 e25(.CIN(1'b1),
            .SEL({~EBOX_CLK_EN, 1'b0}),
            .CLK(MBOX_CLK),
            .D('0),
@@ -523,12 +523,12 @@ module clk(input clk,
   always_ff @(posedge MBOX_CLK) EBOX_CLK <= EBOX_CLK_EN;
 
   // NOTE: Active-low schematic symbol
-  USR4 e30(.S0(0),
+  USR4 e30(.S0(1'b0),
            .D({PAG.PF_EBOX_HANDLE,
                CON.AR_FROM_EBUS | CLK.PAGE_FAIL_EN,
                ~SHM.AR_PAR_ODD & CON.AR_LOADED,
                ~SHM.ARX_PAR_ODD & CON.ARX_LOADED}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{~CLK.PAGE_FAIL}}),
            .CLK(ODD),
            .Q(CLK.PF_DISP[7:10]));
@@ -628,7 +628,7 @@ module clk(input clk,
            .CLK(MAIN_SOURCE));
 
   // NOTE: Active-low schematic symbol
-  UCR4 e21(.RESET(0),
+  UCR4 e21(.RESET(1'b0),
            .CIN(~BURST_CNTeq0),
            .SEL(~{CLK.FUNC_042 | RATE_SELECTED | BURST, CLK.FUNC_042}),
            .COUT(burstLSBcarry),

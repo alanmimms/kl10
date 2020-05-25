@@ -13,7 +13,7 @@
 // This module would be instantiated twice in a real KL to provide two
 // cable interfaces to the memory. In this implementation we unify
 // this into a single module.
-module mt0(input CROBAR,
+module mt0(input bit CROBAR,
            iCLK CLK,
            iMBOX MBOX,
            iMBX MBX,

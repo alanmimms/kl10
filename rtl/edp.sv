@@ -15,7 +15,7 @@ module edp(iAPR APR,
            iVMA VMA,
            iEBUS.mod EBUS,
            iMBOX MBOX,
-           input [18:35] hwOptions);
+           input bit [18:35] hwOptions);
 
   bit [0:17] ARL;
   bit [0:17] ARXL, ARXR;

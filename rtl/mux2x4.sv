@@ -1,10 +1,10 @@
 `timescale 1ns/1ns
 // Dual 1-of-4 mux
 module mux2x4
-  (input wire [0:1] SEL,
-   input wire EN,
-   input wire [0:3] D0,
-   input wire [0:3] D1,
+  (input bit [0:1] SEL,
+   input bit EN,
+   input bit [0:3] D0,
+   input bit [0:3] D1,
    output bit B0,
    output bit B1);
 

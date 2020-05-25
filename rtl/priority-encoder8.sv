@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 
 module priority_encoder8
-  (input [0:7] d,
+  (input bit [0:7] d,
    output bit [0:2] q,
    output bit any);
 

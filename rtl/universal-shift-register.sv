@@ -1,10 +1,10 @@
 `timescale 1ns/1ns
 // This is like MC10141 ECL universal shift register
-module USR4(input S0,
-            input [0:3] D,
-            input S3,
-            input [0:1] SEL,
-            input CLK,
+module USR4(input bit S0,
+            input bit [0:3] D,
+            input bit S3,
+            input bit [0:1] SEL,
+            input bit CLK,
             output bit [0:3] Q);
 
   always_ff @(posedge CLK) unique case (SEL)

@@ -1,10 +1,10 @@
 `timescale 1ns/1ns
 // This is like MC10136 ECL universal up-down counter but all positive logic
-module UCR4(input RESET = 0,
-            input [0:3] D,
-            input CIN,
-            input [0:1] SEL,
-            input CLK,
+module UCR4(input bit RESET = 0,
+            input bit [0:3] D,
+            input bit CIN,
+            input bit [0:1] SEL,
+            input bit CLK,
             // NOTE these outputs are BIT, not LOGIC, so counting happens at power-on
             output bit [0:3] Q,
             output bit COUT);

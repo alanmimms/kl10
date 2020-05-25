@@ -113,8 +113,8 @@ module mtr(iCHC CHC,
   always_ff @(posedge CONO_MTR, posedge RESET) if (RESET) TIME_ON <= 0;
                                                else TIME_ON <= TIME_ON & ~mtrEBUS[24] | mtrEBUS[25];
 
-  UCR4 e88(.RESET(0),
-           .CIN(1),
+  UCR4 e88(.RESET(1'b0),
+           .CIN(1'b1),
            .SEL({1'b0, COUNT_TEN_USEC}),
            .D({4{~RESET}}),
            .CLK(INTERVAL_CLK),
@@ -122,8 +122,8 @@ module mtr(iCHC CHC,
            .COUT(TEN_USEC));
 
   bit e60COUT;
-  UCR4 e60(.RESET(0),
-           .CIN(1),
+  UCR4 e60(.RESET(1'b0),
+           .CIN(1'b1),
            .CLK(MBOX_CLK),
            .SEL({RESET | MTR._1_MHZ, 1'b0}),
            .D(4'b0000),         // Note assumes MBOX_CLK of 33MHz
@@ -131,7 +131,7 @@ module mtr(iCHC CHC,
            .COUT(e60COUT));
 
   bit [1:3] e59Unused;
-  UCR4 e59(.RESET(0),
+  UCR4 e59(.RESET(1'b0),
            .CIN(e60COUT),
            .COUT(),
            .SEL({RESET | MTR._1_MHZ, 1'b0}),
@@ -205,7 +205,7 @@ module mtr(iCHC CHC,
   always_ff @(posedge LOAD_PA_RIGHT) PROBE_LOW_PA_EN <= mtrEBUS[28];
   always_ff @(posedge LOAD_PA_RIGHT) PROBE_PA_DONT_CARE <= mtrEBUS[29];
 
-  mux e31(.en(1),
+  mux e31(.en(1'b1),
           .sel(PI_LEVEL),
           .d({e39q14, PI_PA_EN[1:7]}),
           .q(CURRENT_PI_PA_EN));
@@ -264,7 +264,7 @@ module mtr(iCHC CHC,
           .q(e66Q));
 
   bit [2:3] unusedE71;
-  UCR4 e71(.CIN(1),
+  UCR4 e71(.CIN(1'b1),
            .SEL({e66Q | |CHAN_BUSY[0:1], e66Q | RESET}),
            .CLK(MBOX.CH_T1),
            .D({4{e66Q}}),
@@ -398,8 +398,8 @@ endmodule
 
 module MTRcounter
   #(N=2, M=17)
-  (input clk,
-   input clear,
+  (input bit clk,
+   input bit clear,
    output bit carry);
 
   bit [N:M] count;
