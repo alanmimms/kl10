@@ -112,6 +112,11 @@ module mbx(iAPR APR,
                       CSH.CHAN_T4 & ~MBX.CHAN_WR_CYC;
   assign CSH_TO_MB_WD = (WD_NEEDED & {4{CTOMB_LOAD}} | CSH.WD_WR) &
                         (MBOX.CSH_WD_VAL | {4{MBX.CHAN_WR_CYC}} | CSH.WD_WR);
+  // CORE_BUSY is  MBX3 CORE BUSY 1A L here
+  assign MB_WR_RQ_CLR = MBOX.MB_SEL_HOLD & CORE_BUSY |
+                        MBOX.CHAN_READ |
+                        MBOX.MB_SEL_HOLD & MBC.MEM_START |
+                        MBOX.MB_SEL_HOLD & ~CSH.E_CACHE_WR_CYC & ~PMA.CSH_WRITEBACK_CYC;
   assign MB_SEL_HOLD_FF_IN = ~MB_WR_RQ_CLR_FF & (MB_WR_RQ_ANY | MBOX.MB_SEL_HOLD);
   assign MBOX.MB_SEL_2_EN = (CCL.CH_MB_SEL[2] | ~CHAN_READ) &
                             (MB_WR_RQ_P2 | CHAN_READ);
@@ -144,13 +149,11 @@ module mbx(iAPR APR,
               .en(~CORE_BUSY & (MBC.CORE_DATA_VALminus2 | CSH.ONE_WORD_WR_T0)),
               .q({CORE_WD_COMING[0:3], ignoredE18}));
   
-  bit unusedE12a, unusedE12b;
-  USR4 e12(.S0(1'b0),
-           .D({{2{MBOX.MB_SEL_2_EN}}, {2{MBOX.MB_SEL_1_EN}}}),
-           .S3(1'b0),
-           .SEL({2{MBOX.MB_SEL_HOLD}}),
-           .Q({MBOX.MB_SEL[2], unusedE12a, MBOX.MB_SEL[1], unusedE12b}),
-           .CLK(clk));
+  // E12
+  always_ff @(posedge clk) if (~MBOX.MB_SEL_HOLD) begin
+    MBOX.MB_SEL[2] <= MBOX.MB_SEL_2_EN;
+    MBOX.MB_SEL[1] <= MBOX.MB_SEL_1_EN;
+  end
 
   bit [0:3] wd;
   assign wd = CORE_WD_COMING | CSH_TO_MB_WD | MB_WR_RQ;
