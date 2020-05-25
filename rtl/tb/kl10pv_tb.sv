@@ -29,7 +29,7 @@ module kl10pv_tb(iAPR APR,
 
                  iEBUS.dte EBUS,
                  iMBOX MBOX,
-                 input [18:35] hwOptions,
+                 input bit [18:35] hwOptions,
 
                  output bit CROBAR,
                  output bit clk,
@@ -144,7 +144,7 @@ module kl10pv_tb(iAPR APR,
 
   
   ////////////////////////////////////////////////////////////////
-  task KLBootDialog(input int microcodeEditNumber, input [0:35] hwo);
+  task KLBootDialog(input int microcodeEditNumber, input bit [0:35] hwo);
     // Time to pretend a little...
     $display("");
     $display("KLISIM -- VERSION 0.0.1 RUNNING");
@@ -433,7 +433,7 @@ module kl10pv_tb(iAPR APR,
   endfunction
 
 
-  function string octW(input [0:35] w);
+  function string octW(input bit [0:35] w);
     $sformat(octW, "%06o,,%06o", w[0:17], w[18:35]);
   endfunction
 
@@ -468,7 +468,7 @@ module kl10pv_tb(iAPR APR,
   ////////////////////////////////////////////////////////////////
   // Request the specified CLK diagnostic function as if we were the
   // front-end setting up a KL10pv.
-  task doDiagWrite(input tDiagFunction func, input [18:35] ebusRH);
+  task doDiagWrite(input tDiagFunction func, input bit [18:35] ebusRH);
 
     @(negedge CLK.MHZ16_FREE) begin
       string shortName;

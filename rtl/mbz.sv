@@ -84,44 +84,44 @@ module mbz(iAPR APR,
 
 
   // MBZ2 p.304
-  USR4 e22(.S0(0),
+  USR4 e22(.S0(1'b0),
            .D(EBUS_REG_IN[0:3]),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[0:3]));
 
-  USR4 e15(.S0(0),
+  USR4 e15(.S0(1'b0),
            .D({EBUS_REG_IN[4:6], PAG.PT_CACHE}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[4:7]));
 
-  USR4 e16(.S0(0),
+  USR4 e16(.S0(1'b0),
            .D({MBOX.PAGED_REF, MBOX.PMA[14:16]}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q({EBUS_REG[8], EBUS_REG[14:16]}));
 
-  USR4 e26(.S0(0),
+  USR4 e26(.S0(1'b0),
            .D(MBOX.PMA[17:20]),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[17:20]));
 
-  USR4 e13(.S0(0),
+  USR4 e13(.S0(1'b0),
            .D(MBOX.PMA[21:24]),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q(EBUS_REG[21:24]));
 
-  USR4 e11(.S0(0),
+  USR4 e11(.S0(1'b0),
            .D({MBOX.PMA[25:26], MBOX.PMA[34:35]}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.LOAD_EBUS_REG}}),
            .CLK(clk),
            .Q({EBUS_REG[25:26], EBUS_REG[34:35]}));
@@ -211,7 +211,7 @@ module mbz(iAPR APR,
 
   // MBZ3 p.305
   bit [0:1] ignoredE23;
-  USR4 e23(.S0(0),
+  USR4 e23(.S0(1'b0),
            .D('0),
            .S3(~MBOX.NXM_ACKN & ~NXM_CLR_T0),
            .SEL({NXM_FLG & MEM_START_C,
@@ -301,9 +301,9 @@ module mbz(iAPR APR,
   assign MBOX.CHAN_ADR_PAR_ERR = ~e25q3 & MBOX.MBOX_ADR_PAR_ERR & CHAN_MEM_REF;
   assign MBOX.CHAN_PAR_ERR = ~e30q13 & MBOX.MB_PAR_ERR & CHAN_MEM_REF;
 
-  USR4  e6(.S0(0),
+  USR4  e6(.S0(1'b0),
            .D({MBOX.MB_DATA_CODE_2, MBOX.MB_DATA_CODE_1, MBOX.MB_SEL}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{LOAD_MB_MAGIC}}),
            .CLK(clk),
            .Q({MB_DATA_SOURCE, MB_WD_SEL}));
@@ -311,16 +311,16 @@ module mbz(iAPR APR,
 
   // MBZ5 p.307
   bit [2:3] e45Ignored, e56Ignored;
-  USR4 e45(.S0(0),
+  USR4 e45(.S0(1'b0),
            .D({CH_BUF_00to17_PAR, CH_BUF_18to35_PAR, 2'b00}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{CRC.CBUS_OUT_HOLD}}),
            .CLK(clk),
            .Q({MBOX.CBUS_PAR_LEFT_TE, MBOX.CBUS_PAR_RIGHT_TE, e45Ignored}));
 
-  USR4 e56(.S0(0),
+  USR4 e56(.S0(1'b0),
            .D({CH_BUF_00to17_PAR, CH_BUF_18to35_PAR, 2'b00}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.CH_T0}}),
            .CLK(clk),
            .Q({MB_CH_BUF_00to17_PAR, MB_CH_BUF_18to35_PAR, e56Ignored}));
@@ -357,7 +357,7 @@ module mbz(iAPR APR,
              .B0(MBOX.CSH_PAR_BIT_IN),
              .D1(), .B1());
 
-  mux e40(.en(1),
+  mux e40(.en(1'b1),
           .sel(MBOX.MB_IN_SEL),
           .d({CSH_PAR_BIT,
               1'b0,
@@ -393,9 +393,9 @@ module mbz(iAPR APR,
                             MBOX.CACHE_TO_MB_T4 & MBOX.CORE_BUSY & ~RESET;
 
   bit ignoredE18;
-  USR4 e18(.S0(0),
+  USR4 e18(.S0(1'b0),
            .D({~MEM_RD_RQ, CHAN_CORE_BUSY, MTR.CCA_WRITEBACK, 1'b0}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{MBOX.HOLD_ERA}}),
            .CLK(clk),
            .Q({MEM_WRITE, CHAN_REF, CCA_REF, ignoredE18}));

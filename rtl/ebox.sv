@@ -1,13 +1,13 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
 
-module ebox(input clk,
-            input clk30,
-            input clk31,
-            input EXTERNAL_CLK,
-            input CROBAR,
-            input PWR_WARN,
-            input [18:35] hwOptions,
+module ebox(input bit clk,
+            input bit clk30,
+            input bit clk31,
+            input bit EXTERNAL_CLK,
+            input bit CROBAR,
+            input bit PWR_WARN,
+            input bit [18:35] hwOptions,
 
             iAPR APR,
             iCCL CCL,

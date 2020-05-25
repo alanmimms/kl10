@@ -2,19 +2,19 @@
  `define _EBOX_SVH_ 1
 
 // Universal shift register function selector values
-enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
+typedef enum bit [0:1] {usrLOAD, usrSHL, usrSHR, usrHOLD} tUSRfunc;
 
-  
+
 ///////////////////////////////////////////////////////////////
 // EBUS
 typedef enum bit [0:2] {
-                        ebusfCONO = 3'b000,
-                        ebusfCONI = 3'b001,
-                        ebusfDATAO = 3'b010,
-                        ebusfDATAI = 3'b011,
-                        ebusfPIserved = 3'b100,
-                        ebusfPIaddrIn = 3'b101
-                        } tEBUSfunction;
+                ebusfCONO = 3'b000,
+                ebusfCONI = 3'b001,
+                ebusfDATAO = 3'b010,
+                ebusfDATAI = 3'b011,
+                ebusfPIserved = 3'b100,
+                ebusfPIaddrIn = 3'b101
+                } tEBUSfunction;
 
 
 // EBUS.ds diagnostic functions driven by the DTE20.
@@ -120,14 +120,8 @@ endinterface
 
 ////////////////////////////////////////////////////////////////
 // CRAM
+
 typedef bit [0:10] tCRADR;
-typedef bit [0:10] tJ;
-typedef bit [0:8] tMAGIC;
-typedef bit [0:5] tMAJVER;
-typedef bit [0:2] tMINVER;
-typedef bit [0:2] tPXCT;
-typedef bit [0:3] tACmagic;
-typedef bit [0:83] tCRAM_ALL;
 
 // CRAM_AD flag bits
  `define adCARRY 6'b100_000
@@ -681,64 +675,64 @@ typedef enum bit [0:8] {
 
 typedef struct packed {
   bit u0;
-  tJ J;
-  tAD AD;
-  tADA ADA;
+  bit [0:10] J;
+  bit [0:5] AD;
+  bit [0:2] ADA;
   bit u21;
-  tADB ADB;
-  tAR AR;
-  tARX ARX;
-  tBR BR;
-  tBRX BRX;
-  tMQ MQ;
-  tFMADR FMADR;
-  tSCAD SCAD;
-  tSCADA SCADA;
+  bit [0:1] ADB;
+  bit [0:2] AR;
+  bit [0:2] ARX;
+  bit BR;
+  bit  BRX;
+  bit MQ;
+  bit [0:2] FMADR;
+  bit [0:2] SCAD;
+  bit [0:2] SCADA;
   bit u42;
-  tSCADB SCADB;
+  bit [0:1] SCADB;
   bit u45;
-  tSC SC;
-  tFE FE;
+  bit SC;
+  bit FE;
   bit u48;
-  tSH SH;
+  bit [0:1] SH;
   bit u51;
-  tVMA VMA;
-  tTIME _TIME;
-  tMEM MEM;
-  tCOND COND;
+  bit [0:1] VMA;
+  bit [0:1] _TIME;
+  bit [0:3] MEM;
+  bit [0:5] COND;
   bit CALL;
-  tDISP DISP;
+  bit [0:4] DISP;
   bit [72:73] u73;
   bit MARK;
-  tMAGIC MAGIC;
+  bit [0:8] MAGIC;
 } tCRAM;
 
 interface iCRAM;
-  tJ J;
-//  tAD AD;
+  bit [0:10] J;
   bit [0:5] AD;
-  tADA ADA;
-  tADB ADB;
-  tAR AR;
-  tARX ARX;
-  tBR BR;
-  tBRX BRX;
-  tMQ MQ;
-  tFMADR FMADR;
-  tSCAD SCAD;
-  tSCADA SCADA;
-  tSCADB SCADB;
-  tSC SC;
-  tFE FE;
-  tSH SH;
-  tVMA VMA;
-  tTIME _TIME;
-  tMEM MEM;
-  tCOND COND;
+  bit [0:2] ADA;
+  bit [0:1] ADB;
+  bit [0:2] AR;
+  bit [0:2] ARX;
+  bit BR;
+  bit  BRX;
+  bit MQ;
+  bit [0:2] FMADR;
+  bit [0:2] SCAD;
+  bit [0:2] SCADA;
+  bit [0:1] SCADB;
+  bit SC;
+  bit FE;
+  bit [0:1] SH;
+  bit [0:1] VMA;
+  bit [0:1] _TIME;
+  bit [0:3] MEM;
+  bit [0:5] COND;
   bit CALL;
-  tDISP DISP;
+  bit [0:4] DISP;
+  bit [0:4] SPEC;
   bit MARK;
-  tMAGIC MAGIC;
+  bit [0:8] MAGIC;
 
   modport crm(output J, AD, ADA, ADB, AR, ARX, BR, BRX, MQ, FMADR,
               SCAD, SCADA, SCADB, SC, FE, SH, VMA, _TIME, MEM, COND,

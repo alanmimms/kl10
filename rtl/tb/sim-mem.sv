@@ -3,12 +3,12 @@ module sim_mem
   #(parameter SIZE=0,
     parameter WIDTH=0,
     parameter NBYTES=0)
-  (input clk,
-   input [0:WIDTH-1] din,
+  (input bit clk,
+   input bit [0:WIDTH-1] din,
    output bit [0:WIDTH-1] dout,
-   input [0:$clog2(SIZE)-1] addr,
-   input oe,                    // All enabled or not - no bytes for oe
-   input [0:NBYTES-1] wea);
+   input bit [0:$clog2(SIZE)-1] addr,
+   input bit oe,                    // All enabled or not - no bytes for oe
+   input bit [0:NBYTES-1] wea);
 
   localparam BYTE_WIDTH = WIDTH / NBYTES;
 

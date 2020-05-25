@@ -236,7 +236,7 @@ module con(iAPR APR,
     DIAG_IR_STROBE = 0;
     DIAG_DRAM_STROBE = 0;
 
-    unique case({CTL.DIAG_CTL_FUNC_01x, EBUS.ds[4:6]})
+    case({CTL.DIAG_CTL_FUNC_01x, EBUS.ds[4:6]})
     4'b1000: DIAG_CLR_RUN = 1;
     4'b1001: DIAG_SET_RUN = 1;
     4'b1010: DIAG_CONTINUE = 1;
@@ -247,7 +247,7 @@ module con(iAPR APR,
 
   bit e19Q, e27Q;
   mux e19(.sel(CRAM.COND[3:5]),
-          .en(1),
+          .en(1'b1),
           .q(e19Q),
           .d({MCL.VMA_FETCH,
               KERNEL_MODE,
@@ -259,7 +259,7 @@ module con(iAPR APR,
               ~PI_XFER}));
 
   mux e27(.sel(CRAM.COND[3:5]),
-          .en(1),
+          .en(1'b1),
           .q(e27Q),
           .d({INT_REQ,
               ~CON.START,
@@ -307,9 +307,9 @@ module con(iAPR APR,
 
   bit unusedE14;
   USR4 e14(.CLK(clk),
-           .S0(0),
+           .S0(1'b0),
            .D({EBUS.data[18], 1'b0, EBUS.data[19], EBUS.data[20]}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{CON.CONO_PI}}),
            .Q({CON.WR_EVEN_PAR_ADR,
                unusedE14,
@@ -317,9 +317,9 @@ module con(iAPR APR,
                WR_EVEN_PAR_DIR}));
 
   USR4 e10(.CLK(clk),
-           .S0(0),
+           .S0(1'b0),
            .D({EBUS.data[18:19], EBUS.data[21:22]}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{CON.CONO_PAG}}),
            .Q({CON.CACHE_LOOK_EN,
                CON.CACHE_LOAD_EN,
@@ -378,11 +378,11 @@ module con(iAPR APR,
   assign CON.EBUS_REL = CON.COND_EBUS_CTL & CRAM.MAGIC[2] & CLK.EBOX_SYNC;
 
   USR4 e40(.CLK(clk),
-           .S0(0),
+           .S0(1'b0),
            .D({CRAM.MAGIC[5:6],
                (CRAM.MAGIC[3] | CRAM.MAGIC[7]) & (CRAM.MAGIC[2] | CRAM.MAGIC[7]),
                (CRAM.MAGIC[4] | CRAM.MAGIC[8]) & (CRAM.MAGIC[3] | CRAM.MAGIC[7])}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{~CON.COND_SR_MAGIC}}),
            .Q(CON.SR));
 
@@ -396,9 +396,9 @@ module con(iAPR APR,
                       (~FM_DATA | FM_BIT_36);
 
   bit unusedE49;
-  USR4 e49(.S0(0),
+  USR4 e49(.S0(1'b0),
            .D({CRAM.MAGIC[7], 1'b0, CRAM.MAGIC[2], CRAM.MAGIC[8]}),
-           .S3(0),
+           .S3(1'b0),
            .SEL({2{~CON.LOAD_SPEC_INSTR}}),
            .CLK(clk),
            .Q({CON.EBOX_HALTED, unusedE49, CON.PCplus1_INH, SPEC8}));

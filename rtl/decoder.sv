@@ -2,8 +2,8 @@
 `include "ebox.svh"
 
 module decoder
-  (input en,
-   input [0:2] sel,
+  (input bit en,
+   input bit [0:2] sel,
    output bit [0:7] q);
 
   always_comb unique case({en, sel})

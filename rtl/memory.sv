@@ -12,7 +12,7 @@
 // * Support interleaving.
 // * Implement hardware memory through DMA to DRAM shared with Linux.
 // * Support ACKN of next word while VALID on current word
-module memory(input CROBAR,
+module memory(input bit CROBAR,
               iSBUS.memory SBUS);
 `define MEM_SIZE (256*1024)
 
@@ -58,13 +58,13 @@ endmodule
 //
 // NOTE: START may already be asserted for subsequent cycle while we
 // are still finishing up the VALID pulses for the current one.
-module memPhase(input CROBAR,
-                input clk,
+module memPhase(input bit CROBAR,
+                input bit clk,
                 ref bit [0:35] memory[`MEM_SIZE],
                 iSBUS.memory SBUS,
                 output bit [0:35] D,
                 output bit PARITY,
-                input START,
+                input bit START,
                 output bit ACKN,
                 output bit VALID);
 
@@ -87,8 +87,6 @@ module memPhase(input CROBAR,
     addr <= '0;
     wo <= '0;
     toAck <= '0;
-    ACKN <= 0;
-    VALID <= 0;
   end else if (START) begin     // A transfer is starting or continuing
     addr <= SBUS.ADR;           // Address of first word we do
     wo <= SBUS.ADR[34:35];      // Word offset we increment mod 4

@@ -39,15 +39,15 @@ module ir(iIR IR,
      .din('0),                    // XXX
      .dout(DRAMdata),
      .addr(DRADR),
-     .oe(1),
-     .wea(0));                   // XXX
+     .oe(1'b1),
+     .wea(1'b0));                   // XXX
 `else
   dram_mem dram(.clka(IR_CLK),
                 .addra(DRADR),
                 .douta(DRAMdata),
                 .dina('0),
-                .wea(0),
-                .ena(1));
+                .wea(1'b0),
+                .ena(1'b1));
 `endif
 
   // p.210 shows older KL10 DRAM addressing.
@@ -127,12 +127,6 @@ module ir(iIR IR,
   bit dramLoadXYeven, dramLoadXYodd;
   bit dramLoadJcommon, dramLoadJeven, dramLoadJodd;
   bit enJRST5, enJRST6, enJRST7;
-
-  // Inferred latch initialization
-  initial begin
-    enAC = 0;
-    enIO_JRST = 0;
-  end
 
   always_comb if (CTL.DIAG_LOAD_FUNC_06x) begin
     dramLoadXYeven = 3'b000;

@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
-module mc10179(input [0:3] G,
-               input [0:3] P,
-               input CIN,
+module mc10179(input bit [0:3] G,
+               input bit [0:3] P,
+               input bit CIN,
 
                output bit GG,
                output bit PG,

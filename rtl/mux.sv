@@ -2,9 +2,9 @@
 
 module mux
 #(parameter N = 8)
-  (input [0:$clog2(N)-1] sel,
-   input en,
-   input [0:N-1] d,
+  (input bit [0:$clog2(N)-1] sel,
+   input bit en,
+   input bit [0:N-1] d,
    output bit q);
 
   assign q = en ? d[sel] : '0;

@@ -1,12 +1,8 @@
 `timescale 1ns/1ns
 `include "ebox.svh"
 
-module top(input clk,
-           input CROBAR,
-           input EXTERNAL_CLK,
-           input clk30,
-           input clk31
-);
+module top;
+  bit clk, CROBAR, EXTERNAL_CLK, clk30, clk31;
 
   bit [27:35] MBOX_GATE_VMA;
   bit [10:12] CACHE_CLEARER;

@@ -72,9 +72,9 @@ module edptb(iAPR APR,
     $display($time, " set AR=h555555555");
     edp0.EDP.AR[0:35] = 36'h555555555;
     CRAM.AR <= arAR;
-    CRAM.BR <= tBR'('0);
+    CRAM.BR <= 0;
     CRAM.ARX <= arxARX;
-    CRAM.BRX <= tBRX'('0);
+    CRAM.BRX <= 0;
     #10 clk <= 1;
     #10 clk <= 0;
     $display($time, " AR=h%09X SB h555555555", EDP.AR[0:35]);
@@ -86,9 +86,9 @@ module edptb(iAPR APR,
     CRAM.AR <= arAR;
     CRAM.ADA <= adaAR;
     CRAM.AR <= arAR;
-    CRAM.BR <= tBR'('0);
+    CRAM.BR <= 0;
     CRAM.ARX <= arxARX;
-    CRAM.BRX <= tBRX'('0);
+    CRAM.BRX <= 0;
     #10 clk <= 1;
     #10 clk <= 0;
     $display($time, " result: AD/A, ADA/AR, AR/AR AD=h%09x SB h555555555", EDP.AD[-2:35]);
@@ -98,9 +98,9 @@ module edptb(iAPR APR,
     $display($time, " set BR=h987654321");
     edp0.EDP.BR[0:35] <= 36'h987654321;
     CRAM.AR <= arAR;
-    CRAM.BR <= tBR'('0);
+    CRAM.BR <= 0;
     CRAM.ARX <= arxARX;
-    CRAM.BRX <= tBRX'('0);
+    CRAM.BRX <= 0;
     #10 clk <= 1;
     #10 clk <= 0;
     $display($time, " BR=h%09X SB h987654321", EDP.BR[0:35]);
@@ -111,9 +111,9 @@ module edptb(iAPR APR,
     CRAM.ADA <= adaAR;
     CRAM.ADB <= adbBR;
     CRAM.AR <= arAR;
-    CRAM.BR <= tBR'('0);
+    CRAM.BR <= 0;
     CRAM.ARX <= arxARX;
-    CRAM.BRX <= tBRX'('0);
+    CRAM.BRX <= 0;
     #10 clk <= 1;
     #10 clk <= 0;
     $display($time, " result: AD/B, ADA/AR, ADB/BR AD=h%09x SB h987654321", EDP.AD[-2:35]);
