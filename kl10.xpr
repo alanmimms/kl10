@@ -21,7 +21,7 @@
     <Option Name="BoardPart" Val=""/>
     <Option Name="BoardPartRepoPaths" Val="$PPRDIR/../.Xilinx/Vivado/2019.2/xhub/board_store"/>
     <Option Name="SourceMgmtMode" Val="DisplayOnly"/>
-    <Option Name="ActiveSimSet" Val="bug001"/>
+    <Option Name="ActiveSimSet" Val="kl10pv"/>
     <Option Name="DefaultLib" Val="xil_defaultlib"/>
     <Option Name="ProjectType" Val="Default"/>
     <Option Name="IPOutputRepo" Val="$PCACHEDIR/ip"/>
@@ -33,7 +33,7 @@
     <Option Name="IPStaticSourceDir" Val="$PIPUSERFILESDIR/ipstatic"/>
     <Option Name="EnableBDX" Val="FALSE"/>
     <Option Name="DSABoardId" Val="cora-z7-10"/>
-    <Option Name="WTXSimLaunchSim" Val="3310"/>
+    <Option Name="WTXSimLaunchSim" Val="3337"/>
     <Option Name="WTModelSimLaunchSim" Val="0"/>
     <Option Name="WTQuestaLaunchSim" Val="0"/>
     <Option Name="WTIesLaunchSim" Val="0"/>
@@ -851,6 +851,7 @@
         <Option Name="XSimWcfgFile" Val="$PPRDIR/page-fail.wcfg"/>
         <Option Name="XSimWcfgFile" Val="$PPRDIR/fig3-28.wcfg"/>
         <Option Name="xsim.simulate.runtime" Val="100us"/>
+        <Option Name="xsim.simulate.log_all_signals" Val="true"/>
         <Option Name="NLNetlistMode" Val="funcsim"/>
         <Define Name="KL10PV_TB" Val="1"/>
         <Define Name="TB" Val="1"/>

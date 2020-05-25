@@ -12,24 +12,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="17965950fs"></ZoomStartTime>
-      <ZoomEndTime time="19087951fs"></ZoomEndTime>
-      <Cursor1Time time="18548950fs"></Cursor1Time>
+      <ZoomStartTime time="18213143fs"></ZoomStartTime>
+      <ZoomEndTime time="18341252fs"></ZoomEndTime>
+      <Cursor1Time time="18319900fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="198"></NameColumnWidth>
-      <ValueColumnWidth column_width="112"></ValueColumnWidth>
+      <ValueColumnWidth column_width="100"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="14" />
+   <WVObjectSize size="22" />
    <wave_markers>
       <marker label="" time="18228950" />
    </wave_markers>
-   <wvobject type="logic" fp_name="/top/MCL/VMA_READ">
-      <obj_property name="ElementShortName">VMA_READ</obj_property>
-      <obj_property name="ObjectShortName">VMA_READ</obj_property>
-      <obj_property name="CustomSignalColor">#FFD700</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/top/CRAM/MEM">
       <obj_property name="ElementShortName">MEM[0:3]</obj_property>
       <obj_property name="ObjectShortName">MEM[0:3]</obj_property>
@@ -44,9 +38,46 @@
       <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mt00/MBOX/CORE_BUSY">
+      <obj_property name="ElementShortName">CORE_BUSY</obj_property>
+      <obj_property name="ObjectShortName">CORE_BUSY</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/MBOX/MEM_BUSY">
+      <obj_property name="ElementShortName">MEM_BUSY</obj_property>
+      <obj_property name="ObjectShortName">MEM_BUSY</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/MBOX/MEM_DATA_VALID_A">
+      <obj_property name="ElementShortName">MEM_DATA_VALID_A</obj_property>
+      <obj_property name="ObjectShortName">MEM_DATA_VALID_A</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/MBOX/MEM_START_A">
+      <obj_property name="ElementShortName">MEM_START_A</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_A</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/MEM_START_SET">
+      <obj_property name="ElementShortName">MEM_START_SET</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_SET</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/MEM_START_CLR">
+      <obj_property name="ElementShortName">MEM_START_CLR</obj_property>
+      <obj_property name="ObjectShortName">MEM_START_CLR</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/MBOX/PHASE_CHANGE_COMING">
+      <obj_property name="ElementShortName">PHASE_CHANGE_COMING</obj_property>
+      <obj_property name="ObjectShortName">PHASE_CHANGE_COMING</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/LAST_ACKN">
+      <obj_property name="ElementShortName">LAST_ACKN</obj_property>
+      <obj_property name="ObjectShortName">LAST_ACKN</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/top/mbox0/mbc0/LAST_ACKN_SEEN">
+      <obj_property name="ElementShortName">LAST_ACKN_SEEN</obj_property>
+      <obj_property name="ObjectShortName">LAST_ACKN_SEEN</obj_property>
+   </wvobject>
    <wvobject type="group" fp_name="group1154">
       <obj_property name="label">SBUS</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/top/SBUS/CLK_INT">
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="ElementShortName">CLK_INT</obj_property>
@@ -212,6 +243,7 @@
    <wvobject type="group" fp_name="group1156">
       <obj_property name="label">CRA-conditions</obj_property>
       <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/top/CLK/CRA">
          <obj_property name="DisplayName">label</obj_property>
          <obj_property name="ElementShortName">CRA</obj_property>
@@ -646,23 +678,17 @@
          <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/top/CRAM/BR">
+      <wvobject type="logic" fp_name="/top/CRAM/BR">
          <obj_property name="ElementShortName">BR</obj_property>
          <obj_property name="ObjectShortName">BR</obj_property>
-         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/top/CRAM/BRX">
+      <wvobject type="logic" fp_name="/top/CRAM/BRX">
          <obj_property name="ElementShortName">BRX</obj_property>
          <obj_property name="ObjectShortName">BRX</obj_property>
-         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/top/CRAM/MQ">
+      <wvobject type="logic" fp_name="/top/CRAM/MQ">
          <obj_property name="ElementShortName">MQ</obj_property>
          <obj_property name="ObjectShortName">MQ</obj_property>
-         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top/CRAM/FMADR">
          <obj_property name="ElementShortName">FMADR[0:2]</obj_property>
@@ -688,17 +714,13 @@
          <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/top/CRAM/SC">
+      <wvobject type="logic" fp_name="/top/CRAM/SC">
          <obj_property name="ElementShortName">SC</obj_property>
          <obj_property name="ObjectShortName">SC</obj_property>
-         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
-      <wvobject type="other" fp_name="/top/CRAM/FE">
+      <wvobject type="logic" fp_name="/top/CRAM/FE">
          <obj_property name="ElementShortName">FE</obj_property>
          <obj_property name="ObjectShortName">FE</obj_property>
-         <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
-         <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/top/CRAM/SH">
          <obj_property name="ElementShortName">SH[0:1]</obj_property>
@@ -740,6 +762,12 @@
          <obj_property name="ElementShortName">DISP[0:4]</obj_property>
          <obj_property name="ObjectShortName">DISP[0:4]</obj_property>
          <obj_property name="CustomSignalColor">#FFFFFF</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/top/CRAM/SPEC">
+         <obj_property name="ElementShortName">SPEC[0:4]</obj_property>
+         <obj_property name="ObjectShortName">SPEC[0:4]</obj_property>
+         <obj_property name="CustomSignalColor">#DCDCDC</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/top/CRAM/MARK">
