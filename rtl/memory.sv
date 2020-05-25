@@ -23,11 +23,8 @@ module memory(input bit CROBAR,
   bit [0:35] aD, bD;
   bit aParity, bParity;
 
-  always @(posedge SBUS.START_A) aClk <= 0;
-  always @(negedge SBUS.CLK_INT) aClk <= ~aClk;
-
-  always @(posedge SBUS.START_B) bClk <= 0;
-  always @(posedge SBUS.CLK_INT) bClk <= ~bClk;
+  always @SBUS.CLK_INT aClk <= ~SBUS.CLK_INT;
+  always @SBUS.CLK_INT bClk <= SBUS.CLK_INT;
 
   assign SBUS.D = aClk ? aD : bD;
   assign SBUS.DATA_PAR = aClk ? aParity : bParity;
