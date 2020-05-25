@@ -139,10 +139,10 @@ module mbx(iAPR APR,
                         .q(e33Q));
   
   bit [4:7] ignoredE18;
-  decoder e18(.sel({1'b0, MBC.CORE_ADR}),
+  decoder e18(.sel({1'b0, MBC.CORE_ADR[34:35]}),
               // -MBX3 CORE BUSY 1A L on MBX2 B4.
               .en(~CORE_BUSY & (MBC.CORE_DATA_VALminus2 | CSH.ONE_WORD_WR_T0)),
-              .q({CORE_WD_COMING, ignoredE18}));
+              .q({CORE_WD_COMING[0:3], ignoredE18}));
   
   bit unusedE12a, unusedE12b;
   USR4 e12(.S0(1'b0),
@@ -152,15 +152,13 @@ module mbx(iAPR APR,
            .Q({MBOX.MB_SEL[2], unusedE12a, MBOX.MB_SEL[1], unusedE12b}),
            .CLK(clk));
 
+  bit [0:3] wd;
+  assign wd = CORE_WD_COMING | CSH_TO_MB_WD | MB_WR_RQ;
   USR4  e9(.S0(1'b0),
-           .D({(CORE_WD_COMING[0] | CSH_TO_MB_WD[0] | MB_WR_RQ[0]) &
-               (MBOX.MB_SEL[2] | MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
-               (CORE_WD_COMING[1] | CSH_TO_MB_WD[1] | MB_WR_RQ[1]) &
-               (MBOX.MB_SEL[2] | ~MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
-               (CORE_WD_COMING[2] | CSH_TO_MB_WD[2] | MB_WR_RQ[2]) &
-               (~MBOX.MB_SEL[2] | MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
-               (CORE_WD_COMING[3] | CSH_TO_MB_WD[3] | MB_WR_RQ[3]) &
-               (~MBOX.MB_SEL[2] | ~MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR)}),
+           .D({wd[0] & ( MBOX.MB_SEL[2] |  MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
+               wd[1] & ( MBOX.MB_SEL[2] | ~MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
+               wd[2] & (~MBOX.MB_SEL[2] |  MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR),
+               wd[3] & (~MBOX.MB_SEL[2] | ~MBOX.MB_SEL[1] | ~MB_WR_RQ_CLR)}),
               .S3(1'b0),
               .SEL({1'b0, RESET}),
               .Q(MB_WR_RQ),
