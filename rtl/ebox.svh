@@ -808,7 +808,6 @@ interface iCLK;
   bit CCW;
   bit CHC;
   bit CHX;
-  bit CLK;
   bit CON;
   bit CRA;
   bit CRAM_PAR_ERR;
