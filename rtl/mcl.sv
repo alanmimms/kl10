@@ -35,7 +35,7 @@ module mcl(iAPR APR,
   bit USER, USER_IOT, PUBLIC, KERNEL_CYCLE;
   bit UPT_EN, EPT_EN, SPEC_EXEC;
   bit PAGE_ILL_ENTRY, USER_COMP;
-  bit BWRITE_01;
+  bit WRITE_01;
   bit REG_FUNC, MAP_FUNC, SPEC_SP_MEM_CYCLE, AD_LONG_EN, VMA_LONG_EN;
   bit AREAD_EN, XR_SHORT, PXCT, ADR_ERR, SP_MEM_CYCLE;
   bit VMA_PREVIOUS, PC_SECTION_0, PCS_SECTION_0, VMA_SECTION_0;
@@ -53,7 +53,7 @@ module mcl(iAPR APR,
   assign AREAD_EA = MEM_AREAD & ~Aeq001;
   assign RW_OR_RPW_CYCLE = MEM_RW_CYCLE | MEM_RPW_CYCLE;
   assign MEM_COND_JUMP = CRAM.MAGIC[5] & MEM_COND_FETCH;
-  assign MCL.REQ_EN = (BWRITE_01 | ~MEM_B_WRITE) &
+  assign MCL.REQ_EN = (WRITE_01 | ~MEM_B_WRITE) &
                       (CRAM.MEM[0] | CRAM.MEM[1] | RESET);
   assign LOAD_AD_FUNC = MEM_RESTORE_VMA | MEM_AD_FUNC;
   assign LOAD_VMA_HELD = CON.COND_LOAD_VMA_HELD | CRAM.MEM[2];
@@ -283,11 +283,11 @@ module mcl(iAPR APR,
 
   bit syncNotReg;
   assign syncNotReg = ~REG_FUNC | CLK.EBOX_SYNC;
-  assign BWRITE_01 = MEM_B_WRITE & IR.DRAM_B[2];
-  assign MCL.MBOX_CYC_REQ = CRAM.MEM[0] & syncNotReg |
+  assign WRITE_01 = MEM_B_WRITE & IR.DRAM_B[1];
+  assign MCL.MBOX_CYC_REQ = CRAM.MEM[0] & syncNotReg | // CRAM.MEM[0] equivalent to MCL1 MEM 00 A
                             MEM_AREAD & ~Aeq0x0 & syncNotReg |
                             MEM_COND_FETCH & ~CON.PI_CYCLE & syncNotReg |
-                            CLK.EBOX_SYNC & (BWRITE_01 |
+                            CLK.EBOX_SYNC & (WRITE_01 |
                                              MEM_REG_FUNC |
                                              MCL.SKIP_SATISFIED |
                                              FETCH_EN_IN);
