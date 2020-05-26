@@ -163,7 +163,9 @@ module clk(input bit clk,
   assign CLK.PMA = CLK_OUT;
   assign CLK.CHX = CLK_OUT;
   assign CLK.CSH = CLK_OUT;
-`else
+
+`else  ////////////////////////////////////////////////////////////////
+
   assign GATED = e56q2 & MAIN_SOURCE;
   kl_delays delays0(.clk_in1(GATED),
                     .locked(delaysLocked),
@@ -175,7 +177,7 @@ module clk(input bit clk,
   assign CLK.CRC = MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CHC = MBOX | DIAG_CHANNEL_CLK_STOP;
   assign CLK.CCW = MBOX | DIAG_CHANNEL_CLK_STOP;
-  assign CLK.MB = MBOX | DIAG_CHANNEL_CLK_STOP;
+  assign CLK.MB  = MBOX | DIAG_CHANNEL_CLK_STOP;
 
   assign CLK.MBC = MBOX;
   assign CLK.MBX = MBOX;
@@ -461,35 +463,33 @@ module clk(input bit clk,
 
   bit notHoldAB;
   bit [0:3] e12SR;
-  bit e17out;
+  bit e17q3;
   assign notHoldAB = ~CLK.ERROR_HOLD_A & ~CLK.ERROR_HOLD_B;
-  assign e17out = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | EBOX_SS | CLK.RESET;
+  assign e17q3 = ~CON.MBOX_WAIT | CLK.RESP_MBOX | VMA.AC_REF | EBOX_SS | CLK.RESET;
 
   USR4 e12(.S0(CLK.PF_DLYD_A),
-           .D({CLK.SYNC & e17out & notHoldAB & ~EBOX_CRM_DIS,
-               CLK.SYNC & e17out & notHoldAB & ~EBOX_EDP_DIS,
-               CLK.SYNC & e17out & notHoldAB & ~EBOX_CTL_DIS,
+           .D({CLK.SYNC & e17q3 & notHoldAB & ~EBOX_CRM_DIS,
+               CLK.SYNC & e17q3 & notHoldAB & ~EBOX_EDP_DIS,
+               CLK.SYNC & e17q3 & notHoldAB & ~EBOX_CTL_DIS,
                EBOX_SRC_EN}),
            .S3(1'b0),
            .SEL({CLK.PAGE_FAIL, CLK.PF_DLYD_A}),
            .CLK(ODD),
            .Q(e12SR));
-           
 
-  assign EBOX_SRC_EN = CLK.SYNC & e17out;
+  assign EBOX_SRC_EN = CLK.SYNC & e17q3;
   assign EBOX_CLK_EN = EBOX_SRC_EN | CLK._1777_EN;
 
-  const real e12SRtoClockDLY = 3 + 2.25;
+  const real e12SRtoClockDLY = 1.75 + 2.25;
 
   always @(e12SR[0]) CLK.CRM <= #e12SRtoClockDLY e12SR[0];
   always @(e12SR[0]) CLK.CRA <= #e12SRtoClockDLY e12SR[0];
-  always @(CTL.DIAG_CLK_EDP | e12SR[1])
-    CLK.EDP <= #e12SRtoClockDLY CTL.DIAG_CLK_EDP | e12SR[1];
+  always @(CTL.DIAG_CLK_EDP | e12SR[1]) CLK.EDP <= #e12SRtoClockDLY CTL.DIAG_CLK_EDP | e12SR[1];
   always @(e12SR[2]) CLK.APR <= #e12SRtoClockDLY e12SR[2];
   always @(e12SR[2]) CLK.CON <= #e12SRtoClockDLY e12SR[2];
   always @(e12SR[2]) CLK.VMA <= #e12SRtoClockDLY e12SR[2];
   always @(e12SR[2]) CLK.MCL <= #e12SRtoClockDLY e12SR[2];
-  always @(e12SR[2]) CLK.IR  <= #e12SRtoClockDLY  e12SR[2];
+  always @(e12SR[2]) CLK.IR  <= #e12SRtoClockDLY e12SR[2];
   always @(e12SR[2]) CLK.SCD <= #e12SRtoClockDLY e12SR[2];
 
   assign EBOX_SOURCE = e12SR[3];
