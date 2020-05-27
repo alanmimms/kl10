@@ -130,7 +130,7 @@ module pma(iAPR APR,
            .Q(CCA[23:26]),
            .CLK(clock));
 
-  UCR4 e40(.D({1'b0, 3'b111}),
+  UCR4 e40(.D(4'b0111),
            .CIN(~e36q15),
            .Q({unusedE40, CCA[27:29]}),
            .COUT(),
