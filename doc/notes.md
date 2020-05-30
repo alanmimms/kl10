@@ -151,6 +151,8 @@ Designation   Designation   Backplane    Model
 # TODO
 - Fix bit ordering in module arguments to be one way or the other.
 - Use sim to see if [0:3] is a four bit field we can use as a number.
+- Copy RSX11M [100,1], [100,2], and [100,3]
+  - These are the files from the three RSX20F floppy images
 
 
 # Memory FSM
