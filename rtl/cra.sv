@@ -1,5 +1,5 @@
 // Schematic review 2020-05-21 CRA1, CRA2
-`timescale 1ns/1ns
+`timescale 1ns/1ps
 `include "ebox.svh"
 
 // M8541 CRA
@@ -71,8 +71,8 @@ module cra(iAPR APR,
 
     if (dispEn00_03) unique case (CRAM.DISP[3:4])
                      2'b00: dispMux[0:6] = diagAdr[0:6];
-                     2'b01: dispMux[0:6] = {2'b00, IR.DRAM_J[1:4], 2'b00};
-                     2'b10: dispMux[0:6] = {2'b00, CRA.AREAD[1:4], 2'b00};
+                     2'b01: dispMux[0:6] = {1'b0, IR.DRAM_J[1:4], 2'b00};
+                     2'b10: dispMux[0:6] = {1'b0, CRA.AREAD[1:4], 2'b00};
                      2'b11: dispMux[0:6] = SBR_RET[0:6];
                      endcase
 
@@ -130,7 +130,9 @@ module cra(iAPR APR,
                                           {10'b0, CON.COND_ADR_10};
   
 
-  assign CRA.AREAD = IR.DRAM_A == 3'b000 ? IR.DRAM_J : '0;
+  assign {CRA.AREAD[1:4], CRA.AREAD[7:10]} = IR.DRAM_A != 3'b111 ?
+                                             {IR.DRAM_J[1:4], IR.DRAM_J[7:10]} :
+                                             {5'b0, IR.DRAM_A};
 
   bit RET_AND_not1777, CALL_RESET, CALL_RESET_1777;
   assign RET_AND_not1777 = CTL.DISP_RETURN & ~CLK.FORCE_1777;
@@ -254,7 +256,7 @@ module cra(iAPR APR,
   always_comb
     if (CRA.EBUSdriver.driving) case (CTL.DIAG[4:6])
                                 3'b000: CRA.EBUSdriver.data[0:5] = {dispEn00_07, dispEn00_03, `SP};
-                                3'b001: CRA.EBUSdriver.data[0:5] = {CRAM.CALL, CRAM.DISP[0:4], `SP};
+                                3'b001: CRA.EBUSdriver.data[0:5] = {CRAM.CALL, CRAM.DISP[0:4]};
                                 3'b010: CRA.EBUSdriver.data[0:5] = SBR_RET[5:10];
                                 3'b011: CRA.EBUSdriver.data[0:5] = {dispEn30_37, SBR_RET[0:4]};
                                 3'b100: CRA.EBUSdriver.data[0:5] = CRA.CRADR[5:10];
