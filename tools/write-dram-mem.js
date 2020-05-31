@@ -1,23 +1,26 @@
 'use strict';
 const DRAM = require('./dram');
 
-// Source bits are [0:23] laid out as
+// Source listing bits are [0:23] laid out as
 // * A[0:2]=3
 // * B[3:5]=3
 // * X1[6:10]=5   UNUSED
 // * P[11]=1
 // * X2[12]=1     UNUSED
 // * J[13:23]=11
-// for total used of 17.
-
-// We need to compress this into the DRAM memory we actually store in
-// the FPGA. In our output COE data, delete bits between B and P,
-// between P and J, and J[0,5,6], leaving
-// * A[0:2]=3
-// * B[3:5]=3
-// * P[6]=1
-// * J[7:14]=8
-// for total used of 15.
+//
+// We need to pack this into the DRAM memory we actually store in the
+// FPGA. In our output COE data, delete bits between B and P, between
+// P and J, and J[0,5,6].
+//
+//     FIELD   IMAGE  COUNT
+//       A      0:2     3
+//       B      3:5     3
+//       P       6      1
+//    J[1:4]    7:10    4
+//    J[7:10]  11:14    4
+//                   ------
+//                     15
 DRAM.forEach(w => {
   const inN = 24;               // Input word width
   const jN = 11;                // Input J word width
