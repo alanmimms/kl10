@@ -4,8 +4,9 @@
 
 I'm doing this while I learn SystemVerilog. The idea is to build an
 FPGA implementation pretty much identical to the original schematics
-from the [`MP00301_KL10PV_Jun80` schematic PDFs from the scans on
-Archive.org](https://archive.org/details/bitsavers_decpdp10KL0_67493660).
+from the [`MP00301_KL10PV_Jun80` schematic PDFs from the scans from Al
+Kossow's Bit Savers
+archive](http://bitsavers.org/pdf/dec/pdp10/KL10/MP00301_KL10PV_Jun80.pdf).
 
 # Status
 This is a labor of love and it's a work in progress. I have about 80%
