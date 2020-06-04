@@ -258,7 +258,7 @@ module clk(input bit clk,
 
   // XXX slashed wire
   assign CLK.FUNC_GATE = ~|e60FF[0:2];
-  assign CLK.TENELEVEN_CLK = e60FF[3];
+  assign CLK.TENELEVEN_CLK = e60FF[3]; // 16MHz synchronized to MAIN_SOURCE
   always_ff @(posedge MAIN_SOURCE) begin
     // XXX slashed wire moves us from active-low to acitve-high
     // discipline.
