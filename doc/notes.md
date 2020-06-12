@@ -10,6 +10,29 @@
     * FPGA implemented pager and PMA
     * FPGA DMA interface to ARM Linux provided RAM
 
+
+# Cables, Backplanes, Clock Delays
+* System is designed with ~128ns of delay baked in
+* Base clock from CLK driven thru (coax?) cable to end of chassis and back
+
+* TODO: CLK1 CLK OUT should drive long cable to CLK1 CLK?
+
+## Required Timing
+* MAIN SOURCE 30MHz
+* GATED: 5ns delayed MAIN SOURCE
+* EBUS CLK, SBUS CLK: GATED divided by 2
+* EBUS CLK SOURCE: 20ns delayed GATED
+* SOURCE DELAYED: inverted, delayed 62.5..102.5 from EBUS CLK SOURCE
+* CLK ON: gated and ~2.5ns delayed SOURCE DELAYED
+* ODD: ~2.5ns delayed CLK ON
+* MBOX: ~5.2ns delayed CLK ON
+* CCL, CRC, CHC, MB, CCW, MBC, MBX, MBZ, MBOX 13/14, MTR, CLK OUT, PI,
+  PMA, CHX, CSH: ~5.5ns delayed MBOX
+* CLK DELAYED: <cable delay> + ~1.5ns delayed CLK OUT-->cable-->CLK CLK
+* MBOX CLK: ~2.5ns delayed CLK DELAYED
+* CRM, CRA, EDP, APR, CON, VMA, MCL, IR, SCD: gated and ~5.5ns delayed ODD
+
+
 # Recipes
 ## To save bookmarks from Evince based PDF files
 
